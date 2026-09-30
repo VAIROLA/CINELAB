@@ -852,15 +852,23 @@ export function loadDatabase(): void {
 
 export function saveDatabase(): void {
   try {
-    if (!fs.existsSync(DB_DIR)) {
-      fs.mkdirSync(DB_DIR, { recursive: true });
-    }
-    const data = JSON.stringify(db, null, 2);
-    fs.writeFileSync(DB_FILE, data, 'utf-8');
     try {
-      fs.writeFileSync(DB_BACKUP_FILE, data, 'utf-8');
-    } catch (bErr) {
-      console.warn('Could not mirror to DB_BACKUP_FILE:', bErr);
+      if (!fs.existsSync(DB_DIR)) {
+        fs.mkdirSync(DB_DIR, { recursive: true });
+      }
+      const data = JSON.stringify(db, null, 2);
+      fs.writeFileSync(DB_FILE, data, 'utf-8');
+      try {
+        fs.writeFileSync(DB_BACKUP_FILE, data, 'utf-8');
+      } catch (bErr) {
+        console.warn('Could not mirror to DB_BACKUP_FILE:', bErr);
+      }
+    } catch (fsErr: any) {
+      if (fsErr?.code === 'EROFS') {
+        console.warn('[DB] Read-only filesystem detected (e.g. Vercel Serverless). In-memory state maintained.');
+      } else {
+        throw fsErr;
+      }
     }
     // Also mirror welcome video configuration to dedicated permanent file
     try {
@@ -883,8 +891,10 @@ export function saveDatabase(): void {
     } catch (wErr) {
       console.warn('Could not mirror to WELCOME_CONFIG_FILE:', wErr);
     }
-  } catch (err) {
-    console.error('Error saving database to file:', err);
+  } catch (err: any) {
+    if (err?.code !== 'EROFS') {
+      console.error('Error saving database to file:', err);
+    }
   }
 }
 

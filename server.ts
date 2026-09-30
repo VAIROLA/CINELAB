@@ -4203,4 +4203,9 @@ async function startServer() {
   server.headersTimeout = 66000;
 }
 
-startServer();
+if (!process.env.VERCEL) {
+  startServer();
+}
+
+export { app };
+export default app;
