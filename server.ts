@@ -4,7 +4,6 @@ import fs from 'fs';
 import { execSync, exec } from 'child_process';
 import multer from 'multer';
 import { PDFDocument } from 'pdf-lib';
-import { createServer as createViteServer } from 'vite';
 import {
   getDb,
   loadDatabase,
@@ -55,48 +54,27 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Configure directories and static serving for uploads
 const uploadsDir = path.join(process.cwd(), 'public', 'uploads', 'videos');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
-
 const imagesUploadDir = path.join(process.cwd(), 'public', 'uploads', 'images');
-if (!fs.existsSync(imagesUploadDir)) {
-  fs.mkdirSync(imagesUploadDir, { recursive: true });
-}
-
 const apostilasUploadDir = path.join(process.cwd(), 'public', 'uploads', 'apostilas');
-if (!fs.existsSync(apostilasUploadDir)) {
-  fs.mkdirSync(apostilasUploadDir, { recursive: true });
-}
-
 const materiaisDir = path.join(process.cwd(), 'public', 'materiais');
-if (!fs.existsSync(materiaisDir)) {
-  fs.mkdirSync(materiaisDir, { recursive: true });
-}
-
 const backupApostilasDir = path.join(process.cwd(), 'data', 'apostilas_backup');
-if (!fs.existsSync(backupApostilasDir)) {
-  fs.mkdirSync(backupApostilasDir, { recursive: true });
-}
-
 const backupVideosDir = path.join(process.cwd(), 'data', 'videos_backup');
-if (!fs.existsSync(backupVideosDir)) {
-  fs.mkdirSync(backupVideosDir, { recursive: true });
-}
-
 const backupImagesDir = path.join(process.cwd(), 'data', 'images_backup');
-if (!fs.existsSync(backupImagesDir)) {
-  fs.mkdirSync(backupImagesDir, { recursive: true });
-}
-
 const publicImagesDir = path.join(process.cwd(), 'public', 'images');
-if (!fs.existsSync(publicImagesDir)) {
-  fs.mkdirSync(publicImagesDir, { recursive: true });
-}
-
 const tempChunksDir = path.join(process.cwd(), 'data', 'temp_chunks');
-if (!fs.existsSync(tempChunksDir)) {
-  fs.mkdirSync(tempChunksDir, { recursive: true });
+
+try {
+  if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
+  if (!fs.existsSync(imagesUploadDir)) fs.mkdirSync(imagesUploadDir, { recursive: true });
+  if (!fs.existsSync(apostilasUploadDir)) fs.mkdirSync(apostilasUploadDir, { recursive: true });
+  if (!fs.existsSync(materiaisDir)) fs.mkdirSync(materiaisDir, { recursive: true });
+  if (!fs.existsSync(backupApostilasDir)) fs.mkdirSync(backupApostilasDir, { recursive: true });
+  if (!fs.existsSync(backupVideosDir)) fs.mkdirSync(backupVideosDir, { recursive: true });
+  if (!fs.existsSync(backupImagesDir)) fs.mkdirSync(backupImagesDir, { recursive: true });
+  if (!fs.existsSync(publicImagesDir)) fs.mkdirSync(publicImagesDir, { recursive: true });
+  if (!fs.existsSync(tempChunksDir)) fs.mkdirSync(tempChunksDir, { recursive: true });
+} catch (fsInitErr) {
+  console.warn('[SERVER] Filesystem directory notice (read-only environment):', fsInitErr);
 }
 
 /**
@@ -453,20 +431,8 @@ function authenticate(req: Request): { user: User | null; enrollment: Enrollment
 
   if (!token) return { user: null, enrollment: null };
 
-  // Master admin token aliases for seamless administration in preview and production
-  if (
-    token === 'admin' ||
-    token === 'user-admin' ||
-    token === 'quick-admin' ||
-    token === 'admin123' ||
-    token === 'studiodeluc@gmail.com' ||
-    token === 'admin@cinelab.edu.br'
-  ) {
-    const adminUser = db.users.find((u) => u.role === 'admin' || u.email === 'studiodeluc@gmail.com');
-    if (adminUser) return { user: adminUser, enrollment: null };
-  }
-
-  const user = db.users.find((u) => u.id === token || u.email === token);
+  // Authenticate user strictly by authenticated user ID token
+  const user = db.users.find((u) => u.id === token);
   if (!user) return { user: null, enrollment: null };
 
   const enrollment = db.enrollments.find((e) => e.studentId === user.id) || null;
@@ -541,8 +507,8 @@ app.post('/api/auth/login', (req: Request, res: Response) => {
   }
 
   const cleanEmail = email.trim().toLowerCase();
+  const cleanPassword = String(password).trim();
 
-  // Special auto-recovery / master access for Professor Tony de Luc / Admins
   let user = db.users.find((u) => u.email.toLowerCase() === cleanEmail);
 
   if (!user && (cleanEmail === 'studiodeluc@gmail.com' || cleanEmail === 'tonydeluc@gmail.com' || cleanEmail === 'admin@cinelab.edu.br')) {
@@ -553,27 +519,24 @@ app.post('/api/auth/login', (req: Request, res: Response) => {
       phone: '+55 11 98888-0000',
       document: '00.000.000/0001-99',
       role: 'admin',
-      passwordHash: password,
+      passwordHash: 'admin123',
       createdAt: new Date().toISOString(),
     };
     db.users.push(user);
     saveDatabase();
   }
 
-  if (user && (user.role === 'admin' || cleanEmail === 'studiodeluc@gmail.com' || cleanEmail === 'admin@cinelab.edu.br')) {
-    // Ensure admin role and allow password to match or update
-    user.role = 'admin';
-    user.name = 'Professor Cineasta Tony de Luc';
-    if (password === 'admin123' || user.passwordHash === password || !user.passwordHash) {
-      user.passwordHash = password;
-      saveDatabase();
-    } else {
-      // Also allow the current password
-      user.passwordHash = password;
-      saveDatabase();
-    }
-  } else if (!user || user.passwordHash !== password) {
+  if (!user) {
     return res.status(401).json({ error: 'Credenciais inválidas. Verifique seu e-mail e senha.' });
+  }
+
+  if (user.role === 'admin' && !user.passwordHash) {
+    user.passwordHash = 'admin123';
+    saveDatabase();
+  }
+
+  if (user.passwordHash !== cleanPassword) {
+    return res.status(401).json({ error: 'Senha incorreta. Verifique os dados digitados.' });
   }
 
   const enrollment = db.enrollments.find((e) => e.studentId === user.id) || null;
@@ -593,36 +556,10 @@ app.post('/api/auth/login', (req: Request, res: Response) => {
   });
 });
 
-// Quick Admin Access for instant management
+// Quick Admin Access disabled for security
 app.post('/api/auth/quick-admin', (req: Request, res: Response) => {
-  const db = getDb();
-  let adminUser = db.users.find((u) => u.role === 'admin' || u.email === 'studiodeluc@gmail.com');
-  if (!adminUser) {
-    adminUser = {
-      id: 'user-admin',
-      name: 'Professor Cineasta Tony de Luc',
-      email: 'studiodeluc@gmail.com',
-      phone: '+55 11 98888-0000',
-      document: '00.000.000/0001-99',
-      role: 'admin',
-      passwordHash: 'admin123',
-      createdAt: '2026-01-10T10:00:00Z',
-    };
-    db.users.unshift(adminUser);
-    saveDatabase();
-  }
-  res.json({
-    token: adminUser.id,
-    user: {
-      id: adminUser.id,
-      name: adminUser.name,
-      email: adminUser.email,
-      phone: adminUser.phone,
-      document: adminUser.document,
-      role: adminUser.role,
-      createdAt: adminUser.createdAt,
-    },
-    enrollment: null,
+  return res.status(403).json({
+    error: 'Acesso rápido desabilitado por segurança. Acesse com seu e-mail e senha de administrador.',
   });
 });
 
@@ -1829,6 +1766,55 @@ function requireAdmin(req: Request, res: Response, next: () => void) {
   }
   next();
 }
+
+// Update Admin's Own Credentials (Email and Password)
+app.put('/api/admin/credentials', requireAdmin, (req: Request, res: Response) => {
+  const { user: currentAdmin } = authenticate(req);
+  if (!currentAdmin) {
+    return res.status(401).json({ error: 'Não autenticado.' });
+  }
+
+  const { newEmail, currentPassword, newPassword } = req.body;
+  const db = getDb();
+
+  const user = db.users.find((u) => u.id === currentAdmin.id);
+  if (!user) {
+    return res.status(404).json({ error: 'Usuário administrador não encontrado.' });
+  }
+
+  if (currentPassword && user.passwordHash && user.passwordHash !== currentPassword) {
+    return res.status(400).json({ error: 'A senha atual informada está incorreta.' });
+  }
+
+  if (newEmail && typeof newEmail === 'string' && newEmail.trim()) {
+    const cleanNewEmail = newEmail.trim().toLowerCase();
+    const taken = db.users.find((u) => u.email.toLowerCase() === cleanNewEmail && u.id !== user.id);
+    if (taken) {
+      return res.status(400).json({ error: 'Este e-mail já está em uso por outro usuário.' });
+    }
+    user.email = cleanNewEmail;
+  }
+
+  if (newPassword && typeof newPassword === 'string' && newPassword.trim()) {
+    if (newPassword.trim().length < 4) {
+      return res.status(400).json({ error: 'A nova senha deve ter pelo menos 4 caracteres.' });
+    }
+    user.passwordHash = newPassword.trim();
+  }
+
+  saveDatabase();
+
+  res.json({
+    success: true,
+    message: 'Credenciais de administrador atualizadas com sucesso.',
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    },
+  });
+});
 
 // Admin Dashboard Stats
 app.get('/api/admin/dashboard-stats', requireAdmin, (req: Request, res: Response) => {
@@ -4182,6 +4168,7 @@ Conte comigo para transformar suas ideias em cinema de verdade! 🎬`;
 // ----------------------------------------------------
 async function startServer() {
   if (process.env.NODE_ENV !== 'production') {
+    const { createServer: createViteServer } = await import('vite');
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: 'spa',

@@ -157,10 +157,7 @@ export default function App() {
         setEnrollment(null);
         navigateTo('inicio');
       } else if (role === 'admin') {
-        const res = await api.quickAdminLogin();
-        setAuthToken(res.token);
-        setUser(res.user);
-        setEnrollment(null);
+        // Administrative area strictly requires login credentials
         navigateTo('admin');
       } else if (role === 'student') {
         const res = await api.quickStudentLogin();

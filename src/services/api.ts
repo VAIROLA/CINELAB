@@ -79,11 +79,6 @@ export const api = {
       body: JSON.stringify({ email, password }),
     }),
 
-  quickAdminLogin: () =>
-    request<{ token: string; user: User; enrollment: Enrollment | null }>('/api/auth/quick-admin', {
-      method: 'POST',
-    }),
-
   quickStudentLogin: () =>
     request<{ token: string; user: User; enrollment: Enrollment | null }>('/api/auth/quick-student', {
       method: 'POST',
@@ -811,6 +806,16 @@ export const api = {
       simulatedDaysOffset: number;
       effectiveNow: string;
     }>('/api/admin/settings', {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+
+  updateAdminCredentials: (data: { newEmail?: string; currentPassword?: string; newPassword?: string }) =>
+    request<{
+      success: boolean;
+      message: string;
+      user: User;
+    }>('/api/admin/credentials', {
       method: 'PUT',
       body: JSON.stringify(data),
     }),

@@ -160,7 +160,7 @@
       "document": "00.000.000/0001-99",
       "role": "admin",
       "createdAt": "2026-01-10T10:00:00Z",
-      "passwordHash": "admin"
+      "passwordHash": "admin123"
     },
     {
       "id": "user-student-demo",

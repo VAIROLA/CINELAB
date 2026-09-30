@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import zlib from 'zlib';
 import {
   User,
   CourseSettings,
@@ -58,10 +59,12 @@ interface DatabaseSchema {
   simulatedDaysOffset: number; // for testing/demo timeline shifting if desired
 }
 
-const DB_DIR = path.join(process.cwd(), 'data');
+const isVercel = Boolean(process.env.VERCEL);
+const DB_DIR = isVercel ? '/tmp/cinelab-data' : path.join(process.cwd(), 'data');
 const DB_FILE = path.join(DB_DIR, 'cinelab-db.json');
 const DB_BACKUP_FILE = path.join(DB_DIR, 'cinelab-db.backup.json');
 const WELCOME_CONFIG_FILE = path.join(DB_DIR, 'welcome-video-config.json');
+const READONLY_SEED_FILE = path.join(process.cwd(), 'data', 'cinelab-db.json');
 
 /**
  * Detecta de forma síncrona e rápida o número real de páginas de um arquivo PDF
@@ -83,7 +86,6 @@ export function detectPdfPageCountSync(filePath: string): number {
       return pageMatches.length;
     }
     // Inspect streams for compressed object streams (pdf-lib format)
-    const zlib = require('zlib');
     const streamMatches = [...str.matchAll(/stream\r?\n([\s\S]*?)\r?\nendstream/g)];
     for (const sm of streamMatches) {
       try {
@@ -345,8 +347,12 @@ export function initExtraVideosForApostila(apos: any, defaultSuffix: string): Ap
 
 export function loadDatabase(): void {
   try {
-    if (!fs.existsSync(DB_DIR)) {
-      fs.mkdirSync(DB_DIR, { recursive: true });
+    try {
+      if (!fs.existsSync(DB_DIR)) {
+        fs.mkdirSync(DB_DIR, { recursive: true });
+      }
+    } catch (e) {
+      console.warn('[DB] Could not create DB_DIR:', e);
     }
     let data = '';
     if (fs.existsSync(DB_FILE)) {
@@ -362,6 +368,14 @@ export function loadDatabase(): void {
         console.log('Successfully recovered database from DB_BACKUP_FILE');
       } catch (backupErr) {
         console.warn('Error reading DB_BACKUP_FILE:', backupErr);
+      }
+    }
+    if (!data && fs.existsSync(READONLY_SEED_FILE)) {
+      try {
+        data = fs.readFileSync(READONLY_SEED_FILE, 'utf-8');
+        console.log('Successfully initialized database from seed file');
+      } catch (seedErr) {
+        console.warn('Error reading READONLY_SEED_FILE:', seedErr);
       }
     }
 
@@ -380,11 +394,15 @@ export function loadDatabase(): void {
       const uploadsVideosDir = path.join(process.cwd(), 'public', 'uploads', 'videos');
       const uploadsImagesDir = path.join(process.cwd(), 'public', 'uploads', 'images');
 
-      if (!fs.existsSync(backupImagesDir)) fs.mkdirSync(backupImagesDir, { recursive: true });
-      if (!fs.existsSync(backupVideosDir)) fs.mkdirSync(backupVideosDir, { recursive: true });
-      if (!fs.existsSync(publicImagesDir)) fs.mkdirSync(publicImagesDir, { recursive: true });
-      if (!fs.existsSync(uploadsVideosDir)) fs.mkdirSync(uploadsVideosDir, { recursive: true });
-      if (!fs.existsSync(uploadsImagesDir)) fs.mkdirSync(uploadsImagesDir, { recursive: true });
+      try {
+        if (!fs.existsSync(backupImagesDir)) fs.mkdirSync(backupImagesDir, { recursive: true });
+        if (!fs.existsSync(backupVideosDir)) fs.mkdirSync(backupVideosDir, { recursive: true });
+        if (!fs.existsSync(publicImagesDir)) fs.mkdirSync(publicImagesDir, { recursive: true });
+        if (!fs.existsSync(uploadsVideosDir)) fs.mkdirSync(uploadsVideosDir, { recursive: true });
+        if (!fs.existsSync(uploadsImagesDir)) fs.mkdirSync(uploadsImagesDir, { recursive: true });
+      } catch (mkdirErr) {
+        console.warn('[DB] Notice creating image/video backup dirs:', mkdirErr);
+      }
 
       // Restore ALL backup images into public/uploads/images and public/images
       try {
@@ -603,9 +621,13 @@ export function loadDatabase(): void {
       const backupDir = path.join(process.cwd(), 'data', 'apostilas_backup');
       const materiaisDir = path.join(process.cwd(), 'public', 'materiais');
       const uploadsAposDir = path.join(process.cwd(), 'public', 'uploads', 'apostilas');
-      if (!fs.existsSync(backupDir)) fs.mkdirSync(backupDir, { recursive: true });
-      if (!fs.existsSync(materiaisDir)) fs.mkdirSync(materiaisDir, { recursive: true });
-      if (!fs.existsSync(uploadsAposDir)) fs.mkdirSync(uploadsAposDir, { recursive: true });
+      try {
+        if (!fs.existsSync(backupDir)) fs.mkdirSync(backupDir, { recursive: true });
+        if (!fs.existsSync(materiaisDir)) fs.mkdirSync(materiaisDir, { recursive: true });
+        if (!fs.existsSync(uploadsAposDir)) fs.mkdirSync(uploadsAposDir, { recursive: true });
+      } catch (mkdirAposErr) {
+        console.warn('[DB] Notice creating apostila backup dirs:', mkdirAposErr);
+      }
 
       db.apostilas = db.apostilas.map((apos: any) => {
         let count = apos.pagesCount || apos.totalPages || 30;
@@ -801,7 +823,9 @@ export function loadDatabase(): void {
         !db.evaluations[0].questions[0].prompt.includes('O que significa audiovisual')
       ) {
         db.evaluations = [...pedagogicalEvaluations];
-        fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2), 'utf-8');
+        try {
+          fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2), 'utf-8');
+        } catch {}
       }
       db.users = db.users || initial.users;
       // Ensure all initial demo students and their control fields exist
@@ -864,11 +888,7 @@ export function saveDatabase(): void {
         console.warn('Could not mirror to DB_BACKUP_FILE:', bErr);
       }
     } catch (fsErr: any) {
-      if (fsErr?.code === 'EROFS') {
-        console.warn('[DB] Read-only filesystem detected (e.g. Vercel Serverless). In-memory state maintained.');
-      } else {
-        throw fsErr;
-      }
+      console.warn('[DB] Filesystem notice (state kept in memory):', fsErr?.message || fsErr);
     }
     // Also mirror welcome video configuration to dedicated permanent file
     try {
