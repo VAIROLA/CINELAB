@@ -808,9 +808,9 @@ export const HomeView: React.FC<HomeViewProps> = ({
               <span className="text-xs text-red-400 font-mono line-through font-bold">
                 De R$ {originalPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (Valor de Mercado)
               </span>
-              <div className="flex items-baseline justify-center gap-1.5 mt-1">
+              <div className="flex items-baseline justify-center gap-1.5 mt-1 flex-wrap">
                 <span className="text-xs font-black uppercase tracking-wider text-amber-400 font-mono">{t('home.pricingBy')}</span>
-                <span className="text-4xl sm:text-5xl font-display font-extrabold text-amber-400">
+                <span className="text-3xl sm:text-5xl font-display font-extrabold text-amber-400 break-words">
                   R$ {price.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
                 <span className="text-xs text-neutral-400">{t('home.pricingCash')}</span>

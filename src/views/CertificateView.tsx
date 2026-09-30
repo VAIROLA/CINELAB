@@ -372,7 +372,7 @@ export const CertificateView: React.FC<CertificateViewProps> = ({
           {/* Certificate Canvas / Diploma Layout */}
           <div
             id="certificate-print-area"
-            className="relative p-8 sm:p-14 rounded-3xl bg-[#0b0d12] border-4 border-double border-amber-500/50 shadow-2xl text-center space-y-8 print:border-neutral-900 print:bg-white print:text-neutral-950 overflow-hidden"
+            className="relative p-4 sm:p-14 rounded-3xl bg-[#0b0d12] border-4 border-double border-amber-500/50 shadow-2xl text-center space-y-6 sm:space-y-8 print:border-neutral-900 print:bg-white print:text-neutral-950 overflow-hidden"
           >
             {/* Guilloche / Film watermark texture backdrop */}
             <div className="absolute inset-0 opacity-[0.03] pointer-events-none flex items-center justify-center">

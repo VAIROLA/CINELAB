@@ -201,45 +201,45 @@ export const CourseBannerPromo: React.FC<CourseBannerPromoProps> = ({
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-900/15 rounded-full blur-3xl pointer-events-none" />
 
       {/* Top Banner Ribbon */}
-      <div className="bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 text-neutral-950 px-4 py-2 text-center flex items-center justify-between font-black uppercase text-xs tracking-wider shadow-md">
-        <div className="flex items-center gap-2">
-          <Clapperboard className="w-4 h-4 fill-neutral-950" />
-          <span>{t('banner.ribbonCourse')}</span>
+      <div className="bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 text-neutral-950 px-2 sm:px-4 py-1.5 sm:py-2 text-center flex items-center justify-between font-black uppercase text-[10px] sm:text-xs tracking-wider shadow-md">
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <Clapperboard className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-neutral-950 shrink-0" />
+          <span className="truncate">{t('banner.ribbonCourse')}</span>
         </div>
         <div className="hidden sm:flex items-center gap-3 font-mono text-[11px] font-bold">
           <span>{t('banner.ribbonDuration')}</span>
           <span>{t('banner.ribbonModules')}</span>
           <span>{t('banner.ribbonCert')}</span>
         </div>
-        <div className="flex items-center gap-1.5 bg-neutral-950 text-amber-400 px-2.5 py-0.5 rounded-full text-[10px] font-mono">
-          <Zap className="w-3 h-3 fill-amber-400" />
+        <div className="flex items-center gap-1 bg-neutral-950 text-amber-400 px-2 py-0.5 rounded-full text-[9.5px] sm:text-[10px] font-mono shrink-0">
+          <Zap className="w-2.5 h-2.5 sm:w-3 sm:h-3 fill-amber-400" />
           <span>{t('banner.ribbonOpen')}</span>
         </div>
       </div>
 
       {/* Main Banner Content */}
-      <div className="p-6 sm:p-10 lg:p-12 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+      <div className="p-4 sm:p-8 lg:p-12 relative z-10 max-w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-12 items-center">
           
           {/* Left Column: Typography & Professor Cineasta Tony de Luc & Benefits */}
-          <div className="lg:col-span-7 space-y-6">
+          <div className="lg:col-span-7 space-y-5 sm:space-y-6">
             
             {/* Tagline / Subtitle */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-900 border border-amber-500/30 text-amber-400 text-xs font-mono font-semibold uppercase tracking-wider">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-900 border border-amber-500/30 text-amber-400 text-[11px] sm:text-xs font-mono font-semibold uppercase tracking-wider">
+              <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
               <span>{t('banner.tagline')}</span>
             </div>
 
             {/* Colossal Cinema Headline */}
             <div>
-              <h2 className="text-4xl sm:text-6xl lg:text-7xl font-display font-black tracking-tight leading-[0.95] text-white">
+              <h2 className="text-3xl sm:text-5xl lg:text-7xl font-display font-black tracking-tight leading-[0.98] sm:leading-[0.95] text-white break-words">
                 {texts.headlineMain1} <br />
                 <span className="text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]">{texts.headlineMain2}</span>
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 drop-shadow-[0_4px_16px_rgba(245,158,11,0.5)]">
                   {texts.headlineMain3}
                 </span>
               </h2>
-              <p className="text-sm sm:text-base text-amber-200/90 font-mono font-bold tracking-wide mt-3 uppercase">
+              <p className="text-xs sm:text-base text-amber-200/90 font-mono font-bold tracking-wide mt-2 sm:mt-3 uppercase">
                 {t('banner.headlineSubtitle')}
               </p>
             </div>
@@ -307,21 +307,21 @@ export const CourseBannerPromo: React.FC<CourseBannerPromoProps> = ({
           </div>
 
           {/* Right Column: Promotional Price Box */}
-          <div className="lg:col-span-5">
-            <div className="relative rounded-3xl bg-gradient-to-b from-neutral-900 via-neutral-950 to-[#0d0f14] border-2 border-amber-400 p-6 sm:p-8 shadow-2xl shadow-amber-500/10 text-center">
+          <div className="lg:col-span-5 max-w-full">
+            <div className="relative rounded-3xl bg-gradient-to-b from-neutral-900 via-neutral-950 to-[#0d0f14] border-2 border-amber-400 p-4 sm:p-8 shadow-2xl shadow-amber-500/10 text-center max-w-full overflow-hidden">
               
               {/* Flash Stamp Banner */}
-              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-5 py-1 rounded-full bg-gradient-to-r from-red-600 via-red-500 to-red-600 text-white text-[11px] sm:text-xs font-black uppercase tracking-widest shadow-lg shadow-red-600/40 border border-red-400 animate-pulse flex items-center gap-1.5 whitespace-nowrap">
-                <Tag className="w-3.5 h-3.5" />
-                <span>{texts.limitedPromo}</span>
+              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-3 sm:px-5 py-1 rounded-full bg-gradient-to-r from-red-600 via-red-500 to-red-600 text-white text-[10px] sm:text-xs font-black uppercase tracking-widest shadow-lg shadow-red-600/40 border border-red-400 animate-pulse flex items-center gap-1.5 whitespace-nowrap max-w-[94%]">
+                <Tag className="w-3.5 h-3.5 shrink-0" />
+                <span className="truncate">{texts.limitedPromo}</span>
               </div>
 
               {/* Price Content */}
-              <div className="pt-4 pb-6 border-b border-neutral-800/80 space-y-2">
+              <div className="pt-4 pb-5 sm:pb-6 border-b border-neutral-800/80 space-y-2">
                 {/* Market Price (Old) */}
                 <div className="flex items-center justify-center gap-2">
-                  <span className="text-xs text-neutral-400 font-mono">{texts.marketVal}</span>
-                  <span className="text-base sm:text-lg text-red-400/90 line-through font-bold font-mono">
+                  <span className="text-[11px] sm:text-xs text-neutral-400 font-mono">{texts.marketVal}</span>
+                  <span className="text-sm sm:text-lg text-red-400/90 line-through font-bold font-mono">
                     R$ {originalPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </span>
                 </div>
@@ -332,18 +332,18 @@ export const CourseBannerPromo: React.FC<CourseBannerPromoProps> = ({
                 </div>
 
                 {/* Promotional Price */}
-                <div className="flex items-baseline justify-center gap-1">
-                  <span className="text-2xl sm:text-3xl font-display font-extrabold text-amber-400">R$</span>
-                  <span className="text-5xl sm:text-6xl font-display font-black text-white tracking-tight drop-shadow-[0_2px_12px_rgba(255,255,255,0.2)]">
-                    {Math.floor(price).toLocaleString('pt-BR')}<span className="text-3xl sm:text-4xl text-amber-300">,{(price % 1).toFixed(2).slice(2) || '00'}</span>
+                <div className="flex items-baseline justify-center gap-1 flex-wrap">
+                  <span className="text-xl sm:text-3xl font-display font-extrabold text-amber-400">R$</span>
+                  <span className="text-4xl sm:text-6xl font-display font-black text-white tracking-tight drop-shadow-[0_2px_12px_rgba(255,255,255,0.2)]">
+                    {Math.floor(price).toLocaleString('pt-BR')}<span className="text-2xl sm:text-4xl text-amber-300">,{(price % 1).toFixed(2).slice(2) || '00'}</span>
                   </span>
                   <span className="text-xs text-neutral-400 font-mono ml-1">{texts.cash}</span>
                 </div>
 
                 {/* Installment Badge */}
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 font-mono text-xs font-bold">
-                  <CreditCard className="w-3.5 h-3.5" />
-                  <span>{texts.installments}</span>
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 font-mono text-[11px] sm:text-xs font-bold max-w-full text-center">
+                  <CreditCard className="w-3.5 h-3.5 shrink-0" />
+                  <span className="break-words">{texts.installments}</span>
                 </div>
 
                 <p className="text-[11px] text-neutral-400 pt-1">
@@ -352,7 +352,7 @@ export const CourseBannerPromo: React.FC<CourseBannerPromoProps> = ({
               </div>
 
               {/* Core Deliverables Checklist */}
-              <div className="py-5 space-y-2 text-xs text-neutral-300 text-left">
+              <div className="py-4 sm:py-5 space-y-2 text-xs text-neutral-300 text-left">
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                   <span>{texts.check1}</span>
@@ -375,25 +375,25 @@ export const CourseBannerPromo: React.FC<CourseBannerPromoProps> = ({
               <div className="space-y-3 pt-2">
                 <button
                   onClick={() => onNavigate('matricula')}
-                  className="w-full py-4 px-6 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 hover:from-amber-300 hover:to-amber-400 text-neutral-950 font-black uppercase tracking-wider text-sm sm:text-base rounded-2xl shadow-xl shadow-amber-500/25 hover:shadow-amber-500/40 transition-all cursor-pointer flex items-center justify-center gap-2 group active:scale-98"
+                  className="w-full py-3.5 sm:py-4 px-4 sm:px-6 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 hover:from-amber-300 hover:to-amber-400 text-neutral-950 font-black uppercase tracking-wider text-xs sm:text-base rounded-2xl shadow-xl shadow-amber-500/25 hover:shadow-amber-500/40 transition-all cursor-pointer flex items-center justify-center gap-2 group active:scale-98"
                   id="cinelab-5-cta-button"
                 >
-                  <span>{texts.ctaBtn}</span>
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform" />
+                  <span className="truncate">{texts.ctaBtn}</span>
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1.5 transition-transform shrink-0" />
                 </button>
 
                 {/* Instant Access & Payment Guarantee Icons */}
-                <div className="flex items-center justify-center gap-4 text-[10.5px] font-mono text-neutral-400 pt-1">
+                <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-[10px] sm:text-[10.5px] font-mono text-neutral-400 pt-1">
                   <span className="flex items-center gap-1 text-emerald-400">
-                    <QrCode className="w-3.5 h-3.5" /> {texts.pix}
+                    <QrCode className="w-3.5 h-3.5 shrink-0" /> {texts.pix}
                   </span>
                   <span>•</span>
                   <span className="flex items-center gap-1 text-amber-300">
-                    <CreditCard className="w-3.5 h-3.5" /> {texts.cards}
+                    <CreditCard className="w-3.5 h-3.5 shrink-0" /> {texts.cards}
                   </span>
                   <span>•</span>
                   <span className="flex items-center gap-1 text-blue-300">
-                    <ShieldCheck className="w-3.5 h-3.5" /> {texts.secure}
+                    <ShieldCheck className="w-3.5 h-3.5 shrink-0" /> {texts.secure}
                   </span>
                 </div>
               </div>

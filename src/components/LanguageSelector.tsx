@@ -147,7 +147,7 @@ export const HeaderCountryTranslator: React.FC<{
 
   return (
     <div
-      className={`flex items-center gap-1 sm:gap-1.5 p-1 rounded-xl transition-all ${
+      className={`flex items-center gap-1 sm:gap-1.5 p-0.5 sm:p-1 rounded-xl transition-all ${
         isNeon
           ? 'bg-purple-950/80 border border-purple-400/50 shadow-[0_0_12px_rgba(168,85,247,0.35)] backdrop-blur-sm'
           : 'bg-neutral-900/90 border border-neutral-700/80 shadow-inner'
@@ -164,7 +164,7 @@ export const HeaderCountryTranslator: React.FC<{
             key={item.code}
             type="button"
             onClick={() => setLanguage(item.code)}
-            className={`flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer select-none whitespace-nowrap ${
+            className={`flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-lg text-xs font-medium transition-all cursor-pointer select-none whitespace-nowrap ${
               isSelected
                 ? 'bg-amber-400 text-neutral-950 font-bold shadow-md shadow-amber-400/30 ring-1 ring-amber-300 scale-[1.03]'
                 : isNeon
@@ -176,7 +176,9 @@ export const HeaderCountryTranslator: React.FC<{
             <span className="text-sm sm:text-base leading-none" role="img" aria-label={item.countryName}>
               {item.flag}
             </span>
-            <span className="text-[11px] sm:text-xs font-semibold tracking-tight">{item.countryName}</span>
+            <span className={`text-[11px] sm:text-xs font-semibold tracking-tight ${stacked ? 'inline' : 'hidden md:inline'}`}>
+              {item.countryName}
+            </span>
           </button>
         );
       })}

@@ -122,6 +122,22 @@ export const WelcomeMessageSection: React.FC<WelcomeMessageSectionProps> = ({
   const [hasStarted, setHasStarted] = useState(false);
   const [isMutedNotice, setIsMutedNotice] = useState(false);
   const [videoLoadError, setVideoLoadError] = useState(false);
+  const [indexedDbBlobUrl, setIndexedDbBlobUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    getWelcomeVideoFromIndexedDB().then((entry) => {
+      if (active && entry && entry.blob) {
+        try {
+          const blobUrl = URL.createObjectURL(entry.blob);
+          setIndexedDbBlobUrl(blobUrl);
+        } catch {}
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     setVideoLoadError(false);
@@ -585,7 +601,7 @@ export const WelcomeMessageSection: React.FC<WelcomeMessageSectionProps> = ({
             </p>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex flex-wrap items-center gap-2">
             {isAdmin && (
               <button
                 onClick={() => setShowUploadModal(true)}
@@ -666,7 +682,7 @@ export const WelcomeMessageSection: React.FC<WelcomeMessageSectionProps> = ({
                           setIsBuffering(false);
                         }}
                       >
-                        <source src={embedInfo.embedUrl || videoUrl} type="video/mp4" />
+                        <source src={indexedDbBlobUrl || embedInfo.embedUrl || videoUrl} type="video/mp4" />
                         <source src="/videos/cinelab-intro-apresentacao.mp4" type="video/mp4" />
                         Seu navegador não suporta a tag de vídeo nativa.
                       </video>
@@ -854,11 +870,11 @@ export const WelcomeMessageSection: React.FC<WelcomeMessageSectionProps> = ({
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-neutral-900/40 border border-neutral-800 text-xs text-neutral-400 flex items-center justify-between gap-3">
-              <span className="font-mono text-[11px] text-neutral-300">
+            <div className="p-3 sm:p-4 rounded-2xl bg-neutral-900/40 border border-neutral-800 text-xs text-neutral-400 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <span className="font-mono text-[11px] text-neutral-300 break-words">
                 {ui.stagesPill}
               </span>
-              <span className="text-amber-400 font-bold font-mono text-[11px] shrink-0">
+              <span className="text-amber-400 font-bold font-mono text-[11px] shrink-0 self-end sm:self-auto">
                 CINELAB EAD
               </span>
             </div>

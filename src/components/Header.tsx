@@ -90,15 +90,15 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-gradient-to-r from-[#190333] via-[#2a0852] to-[#190333] backdrop-blur-md border-b-2 border-fuchsia-500/80 shadow-[0_6px_35px_rgba(168,85,247,0.45)] transition-all">
+    <header className="sticky top-0 z-50 bg-gradient-to-r from-[#190333] via-[#2a0852] to-[#190333] backdrop-blur-md border-b-2 border-fuchsia-500/80 shadow-[0_6px_35px_rgba(168,85,247,0.45)] transition-all max-w-full overflow-hidden">
       {/* Top micro-banner / Faixa Roxo Neon Vibrante + Tradutor e Perfil: Admin & Professor */}
-      <div className="bg-gradient-to-r from-[#6b21a8] via-[#a855f7] to-[#7c3aed] px-3 sm:px-6 lg:px-8 py-1.5 border-b border-fuchsia-300/60 text-[11px] text-white font-mono flex items-center justify-between gap-3 shadow-[0_2px_22px_rgba(168,85,247,0.65)] relative z-40">
+      <div className="bg-gradient-to-r from-[#6b21a8] via-[#a855f7] to-[#7c3aed] px-2 sm:px-6 lg:px-8 py-1 sm:py-1.5 border-b border-fuchsia-300/60 text-[11px] text-white font-mono flex items-center justify-between gap-1.5 sm:gap-3 shadow-[0_2px_22px_rgba(168,85,247,0.65)] relative z-40 max-w-full overflow-hidden">
         {/* Sutil reflexo de luz neon */}
         <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-black/10 pointer-events-none" />
 
-        <div className="flex items-center gap-2 sm:gap-3 shrink-0 relative z-10">
-          <span className="inline-flex items-center gap-1.5 text-white font-extrabold tracking-wide drop-shadow-[0_0_10px_rgba(255,255,255,0.9)]">
-            <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-pulse drop-shadow-[0_0_6px_rgba(251,191,36,0.8)]" /> CINELAB
+        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0 relative z-10">
+          <span className="inline-flex items-center gap-1 text-white font-extrabold tracking-wide drop-shadow-[0_0_10px_rgba(255,255,255,0.9)] text-[11px] sm:text-xs">
+            <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-300 animate-pulse drop-shadow-[0_0_6px_rgba(251,191,36,0.8)]" /> CINELAB
           </span>
           <span className="hidden md:inline text-purple-200/60">|</span>
           <span className="hidden md:inline text-purple-100 font-semibold drop-shadow-sm">
@@ -107,11 +107,11 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Acima do lado direito: Professor junto com Admin / Perfil e o Tradutor */}
-        <div className="ml-auto flex items-center gap-2 sm:gap-3 shrink-0 relative z-20">
+        <div className="ml-auto flex items-center gap-1 sm:gap-2.5 shrink-0 relative z-20">
           {/* Botão e Acesso Direto: Professor Tony de Luc */}
           <button
             onClick={() => handleNav('tony-de-luc')}
-            className={`text-[10px] sm:text-[10.5px] px-2.5 py-1 rounded-lg flex items-center gap-1.5 font-sans font-bold cursor-pointer transition-all active:scale-95 shadow-[0_0_10px_rgba(245,158,11,0.25)] ${
+            className={`text-[9.5px] sm:text-[10.5px] px-1.5 sm:px-2.5 py-1 rounded-lg flex items-center gap-1 font-sans font-bold cursor-pointer transition-all active:scale-95 shadow-[0_0_10px_rgba(245,158,11,0.25)] ${
               currentRoute === 'tony-de-luc' || currentRoute === 'sobre-tony' || currentRoute === 'filmografia'
                 ? 'bg-amber-400 text-neutral-950 ring-1 ring-amber-300'
                 : 'bg-[#270d4a]/95 hover:bg-[#3b126e] text-amber-300 hover:text-white border border-amber-400/60'
@@ -119,8 +119,8 @@ export const Header: React.FC<HeaderProps> = ({
             title="Página do Professor Cineasta Tony de Luc (Bio, Feitos & Filmografia)"
           >
             <Clapperboard className="w-3 h-3 text-amber-400 shrink-0" />
-            <span className="text-purple-300 font-mono text-[9.5px] hidden xs:inline">Professor:</span>
-            <span className="font-extrabold uppercase drop-shadow-[0_0_6px_rgba(255,255,255,0.8)]">Tony de Luc</span>
+            <span className="text-purple-300 font-mono text-[9px] hidden sm:inline">Professor:</span>
+            <span className="font-extrabold uppercase drop-shadow-[0_0_6px_rgba(255,255,255,0.8)] whitespace-nowrap">Tony de Luc</span>
           </button>
 
           {/* Perfil : Admin */}
@@ -128,18 +128,18 @@ export const Header: React.FC<HeaderProps> = ({
             {onSwitchDemoRole ? (
               <button
                 onClick={() => setDemoMenuOpen(!demoMenuOpen)}
-                className="text-xs sm:text-[12px] px-3.5 py-1.5 rounded-xl bg-[#270d4a]/95 hover:bg-[#3d1374] text-purple-100 flex items-center gap-2 border-2 border-purple-400/70 shadow-[0_0_14px_rgba(168,85,247,0.45)] cursor-pointer font-sans transition-all active:scale-95"
+                className="text-[10px] sm:text-[12px] px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl bg-[#270d4a]/95 hover:bg-[#3d1374] text-purple-100 flex items-center gap-1 sm:gap-1.5 border sm:border-2 border-purple-400/70 shadow-[0_0_14px_rgba(168,85,247,0.45)] cursor-pointer font-sans transition-all active:scale-95 whitespace-nowrap"
                 title="Clique para alternar entre Admin, Aluno e Visitante"
               >
-                <span className="text-purple-300 font-mono text-[11px] font-semibold">Perfil:</span>
-                <span className="font-extrabold uppercase text-white font-mono text-xs sm:text-[13px] drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]">
+                <span className="text-purple-300 font-mono text-[9px] sm:text-[11px] font-semibold hidden xs:inline">Perfil:</span>
+                <span className="font-extrabold uppercase text-white font-mono text-[10px] sm:text-[13px] drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]">
                   {user?.role === 'admin' ? 'Admin' : user ? 'Aluno' : 'Visitante'}
                 </span>
-                <ChevronDown className="w-3.5 h-3.5 text-purple-200 transition-transform duration-200" />
+                <ChevronDown className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-purple-200 transition-transform duration-200" />
               </button>
             ) : (
-              <div className="text-xs px-3 py-1.5 rounded-xl bg-[#270d4a]/90 text-purple-100 flex items-center gap-2 border border-purple-400/60 font-mono shadow-[0_0_10px_rgba(168,85,247,0.35)]">
-                <span className="text-purple-300">Perfil:</span>
+              <div className="text-[10px] sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl bg-[#270d4a]/90 text-purple-100 flex items-center gap-1.5 border border-purple-400/60 font-mono shadow-[0_0_10px_rgba(168,85,247,0.35)]">
+                <span className="text-purple-300 hidden xs:inline">Perfil:</span>
                 <span className="font-extrabold uppercase text-white drop-shadow-[0_0_6px_rgba(255,255,255,0.8)]">
                   {user?.role === 'admin' ? 'Admin' : user ? 'Aluno' : 'Visitante'}
                 </span>
@@ -152,7 +152,7 @@ export const Header: React.FC<HeaderProps> = ({
                   className="fixed inset-0 z-40"
                   onClick={() => setDemoMenuOpen(false)}
                 />
-                <div className="absolute right-0 top-full mt-2 w-80 sm:w-[410px] max-h-[85vh] overflow-y-auto bg-[#140428] border-2 border-purple-400/90 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.9),0_0_35px_rgba(168,85,247,0.6)] p-3 sm:p-4 z-50 text-left font-sans backdrop-blur-xl animate-fadeIn custom-scrollbar">
+                <div className="absolute right-0 top-full mt-2 w-[calc(100vw-20px)] max-w-sm sm:w-[410px] max-h-[85vh] overflow-y-auto bg-[#140428] border-2 border-purple-400/90 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.9),0_0_35px_rgba(168,85,247,0.6)] p-3 sm:p-4 z-50 text-left font-sans backdrop-blur-xl animate-fadeIn custom-scrollbar">
                   <div className="px-2 py-2 border-b border-purple-700/60 mb-2 flex items-center justify-between">
                     <div>
                       <span className="text-xs font-mono text-purple-200 uppercase tracking-wider font-bold block">
@@ -293,9 +293,9 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Row Principal: Logo CINELAB + Status / Destaques + Botões de Ação */}
-      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3.5 md:py-4 flex items-center justify-between gap-3 sm:gap-6">
+      <div className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 py-2 sm:py-3.5 md:py-4 flex items-center justify-between gap-2 sm:gap-6 overflow-hidden">
         {/* Brand Logo - CINELAB Oficial */}
-        <div className="py-1 shrink-0 flex items-center">
+        <div className="py-1 shrink-0 flex items-center max-w-[48%] xs:max-w-[55%] sm:max-w-none">
           <Logo
             customUrl={customLogoUrl}
             size="header"
@@ -313,15 +313,15 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Action Controls */}
-        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
           {user ? (
             <div className="relative">
               <button
                 onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#1b0433]/90 border border-purple-400/50 hover:border-amber-400/70 shadow-[0_0_12px_rgba(168,85,247,0.3)] transition-colors text-left cursor-pointer"
+                className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-[#1b0433]/90 border border-purple-400/50 hover:border-amber-400/70 shadow-[0_0_12px_rgba(168,85,247,0.3)] transition-colors text-left cursor-pointer"
                 id="header-user-menu-btn"
               >
-                <div className="w-7 h-7 rounded-md bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 text-xs font-bold font-mono">
+                <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-md bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 text-xs font-bold font-mono">
                   {user.name.charAt(0)}
                 </div>
                 <div className="hidden sm:block leading-tight">
@@ -342,7 +342,7 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
 
               {userDropdownOpen && (
-                <div className="absolute right-0 top-full mt-2 w-72 sm:w-80 bg-neutral-900/98 backdrop-blur-md border border-purple-500/50 rounded-2xl shadow-2xl p-3 z-50 text-sm animate-fadeIn">
+                <div className="absolute right-0 top-full mt-2 w-[calc(100vw-24px)] max-w-xs sm:w-80 bg-neutral-900/98 backdrop-blur-md border border-purple-500/50 rounded-2xl shadow-2xl p-3 z-50 text-sm animate-fadeIn">
                   <div className="px-3 py-2 border-b border-neutral-800 mb-1">
                     <p className="text-xs font-bold text-white truncate">{user.name}</p>
                     <p className="text-[11px] text-neutral-400 font-mono truncate">{user.email}</p>
@@ -512,17 +512,17 @@ export const Header: React.FC<HeaderProps> = ({
               )}
             </div>
           ) : (
-            <div className="flex items-center gap-1.5 sm:gap-2">
+            <div className="flex items-center gap-1 sm:gap-2">
               <button
                 onClick={onOpenAuth}
-                className="px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-semibold text-purple-100 hover:text-white hover:bg-purple-900/60 border border-purple-400/40 rounded-xl transition-all shadow-[0_0_10px_rgba(168,85,247,0.2)] cursor-pointer"
+                className="hidden xs:inline-flex px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-semibold text-purple-100 hover:text-white hover:bg-purple-900/60 border border-purple-400/40 rounded-xl transition-all shadow-[0_0_10px_rgba(168,85,247,0.2)] cursor-pointer whitespace-nowrap"
                 id="header-login-btn"
               >
                 {t('header.login')}
               </button>
               <button
                 onClick={() => handleNav('matricula')}
-                className="px-3 sm:px-4 py-1.5 text-xs sm:text-sm font-bold uppercase tracking-wider bg-amber-500 hover:bg-amber-400 text-neutral-950 rounded-xl transition-all shadow-md shadow-amber-500/30 active:scale-95 cursor-pointer whitespace-nowrap"
+                className="px-2.5 sm:px-4 py-1 sm:py-1.5 text-[11px] sm:text-sm font-bold uppercase tracking-wider bg-amber-500 hover:bg-amber-400 text-neutral-950 rounded-lg sm:rounded-xl transition-all shadow-md shadow-amber-500/30 active:scale-95 cursor-pointer whitespace-nowrap"
                 id="header-matricula-cta"
               >
                 {t('header.enrollNow')}

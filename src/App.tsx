@@ -175,7 +175,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#0c0d10] text-[#e4e6eb]">
+    <div className="min-h-screen flex flex-col bg-[#0c0d10] text-[#e4e6eb] max-w-full overflow-x-hidden">
       {/* Platform Header */}
       <Header
         currentRoute={currentRoute}
@@ -189,7 +189,7 @@ export default function App() {
       />
 
       {/* Main Content Router */}
-      <main className="flex-1">
+      <main className="flex-1 w-full max-w-full overflow-x-hidden">
         {(currentRoute === 'inicio' || currentRoute === 'home' || !currentRoute) && (
           <HomeView
             onNavigate={navigateTo}

@@ -4547,6 +4547,34 @@
   "simulatedDaysOffset": 0,
   "visitors": [
     {
+      "id": "vis-1790776667399-8mfo",
+      "ip": "138.186.237.92",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "deviceType": "desktop",
+      "pagePath": "/",
+      "pageTitle": "Página Inicial – CINELAB",
+      "referrer": "https://aistudio.google.com/",
+      "timestamp": "2026-09-30T13:57:47.399Z",
+      "isInterestedInEnrollment": false,
+      "city": "Brasil",
+      "state": "BR",
+      "isStudent": false
+    },
+    {
+      "id": "vis-1790776667388-ez0k",
+      "ip": "138.186.237.92",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "deviceType": "desktop",
+      "pagePath": "/",
+      "pageTitle": "Página Inicial – CINELAB",
+      "referrer": "https://aistudio.google.com/",
+      "timestamp": "2026-09-30T13:57:47.388Z",
+      "isInterestedInEnrollment": false,
+      "city": "Brasil",
+      "state": "BR",
+      "isStudent": false
+    },
+    {
       "id": "vis-1790775045510-r72a",
       "ip": "138.186.237.92",
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
