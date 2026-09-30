@@ -1,0 +1,6 @@
+{
+  "name": "CINELAB – Cinema & Audiovisual",
+  "description": "Plataforma Educacional EAD completa e profissional de formação em Cinema e Audiovisual.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

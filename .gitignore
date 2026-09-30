@@ -1,0 +1,17 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+
+# Large video files and temp chunks (>100MB exceeds GitHub limits)
+*.mp4
+*.webm
+*.mov
+*.mkv
+public/uploads/videos/
+data/videos_backup/
+data/temp_chunks/
