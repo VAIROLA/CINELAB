@@ -201,7 +201,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
   ];
 
   return (
-    <div className="min-h-screen text-neutral-200">
+    <div className="min-h-screen text-neutral-200 w-full max-w-full overflow-x-hidden">
       {/* 1. HERO SECTION */}
       <section className="relative overflow-hidden pt-12 pb-20 lg:pt-20 lg:pb-28 border-b border-neutral-800">
         {/* Cinematic Backdrop Glow */}
@@ -223,7 +223,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
             </div>
 
             {/* Main Headline */}
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-display font-extrabold text-white tracking-tight leading-[1.1] mb-6">
+            <h1 className="text-2xl xs:text-3xl sm:text-5xl lg:text-6xl font-display font-extrabold text-white tracking-tight leading-[1.1] mb-6 break-words">
               {t('home.heroTitle1')}{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-500">
                 {t('home.heroTitle2')}
