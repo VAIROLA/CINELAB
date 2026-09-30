@@ -26,7 +26,7 @@ export const Logo: React.FC<LogoProps> = ({
   const stackedSizeClasses: Record<string, string> = {
     sm: 'h-12 sm:h-16 w-auto max-w-[160px] sm:max-w-[200px]',
     md: 'h-16 sm:h-22 md:h-26 w-auto max-w-[220px] sm:max-w-[320px]',
-    header: 'h-12 sm:h-[120px] md:h-[148px] lg:h-[175px] xl:h-[195px] w-auto max-w-[150px] xs:max-w-[200px] sm:max-w-[460px] md:max-w-[580px] lg:max-w-[680px] xl:max-w-[760px]',
+    header: 'h-10 xs:h-12 sm:h-[120px] md:h-[148px] lg:h-[175px] xl:h-[195px] w-auto max-w-[130px] xs:max-w-[170px] sm:max-w-[460px] md:max-w-[580px] lg:max-w-[680px] xl:max-w-[760px]',
     lg: 'h-20 sm:h-28 md:h-32 w-auto max-w-[260px] sm:max-w-[360px]',
     xl: 'h-28 sm:h-44 md:h-56 w-auto max-w-[340px] sm:max-w-[680px]',
   };
@@ -34,7 +34,7 @@ export const Logo: React.FC<LogoProps> = ({
   const horizontalSizeClasses: Record<string, string> = {
     sm: 'h-10 sm:h-14 w-auto max-w-[180px] sm:max-w-[220px]',
     md: 'h-14 sm:h-20 w-auto max-w-[240px] sm:max-w-[300px]',
-    header: 'h-10 sm:h-[105px] md:h-[125px] lg:h-[150px] xl:h-[170px] w-auto max-w-[160px] xs:max-w-[210px] sm:max-w-[520px] md:max-w-[640px]',
+    header: 'h-9 xs:h-10 sm:h-[105px] md:h-[125px] lg:h-[150px] xl:h-[170px] w-auto max-w-[135px] xs:max-w-[180px] sm:max-w-[520px] md:max-w-[640px]',
     lg: 'h-20 sm:h-28 w-auto max-w-[320px] sm:max-w-[400px]',
     xl: 'h-28 sm:h-44 w-auto max-w-[400px] sm:max-w-[600px]',
   };

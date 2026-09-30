@@ -176,7 +176,7 @@ export const HeaderCountryTranslator: React.FC<{
             <span className="text-sm sm:text-base leading-none" role="img" aria-label={item.countryName}>
               {item.flag}
             </span>
-            <span className={`text-[11px] sm:text-xs font-semibold tracking-tight ${stacked ? 'inline' : 'hidden md:inline'}`}>
+            <span className={`text-[11px] sm:text-xs font-semibold tracking-tight ${stacked ? 'inline' : 'hidden xl:inline'}`}>
               {item.countryName}
             </span>
           </button>
