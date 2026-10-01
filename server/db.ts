@@ -60,7 +60,7 @@ interface DatabaseSchema {
 }
 
 const isVercel = Boolean(process.env.VERCEL);
-const DB_DIR = isVercel ? '/tmp/cinelab-data' : path.join(process.cwd(), 'data');
+export const DB_DIR = isVercel ? '/tmp/cinelab-data' : path.join(process.cwd(), 'data');
 const DB_FILE = path.join(DB_DIR, 'cinelab-db.json');
 const DB_BACKUP_FILE = path.join(DB_DIR, 'cinelab-db.backup.json');
 const WELCOME_CONFIG_FILE = path.join(DB_DIR, 'welcome-video-config.json');
@@ -262,11 +262,16 @@ export function initExtraVideosForApostila(apos: any, defaultSuffix: string): Ap
   const existing: ApostilaExtraVideo[] = Array.isArray(apos.extraVideos) ? apos.extraVideos : [];
 
   // Dedicated custom notes store
-  const notesFilePath = path.join(process.cwd(), 'data', 'extra-videos-notes.json');
+  const notesFilePath = path.join(DB_DIR, 'extra-videos-notes.json');
+  const seedNotesFilePath = path.join(process.cwd(), 'data', 'extra-videos-notes.json');
   let savedNotesMap: Record<string, string> = {};
   if (fs.existsSync(notesFilePath)) {
     try {
       savedNotesMap = JSON.parse(fs.readFileSync(notesFilePath, 'utf-8'));
+    } catch {}
+  } else if (fs.existsSync(seedNotesFilePath)) {
+    try {
+      savedNotesMap = JSON.parse(fs.readFileSync(seedNotesFilePath, 'utf-8'));
     } catch {}
   }
 

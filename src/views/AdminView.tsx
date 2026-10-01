@@ -3261,8 +3261,23 @@ export const AdminView: React.FC<AdminViewProps> = ({
                 apostila={extraVideosModalApostila}
                 isAdmin={true}
                 onApostilaUpdated={(updated) => {
-                  setExtraVideosModalApostila(updated);
-                  loadAllAdminData();
+                  if (updated) {
+                    setExtraVideosModalApostila(updated);
+                    setApostilas((prev) =>
+                      prev.map((a) =>
+                        a.id === updated.id || a.moduleId === updated.moduleId
+                          ? { ...a, ...updated, extraVideos: updated.extraVideos || a.extraVideos }
+                          : a
+                      )
+                    );
+                    setBonusApostilas((prev) =>
+                      prev.map((b) =>
+                        b.id === updated.id || b.number === updated.number
+                          ? { ...b, ...updated, extraVideos: updated.extraVideos || b.extraVideos }
+                          : b
+                      )
+                    );
+                  }
                 }}
               />
             </div>

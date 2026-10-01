@@ -1,6 +1,6 @@
 // Client-Side Persistent Apostila Vault (IndexedDB + LocalStorage)
 // Ensures uploaded PDFs and their page counts NEVER disappear across sessions or container restarts.
-import { Apostila, BonusApostila } from '../types/index.js';
+import { Apostila, BonusApostila, ApostilaExtraVideo } from '../types/index.js';
 
 const DB_NAME = 'cinelab_apostilas_vault_v2';
 const STORE_NAME = 'apostilas';
@@ -18,6 +18,7 @@ export interface VaultApostilaItem {
   fileSizeMb?: number;
   pdfBlob?: Blob;
   pdfUrl?: string;
+  extraVideos?: ApostilaExtraVideo[];
   updatedAt: string;
 }
 
@@ -271,8 +272,196 @@ export async function getVaultBlobUrl(targetIdOrModuleId: number | string, isBon
 }
 
 /**
+ * Formata duração no padrão de cinema oficial: horas, minutos e segundos
+ */
+export function formatHms(hours: number, minutes: number, seconds: number): string {
+  const pad = (n: number) => String(Math.max(0, Math.floor(n || 0))).padStart(2, '0');
+  const hh = Math.max(0, Math.floor(hours || 0));
+  const mm = Math.max(0, Math.min(59, Math.floor(minutes || 0)));
+  const ss = Math.max(0, Math.min(59, Math.floor(seconds || 0)));
+  return `${pad(hh)}h ${pad(mm)}m ${pad(ss)}s`;
+}
+
+/**
+ * Mescla de forma inteligente dois arrays de extraVideos garantindo que NENHUM dado personalizado seja perdido.
+ * Se o slot 1 foi preenchido e o slot 2 está sendo editado, o slot 1 permanece 100% preservado e vice-versa.
+ */
+export function mergeExtraVideosList(
+  baseVideos?: ApostilaExtraVideo[] | null,
+  incomingVideos?: ApostilaExtraVideo[] | null
+): ApostilaExtraVideo[] {
+  const base = Array.isArray(baseVideos) ? baseVideos : [];
+  const incoming = Array.isArray(incomingVideos) ? incomingVideos : [];
+
+  const slots = [1, 2] as const;
+  return slots.map((slotNum) => {
+    const b = base.find((v) => v.slot === slotNum);
+    const inc = incoming.find((v) => v.slot === slotNum);
+
+    if (!b && !inc) {
+      return {
+        id: `ev-slot-${slotNum}`,
+        slot: slotNum,
+        title: slotNum === 1 ? 'Vídeo Extra 01: Estudo Dirigido' : 'Vídeo Extra 02: Estudo de Caso',
+        description: 'Conteúdo complementar em vídeo.',
+        videoUrl: '',
+        thumbnailUrl: '',
+        durationHours: 0,
+        durationMinutes: slotNum === 1 ? 18 : 24,
+        durationSeconds: 0,
+        totalDurationSeconds: (slotNum === 1 ? 18 : 24) * 60,
+        durationLabel: slotNum === 1 ? '00h 18m 00s' : '00h 24m 00s',
+        professorNotes: '',
+        uploadedAt: new Date().toISOString(),
+      };
+    }
+
+    if (!b) return inc!;
+    if (!inc) return b!;
+
+    // Ambos existem: prioriza o que tiver vídeo preenchido, título customizado ou notas do professor
+    const hasIncVideo = Boolean(inc.videoUrl && inc.videoUrl.trim() !== '');
+    const hasBVideo = Boolean(b.videoUrl && b.videoUrl.trim() !== '');
+    const resolvedVideoUrl = hasIncVideo ? inc.videoUrl : (hasBVideo ? b.videoUrl : '');
+
+    // Verifica se os títulos são os genéricos de fallback
+    const isBDefault = !b.title || b.title.startsWith('Vídeo Extra 01: Estudo Dirigido & Análise Prática') || b.title.startsWith('Vídeo Extra 02: Estudo de Caso & Exercício Técnico');
+    const isIncDefault = !inc.title || inc.title.startsWith('Vídeo Extra 01: Estudo Dirigido & Análise Prática') || inc.title.startsWith('Vídeo Extra 02: Estudo de Caso & Exercício Técnico');
+
+    let resolvedTitle = inc.title || b.title;
+    if (isIncDefault && !isBDefault && b.title) {
+      resolvedTitle = b.title;
+    } else if (inc.title && !isIncDefault) {
+      resolvedTitle = inc.title;
+    }
+
+    const resolvedNotes = (inc.professorNotes !== undefined && inc.professorNotes.trim() !== '')
+      ? inc.professorNotes
+      : (b.professorNotes || '');
+
+    const resolvedDesc = (inc.description && inc.description.trim() !== '')
+      ? inc.description
+      : (b.description || '');
+
+    const resolvedThumb = (hasIncVideo && inc.thumbnailUrl)
+      ? inc.thumbnailUrl
+      : (b.thumbnailUrl || inc.thumbnailUrl || '');
+
+    const hours = inc.durationHours !== undefined ? inc.durationHours : (b.durationHours ?? 0);
+    const minutes = inc.durationMinutes !== undefined ? inc.durationMinutes : (b.durationMinutes ?? (slotNum === 1 ? 18 : 24));
+    const seconds = inc.durationSeconds !== undefined ? inc.durationSeconds : (b.durationSeconds ?? 0);
+    const totalSecs = (hours * 3600) + (minutes * 60) + seconds;
+    const durationLabel = inc.durationLabel || b.durationLabel || formatHms(hours, minutes, seconds);
+
+    return {
+      id: inc.id || b.id || `ev-slot-${slotNum}`,
+      slot: slotNum,
+      title: resolvedTitle,
+      description: resolvedDesc,
+      videoUrl: resolvedVideoUrl,
+      thumbnailUrl: resolvedThumb,
+      durationHours: hours,
+      durationMinutes: minutes,
+      durationSeconds: seconds,
+      totalDurationSeconds: totalSecs,
+      durationLabel,
+      professorNotes: resolvedNotes,
+      uploadedAt: inc.uploadedAt || b.uploadedAt || new Date().toISOString(),
+    };
+  });
+}
+
+/**
+ * Salva e persiste os 2 Vídeos Extras de Estudo no cofre permanente do navegador (LocalStorage + IndexedDB).
+ * Garante que ambos os slots persistam de forma 100% independente e nunca se apaguem.
+ */
+export async function saveApostilaExtraVideosToVault(
+  targetIdOrModuleId: number | string,
+  extraVideos: ApostilaExtraVideo[],
+  isBonus?: boolean
+): Promise<void> {
+  const id = getVaultItemId(targetIdOrModuleId, isBonus);
+  const rawIdStr = String(targetIdOrModuleId);
+  const currentIndex = getPersistentVaultIndex();
+  const existing = currentIndex[id] || { id };
+
+  // Grava chaves síncronas dedicadas no localStorage para resiliência máxima
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const dataStr = JSON.stringify(extraVideos);
+      localStorage.setItem(`cinelab_extra_videos_v2_${id}`, dataStr);
+      localStorage.setItem(`cinelab_extra_videos_v2_${rawIdStr}`, dataStr);
+      if (rawIdStr.startsWith('apostila-')) {
+        const numPart = rawIdStr.replace('apostila-', '');
+        localStorage.setItem(`cinelab_extra_videos_v2_${numPart}`, dataStr);
+      }
+    }
+  } catch (e) {
+    console.warn('Erro ao salvar no localStorage direto:', e);
+  }
+
+  currentIndex[id] = {
+    ...existing,
+    extraVideos,
+    updatedAt: new Date().toISOString(),
+  };
+  savePersistentVaultIndex(currentIndex);
+
+  try {
+    const db = await openVaultDb();
+    const tx = db.transaction(STORE_NAME, 'readwrite');
+    const store = tx.objectStore(STORE_NAME);
+    const req = store.get(id);
+    req.onsuccess = () => {
+      const item = req.result || { id };
+      item.extraVideos = extraVideos;
+      item.updatedAt = new Date().toISOString();
+      store.put(item);
+    };
+  } catch (err) {
+    console.warn('saveApostilaExtraVideosToVault IndexedDB warning:', err);
+  }
+}
+
+/**
+ * Lê os vídeos extras persistentes para uma determinada apostila do cofre local
+ */
+export function getPersistentExtraVideos(targetIdOrModuleId: number | string, isBonus?: boolean): ApostilaExtraVideo[] | null {
+  if (typeof window === 'undefined' || !window.localStorage) return null;
+  const id = getVaultItemId(targetIdOrModuleId, isBonus);
+  const rawIdStr = String(targetIdOrModuleId);
+  try {
+    const direct1 = localStorage.getItem(`cinelab_extra_videos_v2_${id}`);
+    if (direct1) {
+      const parsed = JSON.parse(direct1);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+    const direct2 = localStorage.getItem(`cinelab_extra_videos_v2_${rawIdStr}`);
+    if (direct2) {
+      const parsed = JSON.parse(direct2);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+    if (rawIdStr.startsWith('apostila-')) {
+      const numPart = rawIdStr.replace('apostila-', '');
+      const direct3 = localStorage.getItem(`cinelab_extra_videos_v2_${numPart}`);
+      if (direct3) {
+        const parsed = JSON.parse(direct3);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    }
+  } catch {}
+
+  const vault = getPersistentVaultIndex();
+  const item = vault[id];
+  if (item && Array.isArray(item.extraVideos) && item.extraVideos.length > 0) {
+    return item.extraVideos;
+  }
+  return null;
+}
+
+/**
  * Mescla a lista de apostilas do servidor com os dados persistentes locais do usuário
- * Garante que títulos editados, páginas e uploads NUNCA sejam revertidos na UI
+ * Garante que títulos editados, páginas, uploads e VÍDEOS EXTRAS NUNCA sejam revertidos na UI
  */
 export function getMergedApostilasWithVault(serverApostilas: Apostila[]): Apostila[] {
   if (!Array.isArray(serverApostilas)) return serverApostilas;
@@ -281,30 +470,34 @@ export function getMergedApostilasWithVault(serverApostilas: Apostila[]): Aposti
   return serverApostilas.map((apos) => {
     const key = `mod-${apos.moduleId}`;
     const local = vault[key];
-    if (!local) return apos;
 
     // Fallback to real canonical pages if not explicitly customized
     const canonicalPages = apos.moduleId === 1 ? 8 : (apos.moduleId === 5 ? 6 : 4);
-    const pages = (local.pagesCount && local.pagesCount > 0) ? local.pagesCount : (apos.pagesCount || apos.totalPages || canonicalPages);
+    const pages = (local && local.pagesCount && local.pagesCount > 0) ? local.pagesCount : (apos.pagesCount || apos.totalPages || canonicalPages);
 
     // Auto-heal duplicate module 1 title on module 2 or other modules in client vault
-    const isCorruptedTitle = apos.moduleId !== 1 && local.title === 'Introdução ao Cinema e à Linguagem Audiovisual';
+    const isCorruptedTitle = apos.moduleId !== 1 && local?.title === 'Introdução ao Cinema e à Linguagem Audiovisual';
     const effectiveTitle = isCorruptedTitle
       ? (apos.moduleId === 2 ? 'História do Cinema' : apos.title)
-      : (local.title || apos.title);
+      : (local?.title || apos.title);
 
     if (isCorruptedTitle && vault[key]) {
       vault[key].title = effectiveTitle;
       savePersistentVaultIndex(vault);
     }
 
+    // Mescla vídeos extras locais com os do servidor
+    const localVideos = getPersistentExtraVideos(apos.id || apos.moduleId, false) || (local as any)?.extraVideos;
+    const effectiveExtraVideos = mergeExtraVideosList(apos.extraVideos, localVideos);
+
     return {
       ...apos,
       title: effectiveTitle,
       pagesCount: pages,
       totalPages: pages,
-      pdfUrl: local.pdfUrl || apos.pdfUrl,
-      fileSizeMb: local.fileSizeMb || apos.fileSizeMb,
+      pdfUrl: local?.pdfUrl || apos.pdfUrl,
+      fileSizeMb: local?.fileSizeMb || apos.fileSizeMb,
+      extraVideos: effectiveExtraVideos,
     };
   });
 }
@@ -375,6 +568,9 @@ export function getMergedBonusWithVault(serverBonus: BonusApostila[]): BonusApos
       pages = (p !== 96 && p !== 104) ? p : defaultPages;
     }
 
+    const localBonusVideos = getPersistentExtraVideos(b.id || b.number, true) || (local as any)?.extraVideos;
+    const effectiveBonusExtraVideos = mergeExtraVideosList(b.extraVideos, localBonusVideos);
+
     return {
       ...b,
       title,
@@ -385,6 +581,7 @@ export function getMergedBonusWithVault(serverBonus: BonusApostila[]): BonusApos
       totalPages: pages,
       pdfUrl: (!isOutdatedLocal && local?.pdfUrl) ? local.pdfUrl : (b.pdfUrl || (b.number === 1 ? '/materiais/cinelab-bonus-01-glossario-planos.pdf' : '/materiais/cinelab-bonus-02-glossario-roteiro.pdf')),
       fileSizeMb: local?.fileSizeMb || b.fileSizeMb,
+      extraVideos: effectiveBonusExtraVideos,
     };
   });
 

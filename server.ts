@@ -11,6 +11,7 @@ import {
   calculateModuleTimeline,
   getEffectiveNow,
   initExtraVideosForApostila,
+  DB_DIR,
   logEmail,
   logVisitor,
 } from './server/db.js';
@@ -2445,7 +2446,13 @@ app.put('/api/admin/apostilas/:id', requireAdmin, (req: Request, res: Response) 
   const db = getDb();
 
   // 1. Check in regular module apostilas
-  const index = db.apostilas.findIndex((a) => a.id === apostilaId);
+  const index = db.apostilas.findIndex(
+    (a) =>
+      a.id === apostilaId ||
+      a.id === `apostila-${apostilaId}` ||
+      a.id === `apos-${apostilaId}` ||
+      (!isNaN(Number(apostilaId)) && a.moduleId === Number(apostilaId))
+  );
   if (index !== -1) {
     const newPages = pagesCount !== undefined && Number(pagesCount) > 0
       ? Number(pagesCount)
@@ -2664,11 +2671,103 @@ function formatHmsDuration(h: number, m: number, s: number): string {
   return `${pad(hh)}h ${pad(mm)}m ${pad(ss)}s`;
 }
 
+// Helper para mesclar listas de vídeos extras no backend sem perder dados de nenhum dos dois slots
+function mergeExtraVideosListBackend(
+  baseList?: ApostilaExtraVideo[],
+  incomingList?: ApostilaExtraVideo[]
+): ApostilaExtraVideo[] {
+  const base = Array.isArray(baseList) ? baseList : [];
+  const incoming = Array.isArray(incomingList) ? incomingList : [];
+
+  return [1, 2].map((slotNum) => {
+    const b = base.find((v) => v.slot === slotNum);
+    const inc = incoming.find((v) => v.slot === slotNum);
+
+    if (!b && !inc) {
+      return {
+        id: `ev-slot-${slotNum}`,
+        slot: slotNum as 1 | 2,
+        title: `Vídeo Extra 0${slotNum}: Estudo Complementar`,
+        description: '',
+        videoUrl: '',
+        thumbnailUrl: '',
+        durationHours: 0,
+        durationMinutes: slotNum === 1 ? 18 : 24,
+        durationSeconds: 0,
+        totalDurationSeconds: (slotNum === 1 ? 18 : 24) * 60,
+        durationLabel: slotNum === 1 ? '00h 18m 00s' : '00h 24m 00s',
+        professorNotes: '',
+        uploadedAt: new Date().toISOString(),
+      };
+    }
+
+    if (!inc) return b!;
+    if (!b) return inc;
+
+    const hasIncVideo = inc.videoUrl && inc.videoUrl.trim() !== '' && inc.videoUrl !== '/videos/cinelab-intro-apresentacao.mp4';
+    const hasBaseVideo = b.videoUrl && b.videoUrl.trim() !== '' && b.videoUrl !== '/videos/cinelab-intro-apresentacao.mp4';
+
+    let resolvedVideoUrl = b.videoUrl || '';
+    if (hasIncVideo) {
+      resolvedVideoUrl = inc.videoUrl!;
+    } else if (hasBaseVideo) {
+      resolvedVideoUrl = b.videoUrl!;
+    } else if (inc.videoUrl) {
+      resolvedVideoUrl = inc.videoUrl;
+    }
+
+    const isIncDefault = !inc.title || inc.title.includes('Estudo Dirigido & Análise Prática – Módulo') || inc.title.includes('Estudo de Caso & Exercício Técnico – Módulo');
+    const isBaseDefault = !b.title || b.title.includes('Estudo Dirigido & Análise Prática – Módulo') || b.title.includes('Estudo de Caso & Exercício Técnico – Módulo');
+
+    let resolvedTitle = inc.title || b.title || `Vídeo Extra 0${slotNum}`;
+    if (inc.title && !isIncDefault) {
+      resolvedTitle = inc.title;
+    } else if (b.title && !isBaseDefault) {
+      resolvedTitle = b.title;
+    }
+
+    const resolvedNotes = (inc.professorNotes !== undefined && inc.professorNotes.trim() !== '')
+      ? inc.professorNotes
+      : (b.professorNotes || '');
+
+    const resolvedDesc = (inc.description && inc.description.trim() !== '')
+      ? inc.description
+      : (b.description || '');
+
+    const resolvedThumb = (hasIncVideo && inc.thumbnailUrl)
+      ? inc.thumbnailUrl
+      : (b.thumbnailUrl || inc.thumbnailUrl || '');
+
+    const hours = inc.durationHours !== undefined ? inc.durationHours : (b.durationHours ?? 0);
+    const minutes = inc.durationMinutes !== undefined ? inc.durationMinutes : (b.durationMinutes ?? (slotNum === 1 ? 18 : 24));
+    const seconds = inc.durationSeconds !== undefined ? inc.durationSeconds : (b.durationSeconds ?? 0);
+    const totalSecs = (hours * 3600) + (minutes * 60) + seconds;
+    const durationLabel = inc.durationLabel || b.durationLabel || formatHmsDuration(hours, minutes, seconds);
+
+    return {
+      id: inc.id || b.id || `ev-slot-${slotNum}`,
+      slot: slotNum as 1 | 2,
+      title: resolvedTitle,
+      description: resolvedDesc,
+      videoUrl: resolvedVideoUrl,
+      thumbnailUrl: resolvedThumb,
+      durationHours: hours,
+      durationMinutes: minutes,
+      durationSeconds: seconds,
+      totalDurationSeconds: totalSecs,
+      durationLabel,
+      professorNotes: resolvedNotes,
+      uploadedAt: inc.uploadedAt || b.uploadedAt || new Date().toISOString(),
+    };
+  });
+}
+
 // Atualizar Metadados ou Link do Vídeo Extra de Estudo (Slot 1 ou 2, com suporte completo a YouTube e links externos)
 app.put('/api/admin/apostilas/:id/extra-video/:slot', requireAdmin, (req: Request, res: Response) => {
   const db = getDb();
   const rawId = req.params.id;
   const slot = Number(req.params.slot) === 2 ? 2 : 1;
+  const otherSlot = slot === 1 ? 2 : 1;
   const {
     title,
     description,
@@ -2686,33 +2785,35 @@ app.put('/api/admin/apostilas/:id/extra-video/:slot', requireAdmin, (req: Reques
     return res.status(404).json({ error: 'Apostila não encontrada.' });
   }
 
-  apostila.extraVideos = initExtraVideosForApostila(apostila, isBonus ? `Bônus 0${apostila.number}` : `Módulo 0${apostila.moduleId || apostila.number}`);
-  const slotIdx = apostila.extraVideos.findIndex((v: any) => v.slot === slot);
+  // Inicializa estrutura base se necessário
+  const initialBase = initExtraVideosForApostila(apostila, isBonus ? `Bônus 0${apostila.number}` : `Módulo 0${apostila.moduleId || apostila.number}`);
+  apostila.extraVideos = mergeExtraVideosListBackend(initialBase, apostila.extraVideos);
 
-  const prev = slotIdx !== -1 ? apostila.extraVideos[slotIdx] : null;
-  const vUrl = videoUrl !== undefined ? videoUrl.trim() : (prev?.videoUrl || '');
+  const prevThis = apostila.extraVideos.find((v: any) => v.slot === slot);
+  const otherVideo = apostila.extraVideos.find((v: any) => v.slot === otherSlot) || initialBase.find((v: any) => v.slot === otherSlot);
+  const vUrl = videoUrl !== undefined ? videoUrl.trim() : (prevThis?.videoUrl || '');
 
   // Extração e cálculo de Horas, Minutos e Segundos
-  const h = durationHours !== undefined ? Number(durationHours) : (prev?.durationHours ?? 0);
-  const m = durationMinutes !== undefined ? Number(durationMinutes) : (prev?.durationMinutes ?? 18);
-  const s = durationSeconds !== undefined ? Number(durationSeconds) : (prev?.durationSeconds ?? 0);
+  const h = durationHours !== undefined ? Number(durationHours) : (prevThis?.durationHours ?? 0);
+  const m = durationMinutes !== undefined ? Number(durationMinutes) : (prevThis?.durationMinutes ?? (slot === 1 ? 18 : 24));
+  const s = durationSeconds !== undefined ? Number(durationSeconds) : (prevThis?.durationSeconds ?? 0);
 
   const safeH = isNaN(h) ? 0 : Math.max(0, Math.floor(h));
-  const safeM = isNaN(m) ? 18 : Math.max(0, Math.min(59, Math.floor(m)));
+  const safeM = isNaN(m) ? (slot === 1 ? 18 : 24) : Math.max(0, Math.min(59, Math.floor(m)));
   const safeS = isNaN(s) ? 0 : Math.max(0, Math.min(59, Math.floor(s)));
   const totalSecs = safeH * 3600 + safeM * 60 + safeS;
   const finalDurationLabel = durationLabel || formatHmsDuration(safeH, safeM, safeS);
 
   // Extract YouTube ID if valid YouTube URL provided
   const ytId = extractYoutubeId(vUrl);
-  let resolvedThumb = thumbnailUrl !== undefined ? thumbnailUrl : (prev?.thumbnailUrl || '');
+  let resolvedThumb = thumbnailUrl !== undefined ? thumbnailUrl : (prevThis?.thumbnailUrl || '');
   if (ytId && (!resolvedThumb || resolvedThumb.includes('unsplash.com'))) {
     resolvedThumb = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
   } else if (!resolvedThumb) {
     resolvedThumb = 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80';
   }
 
-  const notesFilePath = path.join(process.cwd(), 'data', 'extra-videos-notes.json');
+  const notesFilePath = path.join(DB_DIR, 'extra-videos-notes.json');
   if (professorNotes !== undefined) {
     try {
       let savedNotesMap: Record<string, string> = {};
@@ -2723,15 +2824,15 @@ app.put('/api/admin/apostilas/:id/extra-video/:slot', requireAdmin, (req: Reques
       savedNotesMap[noteKey] = typeof professorNotes === 'string' ? professorNotes.trim() : '';
       fs.writeFileSync(notesFilePath, JSON.stringify(savedNotesMap, null, 2), 'utf-8');
     } catch (nErr) {
-      console.warn('Notice saving extra-videos-notes.json:', nErr);
+      console.warn('Notice saving extra-videos-notes.json in DB_DIR:', nErr);
     }
   }
 
   const updatedVideo: ApostilaExtraVideo = {
-    id: prev?.id || `ev-${apostila.id}-slot-${slot}`,
+    id: prevThis?.id || `ev-${apostila.id}-slot-${slot}`,
     slot: slot as 1 | 2,
-    title: title !== undefined ? title : (prev?.title || (slot === 1 ? 'Vídeo Extra 01: Estudo Dirigido' : 'Vídeo Extra 02: Estudo de Caso')),
-    description: description !== undefined ? description : (prev?.description || 'Conteúdo complementar em vídeo.'),
+    title: title !== undefined ? title : (prevThis?.title || (slot === 1 ? 'Vídeo Extra 01: Estudo Dirigido' : 'Vídeo Extra 02: Estudo de Caso')),
+    description: description !== undefined ? description : (prevThis?.description || 'Conteúdo complementar em vídeo.'),
     videoUrl: vUrl,
     thumbnailUrl: resolvedThumb,
     durationHours: safeH,
@@ -2739,15 +2840,14 @@ app.put('/api/admin/apostilas/:id/extra-video/:slot', requireAdmin, (req: Reques
     durationSeconds: safeS,
     totalDurationSeconds: totalSecs,
     durationLabel: finalDurationLabel,
-    professorNotes: professorNotes !== undefined ? (typeof professorNotes === 'string' ? professorNotes.trim() : '') : (prev?.professorNotes || ''),
-    uploadedAt: prev?.uploadedAt || new Date().toISOString(),
+    professorNotes: professorNotes !== undefined ? (typeof professorNotes === 'string' ? professorNotes.trim() : '') : (prevThis?.professorNotes || ''),
+    uploadedAt: prevThis?.uploadedAt || new Date().toISOString(),
   };
 
-  if (slotIdx !== -1) {
-    apostila.extraVideos[slotIdx] = updatedVideo;
-  } else {
-    apostila.extraVideos.push(updatedVideo);
-  }
+  // Garante que ambos os slots persistam de forma 100% independente sem apagar o outro slot
+  apostila.extraVideos = slot === 1
+    ? [updatedVideo, otherVideo!]
+    : [otherVideo!, updatedVideo];
 
   saveDatabase();
   return res.json({
@@ -2816,6 +2916,12 @@ app.post('/api/admin/apostilas/sync-vault', (req: Request, res: Response) => {
         }
         if (item.pdfUrl) db.bonusApostilas[bIdx].pdfUrl = item.pdfUrl;
         if (item.fileSizeMb) db.bonusApostilas[bIdx].fileSizeMb = Number(item.fileSizeMb);
+        if (Array.isArray(item.extraVideos) && item.extraVideos.length > 0) {
+          db.bonusApostilas[bIdx].extraVideos = mergeExtraVideosListBackend(
+            db.bonusApostilas[bIdx].extraVideos,
+            item.extraVideos
+          );
+        }
         updatedCount++;
       }
     } else if (item.moduleId) {
@@ -2829,6 +2935,12 @@ app.post('/api/admin/apostilas/sync-vault', (req: Request, res: Response) => {
         }
         if (item.pdfUrl) db.apostilas[aIdx].pdfUrl = item.pdfUrl;
         if (item.fileSizeMb) db.apostilas[aIdx].fileSizeMb = Number(item.fileSizeMb);
+        if (Array.isArray(item.extraVideos) && item.extraVideos.length > 0) {
+          db.apostilas[aIdx].extraVideos = mergeExtraVideosListBackend(
+            db.apostilas[aIdx].extraVideos,
+            item.extraVideos
+          );
+        }
         updatedCount++;
       }
     }
