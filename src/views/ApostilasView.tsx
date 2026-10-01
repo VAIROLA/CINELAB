@@ -178,10 +178,6 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
   }, [trainingModalOpen]);
 
   const handleOpenApostila = (item: Apostila, defaultTab: 'pdf' | 'text' | 'quiz' | 'extra-videos' = 'pdf') => {
-    if (!isPaidStudent) {
-      setAccessModalOpen(true);
-      return;
-    }
     setSelectedApostila(item);
     setModalTab(defaultTab);
   };

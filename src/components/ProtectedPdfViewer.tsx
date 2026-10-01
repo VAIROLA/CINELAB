@@ -284,7 +284,22 @@ export const ProtectedPdfViewer: React.FC<ProtectedPdfViewerProps> = ({
         }
 
         const origin = typeof window !== 'undefined' ? window.location.origin : '';
-        const effectiveUrl = url || (moduleId ? `/materiais/cinelab-apostila-${moduleId < 10 ? '0' + moduleId : moduleId}.pdf` : '');
+        let effectiveUrl = url || '';
+
+        // Auto-heal de URLs corrompidas ou antigas para as 10 apostilas oficiais e bônus
+        if (!effectiveUrl || effectiveUrl.includes('1790444') || effectiveUrl.includes('1790684')) {
+          if (moduleId && moduleId >= 1 && moduleId <= 10) {
+            effectiveUrl = `/materiais/cinelab-apostila-${moduleId < 10 ? '0' + moduleId : moduleId}.pdf`;
+          } else if (effectiveUrl.includes('bonus-01') || effectiveUrl.includes('bonus-1')) {
+            effectiveUrl = '/materiais/cinelab-bonus-01-glossario-planos.pdf';
+          } else if (effectiveUrl.includes('bonus-02') || effectiveUrl.includes('bonus-2')) {
+            effectiveUrl = '/materiais/cinelab-bonus-02-glossario-roteiro.pdf';
+          } else if (effectiveUrl.includes('bonus-03') || effectiveUrl.includes('bonus-3')) {
+            effectiveUrl = '/materiais/cinelab-bonus-03-analise-filmica.pdf';
+          } else if (moduleId) {
+            effectiveUrl = `/materiais/cinelab-apostila-${moduleId < 10 ? '0' + moduleId : moduleId}.pdf`;
+          }
+        }
 
         currentLoadingTask = pdfjs.getDocument({
           url: effectiveUrl,

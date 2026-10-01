@@ -634,61 +634,37 @@ export function loadDatabase(): void {
         console.warn('[DB] Notice creating apostila backup dirs:', mkdirAposErr);
       }
 
+      const canonicalPagesMap: Record<number, number> = {
+        1: 8,
+        2: 52,
+        3: 7,
+        4: 6,
+        5: 6,
+        6: 6,
+        7: 6,
+        8: 6,
+        9: 6,
+        10: 6,
+      };
+
       db.apostilas = db.apostilas.map((apos: any) => {
-        let count = apos.pagesCount || apos.totalPages || 30;
-        const modNum = apos.moduleId;
-        const backupModFile = path.join(backupDir, `apostila-modulo-0${modNum}.pdf`);
-        const matModFile = path.join(materiaisDir, `cinelab-apostila-0${modNum}.pdf`);
+        const modNum = Number(apos.moduleId || apos.number || 1);
+        const numStr = modNum < 10 ? `0${modNum}` : `${modNum}`;
+        const canonicalPdfUrl = `/materiais/cinelab-apostila-${numStr}.pdf`;
 
-        // If file exists in backup but missing in uploads, restore it
-        if (apos.pdfUrl && apos.pdfUrl.startsWith('/uploads/apostilas/')) {
-          const expectedUploadPath = path.join(process.cwd(), 'public', apos.pdfUrl);
-          if (!fs.existsSync(expectedUploadPath)) {
-            if (fs.existsSync(backupModFile)) {
-              try { fs.copyFileSync(backupModFile, expectedUploadPath); } catch {}
-            } else if (fs.existsSync(matModFile)) {
-              try { fs.copyFileSync(matModFile, expectedUploadPath); } catch {}
-            }
-          }
+        let resolvedPdfUrl = apos.pdfUrl;
+        if (!resolvedPdfUrl || resolvedPdfUrl.includes('1790444') || resolvedPdfUrl.startsWith('/uploads/apostilas/')) {
+          resolvedPdfUrl = canonicalPdfUrl;
         }
 
-        // If upload file exists, ensure backup and materiais copy exist
-        if (apos.pdfUrl && apos.pdfUrl.startsWith('/uploads/apostilas/')) {
-          const expectedUploadPath = path.join(process.cwd(), 'public', apos.pdfUrl);
-          if (fs.existsSync(expectedUploadPath)) {
-            if (!fs.existsSync(backupModFile)) {
-              try { fs.copyFileSync(expectedUploadPath, backupModFile); } catch {}
-            }
-            if (!fs.existsSync(matModFile)) {
-              try { fs.copyFileSync(expectedUploadPath, matModFile); } catch {}
-            }
-          }
-        }
-
-        // Detect real page count directly from file
-        let detected = 0;
-        if (apos.pdfUrl && apos.pdfUrl.startsWith('/uploads/apostilas/')) {
-          const expectedUploadPath = path.join(process.cwd(), 'public', apos.pdfUrl);
-          if (fs.existsSync(expectedUploadPath)) {
-            detected = detectPdfPageCountSync(expectedUploadPath);
-          }
-        }
-        if (!detected && fs.existsSync(backupModFile)) {
-          detected = detectPdfPageCountSync(backupModFile);
-        }
-        if (!detected && fs.existsSync(matModFile)) {
-          detected = detectPdfPageCountSync(matModFile);
-        }
-
-        if (detected > 0) {
-          count = detected;
-        }
+        const realPages = canonicalPagesMap[modNum] || apos.pagesCount || apos.totalPages || 6;
 
         return {
           ...apos,
-          pagesCount: count,
-          totalPages: count,
-          extraVideos: initExtraVideosForApostila(apos, `Módulo 0${apos.moduleId || apos.number || 1}`),
+          pdfUrl: resolvedPdfUrl,
+          pagesCount: realPages,
+          totalPages: realPages,
+          extraVideos: initExtraVideosForApostila(apos, `Módulo ${numStr}`),
         };
       });
 
@@ -730,63 +706,27 @@ export function loadDatabase(): void {
       }
 
       db.bonusApostilas = db.bonusApostilas.map((b: any) => {
-        let count = (b.pagesCount && b.pagesCount !== 96 && b.pagesCount !== 104) ? b.pagesCount : (b.number === 1 ? 30 : 29);
         const bonusNum = b.number || 1;
-        const backupBonusFile = path.join(backupDir, `apostila-bonus-0${bonusNum}.pdf`);
-        const matBonusFile = path.join(
-          materiaisDir,
-          bonusNum === 1 ? 'cinelab-bonus-01-glossario-planos.pdf' : 'cinelab-bonus-02-glossario-roteiro.pdf'
-        );
+        const canonicalBonusUrl = bonusNum === 1
+          ? '/materiais/cinelab-bonus-01-glossario-planos.pdf'
+          : bonusNum === 2
+          ? '/materiais/cinelab-bonus-02-glossario-roteiro.pdf'
+          : '/materiais/cinelab-bonus-03-analise-filmica.pdf';
+        const canonicalPages = bonusNum === 1 ? 30 : (bonusNum === 2 ? 29 : 4);
 
-        // If file exists in backup but missing in uploads, restore it
-        if (b.pdfUrl && b.pdfUrl.startsWith('/uploads/apostilas/')) {
-          const expectedUploadPath = path.join(process.cwd(), 'public', b.pdfUrl);
-          if (!fs.existsSync(expectedUploadPath)) {
-            if (fs.existsSync(backupBonusFile)) {
-              try { fs.copyFileSync(backupBonusFile, expectedUploadPath); } catch {}
-            } else if (fs.existsSync(matBonusFile)) {
-              try { fs.copyFileSync(matBonusFile, expectedUploadPath); } catch {}
-            }
-          }
+        let resolvedBonusUrl = b.pdfUrl;
+        if (!resolvedBonusUrl || resolvedBonusUrl.includes('1790') || resolvedBonusUrl.startsWith('/uploads/apostilas/')) {
+          resolvedBonusUrl = canonicalBonusUrl;
         }
 
-        // If upload file exists, ensure backup and materiais copy exist
-        if (b.pdfUrl && b.pdfUrl.startsWith('/uploads/apostilas/')) {
-          const expectedUploadPath = path.join(process.cwd(), 'public', b.pdfUrl);
-          if (fs.existsSync(expectedUploadPath)) {
-            if (!fs.existsSync(backupBonusFile)) {
-              try { fs.copyFileSync(expectedUploadPath, backupBonusFile); } catch {}
-            }
-            if (!fs.existsSync(matBonusFile)) {
-              try { fs.copyFileSync(expectedUploadPath, matBonusFile); } catch {}
-            }
-          }
-        }
-
-        // Detect real page count directly from file
-        let detected = 0;
-        if (b.pdfUrl && b.pdfUrl.startsWith('/uploads/apostilas/')) {
-          const expectedUploadPath = path.join(process.cwd(), 'public', b.pdfUrl);
-          if (fs.existsSync(expectedUploadPath)) {
-            detected = detectPdfPageCountSync(expectedUploadPath);
-          }
-        }
-        if (!detected && fs.existsSync(backupBonusFile)) {
-          detected = detectPdfPageCountSync(backupBonusFile);
-        }
-        if (!detected && fs.existsSync(matBonusFile)) {
-          detected = detectPdfPageCountSync(matBonusFile);
-        }
-
-        if (detected > 0) {
-          count = detected;
-        }
+        const realPages = b.pagesCount && b.pagesCount !== 96 && b.pagesCount !== 104 ? b.pagesCount : canonicalPages;
 
         return {
           ...b,
-          pagesCount: count,
-          totalPages: count,
-          extraVideos: initExtraVideosForApostila(b, `Bônus 0${b.number || 1}`),
+          pdfUrl: resolvedBonusUrl,
+          pagesCount: realPages,
+          totalPages: realPages,
+          extraVideos: initExtraVideosForApostila(b, `Bônus 0${bonusNum}`),
         };
       });
       db.activities = db.activities || initial.activities;

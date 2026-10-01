@@ -266,6 +266,10 @@ export async function getAllVaultApostilas(): Promise<VaultApostilaItem[]> {
 export async function getVaultBlobUrl(targetIdOrModuleId: number | string, isBonus?: boolean): Promise<string | null> {
   const item = await getApostilaFromVault(targetIdOrModuleId, isBonus);
   if (item && item.pdfBlob) {
+    // Rejeita blobs corrompidos ou incompletos menores que 50KB gerados em uploads anteriores
+    if (item.pdfBlob.size < 50000) {
+      return null;
+    }
     return URL.createObjectURL(item.pdfBlob);
   }
   return null;
@@ -303,7 +307,7 @@ export function mergeExtraVideosList(
         id: `ev-slot-${slotNum}`,
         slot: slotNum,
         title: slotNum === 1 ? 'Vídeo Extra 01: Estudo Dirigido' : 'Vídeo Extra 02: Estudo de Caso',
-        description: 'Conteúdo complementar em vídeo.',
+        description: '',
         videoUrl: '',
         thumbnailUrl: '',
         durationHours: 0,
@@ -319,31 +323,99 @@ export function mergeExtraVideosList(
     if (!b) return inc!;
     if (!inc) return b!;
 
-    // Ambos existem: prioriza o que tiver vídeo preenchido, título customizado ou notas do professor
-    const hasIncVideo = Boolean(inc.videoUrl && inc.videoUrl.trim() !== '');
-    const hasBVideo = Boolean(b.videoUrl && b.videoUrl.trim() !== '');
-    const resolvedVideoUrl = hasIncVideo ? inc.videoUrl : (hasBVideo ? b.videoUrl : '');
+    // Detecção de vídeo real vs placeholder genérico
+    const isIncRealVideo = Boolean(inc.videoUrl && inc.videoUrl.trim() !== '' && inc.videoUrl !== '/videos/cinelab-intro-apresentacao.mp4');
+    const isBRealVideo = Boolean(b.videoUrl && b.videoUrl.trim() !== '' && b.videoUrl !== '/videos/cinelab-intro-apresentacao.mp4');
 
-    // Verifica se os títulos são os genéricos de fallback
-    const isBDefault = !b.title || b.title.startsWith('Vídeo Extra 01: Estudo Dirigido & Análise Prática') || b.title.startsWith('Vídeo Extra 02: Estudo de Caso & Exercício Técnico');
-    const isIncDefault = !inc.title || inc.title.startsWith('Vídeo Extra 01: Estudo Dirigido & Análise Prática') || inc.title.startsWith('Vídeo Extra 02: Estudo de Caso & Exercício Técnico');
-
-    let resolvedTitle = inc.title || b.title;
-    if (isIncDefault && !isBDefault && b.title) {
-      resolvedTitle = b.title;
-    } else if (inc.title && !isIncDefault) {
-      resolvedTitle = inc.title;
+    let resolvedVideoUrl = '';
+    if (isIncRealVideo) {
+      resolvedVideoUrl = inc.videoUrl!;
+    } else if (isBRealVideo) {
+      resolvedVideoUrl = b.videoUrl!;
+    } else {
+      resolvedVideoUrl = inc.videoUrl || b.videoUrl || '';
     }
 
-    const resolvedNotes = (inc.professorNotes !== undefined && inc.professorNotes.trim() !== '')
-      ? inc.professorNotes
-      : (b.professorNotes || '');
+    // Detecção de títulos genéricos de fallback
+    const isGenericTitle = (t?: string) => {
+      if (!t || !t.trim()) return true;
+      const s = t.trim();
+      return (
+        s === 'Vídeo Extra 01' ||
+        s === 'Vídeo Extra 02' ||
+        s === 'Vídeo Extra 01: Estudo Dirigido' ||
+        s === 'Vídeo Extra 02: Estudo de Caso' ||
+        s === 'Vídeo Extra 01: Estudo Complementar' ||
+        s === 'Vídeo Extra 02: Estudo Complementar' ||
+        s.startsWith('Vídeo Extra 01: Estudo Dirigido & Análise Prática – Módulo') ||
+        s.startsWith('Vídeo Extra 02: Estudo de Caso & Exercício Técnico – Módulo') ||
+        s.startsWith('Vídeo Extra 01: Estudo Dirigido & Análise Prática – Apostila') ||
+        s.startsWith('Vídeo Extra 02: Estudo de Caso & Exercício Técnico – Apostila') ||
+        s.startsWith('Vídeo Extra 01: Estudo Dirigido – Apostila') ||
+        s.startsWith('Vídeo Extra 02: Estudo de Caso – Apostila')
+      );
+    };
 
-    const resolvedDesc = (inc.description && inc.description.trim() !== '')
-      ? inc.description
-      : (b.description || '');
+    let resolvedTitle = inc.title || b.title || `Vídeo Extra 0${slotNum}`;
+    const incTitleGeneric = isGenericTitle(inc.title);
+    const bTitleGeneric = isGenericTitle(b.title);
+    if (!incTitleGeneric) {
+      resolvedTitle = inc.title!;
+    } else if (!bTitleGeneric) {
+      resolvedTitle = b.title!;
+    }
 
-    const resolvedThumb = (hasIncVideo && inc.thumbnailUrl)
+    // Detecção estrita de descrições genéricas padrão
+    const genericDescriptions = [
+      'conteúdo complementar em vídeo.',
+      'análise comentada passo a passo para aprofundar o conteúdo desta apostila.',
+      'exercício prático e demonstração das regras de linguagem audiovisual do cinelab.',
+      'análise técnica e decupagem comentada pelo professor cineasta tony de luc para aprofundar os conceitos teóricos desta apostila.',
+      'demonstração em set de filmagem com resolução prática de problemas de decupagem e linguagem cinematográfica.',
+      'aprofundamento técnico dos conceitos fundamentais da apostila com análise de decupagem comentada pelo professor tony de luc.',
+      'exercício prático de aplicação em set de filmagem com demonstração passo a passo da metodologia do cinelab.',
+      'análise técnica e estudo dirigido para aprofundar os conceitos teóricos desta apostila com o diretor tony de luc.',
+    ];
+    const isGenericDesc = (d?: string) => {
+      if (!d || !d.trim()) return true;
+      return genericDescriptions.includes(d.trim().toLowerCase());
+    };
+
+    let resolvedDesc = inc.description || b.description || '';
+    const incDescGeneric = isGenericDesc(inc.description);
+    const bDescGeneric = isGenericDesc(b.description);
+    if (!incDescGeneric) {
+      resolvedDesc = inc.description!;
+    } else if (!bDescGeneric) {
+      resolvedDesc = b.description!;
+    }
+
+    // Detecção de notas do professor
+    const cannedNotes = [
+      'assista com atenção antes de responder ao quiz e à avaliação de treinamento.',
+      'aplicação prática e orientações de direção do cinema profissional.',
+      'assista com atenção aos detalhes do enquadramento e da linguagem cinematográfica.',
+      'demonstração de resolução de problemas no set e técnicas de direção.',
+    ];
+    const isCannedNote = (n?: string) => {
+      if (!n || !n.trim()) return true;
+      return cannedNotes.includes(n.trim().toLowerCase());
+    };
+
+    let resolvedNotes = '';
+    const incNoteCanned = isCannedNote(inc.professorNotes);
+    const bNoteCanned = isCannedNote(b.professorNotes);
+    if (inc.professorNotes !== undefined && !incNoteCanned) {
+      resolvedNotes = inc.professorNotes.trim();
+    } else if (b.professorNotes !== undefined && !bNoteCanned) {
+      resolvedNotes = b.professorNotes.trim();
+    } else if (inc.professorNotes !== undefined) {
+      resolvedNotes = inc.professorNotes.trim();
+    } else {
+      resolvedNotes = b.professorNotes || '';
+    }
+
+    const resolvedThumb = (isIncRealVideo && inc.thumbnailUrl)
       ? inc.thumbnailUrl
       : (b.thumbnailUrl || inc.thumbnailUrl || '');
 
@@ -467,13 +539,26 @@ export function getMergedApostilasWithVault(serverApostilas: Apostila[]): Aposti
   if (!Array.isArray(serverApostilas)) return serverApostilas;
   const vault = getPersistentVaultIndex();
 
+  const canonicalPagesMap: Record<number, number> = {
+    1: 8,
+    2: 52,
+    3: 7,
+    4: 6,
+    5: 6,
+    6: 6,
+    7: 6,
+    8: 6,
+    9: 6,
+    10: 6,
+  };
+
   return serverApostilas.map((apos) => {
     const key = `mod-${apos.moduleId}`;
     const local = vault[key];
 
-    // Fallback to real canonical pages if not explicitly customized
-    const canonicalPages = apos.moduleId === 1 ? 8 : (apos.moduleId === 5 ? 6 : 4);
-    const pages = (local && local.pagesCount && local.pagesCount > 0) ? local.pagesCount : (apos.pagesCount || apos.totalPages || canonicalPages);
+    const realCanonicalPages = canonicalPagesMap[apos.moduleId] || 6;
+    const isOutdatedPages = !local?.pagesCount || local.pagesCount === 4 || local.pagesCount === 35 || local.pagesCount === 40;
+    const pages = (!isOutdatedPages && local && local.pagesCount > 0) ? local.pagesCount : (apos.pagesCount || realCanonicalPages);
 
     // Auto-heal duplicate module 1 title on module 2 or other modules in client vault
     const isCorruptedTitle = apos.moduleId !== 1 && local?.title === 'Introdução ao Cinema e à Linguagem Audiovisual';
@@ -481,8 +566,17 @@ export function getMergedApostilasWithVault(serverApostilas: Apostila[]): Aposti
       ? (apos.moduleId === 2 ? 'História do Cinema' : apos.title)
       : (local?.title || apos.title);
 
-    if (isCorruptedTitle && vault[key]) {
-      vault[key].title = effectiveTitle;
+    // Auto-heal pdfUrl se apontar para upload corrompido de 6KB (1790444 ou 1790684)
+    const rawPdfUrl = local?.pdfUrl || apos.pdfUrl || '';
+    const numStr = apos.moduleId < 10 ? `0${apos.moduleId}` : `${apos.moduleId}`;
+    const canonicalPdfUrl = `/materiais/cinelab-apostila-${numStr}.pdf`;
+    const isCorruptedPdf = !rawPdfUrl || rawPdfUrl.includes('1790444') || rawPdfUrl.includes('1790684');
+    const effectivePdfUrl = isCorruptedPdf ? canonicalPdfUrl : rawPdfUrl;
+
+    if ((isCorruptedTitle || isCorruptedPdf || isOutdatedPages) && vault[key]) {
+      if (isCorruptedTitle) vault[key].title = effectiveTitle;
+      if (isCorruptedPdf) vault[key].pdfUrl = effectivePdfUrl;
+      if (isOutdatedPages) vault[key].pagesCount = pages;
       savePersistentVaultIndex(vault);
     }
 
@@ -495,7 +589,7 @@ export function getMergedApostilasWithVault(serverApostilas: Apostila[]): Aposti
       title: effectiveTitle,
       pagesCount: pages,
       totalPages: pages,
-      pdfUrl: local?.pdfUrl || apos.pdfUrl,
+      pdfUrl: effectivePdfUrl,
       fileSizeMb: local?.fileSizeMb || apos.fileSizeMb,
       extraVideos: effectiveExtraVideos,
     };
@@ -569,6 +663,16 @@ export function getMergedBonusWithVault(serverBonus: BonusApostila[]): BonusApos
     }
 
     const localBonusVideos = getPersistentExtraVideos(b.id || b.number, true) || (local as any)?.extraVideos;
+    const canonicalBonusUrl =
+      b.number === 1
+        ? '/materiais/cinelab-bonus-01-glossario-planos.pdf'
+        : b.number === 2
+        ? '/materiais/cinelab-bonus-02-glossario-roteiro.pdf'
+        : '/materiais/cinelab-bonus-03-analise-filmica.pdf';
+    const rawBonusUrl = local?.pdfUrl || b.pdfUrl || '';
+    const isCorruptedBonusUrl = !rawBonusUrl || rawBonusUrl.includes('1790444') || rawBonusUrl.includes('1790684');
+    const effectiveBonusPdfUrl = isCorruptedBonusUrl ? canonicalBonusUrl : rawBonusUrl;
+
     const effectiveBonusExtraVideos = mergeExtraVideosList(b.extraVideos, localBonusVideos);
 
     return {
@@ -579,7 +683,7 @@ export function getMergedBonusWithVault(serverBonus: BonusApostila[]): BonusApos
       description: summary,
       pagesCount: pages,
       totalPages: pages,
-      pdfUrl: (!isOutdatedLocal && local?.pdfUrl) ? local.pdfUrl : (b.pdfUrl || (b.number === 1 ? '/materiais/cinelab-bonus-01-glossario-planos.pdf' : '/materiais/cinelab-bonus-02-glossario-roteiro.pdf')),
+      pdfUrl: effectiveBonusPdfUrl,
       fileSizeMb: local?.fileSizeMb || b.fileSizeMb,
       extraVideos: effectiveBonusExtraVideos,
     };

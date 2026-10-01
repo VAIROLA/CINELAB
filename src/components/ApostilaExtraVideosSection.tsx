@@ -238,7 +238,7 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
     setCurrentVideos((prev) => {
       const incomingPropVideos = (apostila as any)?.extraVideos || [];
       const localVideos = getPersistentExtraVideos(targetId, isBonus);
-      const mergedWithProp = mergeExtraVideosList(prev, incomingPropVideos);
+      const mergedWithProp = mergeExtraVideosList(incomingPropVideos, prev);
       return mergeExtraVideosList(mergedWithProp, localVideos);
     });
   }, [apostila.id, (apostila as any).extraVideos]);
@@ -360,9 +360,10 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
         totalDurationSeconds: totalSecs,
         durationLabel: formattedLabel,
         professorNotes: ytProfessorNotes.trim(),
+        extraVideos: updatedList,
       });
 
-      const finalMerged = mergeExtraVideosList(updatedList, res.extraVideos);
+      const finalMerged = mergeExtraVideosList(res.extraVideos, updatedList);
       setCurrentVideos(finalMerged);
       await saveApostilaExtraVideosToVault(targetId, finalMerged, isBonus);
 
@@ -440,9 +441,10 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
         totalDurationSeconds: totalSecs,
         durationLabel: formattedLabel,
         professorNotes: formProfessorNotes.trim(),
+        extraVideos: updatedList,
       });
 
-      const finalMerged = mergeExtraVideosList(updatedList, res.extraVideos);
+      const finalMerged = mergeExtraVideosList(res.extraVideos, updatedList);
       setCurrentVideos(finalMerged);
       await saveApostilaExtraVideosToVault(targetId, finalMerged, isBonus);
 
@@ -486,9 +488,10 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
 
       const res = await api.updateApostilaExtraVideo(apostila.id, slot, {
         professorNotes: notesText.trim(),
+        extraVideos: updatedList,
       });
 
-      const finalMerged = mergeExtraVideosList(updatedList, res.extraVideos);
+      const finalMerged = mergeExtraVideosList(res.extraVideos, updatedList);
       setCurrentVideos(finalMerged);
       await saveApostilaExtraVideosToVault(targetId, finalMerged, isBonus);
 
@@ -571,7 +574,7 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
         ? [thisNewVid || currentVid!, otherVideo]
         : [otherVideo, thisNewVid || currentVid!];
 
-      const finalMerged = mergeExtraVideosList(updatedList, res.extraVideos);
+      const finalMerged = mergeExtraVideosList(res.extraVideos, updatedList);
       setCurrentVideos(finalMerged);
       await saveApostilaExtraVideosToVault(targetId, finalMerged, isBonus);
 
@@ -615,7 +618,7 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
       await saveApostilaExtraVideosToVault(targetId, updatedList, isBonus);
 
       const res = await api.deleteApostilaExtraVideo(apostila.id, slot);
-      const finalMerged = mergeExtraVideosList(updatedList, res.extraVideos);
+      const finalMerged = mergeExtraVideosList(res.extraVideos, updatedList);
       setCurrentVideos(finalMerged);
       await saveApostilaExtraVideosToVault(targetId, finalMerged, isBonus);
 

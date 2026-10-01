@@ -2585,28 +2585,33 @@ app.post('/api/admin/apostilas/extra-video/upload', requireAdmin, (req: Request,
     const db = getDb();
     const rawAposId = req.body.apostilaId || req.body.moduleId;
     const slot = Number(req.body.slot) === 2 ? 2 : 1;
+    const otherSlot = slot === 1 ? 2 : 1;
     const { apostila, isBonus } = findTargetApostila(db, rawAposId);
 
     if (!apostila) {
       return res.status(404).json({ error: 'Apostila correspondente não encontrada para vincular o vídeo extra.' });
     }
 
-    // Garante inicialização dos 2 slots
-    apostila.extraVideos = initExtraVideosForApostila(apostila, isBonus ? `Bônus 0${apostila.number}` : `Módulo 0${apostila.moduleId || apostila.number}`);
+    // Inicializa e mescla com a lista existente sem perder nenhum slot
+    const initialBase = initExtraVideosForApostila(apostila, isBonus ? `Bônus 0${apostila.number}` : `Módulo 0${apostila.moduleId || apostila.number}`);
+    apostila.extraVideos = mergeExtraVideosListBackend(initialBase, apostila.extraVideos);
+
+    const prevThis = apostila.extraVideos.find((v: any) => v.slot === slot);
+    let otherVideo = apostila.extraVideos.find((v: any) => v.slot === otherSlot) || initialBase.find((v: any) => v.slot === otherSlot)!;
 
     const fileUrl = `/uploads/videos/${req.file.filename}`;
-    const rawH = req.body.durationHours !== undefined ? Number(req.body.durationHours) : 0;
-    const rawM = req.body.durationMinutes !== undefined ? Number(req.body.durationMinutes) : 18;
-    const rawS = req.body.durationSeconds !== undefined ? Number(req.body.durationSeconds) : 0;
+    const rawH = req.body.durationHours !== undefined ? Number(req.body.durationHours) : (prevThis?.durationHours ?? 0);
+    const rawM = req.body.durationMinutes !== undefined ? Number(req.body.durationMinutes) : (prevThis?.durationMinutes ?? (slot === 1 ? 18 : 24));
+    const rawS = req.body.durationSeconds !== undefined ? Number(req.body.durationSeconds) : (prevThis?.durationSeconds ?? 0);
     const safeH = isNaN(rawH) ? 0 : Math.max(0, Math.floor(rawH));
     const safeM = isNaN(rawM) ? 18 : Math.max(0, Math.min(59, Math.floor(rawM)));
     const safeS = isNaN(rawS) ? 0 : Math.max(0, Math.min(59, Math.floor(rawS)));
     const totalSecs = safeH * 3600 + safeM * 60 + safeS;
     const finalDurationLabel = req.body.durationLabel || formatHmsDuration(safeH, safeM, safeS);
 
-    const title = req.body.title || (slot === 1 ? 'Vídeo Extra 01: Estudo Dirigido & Análise Prática' : 'Vídeo Extra 02: Estudo de Caso & Aplicação no Set');
-    const description = req.body.description || (slot === 1 ? 'Análise comentada passo a passo para aprofundar o conteúdo desta apostila.' : 'Exercício prático e demonstração das regras de linguagem audiovisual do CINELAB.');
-    const professorNotes = req.body.professorNotes || 'Vídeo de estudo extra gravado para o CINELAB.';
+    const title = req.body.title || prevThis?.title || (slot === 1 ? 'Vídeo Extra 01: Estudo Dirigido & Análise Prática' : 'Vídeo Extra 02: Estudo de Caso & Aplicação no Set');
+    const description = req.body.description !== undefined ? req.body.description : (prevThis?.description || (slot === 1 ? 'Análise comentada passo a passo para aprofundar o conteúdo desta apostila.' : 'Exercício prático e demonstração das regras de linguagem audiovisual do CINELAB.'));
+    const professorNotes = req.body.professorNotes !== undefined ? req.body.professorNotes : (prevThis?.professorNotes || '');
 
     // Mirror to backup
     try {
@@ -2616,28 +2621,40 @@ app.post('/api/admin/apostilas/extra-video/upload', requireAdmin, (req: Request,
       console.warn('Backup notice for extra video:', bkErr);
     }
 
-    const slotIdx = apostila.extraVideos.findIndex((v: any) => v.slot === slot);
+    const notesFilePath = path.join(DB_DIR, 'extra-videos-notes.json');
+    if (professorNotes) {
+      try {
+        let savedNotesMap: Record<string, string> = {};
+        if (fs.existsSync(notesFilePath)) {
+          savedNotesMap = JSON.parse(fs.readFileSync(notesFilePath, 'utf-8'));
+        }
+        const noteKey = `${apostila.id}_slot_${slot}`;
+        savedNotesMap[noteKey] = typeof professorNotes === 'string' ? professorNotes.trim() : '';
+        fs.writeFileSync(notesFilePath, JSON.stringify(savedNotesMap, null, 2), 'utf-8');
+      } catch (nErr) {
+        console.warn('Notice saving extra-videos-notes.json:', nErr);
+      }
+    }
+
     const updatedVideo: ApostilaExtraVideo = {
-      id: `ev-${apostila.id}-slot-${slot}`,
+      id: prevThis?.id || `ev-${apostila.id}-slot-${slot}`,
       slot: slot as 1 | 2,
       title,
       description,
       videoUrl: fileUrl,
-      thumbnailUrl: req.body.thumbnailUrl || (slotIdx !== -1 && apostila.extraVideos[slotIdx]?.thumbnailUrl) || 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80',
+      thumbnailUrl: req.body.thumbnailUrl || prevThis?.thumbnailUrl || 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80',
       durationHours: safeH,
       durationMinutes: safeM,
       durationSeconds: safeS,
       totalDurationSeconds: totalSecs,
       durationLabel: finalDurationLabel,
-      professorNotes: professorNotes !== undefined ? (typeof professorNotes === 'string' ? professorNotes.trim() : '') : (slotIdx !== -1 ? apostila.extraVideos[slotIdx]?.professorNotes || '' : ''),
+      professorNotes: typeof professorNotes === 'string' ? professorNotes.trim() : (prevThis?.professorNotes || ''),
       uploadedAt: new Date().toISOString(),
     };
 
-    if (slotIdx !== -1) {
-      apostila.extraVideos[slotIdx] = updatedVideo;
-    } else {
-      apostila.extraVideos.push(updatedVideo);
-    }
+    apostila.extraVideos = slot === 1
+      ? [updatedVideo, otherVideo]
+      : [otherVideo, updatedVideo];
 
     saveDatabase();
     console.log(`[ExtraVideo] Upload concluído para Apostila ${apostila.id} no Slot ${slot}: ${fileUrl}`);
@@ -2704,37 +2721,99 @@ function mergeExtraVideosListBackend(
     if (!inc) return b!;
     if (!b) return inc;
 
-    const hasIncVideo = inc.videoUrl && inc.videoUrl.trim() !== '' && inc.videoUrl !== '/videos/cinelab-intro-apresentacao.mp4';
-    const hasBaseVideo = b.videoUrl && b.videoUrl.trim() !== '' && b.videoUrl !== '/videos/cinelab-intro-apresentacao.mp4';
+    // Detecção estrita de vídeos reais vs placeholder
+    const isIncRealVideo = Boolean(inc.videoUrl && inc.videoUrl.trim() !== '' && inc.videoUrl !== '/videos/cinelab-intro-apresentacao.mp4');
+    const isBRealVideo = Boolean(b.videoUrl && b.videoUrl.trim() !== '' && b.videoUrl !== '/videos/cinelab-intro-apresentacao.mp4');
 
-    let resolvedVideoUrl = b.videoUrl || '';
-    if (hasIncVideo) {
+    let resolvedVideoUrl = '';
+    if (isIncRealVideo) {
       resolvedVideoUrl = inc.videoUrl!;
-    } else if (hasBaseVideo) {
+    } else if (isBRealVideo) {
       resolvedVideoUrl = b.videoUrl!;
-    } else if (inc.videoUrl) {
-      resolvedVideoUrl = inc.videoUrl;
+    } else {
+      resolvedVideoUrl = inc.videoUrl || b.videoUrl || '';
     }
 
-    const isIncDefault = !inc.title || inc.title.includes('Estudo Dirigido & Análise Prática – Módulo') || inc.title.includes('Estudo de Caso & Exercício Técnico – Módulo');
-    const isBaseDefault = !b.title || b.title.includes('Estudo Dirigido & Análise Prática – Módulo') || b.title.includes('Estudo de Caso & Exercício Técnico – Módulo');
+    // Detecção estrita de títulos genéricos
+    const isGenericTitle = (t?: string) => {
+      if (!t || !t.trim()) return true;
+      const s = t.trim();
+      return (
+        s === 'Vídeo Extra 01' ||
+        s === 'Vídeo Extra 02' ||
+        s === 'Vídeo Extra 01: Estudo Dirigido' ||
+        s === 'Vídeo Extra 02: Estudo de Caso' ||
+        s === 'Vídeo Extra 01: Estudo Complementar' ||
+        s === 'Vídeo Extra 02: Estudo Complementar' ||
+        s.startsWith('Vídeo Extra 01: Estudo Dirigido & Análise Prática – Módulo') ||
+        s.startsWith('Vídeo Extra 02: Estudo de Caso & Exercício Técnico – Módulo') ||
+        s.startsWith('Vídeo Extra 01: Estudo Dirigido & Análise Prática – Apostila') ||
+        s.startsWith('Vídeo Extra 02: Estudo de Caso & Exercício Técnico – Apostila') ||
+        s.startsWith('Vídeo Extra 01: Estudo Dirigido – Apostila') ||
+        s.startsWith('Vídeo Extra 02: Estudo de Caso – Apostila')
+      );
+    };
 
     let resolvedTitle = inc.title || b.title || `Vídeo Extra 0${slotNum}`;
-    if (inc.title && !isIncDefault) {
-      resolvedTitle = inc.title;
-    } else if (b.title && !isBaseDefault) {
-      resolvedTitle = b.title;
+    const incTitleGeneric = isGenericTitle(inc.title);
+    const bTitleGeneric = isGenericTitle(b.title);
+    if (!incTitleGeneric) {
+      resolvedTitle = inc.title!;
+    } else if (!bTitleGeneric) {
+      resolvedTitle = b.title!;
     }
 
-    const resolvedNotes = (inc.professorNotes !== undefined && inc.professorNotes.trim() !== '')
-      ? inc.professorNotes
-      : (b.professorNotes || '');
+    // Detecção estrita de descrições genéricas padrão
+    const genericDescriptions = [
+      'conteúdo complementar em vídeo.',
+      'análise comentada passo a passo para aprofundar o conteúdo desta apostila.',
+      'exercício prático e demonstração das regras de linguagem audiovisual do cinelab.',
+      'análise técnica e decupagem comentada pelo professor cineasta tony de luc para aprofundar os conceitos teóricos desta apostila.',
+      'demonstração em set de filmagem com resolução prática de problemas de decupagem e linguagem cinematográfica.',
+      'aprofundamento técnico dos conceitos fundamentais da apostila com análise de decupagem comentada pelo professor tony de luc.',
+      'exercício prático de aplicação em set de filmagem com demonstração passo a passo da metodologia do cinelab.',
+      'análise técnica e estudo dirigido para aprofundar os conceitos teóricos desta apostila com o diretor tony de luc.',
+    ];
+    const isGenericDesc = (d?: string) => {
+      if (!d || !d.trim()) return true;
+      return genericDescriptions.includes(d.trim().toLowerCase());
+    };
 
-    const resolvedDesc = (inc.description && inc.description.trim() !== '')
-      ? inc.description
-      : (b.description || '');
+    let resolvedDesc = inc.description || b.description || '';
+    const incDescGeneric = isGenericDesc(inc.description);
+    const bDescGeneric = isGenericDesc(b.description);
+    if (!incDescGeneric) {
+      resolvedDesc = inc.description!;
+    } else if (!bDescGeneric) {
+      resolvedDesc = b.description!;
+    }
 
-    const resolvedThumb = (hasIncVideo && inc.thumbnailUrl)
+    // Detecção de notas do professor
+    const cannedNotes = [
+      'assista com atenção antes de responder ao quiz e à avaliação de treinamento.',
+      'aplicação prática e orientações de direção do cinema profissional.',
+      'assista com atenção aos detalhes do enquadramento e da linguagem cinematográfica.',
+      'demonstração de resolução de problemas no set e técnicas de direção.',
+    ];
+    const isCannedNote = (n?: string) => {
+      if (!n || !n.trim()) return true;
+      return cannedNotes.includes(n.trim().toLowerCase());
+    };
+
+    let resolvedNotes = '';
+    const incNoteCanned = isCannedNote(inc.professorNotes);
+    const bNoteCanned = isCannedNote(b.professorNotes);
+    if (inc.professorNotes !== undefined && !incNoteCanned) {
+      resolvedNotes = inc.professorNotes.trim();
+    } else if (b.professorNotes !== undefined && !bNoteCanned) {
+      resolvedNotes = b.professorNotes.trim();
+    } else if (inc.professorNotes !== undefined) {
+      resolvedNotes = inc.professorNotes.trim();
+    } else {
+      resolvedNotes = b.professorNotes || '';
+    }
+
+    const resolvedThumb = (isIncRealVideo && inc.thumbnailUrl)
       ? inc.thumbnailUrl
       : (b.thumbnailUrl || inc.thumbnailUrl || '');
 
@@ -2778,11 +2857,17 @@ app.put('/api/admin/apostilas/:id/extra-video/:slot', requireAdmin, (req: Reques
     durationSeconds,
     durationLabel,
     professorNotes,
+    extraVideos: incomingExtraVideos,
   } = req.body;
 
   const { apostila, isBonus } = findTargetApostila(db, rawId);
   if (!apostila) {
     return res.status(404).json({ error: 'Apostila não encontrada.' });
+  }
+
+  // Se o frontend enviou a lista completa atualizada dos 2 slots, mesclamos primeiro
+  if (Array.isArray(incomingExtraVideos) && incomingExtraVideos.length > 0) {
+    apostila.extraVideos = mergeExtraVideosListBackend(apostila.extraVideos, incomingExtraVideos);
   }
 
   // Inicializa estrutura base se necessário
@@ -2860,7 +2945,7 @@ app.put('/api/admin/apostilas/:id/extra-video/:slot', requireAdmin, (req: Reques
   });
 });
 
-// Remover Vídeo Extra de um Slot da Apostila
+// Remover Vídeo Extra de um Slot da Apostila sem resetar o outro slot
 app.delete('/api/admin/apostilas/:id/extra-video/:slot', requireAdmin, (req: Request, res: Response) => {
   const db = getDb();
   const rawId = req.params.id;
@@ -2871,7 +2956,10 @@ app.delete('/api/admin/apostilas/:id/extra-video/:slot', requireAdmin, (req: Req
     return res.status(404).json({ error: 'Apostila não encontrada.' });
   }
 
-  apostila.extraVideos = initExtraVideosForApostila(apostila, isBonus ? `Bônus 0${apostila.number}` : `Módulo 0${apostila.moduleId || apostila.number}`);
+  if (!Array.isArray(apostila.extraVideos) || apostila.extraVideos.length === 0) {
+    apostila.extraVideos = initExtraVideosForApostila(apostila, isBonus ? `Bônus 0${apostila.number}` : `Módulo 0${apostila.moduleId || apostila.number}`);
+  }
+
   const slotIdx = apostila.extraVideos.findIndex((v: any) => v.slot === slot);
   if (slotIdx !== -1) {
     apostila.extraVideos[slotIdx].videoUrl = '';

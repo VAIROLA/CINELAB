@@ -315,6 +315,7 @@ export const api = {
       totalDurationSeconds?: number;
       durationLabel?: string;
       professorNotes?: string;
+      extraVideos?: any[];
     }
   ) =>
     request<{
