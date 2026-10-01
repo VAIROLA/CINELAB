@@ -8,10 +8,14 @@ coverage/
 !.env.example
 
 # Large video files and temp chunks (>100MB exceeds GitHub limits)
-*.mp4
 *.webm
 *.mov
 *.mkv
-public/uploads/videos/
+public/uploads/videos/*
+!public/uploads/videos/cinelab-intro-apresentacao.mp4
+!public/uploads/videos/aula-CINELAB_INTRODU__O-1790897028732-786545.mp4
 data/videos_backup/
 data/temp_chunks/
+
+# Allow official web-optimized welcome video (<35MB) to be tracked and deployed
+!public/videos/cinelab-intro-apresentacao.mp4

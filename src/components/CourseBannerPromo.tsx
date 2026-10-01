@@ -307,12 +307,12 @@ export const CourseBannerPromo: React.FC<CourseBannerPromoProps> = ({
           </div>
 
           {/* Right Column: Promotional Price Box */}
-          <div className="lg:col-span-5 max-w-full pt-3 sm:pt-0">
-            <div className="relative rounded-3xl bg-gradient-to-b from-neutral-900 via-neutral-950 to-[#0d0f14] border-2 border-amber-400 p-4 sm:p-8 shadow-2xl shadow-amber-500/10 text-center max-w-full">
+          <div className="lg:col-span-5 max-w-full">
+            <div className="relative rounded-3xl bg-gradient-to-b from-neutral-900 via-neutral-950 to-[#0d0f14] border-2 border-amber-400 p-4 sm:p-8 shadow-2xl shadow-amber-500/10 text-center max-w-full overflow-hidden">
               
               {/* Flash Stamp Banner */}
-              <div className="absolute -top-3.5 sm:-top-4 left-1/2 -translate-x-1/2 px-3 sm:px-5 py-1 sm:py-1.5 rounded-full bg-gradient-to-r from-red-600 via-red-500 to-red-600 text-white text-[9.5px] xs:text-[10.5px] sm:text-xs font-black uppercase tracking-wider sm:tracking-widest shadow-xl shadow-red-600/50 border border-red-300 animate-pulse flex items-center justify-center gap-1.5 whitespace-nowrap max-w-[92%] z-20">
-                <Tag className="w-3.5 h-3.5 shrink-0 text-white" />
+              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-3 sm:px-5 py-1 rounded-full bg-gradient-to-r from-red-600 via-red-500 to-red-600 text-white text-[10px] sm:text-xs font-black uppercase tracking-widest shadow-lg shadow-red-600/40 border border-red-400 animate-pulse flex items-center gap-1.5 whitespace-nowrap max-w-[94%]">
+                <Tag className="w-3.5 h-3.5 shrink-0" />
                 <span className="truncate">{texts.limitedPromo}</span>
               </div>
 

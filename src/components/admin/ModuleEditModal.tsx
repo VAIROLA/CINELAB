@@ -60,7 +60,6 @@ export const ModuleEditModal: React.FC<ModuleEditModalProps> = ({
   const pdfFileInputRef = useRef<HTMLInputElement>(null);
 
   const [errorMessage, setErrorMessage] = useState('');
-  const [currentApostila, setCurrentApostila] = useState<Apostila | null>(apostila || null);
 
   // Capa da videoaula (Thumbnail / Poster)
   const [thumbnailUrl, setThumbnailUrl] = useState(video?.thumbnailUrl || '');
@@ -70,7 +69,6 @@ export const ModuleEditModal: React.FC<ModuleEditModalProps> = ({
 
   useEffect(() => {
     if (module) {
-      setCurrentApostila(apostila || null);
       setTitle(module.title || '');
       setApostilaTitle(apostila?.title || module.title || '');
       setSubtitle(module.subtitle || '');
@@ -816,12 +814,9 @@ export const ModuleEditModal: React.FC<ModuleEditModalProps> = ({
             {/* 2 Locais de Vídeos Extras para Estudo da Apostila */}
             <div className="pt-4 border-t border-neutral-800">
               <ApostilaExtraVideosSection
-                apostila={currentApostila || apostila || ({ id: `apostila-${module.id}`, moduleId: module.id, number: module.id, title: apostilaTitle || module.title } as any)}
+                apostila={apostila || ({ id: `apostila-${module.id}`, moduleId: module.id, number: module.id, title: apostilaTitle || module.title } as any)}
                 isAdmin={true}
-                onApostilaUpdated={(updated) => {
-                  if (updated) {
-                    setCurrentApostila(updated);
-                  }
+                onApostilaUpdated={() => {
                   onSuccess('Vídeos extras da apostila atualizados com sucesso!');
                 }}
               />

@@ -66,6 +66,7 @@ export const Header: React.FC<HeaderProps> = ({
     { label: t('nav.validate', 'Validar'), route: 'validar-certificado' },
     { label: t('nav.faq', 'FAQ'), route: 'faq' },
     { label: t('nav.contact', 'Contato'), route: 'contato' },
+    { label: 'Painel Admin', route: 'admin', icon: Shield, highlight: 'red' },
   ];
 
   const handleNav = (route: string, action?: 'panel' | 'logout') => {
@@ -90,28 +91,45 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full max-w-full bg-gradient-to-r from-[#190333] via-[#2a0852] to-[#190333] backdrop-blur-md border-b-2 border-fuchsia-500/80 shadow-[0_6px_35px_rgba(168,85,247,0.45)] transition-all">
+    <header className="sticky top-0 z-50 bg-gradient-to-r from-[#190333] via-[#2a0852] to-[#190333] backdrop-blur-md border-b-2 border-fuchsia-500/80 shadow-[0_6px_35px_rgba(168,85,247,0.45)] transition-all max-w-full">
       {/* Top micro-banner / Faixa Roxo Neon Vibrante + Tradutor e Perfil: Admin & Professor */}
-      <div className="bg-gradient-to-r from-[#6b21a8] via-[#a855f7] to-[#7c3aed] px-2 sm:px-6 lg:px-8 py-1 sm:py-1.5 border-b border-fuchsia-300/60 text-[11px] text-white font-mono flex items-center justify-between gap-1 sm:gap-3 shadow-[0_2px_22px_rgba(168,85,247,0.65)] relative z-40 w-full max-w-full">
+      <div className="bg-gradient-to-r from-[#6b21a8] via-[#a855f7] to-[#7c3aed] px-2 sm:px-6 lg:px-8 py-1 sm:py-1.5 border-b border-fuchsia-300/60 text-[11px] text-white font-mono flex items-center justify-between gap-1.5 sm:gap-3 shadow-[0_2px_22px_rgba(168,85,247,0.65)] relative z-40 max-w-full">
         {/* Sutil reflexo de luz neon */}
         <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-black/10 pointer-events-none" />
 
-        <div className="flex items-center gap-1 sm:gap-2.5 min-w-0 relative z-10">
-          <span className="inline-flex items-center gap-1 text-white font-extrabold tracking-wide drop-shadow-[0_0_10px_rgba(255,255,255,0.9)] text-[10.5px] sm:text-xs whitespace-nowrap">
+        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0 relative z-10">
+          <span className="inline-flex items-center gap-1 text-white font-extrabold tracking-wide drop-shadow-[0_0_10px_rgba(255,255,255,0.9)] text-[11px] sm:text-xs">
             <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-300 animate-pulse drop-shadow-[0_0_6px_rgba(251,191,36,0.8)]" /> CINELAB
           </span>
           <span className="hidden md:inline text-purple-200/60">|</span>
-          <span className="hidden md:inline text-purple-100 font-semibold drop-shadow-sm truncate">
+          <span className="hidden md:inline text-purple-100 font-semibold drop-shadow-sm">
             {t('topbar.tagline', 'Formação Profissional em Cinema e Audiovisual • Duração 3 Meses')}
           </span>
         </div>
 
         {/* Acima do lado direito: Professor junto com Admin / Perfil e o Tradutor */}
         <div className="ml-auto flex items-center gap-1 sm:gap-2 shrink-0 relative z-20">
-          {/* Botão e Acesso Direto: Professor Tony de Luc */}
+          {/* Botão Acesso Direto: ADMIN */}
+          <button
+            onClick={() => {
+              if (onSwitchDemoRole) onSwitchDemoRole('admin');
+              handleNav('admin');
+            }}
+            className={`text-[9px] sm:text-[10.5px] px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-lg flex items-center gap-1 font-mono font-bold cursor-pointer transition-all active:scale-95 shadow-[0_0_10px_rgba(239,68,68,0.3)] shrink-0 ${
+              user?.role === 'admin'
+                ? 'bg-red-500 text-white ring-2 ring-red-300 font-extrabold shadow-md'
+                : 'bg-red-950/90 hover:bg-red-900 text-red-200 hover:text-white border border-red-500/70'
+            }`}
+            title="Acesso Direto ao Painel Administrativo CINELAB"
+          >
+            <Shield className="w-3 h-3 text-red-300 shrink-0" />
+            <span className="uppercase tracking-wider">Admin</span>
+          </button>
+
+          {/* Botão e Acesso Direto: Professor Tony de Luc - Oculto em telas ultra-pequenas (< sm) para eliminar scroll lateral no mobile */}
           <button
             onClick={() => handleNav('tony-de-luc')}
-            className={`text-[9px] sm:text-[10.5px] px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-lg flex items-center gap-1 font-sans font-bold cursor-pointer transition-all active:scale-95 shadow-[0_0_10px_rgba(245,158,11,0.25)] shrink-0 ${
+            className={`hidden sm:flex text-[9px] sm:text-[10.5px] px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-lg items-center gap-1 font-sans font-bold cursor-pointer transition-all active:scale-95 shadow-[0_0_10px_rgba(245,158,11,0.25)] shrink-0 ${
               currentRoute === 'tony-de-luc' || currentRoute === 'sobre-tony' || currentRoute === 'filmografia'
                 ? 'bg-amber-400 text-neutral-950 ring-1 ring-amber-300'
                 : 'bg-[#270d4a]/95 hover:bg-[#3b126e] text-amber-300 hover:text-white border border-amber-400/60'
@@ -119,9 +137,9 @@ export const Header: React.FC<HeaderProps> = ({
             title="Página do Professor Cineasta Tony de Luc (Bio, Feitos & Filmografia)"
           >
             <Clapperboard className="w-3 h-3 text-amber-400 shrink-0" />
-            <span className="text-purple-300 font-mono text-[9px] hidden sm:inline">Professor:</span>
+            <span className="text-purple-300 font-mono text-[9px]">Professor:</span>
             <span className="font-extrabold uppercase drop-shadow-[0_0_6px_rgba(255,255,255,0.8)] whitespace-nowrap">Tony</span>
-            <span className="font-extrabold uppercase drop-shadow-[0_0_6px_rgba(255,255,255,0.8)] whitespace-nowrap hidden sm:inline"> de Luc</span>
+            <span className="font-extrabold uppercase drop-shadow-[0_0_6px_rgba(255,255,255,0.8)] whitespace-nowrap hidden md:inline"> de Luc</span>
           </button>
 
           {/* Perfil : Admin */}
@@ -129,17 +147,17 @@ export const Header: React.FC<HeaderProps> = ({
             {onSwitchDemoRole ? (
               <button
                 onClick={() => setDemoMenuOpen(!demoMenuOpen)}
-                className="text-[9px] sm:text-[12px] px-1.5 sm:px-3 py-0.5 sm:py-1.5 rounded-lg sm:rounded-xl bg-[#270d4a]/95 hover:bg-[#3d1374] text-purple-100 flex items-center gap-1 sm:gap-1.5 border border-purple-400/70 shadow-[0_0_14px_rgba(168,85,247,0.45)] cursor-pointer font-sans transition-all active:scale-95 whitespace-nowrap shrink-0"
+                className="text-[9.5px] sm:text-[12px] px-1.5 sm:px-3 py-0.5 sm:py-1.5 rounded-lg sm:rounded-xl bg-[#270d4a]/95 hover:bg-[#3d1374] text-purple-100 flex items-center gap-1 sm:gap-1.5 border border-purple-400/70 shadow-[0_0_14px_rgba(168,85,247,0.45)] cursor-pointer font-sans transition-all active:scale-95 whitespace-nowrap shrink-0"
                 title="Clique para alternar entre Admin, Aluno e Visitante"
               >
                 <span className="text-purple-300 font-mono text-[9px] sm:text-[11px] font-semibold hidden sm:inline">Perfil:</span>
-                <span className="font-extrabold uppercase text-white font-mono text-[9px] sm:text-[13px] drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]">
+                <span className="font-extrabold uppercase text-white font-mono text-[9.5px] sm:text-[13px] drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]">
                   {user?.role === 'admin' ? 'Admin' : user ? 'Aluno' : 'Visitante'}
                 </span>
                 <ChevronDown className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-purple-200 transition-transform duration-200" />
               </button>
             ) : (
-              <div className="text-[9px] sm:text-xs px-1.5 sm:px-3 py-0.5 sm:py-1.5 rounded-lg sm:rounded-xl bg-[#270d4a]/90 text-purple-100 flex items-center gap-1 sm:gap-1.5 border border-purple-400/60 font-mono shadow-[0_0_10px_rgba(168,85,247,0.35)] shrink-0">
+              <div className="text-[9.5px] sm:text-xs px-1.5 sm:px-3 py-0.5 sm:py-1.5 rounded-lg sm:rounded-xl bg-[#270d4a]/90 text-purple-100 flex items-center gap-1 sm:gap-1.5 border border-purple-400/60 font-mono shadow-[0_0_10px_rgba(168,85,247,0.35)] shrink-0">
                 <span className="text-purple-300 hidden sm:inline">Perfil:</span>
                 <span className="font-extrabold uppercase text-white drop-shadow-[0_0_6px_rgba(255,255,255,0.8)]">
                   {user?.role === 'admin' ? 'Admin' : user ? 'Aluno' : 'Visitante'}
@@ -150,10 +168,10 @@ export const Header: React.FC<HeaderProps> = ({
             {demoMenuOpen && onSwitchDemoRole && (
               <>
                 <div
-                  className="fixed inset-0 z-40"
+                  className="fixed inset-0 z-[99] bg-black/50"
                   onClick={() => setDemoMenuOpen(false)}
                 />
-                <div className="fixed inset-x-2 top-9 sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:absolute w-auto max-w-[calc(100vw-16px)] sm:w-[410px] sm:max-w-sm max-h-[85vh] overflow-y-auto bg-[#140428] border-2 border-purple-400/90 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.9),0_0_35px_rgba(168,85,247,0.6)] p-3 sm:p-4 z-50 text-left font-sans backdrop-blur-xl animate-fadeIn custom-scrollbar">
+                <div className="fixed sm:absolute top-12 sm:top-full inset-x-2 sm:inset-auto sm:right-0 mt-1 max-w-sm sm:w-[410px] mx-auto max-h-[85vh] overflow-y-auto bg-[#140428] border-2 border-purple-400/90 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.9),0_0_35px_rgba(168,85,247,0.6)] p-3 sm:p-4 z-[100] text-left font-sans backdrop-blur-xl animate-fadeIn custom-scrollbar">
                   <div className="px-2 py-2 border-b border-purple-700/60 mb-2 flex items-center justify-between">
                     <div>
                       <span className="text-xs font-mono text-purple-200 uppercase tracking-wider font-bold block">
@@ -304,9 +322,9 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Row Principal: Logo CINELAB + Status / Destaques + Botões de Ação */}
-      <div className="max-w-[1600px] mx-auto px-2.5 sm:px-6 lg:px-8 py-2 sm:py-3.5 md:py-4 flex items-center justify-between gap-2 sm:gap-6 w-full max-w-full">
+      <div className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 py-2 sm:py-3.5 md:py-4 flex items-center justify-between gap-2 sm:gap-6 overflow-hidden">
         {/* Brand Logo - CINELAB Oficial */}
-        <div className="py-0.5 sm:py-1 flex-1 sm:flex-initial flex items-center min-w-0 max-w-[50%] sm:max-w-none">
+        <div className="py-1 shrink-0 flex items-center max-w-[42%] xs:max-w-[46%] sm:max-w-none min-w-0">
           <Logo
             customUrl={customLogoUrl}
             size="header"
@@ -353,12 +371,7 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
 
               {userDropdownOpen && (
-                <>
-                  <div
-                    className="fixed inset-0 z-40"
-                    onClick={() => setUserDropdownOpen(false)}
-                  />
-                  <div className="fixed inset-x-2 top-20 sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:absolute w-auto max-w-[calc(100vw-16px)] sm:w-80 sm:max-w-xs bg-neutral-900/98 backdrop-blur-md border border-purple-500/50 rounded-2xl shadow-2xl p-3 z-50 text-sm animate-fadeIn max-h-[85vh] overflow-y-auto custom-scrollbar">
+                <div className="absolute right-0 top-full mt-2 w-[calc(100vw-24px)] max-w-xs sm:w-80 bg-neutral-900/98 backdrop-blur-md border border-purple-500/50 rounded-2xl shadow-2xl p-3 z-50 text-sm animate-fadeIn">
                   <div className="px-3 py-2 border-b border-neutral-800 mb-1">
                     <p className="text-xs font-bold text-white truncate">{user.name}</p>
                     <p className="text-[11px] text-neutral-400 font-mono truncate">{user.email}</p>
@@ -525,8 +538,7 @@ export const Header: React.FC<HeaderProps> = ({
                     </button>
                   </div>
                 </div>
-              </>
-            )}
+              )}
             </div>
           ) : (
             <div className="flex items-center gap-1 sm:gap-2 shrink-0">
@@ -574,7 +586,11 @@ export const Header: React.FC<HeaderProps> = ({
                 key={item.label}
                 onClick={() => handleNav(item.route, item.action)}
                 className={`px-2.5 2xl:px-3 py-1 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 text-[12.5px] xl:text-[13px] 2xl:text-[14px] whitespace-nowrap ${
-                  isActive
+                  item.highlight === 'red'
+                    ? isActive
+                      ? 'text-white bg-red-600 font-extrabold shadow-[0_0_16px_rgba(239,68,68,0.7)] ring-2 ring-red-400'
+                      : 'text-red-200 bg-red-950/80 hover:bg-red-900 border border-red-500/70 hover:text-white font-bold'
+                    : isActive
                     ? 'text-amber-300 bg-purple-900/95 font-bold shadow-[0_0_14px_rgba(245,158,11,0.35)] ring-1 ring-amber-400/60'
                     : 'text-purple-100 hover:text-white hover:bg-purple-900/60 font-semibold'
                 }`}
@@ -594,7 +610,7 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-[#180430]/98 border-b-2 border-fuchsia-500/80 px-3 sm:px-4 py-3 sm:py-4 space-y-3.5 animate-fadeIn shadow-2xl max-w-full overflow-x-hidden">
+        <div className="lg:hidden bg-[#180430]/98 border-b-2 border-fuchsia-500/80 px-4 py-4 space-y-4 animate-fadeIn shadow-2xl">
           {/* Mobile Country Translator */}
           <div className="p-3 bg-purple-950/60 rounded-2xl border border-purple-400/40 space-y-2 shadow-inner">
             <span className="text-xs font-mono text-purple-200 block text-center font-bold">
@@ -603,21 +619,24 @@ export const Header: React.FC<HeaderProps> = ({
             <HeaderCountryTranslator stacked variant="neon" className="w-full justify-center" />
           </div>
 
-          {/* Quick Access to Professor & Profile in mobile */}
+          {/* Quick Access to Professor & Admin in mobile */}
           <div className="grid grid-cols-2 gap-2">
             <button
               onClick={() => handleNav('tony-de-luc')}
-              className="px-3 py-2 rounded-xl bg-amber-500/20 border border-amber-400/50 text-amber-300 flex items-center justify-center gap-2 font-bold text-xs min-w-0 overflow-hidden"
+              className="px-3 py-2 rounded-xl bg-amber-500/20 border border-amber-400/50 text-amber-300 flex items-center justify-center gap-2 font-bold text-xs"
             >
-              <Clapperboard className="w-4 h-4 text-amber-400 shrink-0" />
-              <span className="truncate">Prof. Tony de Luc</span>
+              <Clapperboard className="w-4 h-4 text-amber-400" />
+              <span>Prof. Tony de Luc</span>
             </button>
             <button
-              onClick={() => handleNav(user?.role === 'admin' ? 'admin' : 'minha-area')}
-              className="px-3 py-2 rounded-xl bg-purple-900/60 border border-purple-400/50 text-purple-200 flex items-center justify-center gap-2 font-bold text-xs min-w-0 overflow-hidden"
+              onClick={() => {
+                if (onSwitchDemoRole) onSwitchDemoRole('admin');
+                handleNav('admin');
+              }}
+              className="px-3 py-2 rounded-xl bg-red-950/90 border border-red-500/80 text-red-200 hover:text-white flex items-center justify-center gap-2 font-bold text-xs shadow-[0_0_12px_rgba(239,68,68,0.4)] ring-1 ring-red-400"
             >
-              <Shield className="w-4 h-4 text-purple-300 shrink-0" />
-              <span className="truncate">{user?.role === 'admin' ? 'Painel Admin' : 'Painel Aluno'}</span>
+              <Shield className="w-4 h-4 text-red-400" />
+              <span>Painel Admin</span>
             </button>
           </div>
 
@@ -633,7 +652,7 @@ export const Header: React.FC<HeaderProps> = ({
                     onSwitchDemoRole('admin');
                     setMobileMenuOpen(false);
                   }}
-                  className={`px-2 py-2 rounded-xl text-xs font-bold border transition-colors truncate ${
+                  className={`px-2 py-2 rounded-xl text-xs font-bold border transition-colors ${
                     user?.role === 'admin'
                       ? 'bg-red-500/30 text-red-200 border-red-400 shadow-sm'
                       : 'bg-[#220743] text-red-300 border-purple-500/40 hover:bg-purple-900/50'
@@ -646,7 +665,7 @@ export const Header: React.FC<HeaderProps> = ({
                     onSwitchDemoRole('guest');
                     setMobileMenuOpen(false);
                   }}
-                  className={`px-2 py-2 rounded-xl text-xs font-bold border transition-colors truncate ${
+                  className={`px-2 py-2 rounded-xl text-xs font-bold border transition-colors ${
                     !user
                       ? 'bg-purple-500/30 text-purple-200 border-purple-400 shadow-sm'
                       : 'bg-[#220743] text-purple-300 border-purple-500/40 hover:bg-purple-900/50'
@@ -659,7 +678,7 @@ export const Header: React.FC<HeaderProps> = ({
                     onSwitchDemoRole('student');
                     setMobileMenuOpen(false);
                   }}
-                  className={`px-2 py-2 rounded-xl text-xs font-bold border transition-colors truncate ${
+                  className={`px-2 py-2 rounded-xl text-xs font-bold border transition-colors ${
                     user && user.role !== 'admin'
                       ? 'bg-emerald-500/30 text-emerald-200 border-emerald-400 shadow-sm'
                       : 'bg-[#220743] text-emerald-300 border-purple-500/40 hover:bg-purple-900/50'
@@ -672,14 +691,14 @@ export const Header: React.FC<HeaderProps> = ({
           )}
 
           {user && (
-            <div className="p-3 bg-neutral-800/60 rounded-xl mb-3 flex items-center justify-between gap-2 min-w-0">
-              <div className="min-w-0 flex-1">
-                <p className="text-xs font-bold text-white truncate">{user.name}</p>
-                <p className="text-[11px] font-mono text-amber-400 truncate">{user.email}</p>
+            <div className="p-3 bg-neutral-800/60 rounded-xl mb-3 flex items-center justify-between">
+              <div>
+                <p className="text-xs font-bold text-white">{user.name}</p>
+                <p className="text-[11px] font-mono text-amber-400">{user.email}</p>
               </div>
               <button
                 onClick={() => handleNav(user.role === 'admin' ? 'admin' : 'minha-area')}
-                className="px-2.5 py-1 text-xs bg-amber-500 text-neutral-950 font-bold rounded-lg shrink-0"
+                className="px-2.5 py-1 text-xs bg-amber-500 text-neutral-950 font-bold rounded-lg"
               >
                 {user.role === 'admin' ? t('header.adminRole') : t('header.panel')}
               </button>
@@ -696,14 +715,18 @@ export const Header: React.FC<HeaderProps> = ({
                 <button
                   key={item.label}
                   onClick={() => handleNav(item.route, item.action)}
-                  className={`text-left px-2.5 sm:px-3 py-2 text-xs rounded-lg flex items-center gap-1.5 sm:gap-2 cursor-pointer min-w-0 overflow-hidden ${
-                    isActive
+                  className={`text-left px-3 py-2 text-xs rounded-lg flex items-center gap-2 cursor-pointer ${
+                    item.highlight === 'red'
+                      ? isActive
+                        ? 'bg-red-600 text-white font-bold ring-1 ring-red-400'
+                        : 'bg-red-950/80 border border-red-500/60 text-red-200 hover:text-white font-bold'
+                      : isActive
                       ? 'bg-amber-500/20 text-amber-400 font-bold'
                       : 'text-neutral-300 hover:bg-neutral-800'
                   }`}
                 >
-                  {item.icon && <item.icon className="w-3.5 h-3.5 shrink-0" />}
-                  <span className="truncate min-w-0">{item.label}</span>
+                  {item.icon && <item.icon className="w-3.5 h-3.5" />}
+                  <span>{item.label}</span>
                 </button>
               );
             })}

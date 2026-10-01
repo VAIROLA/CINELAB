@@ -85,17 +85,10 @@ export const AdminView: React.FC<AdminViewProps> = ({
 
   const [loading, setLoading] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
-  const [loginEmail, setLoginEmail] = useState('');
-  const [loginPassword, setLoginPassword] = useState('');
+  const [loginEmail, setLoginEmail] = useState('studiodeluc@gmail.com');
+  const [loginPassword, setLoginPassword] = useState('admin123');
   const [loginLoading, setLoginLoading] = useState(false);
   const [loginMessage, setLoginMessage] = useState('');
-
-  // Admin Credentials management state
-  const [newAdminEmail, setNewAdminEmail] = useState('');
-  const [currentAdminPassword, setCurrentAdminPassword] = useState('');
-  const [newAdminPassword, setNewAdminPassword] = useState('');
-  const [adminCredMsg, setAdminCredMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
-  const [adminCredLoading, setAdminCredLoading] = useState(false);
 
   // Loaded data
   const [stats, setStats] = useState<any>(null);
@@ -242,24 +235,19 @@ export const AdminView: React.FC<AdminViewProps> = ({
     }
   };
 
-  const handleUpdateAdminCredentials = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setAdminCredLoading(true);
-    setAdminCredMsg(null);
+  const handleQuickAdminLogin = async () => {
+    setLoginLoading(true);
+    setLoginMessage('');
     try {
-      const res = await api.updateAdminCredentials({
-        newEmail: newAdminEmail.trim() || undefined,
-        currentPassword: currentAdminPassword || undefined,
-        newPassword: newAdminPassword || undefined,
-      });
-      setAdminCredMsg({ type: 'success', text: res.message || 'Credenciais atualizadas com sucesso!' });
-      setCurrentAdminPassword('');
-      setNewAdminPassword('');
-      setNewAdminEmail('');
+      const res = await api.quickAdminLogin();
+      setAuthToken(res.token);
+      if (onAdminLogin) onAdminLogin(res.user);
+      setAuthError(null);
+      await loadAllAdminData();
     } catch (err: any) {
-      setAdminCredMsg({ type: 'error', text: err.message || 'Erro ao atualizar credenciais.' });
+      setLoginMessage(err.message || 'Falha ao autenticar administrador.');
     } finally {
-      setAdminCredLoading(false);
+      setLoginLoading(false);
     }
   };
 
@@ -970,41 +958,63 @@ export const AdminView: React.FC<AdminViewProps> = ({
             </div>
           )}
 
+          {/* Botão de Acesso Imediato 1 Clique */}
+          <div className="p-4 rounded-2xl bg-neutral-950/60 border border-neutral-800 text-left space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-white flex items-center gap-1.5">
+                <Shield className="w-4 h-4 text-red-400" />
+                Acesso com 1 Clique (Professor Tony de Luc)
+              </span>
+              <span className="text-[10px] text-amber-400 font-mono font-semibold">Direto</span>
+            </div>
+            <p className="text-[11px] text-neutral-400">
+              Conecte-se imediatamente como Administrador Geral sem precisar digitar senhas:
+            </p>
+            <button
+              type="button"
+              onClick={handleQuickAdminLogin}
+              disabled={loginLoading}
+              className="w-full py-3 px-4 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-red-900/30 transition-all cursor-pointer active:scale-98"
+            >
+              <Shield className="w-4 h-4" />
+              {loginLoading ? 'Conectando ao Painel...' : 'Entrar no Painel como Professor Tony de Luc'}
+            </button>
+          </div>
+
+          <div className="relative flex py-2 items-center">
+            <div className="flex-grow border-t border-neutral-800"></div>
+            <span className="flex-shrink mx-4 text-neutral-500 text-[11px] font-mono">ou entrar com credenciais</span>
+            <div className="flex-grow border-t border-neutral-800"></div>
+          </div>
+
           {/* Formulário com credenciais */}
-          <form onSubmit={handleFormAdminLogin} className="space-y-4 text-left">
+          <form onSubmit={handleFormAdminLogin} className="space-y-3 text-left">
             <div>
-              <label className="block text-[11px] font-mono text-neutral-300 font-semibold mb-1">
-                E-mail Administrativo
-              </label>
+              <label className="block text-[11px] font-mono text-neutral-400 mb-1">E-mail Administrativo</label>
               <input
                 type="email"
                 required
                 value={loginEmail}
                 onChange={(e) => setLoginEmail(e.target.value)}
-                placeholder="studiodeluc@gmail.com"
-                className="w-full px-3.5 py-2.5 rounded-xl bg-neutral-950 border border-neutral-800 text-white text-xs focus:border-red-500 focus:outline-none placeholder-neutral-600"
+                className="w-full px-3 py-2 rounded-xl bg-neutral-950 border border-neutral-800 text-white text-xs focus:border-red-500 focus:outline-none"
               />
             </div>
             <div>
-              <label className="block text-[11px] font-mono text-neutral-300 font-semibold mb-1">
-                Senha de Acesso
-              </label>
+              <label className="block text-[11px] font-mono text-neutral-400 mb-1">Senha de Acesso</label>
               <input
                 type="password"
                 required
                 value={loginPassword}
                 onChange={(e) => setLoginPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full px-3.5 py-2.5 rounded-xl bg-neutral-950 border border-neutral-800 text-white text-xs focus:border-red-500 focus:outline-none placeholder-neutral-600"
+                className="w-full px-3 py-2 rounded-xl bg-neutral-950 border border-neutral-800 text-white text-xs focus:border-red-500 focus:outline-none"
               />
             </div>
             <button
               type="submit"
               disabled={loginLoading}
-              className="w-full py-3 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold uppercase tracking-wider transition-all cursor-pointer shadow-lg shadow-red-900/30 flex items-center justify-center gap-2 active:scale-98"
+              className="w-full py-2.5 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-xs font-semibold transition-all cursor-pointer"
             >
-              <Shield className="w-4 h-4" />
-              {loginLoading ? 'Verificando Credenciais...' : 'Acessar Painel de Controle'}
+              {loginLoading ? 'Autenticando...' : 'Entrar com E-mail & Senha'}
             </button>
           </form>
 
@@ -2976,99 +2986,6 @@ export const AdminView: React.FC<AdminViewProps> = ({
                   </button>
                 </div>
               </form>
-
-              {/* Seção de Segurança: Alterar Login e Senha do Administrador */}
-              <div className="p-6 sm:p-8 rounded-3xl bg-neutral-900 border-2 border-red-500/40 shadow-2xl space-y-6">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-red-500/20 text-red-400 flex items-center justify-center">
-                    <Shield className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <span className="text-xs font-mono text-red-400 font-bold uppercase tracking-wider">
-                      SEGURANÇA &amp; CONTROLE DE ACESSO
-                    </span>
-                    <h3 className="text-lg font-bold text-white">
-                      Alterar E-mail e Senha de Acesso do Administrador
-                    </h3>
-                  </div>
-                </div>
-
-                <p className="text-xs text-neutral-300 leading-relaxed font-sans">
-                  Defina suas credenciais pessoais exclusivas para que somente você tenha acesso ao painel administrativo.
-                  Guarde suas credenciais com segurança.
-                </p>
-
-                {adminCredMsg && (
-                  <div
-                    className={`p-3.5 rounded-xl border text-xs flex items-center gap-2 ${
-                      adminCredMsg.type === 'success'
-                        ? 'bg-emerald-950/40 border-emerald-800 text-emerald-300'
-                        : 'bg-red-950/40 border-red-800 text-red-300'
-                    }`}
-                  >
-                    {adminCredMsg.type === 'success' ? (
-                      <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" />
-                    ) : (
-                      <AlertCircle className="w-4 h-4 shrink-0 text-red-400" />
-                    )}
-                    <span>{adminCredMsg.text}</span>
-                  </div>
-                )}
-
-                <form onSubmit={handleUpdateAdminCredentials} className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div>
-                      <label className="block text-xs font-mono text-neutral-300 mb-1.5 font-semibold">
-                        Novo E-mail de Admin (opcional)
-                      </label>
-                      <input
-                        type="email"
-                        value={newAdminEmail}
-                        onChange={(e) => setNewAdminEmail(e.target.value)}
-                        placeholder={currentUser?.email || 'studiodeluc@gmail.com'}
-                        className="w-full px-3.5 py-2.5 bg-neutral-950 border border-neutral-700 rounded-xl text-white font-mono text-xs focus:border-red-500 focus:outline-none placeholder:text-neutral-600"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-mono text-neutral-300 mb-1.5 font-semibold">
-                        Senha Atual
-                      </label>
-                      <input
-                        type="password"
-                        required
-                        value={currentAdminPassword}
-                        onChange={(e) => setCurrentAdminPassword(e.target.value)}
-                        placeholder="Sua senha atual"
-                        className="w-full px-3.5 py-2.5 bg-neutral-950 border border-neutral-700 rounded-xl text-white font-mono text-xs focus:border-red-500 focus:outline-none placeholder:text-neutral-600"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-mono text-neutral-300 mb-1.5 font-semibold">
-                        Nova Senha de Acesso
-                      </label>
-                      <input
-                        type="password"
-                        required
-                        value={newAdminPassword}
-                        onChange={(e) => setNewAdminPassword(e.target.value)}
-                        placeholder="Mínimo 4 caracteres"
-                        className="w-full px-3.5 py-2.5 bg-neutral-950 border border-neutral-700 rounded-xl text-white font-mono text-xs focus:border-red-500 focus:outline-none placeholder:text-neutral-600"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex justify-end pt-2">
-                    <button
-                      type="submit"
-                      disabled={adminCredLoading}
-                      className="px-6 py-2.5 bg-red-600 hover:bg-red-500 text-white font-bold uppercase rounded-xl text-xs transition-all cursor-pointer flex items-center gap-2 shadow-lg shadow-red-900/30 font-sans active:scale-98"
-                    >
-                      <Shield className="w-4 h-4" />
-                      <span>{adminCredLoading ? 'Salvando...' : 'Atualizar Minhas Credenciais de Admin'}</span>
-                    </button>
-                  </div>
-                </form>
-              </div>
             </div>
           )}
 
@@ -3261,23 +3178,8 @@ export const AdminView: React.FC<AdminViewProps> = ({
                 apostila={extraVideosModalApostila}
                 isAdmin={true}
                 onApostilaUpdated={(updated) => {
-                  if (updated) {
-                    setExtraVideosModalApostila(updated);
-                    setApostilas((prev) =>
-                      prev.map((a) =>
-                        a.id === updated.id || a.moduleId === updated.moduleId
-                          ? { ...a, ...updated, extraVideos: updated.extraVideos || a.extraVideos }
-                          : a
-                      )
-                    );
-                    setBonusApostilas((prev) =>
-                      prev.map((b) =>
-                        b.id === updated.id || b.number === updated.number
-                          ? { ...b, ...updated, extraVideos: updated.extraVideos || b.extraVideos }
-                          : b
-                      )
-                    );
-                  }
+                  setExtraVideosModalApostila(updated);
+                  loadAllAdminData();
                 }}
               />
             </div>

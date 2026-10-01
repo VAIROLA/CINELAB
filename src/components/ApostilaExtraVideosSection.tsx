@@ -1,11 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Apostila, BonusApostila, ApostilaExtraVideo } from '../types/index.js';
 import { api } from '../services/api.js';
-import {
-  saveApostilaExtraVideosToVault,
-  getPersistentExtraVideos,
-  mergeExtraVideosList,
-} from '../utils/apostilaVault.js';
 import {
   Film,
   Play,
@@ -182,81 +177,61 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
     } catch {}
   };
 
-  const isBonus = (apostila as any).number !== undefined && (apostila as any).moduleId === undefined;
-  const targetId = apostila.id || (isBonus ? (apostila as any).number : (apostila as any).moduleId);
-
   // Garante que o Slot 1 e o Slot 2 sempre existam estruturados com Horas, Minutos e Segundos
   const defaultSlot1Title = `Vídeo Extra 01: Estudo Dirigido & Análise Prática – ${apostila.title}`;
   const defaultSlot2Title = `Vídeo Extra 02: Estudo de Caso & Exercício Técnico – ${apostila.title}`;
 
-  const computeInitialVideos = (): ApostilaExtraVideo[] => {
-    const rawList: any[] = (apostila as any)?.extraVideos || [];
-    const rawSlot1 = rawList.find((v: any) => v.slot === 1);
-    const rawSlot2 = rawList.find((v: any) => v.slot === 2);
+  const rawSlot1 = rawExtraVideos.find((v: any) => v.slot === 1);
+  const note1 = rawSlot1?.professorNotes !== undefined ? rawSlot1.professorNotes : (getLocalNotes(1) || '');
 
-    const baseSlot1: ApostilaExtraVideo = rawSlot1 ? { ...rawSlot1, professorNotes: rawSlot1.professorNotes !== undefined ? rawSlot1.professorNotes : (getLocalNotes(1) || '') } : {
-      id: `ev-${apostila.id}-1`,
-      slot: 1,
-      title: defaultSlot1Title,
-      description: `Aprofundamento técnico dos conceitos fundamentais da apostila com análise de decupagem comentada pelo Professor Tony de Luc.`,
-      videoUrl: '/videos/cinelab-intro-apresentacao.mp4',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80',
-      durationHours: 0,
-      durationMinutes: 18,
-      durationSeconds: 0,
-      totalDurationSeconds: 18 * 60,
-      durationLabel: '00h 18m 00s',
-      professorNotes: getLocalNotes(1) || '',
-      uploadedAt: new Date().toISOString(),
-    };
+  const rawSlot2 = rawExtraVideos.find((v: any) => v.slot === 2);
+  const note2 = rawSlot2?.professorNotes !== undefined ? rawSlot2.professorNotes : (getLocalNotes(2) || '');
 
-    const baseSlot2: ApostilaExtraVideo = rawSlot2 ? { ...rawSlot2, professorNotes: rawSlot2.professorNotes !== undefined ? rawSlot2.professorNotes : (getLocalNotes(2) || '') } : {
-      id: `ev-${apostila.id}-2`,
-      slot: 2,
-      title: defaultSlot2Title,
-      description: `Exercício prático de aplicação em set de filmagem com demonstração passo a passo da metodologia do CINELAB.`,
-      videoUrl: '',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80',
-      durationHours: 0,
-      durationMinutes: 24,
-      durationSeconds: 0,
-      totalDurationSeconds: 24 * 60,
-      durationLabel: '00h 24m 00s',
-      professorNotes: getLocalNotes(2) || '',
-      uploadedAt: new Date().toISOString(),
-    };
-
-    const baseVideos = [baseSlot1, baseSlot2];
-    const localVideos = getPersistentExtraVideos(targetId, isBonus);
-    return mergeExtraVideosList(baseVideos, localVideos);
+  const slot1: ApostilaExtraVideo = rawSlot1 ? { ...rawSlot1, professorNotes: note1 } : {
+    id: `ev-${apostila.id}-1`,
+    slot: 1,
+    title: defaultSlot1Title,
+    description: `Aprofundamento técnico dos conceitos fundamentais da apostila com análise de decupagem comentada pelo Professor Tony de Luc.`,
+    videoUrl: '/videos/cinelab-intro-apresentacao.mp4',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80',
+    durationHours: 0,
+    durationMinutes: 18,
+    durationSeconds: 0,
+    totalDurationSeconds: 18 * 60,
+    durationLabel: '00h 18m 00s',
+    professorNotes: note1,
+    uploadedAt: new Date().toISOString(),
   };
 
-  const [currentVideos, setCurrentVideos] = useState<ApostilaExtraVideo[]>(computeInitialVideos);
+  const slot2: ApostilaExtraVideo = rawSlot2 ? { ...rawSlot2, professorNotes: note2 } : {
+    id: `ev-${apostila.id}-2`,
+    slot: 2,
+    title: defaultSlot2Title,
+    description: `Exercício prático de aplicação em set de filmagem com demonstração passo a passo da metodologia do CINELAB.`,
+    videoUrl: '', // Pronto para upload ou YouTube
+    thumbnailUrl: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80',
+    durationHours: 0,
+    durationMinutes: 24,
+    durationSeconds: 0,
+    totalDurationSeconds: 24 * 60,
+    durationLabel: '00h 24m 00s',
+    professorNotes: note2,
+    uploadedAt: new Date().toISOString(),
+  };
 
-  // Mantém sincronizado quando a prop 'apostila' mudar sem perder edições locais
-  useEffect(() => {
-    setCurrentVideos((prev) => {
-      const incomingPropVideos = (apostila as any)?.extraVideos || [];
-      const localVideos = getPersistentExtraVideos(targetId, isBonus);
-      const mergedWithProp = mergeExtraVideosList(incomingPropVideos, prev);
-      return mergeExtraVideosList(mergedWithProp, localVideos);
-    });
-  }, [apostila.id, (apostila as any).extraVideos]);
-
-  const extraVideos = currentVideos;
+  const extraVideos = [slot1, slot2];
 
   // Abertura do Modal de Edição Geral
   const handleStartEdit = (video: ApostilaExtraVideo) => {
-    const live = currentVideos.find((v) => v.slot === video.slot) || video;
-    setEditingSlot(live.slot);
+    setEditingSlot(video.slot);
     setYoutubeSlot(null);
     setEditingNotesSlot(null);
-    setFormTitle(live.title || `Vídeo Extra 0${live.slot}: Estudo de Caso`);
-    setFormDescription(live.description || '');
-    setFormVideoUrl(live.videoUrl || '');
-    setFormProfessorNotes(live.professorNotes || '');
+    setFormTitle(video.title || `Vídeo Extra 0${video.slot}: Estudo de Caso`);
+    setFormDescription(video.description || '');
+    setFormVideoUrl(video.videoUrl || '');
+    setFormProfessorNotes(video.professorNotes || '');
 
-    const { hours, minutes, seconds } = parseHmsFromVideo(live);
+    const { hours, minutes, seconds } = parseHmsFromVideo(video);
     setFormHours(hours);
     setFormMinutes(minutes);
     setFormSeconds(seconds);
@@ -267,20 +242,19 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
 
   // Abertura do Modal / Aba Direta do YouTube
   const handleOpenYoutubeModal = (video: ApostilaExtraVideo) => {
-    const live = currentVideos.find((v) => v.slot === video.slot) || video;
-    setYoutubeSlot(live.slot);
+    setYoutubeSlot(video.slot);
     setEditingSlot(null);
     setEditingNotesSlot(null);
-    const isYt = Boolean(extractYoutubeId(live.videoUrl));
-    setYtUrl(isYt ? live.videoUrl : '');
-    setYtTitle(live.title || `Vídeo Extra 0${live.slot}: Estudo Dirigido – ${apostila.title}`);
+    const isYt = Boolean(extractYoutubeId(video.videoUrl));
+    setYtUrl(isYt ? video.videoUrl : '');
+    setYtTitle(video.title || `Vídeo Extra 0${video.slot}: Estudo Dirigido – ${apostila.title}`);
     setYtDescription(
-      live.description ||
+      video.description ||
         `Análise técnica e estudo dirigido para aprofundar os conceitos teóricos desta apostila com o Diretor Tony de Luc.`
     );
-    setYtProfessorNotes(live.professorNotes || '');
+    setYtProfessorNotes(video.professorNotes || '');
 
-    const { hours, minutes, seconds } = parseHmsFromVideo(live);
+    const { hours, minutes, seconds } = parseHmsFromVideo(video);
     setYtHours(hours);
     setYtMinutes(minutes);
     setYtSeconds(seconds);
@@ -319,14 +293,7 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
       const totalSecs = safeH * 3600 + safeM * 60 + safeS;
       const formattedLabel = formatHms(safeH, safeM, safeS);
 
-      const otherSlot = slot === 1 ? 2 : 1;
-      const otherVideo = currentVideos.find((v) => v.slot === otherSlot) || extraVideos.find((v) => v.slot === otherSlot)!;
-      const thisCurrent = currentVideos.find((v) => v.slot === slot) || extraVideos.find((v) => v.slot === slot)!;
-
-      const newThisVideo: ApostilaExtraVideo = {
-        ...thisCurrent,
-        id: thisCurrent?.id || `ev-${apostila.id}-${slot}`,
-        slot,
+      const res = await api.updateApostilaExtraVideo(apostila.id, slot, {
         title: ytTitle.trim() || `Vídeo Extra 0${slot}: Estudo Dirigido – YouTube`,
         description: ytDescription.trim(),
         videoUrl: canonicalYtUrl,
@@ -337,43 +304,13 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
         totalDurationSeconds: totalSecs,
         durationLabel: formattedLabel,
         professorNotes: ytProfessorNotes.trim(),
-        uploadedAt: new Date().toISOString(),
-      };
-
-      const updatedList: ApostilaExtraVideo[] = slot === 1
-        ? [newThisVideo, otherVideo]
-        : [otherVideo, newThisVideo];
-
-      // Atualização imediata no estado e no cofre local
-      setCurrentVideos(updatedList);
-      saveLocalNotes(slot, ytProfessorNotes.trim());
-      await saveApostilaExtraVideosToVault(targetId, updatedList, isBonus);
-
-      const res = await api.updateApostilaExtraVideo(apostila.id, slot, {
-        title: newThisVideo.title,
-        description: newThisVideo.description,
-        videoUrl: newThisVideo.videoUrl,
-        thumbnailUrl: newThisVideo.thumbnailUrl,
-        durationHours: safeH,
-        durationMinutes: safeM,
-        durationSeconds: safeS,
-        totalDurationSeconds: totalSecs,
-        durationLabel: formattedLabel,
-        professorNotes: ytProfessorNotes.trim(),
-        extraVideos: updatedList,
       });
 
-      const finalMerged = mergeExtraVideosList(res.extraVideos, updatedList);
-      setCurrentVideos(finalMerged);
-      await saveApostilaExtraVideosToVault(targetId, finalMerged, isBonus);
-
       if (onApostilaUpdated) {
-        onApostilaUpdated({
-          ...(res.apostila || apostila),
-          extraVideos: finalMerged,
-        });
+        onApostilaUpdated(res.apostila || { ...apostila, extraVideos: res.extraVideos });
       }
 
+      saveLocalNotes(slot, ytProfessorNotes.trim());
       setSuccessMsg(`Vídeo do YouTube vinculado ao Local 0${slot} com sucesso!`);
       setYoutubeSlot(null);
       setTimeout(() => setSuccessMsg(null), 4000);
@@ -402,34 +339,6 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
         thumb = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
       }
 
-      const otherSlot = slot === 1 ? 2 : 1;
-      const otherVideo = currentVideos.find((v) => v.slot === otherSlot) || extraVideos.find((v) => v.slot === otherSlot)!;
-      const thisCurrent = currentVideos.find((v) => v.slot === slot) || extraVideos.find((v) => v.slot === slot)!;
-
-      const newThisVideo: ApostilaExtraVideo = {
-        ...thisCurrent,
-        id: thisCurrent?.id || `ev-${apostila.id}-${slot}`,
-        slot,
-        title: formTitle.trim(),
-        description: formDescription.trim(),
-        videoUrl: trimmedUrl,
-        thumbnailUrl: thumb || thisCurrent?.thumbnailUrl,
-        durationHours: safeH,
-        durationMinutes: safeM,
-        durationSeconds: safeS,
-        totalDurationSeconds: totalSecs,
-        durationLabel: formattedLabel,
-        professorNotes: formProfessorNotes.trim(),
-      };
-
-      const updatedList: ApostilaExtraVideo[] = slot === 1
-        ? [newThisVideo, otherVideo]
-        : [otherVideo, newThisVideo];
-
-      setCurrentVideos(updatedList);
-      saveLocalNotes(slot, formProfessorNotes.trim());
-      await saveApostilaExtraVideosToVault(targetId, updatedList, isBonus);
-
       const res = await api.updateApostilaExtraVideo(apostila.id, slot, {
         title: formTitle.trim(),
         description: formDescription.trim(),
@@ -441,20 +350,12 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
         totalDurationSeconds: totalSecs,
         durationLabel: formattedLabel,
         professorNotes: formProfessorNotes.trim(),
-        extraVideos: updatedList,
       });
 
-      const finalMerged = mergeExtraVideosList(res.extraVideos, updatedList);
-      setCurrentVideos(finalMerged);
-      await saveApostilaExtraVideosToVault(targetId, finalMerged, isBonus);
-
       if (onApostilaUpdated) {
-        onApostilaUpdated({
-          ...(res.apostila || apostila),
-          extraVideos: finalMerged,
-        });
+        onApostilaUpdated(res.apostila || { ...apostila, extraVideos: res.extraVideos });
       }
-
+      saveLocalNotes(slot, formProfessorNotes.trim());
       setSuccessMsg(`Informações do Vídeo Extra 0${slot} salvas com sucesso!`);
       setEditingSlot(null);
       setTimeout(() => setSuccessMsg(null), 4000);
@@ -469,39 +370,15 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
       setIsSavingNotes(true);
       setErrorMsg(null);
 
-      const otherSlot = slot === 1 ? 2 : 1;
-      const otherVideo = currentVideos.find((v) => v.slot === otherSlot) || extraVideos.find((v) => v.slot === otherSlot)!;
-      const thisCurrent = currentVideos.find((v) => v.slot === slot) || extraVideos.find((v) => v.slot === slot)!;
-
-      const newThisVideo: ApostilaExtraVideo = {
-        ...thisCurrent,
-        professorNotes: notesText.trim(),
-      };
-
-      const updatedList: ApostilaExtraVideo[] = slot === 1
-        ? [newThisVideo, otherVideo]
-        : [otherVideo, newThisVideo];
-
-      setCurrentVideos(updatedList);
-      saveLocalNotes(slot, notesText.trim());
-      await saveApostilaExtraVideosToVault(targetId, updatedList, isBonus);
-
       const res = await api.updateApostilaExtraVideo(apostila.id, slot, {
         professorNotes: notesText.trim(),
-        extraVideos: updatedList,
       });
 
-      const finalMerged = mergeExtraVideosList(res.extraVideos, updatedList);
-      setCurrentVideos(finalMerged);
-      await saveApostilaExtraVideosToVault(targetId, finalMerged, isBonus);
-
       if (onApostilaUpdated) {
-        onApostilaUpdated({
-          ...(res.apostila || apostila),
-          extraVideos: finalMerged,
-        });
+        onApostilaUpdated(res.apostila || { ...apostila, extraVideos: res.extraVideos });
       }
 
+      saveLocalNotes(slot, notesText.trim());
       setSuccessMsg(`Orientação do Professor Tony de Luc do Local 0${slot} atualizada com sucesso!`);
       setEditingNotesSlot(null);
       setTimeout(() => setSuccessMsg(null), 4000);
@@ -545,7 +422,7 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
       setUploadingSlot(slot);
       setUploadProgress(0);
 
-      const currentVid = currentVideos.find((v) => v.slot === slot) || extraVideos.find((v) => v.slot === slot);
+      const currentVid = extraVideos.find((v) => v.slot === slot);
       const parsed = parseHmsFromVideo(currentVid);
 
       // Detecta tempo exato do arquivo de vídeo se possível
@@ -554,9 +431,6 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
       const finalM = detectedTime.minutes > 0 ? detectedTime.minutes : parsed.minutes;
       const finalS = detectedTime.seconds > 0 ? detectedTime.seconds : parsed.seconds;
       const finalLabel = formatHms(finalH, finalM, finalS);
-
-      const otherSlot = slot === 1 ? 2 : 1;
-      const otherVideo = currentVideos.find((v) => v.slot === otherSlot) || extraVideos.find((v) => v.slot === otherSlot)!;
 
       const res = await api.uploadApostilaExtraVideo(apostila.id, slot, file, {
         title: currentVid?.title || `Vídeo Extra 0${slot}: Estudo Dirigido`,
@@ -569,20 +443,8 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
         onProgress: (p) => setUploadProgress(p),
       });
 
-      const thisNewVid = res.extraVideo || (res.extraVideos && res.extraVideos.find((v: any) => v.slot === slot));
-      const updatedList: ApostilaExtraVideo[] = slot === 1
-        ? [thisNewVid || currentVid!, otherVideo]
-        : [otherVideo, thisNewVid || currentVid!];
-
-      const finalMerged = mergeExtraVideosList(res.extraVideos, updatedList);
-      setCurrentVideos(finalMerged);
-      await saveApostilaExtraVideosToVault(targetId, finalMerged, isBonus);
-
       if (onApostilaUpdated) {
-        onApostilaUpdated({
-          ...(res.apostila || apostila),
-          extraVideos: finalMerged,
-        });
+        onApostilaUpdated(res.apostila || { ...apostila, extraVideos: res.extraVideos });
       }
       setSuccessMsg(`Arquivo de vídeo para o Local 0${slot} subido com sucesso! (${finalLabel})`);
       setTimeout(() => setSuccessMsg(null), 4000);
@@ -601,32 +463,9 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
     }
     try {
       setErrorMsg(null);
-      const otherSlot = slot === 1 ? 2 : 1;
-      const otherVideo = currentVideos.find((v) => v.slot === otherSlot) || extraVideos.find((v) => v.slot === otherSlot)!;
-      const thisCurrent = currentVideos.find((v) => v.slot === slot) || extraVideos.find((v) => v.slot === slot)!;
-
-      const newThisVideo: ApostilaExtraVideo = {
-        ...thisCurrent,
-        videoUrl: '',
-      };
-
-      const updatedList: ApostilaExtraVideo[] = slot === 1
-        ? [newThisVideo, otherVideo]
-        : [otherVideo, newThisVideo];
-
-      setCurrentVideos(updatedList);
-      await saveApostilaExtraVideosToVault(targetId, updatedList, isBonus);
-
       const res = await api.deleteApostilaExtraVideo(apostila.id, slot);
-      const finalMerged = mergeExtraVideosList(res.extraVideos, updatedList);
-      setCurrentVideos(finalMerged);
-      await saveApostilaExtraVideosToVault(targetId, finalMerged, isBonus);
-
       if (onApostilaUpdated) {
-        onApostilaUpdated({
-          ...(res.apostila || apostila),
-          extraVideos: finalMerged,
-        });
+        onApostilaUpdated(res.apostila || { ...apostila, extraVideos: res.extraVideos });
       }
       setSuccessMsg(`Vídeo do Local 0${slot} removido.`);
       setTimeout(() => setSuccessMsg(null), 4000);

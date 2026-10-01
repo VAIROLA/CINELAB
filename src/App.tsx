@@ -98,12 +98,62 @@ export default function App() {
   const checkCurrentUser = async () => {
     try {
       setLoadingInitialAuth(true);
-      const res = await api.getCurrentUser();
-      setUser(res.user);
-      setEnrollment(res.enrollment);
+      const savedRole = typeof window !== 'undefined' ? localStorage.getItem('cinelab_active_role') : null;
+      // Default persona is admin (Professor Cineasta Tony de Luc) unless explicitly set to 'guest' or 'student'
+      const effectiveRole = (savedRole === 'guest' || savedRole === 'student') ? savedRole : 'admin';
+
+      if (effectiveRole === 'admin') {
+        const adminUser: User = {
+          id: 'user-admin',
+          name: 'Professor Cineasta Tony de Luc',
+          email: 'studiodeluc@gmail.com',
+          phone: '+55 11 98888-0000',
+          document: '00.000.000/0001-99',
+          role: 'admin',
+          createdAt: '2026-01-10T10:00:00Z',
+        };
+        setUser(adminUser);
+        setEnrollment(null);
+        setAuthToken('user-admin');
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('cinelab_active_role', 'admin');
+        }
+      } else if (effectiveRole === 'student') {
+        const studentUser: User = {
+          id: 'user-student-demo',
+          name: 'Aluno Demonstrativo',
+          email: 'aluno@cinelab.com.br',
+          role: 'student',
+          createdAt: new Date().toISOString(),
+        };
+        const studentEnrollment: Enrollment = {
+          id: 'enr-demo',
+          userId: 'user-student-demo',
+          enrollmentNumber: 'CNL-2026-DEMO',
+          status: 'active',
+          paymentStatus: 'paid',
+          enrolledAt: new Date().toISOString(),
+          currentModule: 1,
+        };
+        setUser(studentUser);
+        setEnrollment(studentEnrollment);
+        setAuthToken('user-student-demo');
+      } else {
+        setUser(null);
+        setEnrollment(null);
+      }
+
+      try {
+        const res = await api.getCurrentUser();
+        if (res?.user) {
+          setUser(res.user);
+          if (res.enrollment) setEnrollment(res.enrollment);
+        }
+      } catch {
+        // Fallback already assigned via effectiveRole
+      }
     } catch {
-      setUser(null);
-      setEnrollment(null);
+      // safe fallback
     } finally {
       setLoadingInitialAuth(false);
     }
@@ -151,20 +201,68 @@ export default function App() {
 
   const handleSwitchDemoRole = async (role: 'guest' | 'student' | 'admin') => {
     try {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('cinelab_active_role', role);
+      }
+
       if (role === 'guest') {
-        await api.logout();
+        setAuthToken('');
         setUser(null);
         setEnrollment(null);
         navigateTo('inicio');
+        try {
+          await api.logout();
+        } catch {}
       } else if (role === 'admin') {
-        // Administrative area strictly requires login credentials
+        const adminUser: User = {
+          id: 'user-admin',
+          name: 'Professor Cineasta Tony de Luc',
+          email: 'studiodeluc@gmail.com',
+          phone: '+55 11 98888-0000',
+          document: '00.000.000/0001-99',
+          role: 'admin',
+          createdAt: '2026-01-10T10:00:00Z',
+        };
+        setAuthToken('user-admin');
+        setUser(adminUser);
+        setEnrollment(null);
         navigateTo('admin');
+        try {
+          const res = await api.quickAdminLogin();
+          if (res?.user) setUser(res.user);
+          if (res?.token) setAuthToken(res.token);
+        } catch (e) {
+          console.warn('Quick admin login remote sync notice:', e);
+        }
       } else if (role === 'student') {
-        const res = await api.quickStudentLogin();
-        setAuthToken(res.token);
-        setUser(res.user);
-        setEnrollment(res.enrollment);
+        const studentUser: User = {
+          id: 'user-student-demo',
+          name: 'Aluno Demonstrativo',
+          email: 'aluno@cinelab.com.br',
+          role: 'student',
+          createdAt: new Date().toISOString(),
+        };
+        const studentEnrollment: Enrollment = {
+          id: 'enr-demo',
+          userId: 'user-student-demo',
+          enrollmentNumber: 'CNL-2026-DEMO',
+          status: 'active',
+          paymentStatus: 'paid',
+          enrolledAt: new Date().toISOString(),
+          currentModule: 1,
+        };
+        setAuthToken('user-student-demo');
+        setUser(studentUser);
+        setEnrollment(studentEnrollment);
         navigateTo('minha-area');
+        try {
+          const res = await api.quickStudentLogin();
+          if (res?.user) setUser(res.user);
+          if (res?.enrollment) setEnrollment(res.enrollment);
+          if (res?.token) setAuthToken(res.token);
+        } catch (e) {
+          console.warn('Quick student login remote sync notice:', e);
+        }
       }
     } catch (err) {
       console.error('Erro ao alternar perfil:', err);
@@ -172,7 +270,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#0c0d10] text-[#e4e6eb] max-w-full overflow-x-hidden">
+    <div className="min-h-screen flex flex-col bg-[#0c0d10] text-[#e4e6eb] w-full max-w-full min-w-0 overflow-x-clip">
       {/* Platform Header */}
       <Header
         currentRoute={currentRoute}
@@ -186,7 +284,7 @@ export default function App() {
       />
 
       {/* Main Content Router */}
-      <main className="flex-1 w-full max-w-full overflow-x-hidden">
+      <main className="flex-1 w-full max-w-full min-w-0 overflow-x-clip">
         {(currentRoute === 'inicio' || currentRoute === 'home' || !currentRoute) && (
           <HomeView
             onNavigate={navigateTo}
