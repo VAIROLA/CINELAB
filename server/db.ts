@@ -304,7 +304,7 @@ export function initExtraVideosForApostila(apos: any, defaultSuffix: string): Ap
     };
   } else {
     // If the slot already exists, preserve whatever professorNotes the user wrote (or left empty)
-    if (slot1.professorNotes === undefined) {
+    if (slot1.professorNotes === undefined || (slot1.professorNotes === '' && savedNotesMap[aposKey1])) {
       slot1.professorNotes = savedNotesMap[aposKey1] || '';
     }
     if (!slot1.durationLabel || slot1.durationLabel === '18 min') {
@@ -335,7 +335,7 @@ export function initExtraVideosForApostila(apos: any, defaultSuffix: string): Ap
     };
   } else {
     // If the slot already exists, preserve whatever professorNotes the user wrote (or left empty)
-    if (slot2.professorNotes === undefined) {
+    if (slot2.professorNotes === undefined || (slot2.professorNotes === '' && savedNotesMap[aposKey2])) {
       slot2.professorNotes = savedNotesMap[aposKey2] || '';
     }
     if (!slot2.durationLabel || slot2.durationLabel === '24 min') {

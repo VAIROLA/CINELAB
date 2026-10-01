@@ -1,4 +1,4 @@
-﻿{
+{
     "settings":  {
                      "courseName":  "CINELAB",
                      "courseSubtitle":  "CINEMA \u0026 AUDIOVISUAL",
@@ -740,10 +740,10 @@
                                                   "thumbnailUrl":  "https://img.youtube.com/vi/q1U0eKOOwsQ/hqdefault.jpg",
                                                   "durationHours":  0,
                                                   "durationMinutes":  52,
-                                                  "durationSeconds":  0,
-                                                  "totalDurationSeconds":  3120,
-                                                  "durationLabel":  "00h 52m 00s",
-                                                  "professorNotes":  "",
+                                                  "durationSeconds":  48,
+                                                  "totalDurationSeconds":  3168,
+                                                  "durationLabel":  "00h 52m 48s",
+                                                  "professorNotes":  "Como Chaplin consegue fazer o espectador compreender a história e sentir emoção utilizando principalmente imagens, gestos e expressões?\nO ALUNO DEVE COM O FILME O Garoto, aprender a ler uma história através das imagens.",
                                                   "uploadedAt":  "2026-09-29T13:12:25.244Z"
                                               },
                                               {
@@ -758,7 +758,7 @@
                                                   "durationSeconds":  52,
                                                   "totalDurationSeconds":  5212,
                                                   "durationLabel":  "01h 26m 52s",
-                                                  "professorNotes":  "",
+                                                  "professorNotes":  "Como Chaplin utiliza a imagem, o movimento, o ritmo e o som para transmitir uma ideia sem precisar explicar tudo através de diálogos?\nO ALUNO DEVE COM O FILME Tempos Modernos, perceber como imagem + movimento + montagem + som constroem significado.",
                                                   "uploadedAt":  "2026-09-29T13:12:38.378Z"
                                               }
                                           ]
