@@ -127,13 +127,14 @@ export default function App() {
           createdAt: new Date().toISOString(),
         };
         const studentEnrollment: Enrollment = {
-          id: 'enr-demo',
-          userId: 'user-student-demo',
-          enrollmentNumber: 'CNL-2026-DEMO',
-          status: 'active',
-          paymentStatus: 'paid',
+          id: "enr-demo",
+          enrollmentNumber: "CNL-2026-DEMO",
+          studentId: "user-student-demo",
+          studentName: "Aluno Demonstração",
+          studentEmail: "aluno@cinelab.com.br",
+          status: "active",
           enrolledAt: new Date().toISOString(),
-          currentModule: 1,
+          paymentId: "pay-demo",
         };
         setUser(studentUser);
         setEnrollment(studentEnrollment);
@@ -243,13 +244,14 @@ export default function App() {
           createdAt: new Date().toISOString(),
         };
         const studentEnrollment: Enrollment = {
-          id: 'enr-demo',
-          userId: 'user-student-demo',
-          enrollmentNumber: 'CNL-2026-DEMO',
-          status: 'active',
-          paymentStatus: 'paid',
+          id: "enr-demo",
+          enrollmentNumber: "CNL-2026-DEMO",
+          studentId: "user-student-demo",
+          studentName: "Aluno Demonstração",
+          studentEmail: "aluno@cinelab.com.br",
+          status: "active",
           enrolledAt: new Date().toISOString(),
-          currentModule: 1,
+          paymentId: "pay-demo",
         };
         setAuthToken('user-student-demo');
         setUser(studentUser);
