@@ -1,32 +1,13 @@
-let cachedApp: any = null;
+import app from '../server.ts';
 
-async function getApp() {
-  if (cachedApp) return cachedApp;
+export default function handler(req: any, res: any) {
   try {
-    const mod = await import('../server.js');
-    cachedApp = mod.default || mod.app || mod;
-    return cachedApp;
-  } catch (e1) {
-    try {
-      const mod = await import('../server.ts');
-      cachedApp = mod.default || mod.app || mod;
-      return cachedApp;
-    } catch (e2) {
-      console.error('[CINELAB Vercel Handler] Import failed:', e1, e2);
-      throw e2;
-    }
-  }
-}
-
-export default async function handler(req: any, res: any) {
-  try {
-    const app = await getApp();
     return app(req, res);
   } catch (err: any) {
-    console.error('[CINELAB Vercel API Error]:', err);
+    console.error('[CINELAB API Error]:', err);
     if (!res.headersSent) {
       res.status(500).json({
-        error: 'Erro interno no backend Vercel',
+        error: 'Erro interno na API CINELAB',
         message: err?.message || String(err),
       });
     }
