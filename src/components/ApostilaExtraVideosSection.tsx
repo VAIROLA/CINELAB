@@ -463,7 +463,7 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
   const getEmbedUrl = (url: string) => {
     const ytId = extractYoutubeId(url);
     if (ytId) {
-      return `https://www.youtube.com/embed/${ytId}?rel=0&modestbranding=1&enablejsapi=1`;
+      return `https://www.youtube-nocookie.com/embed/${ytId}?rel=0&modestbranding=1&playsinline=1`;
     }
     if (url.includes('vimeo.com/')) {
       const vimeoId = url.split('vimeo.com/')[1]?.split('?')[0];
@@ -618,8 +618,11 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
                         src={getEmbedUrl(video.videoUrl)}
                         title={video.title}
                         className="w-full h-full border-0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        style={{ minHeight: '180px', width: '100%', height: '100%' }}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
                         allowFullScreen
+                        referrerPolicy="no-referrer-when-downgrade"
+                        loading="lazy"
                       />
                     ) : (
                       <video

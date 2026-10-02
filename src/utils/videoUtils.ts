@@ -62,7 +62,7 @@ export function parseVideoEmbed(rawUrl?: string, subLang?: string): ParsedVideoE
       : '';
     return {
       type: 'youtube',
-      embedUrl: `https://www.youtube.com/embed/${videoId}?rel=0&playsinline=1&enablejsapi=1${ccParam}`,
+      embedUrl: `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&playsinline=1${ccParam}`,
       directUrl: trimmed,
       externalWatchUrl: `https://www.youtube.com/watch?v=${videoId}`,
       platformLabel: 'YouTube HD',
