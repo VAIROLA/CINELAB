@@ -4547,6 +4547,38 @@
   "simulatedDaysOffset": 0,
   "visitors": [
     {
+      "id": "vis-1790906815365-zcot",
+      "ip": "45.237.74.48",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "deviceType": "desktop",
+      "pagePath": "/",
+      "pageTitle": "Página Inicial – CINELAB",
+      "referrer": "https://aistudio.google.com/",
+      "timestamp": "2026-10-02T02:06:55.365Z",
+      "isInterestedInEnrollment": false,
+      "city": "Brasil",
+      "state": "BR",
+      "userId": "user-admin",
+      "userName": "Professor Cineasta Tony de Luc",
+      "isStudent": false
+    },
+    {
+      "id": "vis-1790906810280-foj3",
+      "ip": "45.237.74.48",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "deviceType": "desktop",
+      "pagePath": "/admin",
+      "pageTitle": "Painel de Gestão Acadêmica",
+      "referrer": "https://aistudio.google.com/",
+      "timestamp": "2026-10-02T02:06:50.280Z",
+      "isInterestedInEnrollment": false,
+      "city": "Brasil",
+      "state": "BR",
+      "userId": "user-admin",
+      "userName": "Professor Cineasta Tony de Luc",
+      "isStudent": false
+    },
+    {
       "id": "vis-1790905934580-ueyj",
       "ip": "45.237.74.48",
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",

@@ -53,51 +53,35 @@ app.use((req, res, next) => {
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-// Configure directories and static serving for uploads
-const uploadsDir = path.join(process.cwd(), 'public', 'uploads', 'videos');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
+// Configure directories and static serving for uploads safely (serverless read-only resilient)
+function safeEnsureDir(dirPath) {
+  try {
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath, { recursive: true });
+    }
+  } catch (err) {
+    // Graceful fallback on read-only environments like Vercel Lambda
+  }
 }
 
-const imagesUploadDir = path.join(process.cwd(), 'public', 'uploads', 'images');
-if (!fs.existsSync(imagesUploadDir)) {
-  fs.mkdirSync(imagesUploadDir, { recursive: true });
-}
-
-const apostilasUploadDir = path.join(process.cwd(), 'public', 'uploads', 'apostilas');
-if (!fs.existsSync(apostilasUploadDir)) {
-  fs.mkdirSync(apostilasUploadDir, { recursive: true });
-}
-
-const materiaisDir = path.join(process.cwd(), 'public', 'materiais');
-if (!fs.existsSync(materiaisDir)) {
-  fs.mkdirSync(materiaisDir, { recursive: true });
-}
-
-const backupApostilasDir = path.join(process.cwd(), 'data', 'apostilas_backup');
-if (!fs.existsSync(backupApostilasDir)) {
-  fs.mkdirSync(backupApostilasDir, { recursive: true });
-}
-
-const backupVideosDir = path.join(process.cwd(), 'data', 'videos_backup');
-if (!fs.existsSync(backupVideosDir)) {
-  fs.mkdirSync(backupVideosDir, { recursive: true });
-}
-
-const backupImagesDir = path.join(process.cwd(), 'data', 'images_backup');
-if (!fs.existsSync(backupImagesDir)) {
-  fs.mkdirSync(backupImagesDir, { recursive: true });
-}
-
-const publicImagesDir = path.join(process.cwd(), 'public', 'images');
-if (!fs.existsSync(publicImagesDir)) {
-  fs.mkdirSync(publicImagesDir, { recursive: true });
-}
-
-const tempChunksDir = path.join(process.cwd(), 'data', 'temp_chunks');
-if (!fs.existsSync(tempChunksDir)) {
-  fs.mkdirSync(tempChunksDir, { recursive: true });
-}
+const uploadsDir = path.join(process.cwd(), "public", "uploads", "videos");
+safeEnsureDir(uploadsDir);
+const imagesUploadDir = path.join(process.cwd(), "public", "uploads", "images");
+safeEnsureDir(imagesUploadDir);
+const apostilasUploadDir = path.join(process.cwd(), "public", "uploads", "apostilas");
+safeEnsureDir(apostilasUploadDir);
+const materiaisDir = path.join(process.cwd(), "public", "materiais");
+safeEnsureDir(materiaisDir);
+const backupApostilasDir = path.join(process.cwd(), "data", "apostilas_backup");
+safeEnsureDir(backupApostilasDir);
+const backupVideosDir = path.join(process.cwd(), "data", "videos_backup");
+safeEnsureDir(backupVideosDir);
+const backupImagesDir = path.join(process.cwd(), "data", "images_backup");
+safeEnsureDir(backupImagesDir);
+const publicImagesDir = path.join(process.cwd(), "public", "images");
+safeEnsureDir(publicImagesDir);
+const tempChunksDir = path.join(process.cwd(), "data", "temp_chunks");
+safeEnsureDir(tempChunksDir);
 
 /**
  * Detecta o número real de páginas de um arquivo PDF via pdf-lib com fallback para regex

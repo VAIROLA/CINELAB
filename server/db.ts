@@ -345,9 +345,11 @@ export function initExtraVideosForApostila(apos: any, defaultSuffix: string): Ap
 
 export function loadDatabase(): void {
   try {
-    if (!fs.existsSync(DB_DIR)) {
-      fs.mkdirSync(DB_DIR, { recursive: true });
-    }
+    try {
+      if (!fs.existsSync(DB_DIR)) {
+        fs.mkdirSync(DB_DIR, { recursive: true });
+      }
+    } catch (_) {}
     let data = '';
     if (fs.existsSync(DB_FILE)) {
       try {

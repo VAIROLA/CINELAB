@@ -5031,8 +5031,11 @@ function initExtraVideosForApostila(apos, defaultSuffix) {
 }
 function loadDatabase() {
   try {
-    if (!fs.existsSync(DB_DIR)) {
-      fs.mkdirSync(DB_DIR, { recursive: true });
+    try {
+      if (!fs.existsSync(DB_DIR)) {
+        fs.mkdirSync(DB_DIR, { recursive: true });
+      }
+    } catch (_) {
     }
     let data = "";
     if (fs.existsSync(DB_FILE)) {
@@ -6270,42 +6273,32 @@ app.use((req, res, next) => {
 });
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
+function safeEnsureDir(dirPath) {
+  try {
+    if (!fs2.existsSync(dirPath)) {
+      fs2.mkdirSync(dirPath, { recursive: true });
+    }
+  } catch (err) {
+  }
+}
 var uploadsDir = path2.join(process.cwd(), "public", "uploads", "videos");
-if (!fs2.existsSync(uploadsDir)) {
-  fs2.mkdirSync(uploadsDir, { recursive: true });
-}
+safeEnsureDir(uploadsDir);
 var imagesUploadDir = path2.join(process.cwd(), "public", "uploads", "images");
-if (!fs2.existsSync(imagesUploadDir)) {
-  fs2.mkdirSync(imagesUploadDir, { recursive: true });
-}
+safeEnsureDir(imagesUploadDir);
 var apostilasUploadDir = path2.join(process.cwd(), "public", "uploads", "apostilas");
-if (!fs2.existsSync(apostilasUploadDir)) {
-  fs2.mkdirSync(apostilasUploadDir, { recursive: true });
-}
+safeEnsureDir(apostilasUploadDir);
 var materiaisDir = path2.join(process.cwd(), "public", "materiais");
-if (!fs2.existsSync(materiaisDir)) {
-  fs2.mkdirSync(materiaisDir, { recursive: true });
-}
+safeEnsureDir(materiaisDir);
 var backupApostilasDir = path2.join(process.cwd(), "data", "apostilas_backup");
-if (!fs2.existsSync(backupApostilasDir)) {
-  fs2.mkdirSync(backupApostilasDir, { recursive: true });
-}
+safeEnsureDir(backupApostilasDir);
 var backupVideosDir = path2.join(process.cwd(), "data", "videos_backup");
-if (!fs2.existsSync(backupVideosDir)) {
-  fs2.mkdirSync(backupVideosDir, { recursive: true });
-}
+safeEnsureDir(backupVideosDir);
 var backupImagesDir = path2.join(process.cwd(), "data", "images_backup");
-if (!fs2.existsSync(backupImagesDir)) {
-  fs2.mkdirSync(backupImagesDir, { recursive: true });
-}
+safeEnsureDir(backupImagesDir);
 var publicImagesDir = path2.join(process.cwd(), "public", "images");
-if (!fs2.existsSync(publicImagesDir)) {
-  fs2.mkdirSync(publicImagesDir, { recursive: true });
-}
+safeEnsureDir(publicImagesDir);
 var tempChunksDir = path2.join(process.cwd(), "data", "temp_chunks");
-if (!fs2.existsSync(tempChunksDir)) {
-  fs2.mkdirSync(tempChunksDir, { recursive: true });
-}
+safeEnsureDir(tempChunksDir);
 async function detectPdfPageCount(filePathOrBuffer) {
   try {
     const buffer = typeof filePathOrBuffer === "string" ? fs2.readFileSync(filePathOrBuffer) : filePathOrBuffer;
