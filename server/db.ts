@@ -1,3 +1,4 @@
+import zlib from 'zlib';
 import fs from 'fs';
 import path from 'path';
 import {
@@ -83,7 +84,7 @@ export function detectPdfPageCountSync(filePath: string): number {
       return pageMatches.length;
     }
     // Inspect streams for compressed object streams (pdf-lib format)
-    const zlib = require('zlib');
+    // zlib imported statically at top
     const streamMatches = [...str.matchAll(/stream\r?\n([\s\S]*?)\r?\nendstream/g)];
     for (const sm of streamMatches) {
       try {

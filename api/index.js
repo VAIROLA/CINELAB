@@ -1,10 +1,3 @@
-var __require = /* @__PURE__ */ ((x) => typeof require !== "undefined" ? require : typeof Proxy !== "undefined" ? new Proxy(x, {
-  get: (a, b) => (typeof require !== "undefined" ? require : a)[b]
-}) : x)(function(x) {
-  if (typeof require !== "undefined") return require.apply(this, arguments);
-  throw Error('Dynamic require of "' + x + '" is not supported');
-});
-
 // server.ts
 import express from "express";
 import path2 from "path";
@@ -14,6 +7,7 @@ import multer from "multer";
 import { PDFDocument } from "pdf-lib";
 
 // server/db.ts
+import zlib from "zlib";
 import fs from "fs";
 import path from "path";
 
@@ -4779,7 +4773,6 @@ function detectPdfPageCountSync(filePath) {
     if (pageMatches.length > 0) {
       return pageMatches.length;
     }
-    const zlib = __require("zlib");
     const streamMatches = [...str.matchAll(/stream\r?\n([\s\S]*?)\r?\nendstream/g)];
     for (const sm of streamMatches) {
       try {
