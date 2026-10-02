@@ -259,88 +259,82 @@ function getInitialDb(): DatabaseSchema {
 
 export function initExtraVideosForApostila(apos: any, defaultSuffix: string): ApostilaExtraVideo[] {
   const existing: ApostilaExtraVideo[] = Array.isArray(apos.extraVideos) ? apos.extraVideos : [];
-  if (existing.length >= 2 && existing[0]?.title && existing[1]?.title) {
-    return existing;
-  }
+  
+  // Find canonical matching from pedagogicalApostilas or pedagogicalBonusApostilas
+  const pedApos = pedagogicalApostilas.find((p) => p.moduleId === (apos.moduleId || apos.number)) ||
+                  pedagogicalBonusApostilas.find((b) => b.number === (apos.number || apos.moduleId));
+  const pedVideos = pedApos?.extraVideos || [];
 
-  // Dedicated custom notes store
-  const notesFilePath = path.join(process.cwd(), 'data', 'extra-videos-notes.json');
-  let savedNotesMap: Record<string, string> = {};
-  if (fs.existsSync(notesFilePath)) {
-    try {
-      savedNotesMap = JSON.parse(fs.readFileSync(notesFilePath, 'utf-8'));
-    } catch {}
-  }
+  const modNum = apos.moduleId || apos.number || 1;
+  const modPrefix = apos.isBonus ? `B- ${apos.number || 1}` : `M- ${modNum}`;
+  const cleanAposTitle = (apos.title || defaultSuffix).replace(/^Apostila\s*\d+\s*:\s*/i, "").trim();
 
-  const aposKey1 = `${apos.id || apos.moduleId}_slot_1`;
-  const aposKey2 = `${apos.id || apos.moduleId}_slot_2`;
+  let slot1 = existing.find((v: any) => v.slot === 1) || (pedVideos[0] ? { ...pedVideos[0] } : null);
+  let slot2 = existing.find((v: any) => v.slot === 2) || (pedVideos[1] ? { ...pedVideos[1] } : null);
 
-  const cannedPhrases = [
-    'Assista com atenção antes de responder ao quiz e à avaliação de treinamento.',
-    'Aplicação prática e orientações de direção do cinema profissional.',
-    'Assista com atenção aos detalhes do enquadramento e da linguagem cinematográfica.',
-    'Demonstração de resolução de problemas no set e técnicas de direção.',
-  ];
+  // If slot 1 has old/legacy title or welcome video instead of the real video:
+  const isInvalidSlot1 = !slot1 || !slot1.videoUrl ||
+    slot1.title?.includes("Estudo Dirigido") ||
+    slot1.title?.includes("Módulo 0") ||
+    (!slot1.title?.includes("- M-") && !slot1.title?.includes("- B-")) ||
+    (modNum === 2 && slot1.videoUrl.includes("cinelab-intro-apresentacao.mp4")) ||
+    (pedVideos[0]?.videoUrl?.includes("youtube.com") && slot1.videoUrl.includes("cinelab-intro-apresentacao.mp4"));
 
-  let slot1 = existing.find((v: any) => v.slot === 1);
-  if (!slot1) {
-    slot1 = {
-      id: `ev-${apos.id || 'apos'}-1`,
-      slot: 1,
-      title: `Vídeo Extra 01: Estudo Dirigido & Análise Prática – ${defaultSuffix}`,
-      description: `Análise técnica e decupagem comentada pelo Professor Cineasta Tony de Luc para aprofundar os conceitos teóricos desta apostila.`,
-      videoUrl: '/videos/cinelab-intro-apresentacao.mp4',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80',
-      durationHours: 0,
-      durationMinutes: 18,
-      durationSeconds: 0,
-      totalDurationSeconds: 18 * 60,
-      durationLabel: '00h 18m 00s',
-      professorNotes: savedNotesMap[aposKey1] || '',
-      uploadedAt: new Date().toISOString(),
-    };
-  } else {
-    // If the slot already exists, preserve whatever professorNotes the user wrote (or left empty)
-    if (slot1.professorNotes === undefined) {
-      slot1.professorNotes = savedNotesMap[aposKey1] || '';
-    }
-    if (!slot1.durationLabel || slot1.durationLabel === '18 min') {
-      slot1.durationHours = slot1.durationHours ?? 0;
-      slot1.durationMinutes = slot1.durationMinutes ?? 18;
-      slot1.durationSeconds = slot1.durationSeconds ?? 0;
-      slot1.totalDurationSeconds = (slot1.durationHours * 3600) + (slot1.durationMinutes * 60) + slot1.durationSeconds;
-      slot1.durationLabel = '00h 18m 00s';
+  if (isInvalidSlot1) {
+    if (pedVideos[0]) {
+      slot1 = {
+        ...pedVideos[0],
+        ...(slot1?.professorNotes && slot1.professorNotes.trim() !== "" ? { professorNotes: slot1.professorNotes } : {}),
+      };
+    } else {
+      slot1 = {
+        id: `ev-${apos.id || "apos"}-1`,
+        slot: 1,
+        title: `Vídeo Extra 01: ${cleanAposTitle} & Análise Prática - ${modPrefix}.1`,
+        description: `Análise técnica e decupagem comentada pelo Professor Cineasta Tony de Luc para aprofundar os conceitos teóricos desta apostila.`,
+        videoUrl: modNum === 2 ? "https://www.youtube.com/watch?v=qawVtd32DOQ" : "/videos/cinelab-intro-apresentacao.mp4",
+        thumbnailUrl: modNum === 2 ? "https://img.youtube.com/vi/qawVtd32DOQ/hqdefault.jpg" : "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80",
+        durationHours: 0,
+        durationMinutes: 18,
+        durationSeconds: 0,
+        totalDurationSeconds: 18 * 60,
+        durationLabel: "00h 18m 00s",
+        professorNotes: (slot1?.professorNotes && slot1.professorNotes.trim() !== "") ? slot1.professorNotes : (pedVideos[0]?.professorNotes || ""),
+        uploadedAt: new Date().toISOString(),
+      };
     }
   }
 
-  let slot2 = existing.find((v: any) => v.slot === 2);
-  if (!slot2) {
-    slot2 = {
-      id: `ev-${apos.id || 'apos'}-2`,
-      slot: 2,
-      title: `Vídeo Extra 02: Estudo de Caso & Exercício Técnico – ${defaultSuffix}`,
-      description: `Demonstração em set de filmagem com resolução prática de problemas de decupagem e linguagem cinematográfica.`,
-      videoUrl: '', // Ready for video upload by the user
-      thumbnailUrl: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80',
-      durationHours: 0,
-      durationMinutes: 24,
-      durationSeconds: 0,
-      totalDurationSeconds: 24 * 60,
-      durationLabel: '00h 24m 00s',
-      professorNotes: savedNotesMap[aposKey2] || '',
-      uploadedAt: new Date().toISOString(),
-    };
-  } else {
-    // If the slot already exists, preserve whatever professorNotes the user wrote (or left empty)
-    if (slot2.professorNotes === undefined) {
-      slot2.professorNotes = savedNotesMap[aposKey2] || '';
-    }
-    if (!slot2.durationLabel || slot2.durationLabel === '24 min') {
-      slot2.durationHours = slot2.durationHours ?? 0;
-      slot2.durationMinutes = slot2.durationMinutes ?? 24;
-      slot2.durationSeconds = slot2.durationSeconds ?? 0;
-      slot2.totalDurationSeconds = (slot2.durationHours * 3600) + (slot2.durationMinutes * 60) + slot2.durationSeconds;
-      slot2.durationLabel = '00h 24m 00s';
+  // If slot 2 has old/legacy title or missing video:
+  const isInvalidSlot2 = !slot2 ||
+    slot2.title?.includes("Estudo de Caso") ||
+    slot2.title?.includes("Módulo 0") ||
+    (!slot2.title?.includes("- M-") && !slot2.title?.includes("- B-")) ||
+    (!slot2.videoUrl && pedVideos[1]?.videoUrl) ||
+    (pedVideos[1]?.videoUrl?.includes("youtube.com") && !slot2.videoUrl);
+
+  if (isInvalidSlot2) {
+    if (pedVideos[1]) {
+      slot2 = {
+        ...pedVideos[1],
+        ...(slot2?.professorNotes && slot2.professorNotes.trim() !== "" ? { professorNotes: slot2.professorNotes } : {}),
+      };
+    } else {
+      slot2 = {
+        id: `ev-${apos.id || "apos"}-2`,
+        slot: 2,
+        title: `Vídeo Extra 02: ${cleanAposTitle} & Análise Prática - ${modPrefix}.2`,
+        description: `Exercício prático de aplicação em set de filmagem com demonstração passo a passo da metodologia do CINELAB.`,
+        videoUrl: modNum === 2 ? "https://www.youtube.com/watch?v=UHbpgsD8zCM" : "",
+        thumbnailUrl: modNum === 2 ? "https://img.youtube.com/vi/UHbpgsD8zCM/hqdefault.jpg" : "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80",
+        durationHours: 0,
+        durationMinutes: 24,
+        durationSeconds: 0,
+        totalDurationSeconds: 24 * 60,
+        durationLabel: "00h 24m 00s",
+        professorNotes: (slot2?.professorNotes && slot2.professorNotes.trim() !== "") ? slot2.professorNotes : (pedVideos[1]?.professorNotes || ""),
+        uploadedAt: new Date().toISOString(),
+      };
     }
   }
 
@@ -667,7 +661,9 @@ export function loadDatabase(): void {
           ...apos,
           pagesCount: count,
           totalPages: count,
-          extraVideos: (apos.extraVideos && apos.extraVideos.length >= 2) ? apos.extraVideos : initExtraVideosForApostila(apos, `Módulo 0${apos.moduleId || apos.number || 1}`),
+          extraVideos: (apos.extraVideos && apos.extraVideos.length >= 2 && !apos.extraVideos[0]?.title?.includes("Estudo Dirigido & Análise Prática –"))
+            ? apos.extraVideos
+            : initExtraVideosForApostila(apos, `Módulo 0${apos.moduleId || apos.number || 1}`),
         };
       });
 

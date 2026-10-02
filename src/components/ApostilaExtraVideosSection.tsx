@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Apostila, BonusApostila, ApostilaExtraVideo } from '../types/index.js';
 import { api } from '../services/api.js';
+import { resolveApostilaExtraVideos } from '../data/canonicalExtraVideos.js';
 import {
   Film,
   Play,
@@ -153,21 +154,21 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
 
   // Helper to recognize and eliminate fake canned phrases
   const isCannedPhrase = (text?: string): boolean => {
-    if (!text || typeof text !== 'string') return false;
+    if (!text || typeof text !== "string") return false;
     const canned = [
-      'Assista com atenção antes de responder ao quiz e à avaliação de treinamento.',
-      'Aplicação prática e orientações de direção do cinema profissional.',
-      'Assista com atenção aos detalhes do enquadramento e da linguagem cinematográfica.',
-      'Demonstração de resolução de problemas no set e técnicas de direção.',
+      "Assista com atenção antes de responder ao quiz e à avaliação de treinamento.",
+      "Aplicação prática e orientações de direção do cinema profissional.",
+      "Assista com atenção aos detalhes do enquadramento e da linguagem cinematográfica.",
+      "Demonstração de resolução de problemas no set e técnicas de direção.",
     ];
     return canned.includes(text.trim());
   };
 
   const getLocalNotes = (slotNum: number): string => {
     try {
-      return localStorage.getItem(`cinelab_notes_${apostila.id}_${slotNum}`) || '';
+      return localStorage.getItem(`cinelab_notes_${apostila.id}_${slotNum}`) || "";
     } catch {
-      return '';
+      return "";
     }
   };
 
@@ -177,71 +178,26 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
     } catch {}
   };
 
-  // Garante o formato estrito de título exigido: Vídeo Extra 01: [Título] & Análise Prática - M- [X].1
-  const modNum = (apostila as any).moduleId || (apostila as any).number || 1;
-  const modPrefix = (apostila as any).isBonus ? `B- ${(apostila as any).number || 1}` : `M- ${modNum}`;
-  const cleanAposTitle = (apostila.title || "").replace(/^Apostila\s*\d+\s*:\s*/i, "").trim();
-  const defaultSlot1Title = `Vídeo Extra 01: ${cleanAposTitle} & Análise Prática - ${modPrefix}.1`;
-  const defaultSlot2Title = `Vídeo Extra 02: ${cleanAposTitle} & Análise Prática - ${modPrefix}.2`;
+  // Resolução canônica de vídeos extras para todos os módulos (M- 1.1 até M- 10.2 e Bônus)
+  const [resolvedSlot1, resolvedSlot2] = resolveApostilaExtraVideos(apostila, rawExtraVideos);
 
-  const rawSlot1 = rawExtraVideos.find((v: any) => v.slot === 1);
-  const note1 = (rawSlot1?.professorNotes && rawSlot1.professorNotes.trim() !== "")
-    ? rawSlot1.professorNotes.trim()
-    : (rawSlot1?.description && !rawSlot1.description.startsWith("Aprofundamento técnico dos conceitos") ? rawSlot1.description.trim() : (getLocalNotes(1) || ""));
+  const localNote1 = getLocalNotes(1);
+  const localNote2 = getLocalNotes(2);
 
-  const rawSlot2 = rawExtraVideos.find((v: any) => v.slot === 2);
-  const note2 = (rawSlot2?.professorNotes && rawSlot2.professorNotes.trim() !== "")
-    ? rawSlot2.professorNotes.trim()
-    : (rawSlot2?.description && !rawSlot2.description.startsWith("Exercício prático de aplicação") ? rawSlot2.description.trim() : (getLocalNotes(2) || ""));
-
-  // Auto-correção de títulos legados para o formato padronizado M- X.1 / M- X.2
-  let s1Title = rawSlot1?.title;
-  if (!s1Title || s1Title.includes("Estudo Dirigido & Análise Prática – História do Cinema") || s1Title.includes("Módulo 0")) {
-    s1Title = defaultSlot1Title;
-  }
-  let s1Url = rawSlot1?.videoUrl;
-  if (modNum === 2 && (!s1Url || s1Url.includes("cinelab-intro-apresentacao.mp4"))) {
-    s1Url = "https://www.youtube.com/watch?v=qawVtd32DOQ"; // A Chegada do Trem na Estação (Irmãos Lumière, 1895)
-  }
-  let s2Title = rawSlot2?.title;
-  if (!s2Title || s2Title.includes("Estudo de Caso & Exercício Técnico –") || s2Title.includes("Módulo 0")) {
-    s2Title = defaultSlot2Title;
-  }
-  let s2Url = rawSlot2?.videoUrl;
-  if (modNum === 2 && (!s2Url || s2Url === "")) {
-    s2Url = "https://www.youtube.com/watch?v=UHbpgsD8zCM"; // Viagem à Lua (Georges Méliès, 1902)
-  }
-
-  const slot1: ApostilaExtraVideo = rawSlot1 ? { ...rawSlot1, title: s1Title, videoUrl: s1Url || rawSlot1.videoUrl, professorNotes: note1 } : {
-    id: `ev-${apostila.id}-1`,
-    slot: 1,
-    title: defaultSlot1Title,
-    description: `Aprofundamento técnico dos conceitos fundamentais da apostila com análise de decupagem comentada pelo Professor Tony de Luc.`,
-    videoUrl: '/videos/cinelab-intro-apresentacao.mp4',
-    thumbnailUrl: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80',
-    durationHours: 0,
-    durationMinutes: 18,
-    durationSeconds: 0,
-    totalDurationSeconds: 18 * 60,
-    durationLabel: '00h 18m 00s',
-    professorNotes: note1,
-    uploadedAt: new Date().toISOString(),
+  const slot1: ApostilaExtraVideo = {
+    ...resolvedSlot1,
+    professorNotes:
+      resolvedSlot1.professorNotes && resolvedSlot1.professorNotes.trim() !== ""
+        ? resolvedSlot1.professorNotes
+        : (localNote1 && !isCannedPhrase(localNote1) ? localNote1 : resolvedSlot1.professorNotes),
   };
 
-  const slot2: ApostilaExtraVideo = rawSlot2 ? { ...rawSlot2, title: s2Title, videoUrl: s2Url || rawSlot2.videoUrl, professorNotes: note2 } : {
-    id: `ev-${apostila.id}-2`,
-    slot: 2,
-    title: defaultSlot2Title,
-    description: `Exercício prático de aplicação em set de filmagem com demonstração passo a passo da metodologia do CINELAB.`,
-    videoUrl: '', // Pronto para upload ou YouTube
-    thumbnailUrl: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80',
-    durationHours: 0,
-    durationMinutes: 24,
-    durationSeconds: 0,
-    totalDurationSeconds: 24 * 60,
-    durationLabel: '00h 24m 00s',
-    professorNotes: note2,
-    uploadedAt: new Date().toISOString(),
+  const slot2: ApostilaExtraVideo = {
+    ...resolvedSlot2,
+    professorNotes:
+      resolvedSlot2.professorNotes && resolvedSlot2.professorNotes.trim() !== ""
+        ? resolvedSlot2.professorNotes
+        : (localNote2 && !isCannedPhrase(localNote2) ? localNote2 : resolvedSlot2.professorNotes),
   };
 
   const extraVideos = [slot1, slot2];
