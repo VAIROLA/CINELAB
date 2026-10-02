@@ -259,6 +259,9 @@ function getInitialDb(): DatabaseSchema {
 
 export function initExtraVideosForApostila(apos: any, defaultSuffix: string): ApostilaExtraVideo[] {
   const existing: ApostilaExtraVideo[] = Array.isArray(apos.extraVideos) ? apos.extraVideos : [];
+  if (existing.length >= 2 && existing[0]?.title && existing[1]?.title) {
+    return existing;
+  }
 
   // Dedicated custom notes store
   const notesFilePath = path.join(process.cwd(), 'data', 'extra-videos-notes.json');
@@ -664,7 +667,7 @@ export function loadDatabase(): void {
           ...apos,
           pagesCount: count,
           totalPages: count,
-          extraVideos: initExtraVideosForApostila(apos, `Módulo 0${apos.moduleId || apos.number || 1}`),
+          extraVideos: (apos.extraVideos && apos.extraVideos.length >= 2) ? apos.extraVideos : initExtraVideosForApostila(apos, `Módulo 0${apos.moduleId || apos.number || 1}`),
         };
       });
 
@@ -762,7 +765,7 @@ export function loadDatabase(): void {
           ...b,
           pagesCount: count,
           totalPages: count,
-          extraVideos: initExtraVideosForApostila(b, `Bônus 0${b.number || 1}`),
+          extraVideos: (b.extraVideos && b.extraVideos.length >= 2) ? b.extraVideos : initExtraVideosForApostila(b, `Bônus 0${b.number || 1}`),
         };
       });
       db.activities = db.activities || initial.activities;

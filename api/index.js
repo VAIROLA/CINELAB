@@ -4944,6 +4944,9 @@ function getInitialDb() {
 }
 function initExtraVideosForApostila(apos, defaultSuffix) {
   const existing = Array.isArray(apos.extraVideos) ? apos.extraVideos : [];
+  if (existing.length >= 2 && existing[0]?.title && existing[1]?.title) {
+    return existing;
+  }
   const notesFilePath = path.join(process.cwd(), "data", "extra-videos-notes.json");
   let savedNotesMap = {};
   if (fs.existsSync(notesFilePath)) {
@@ -5351,7 +5354,7 @@ function loadDatabase() {
           ...apos,
           pagesCount: count,
           totalPages: count,
-          extraVideos: initExtraVideosForApostila(apos, `M\xF3dulo 0${apos.moduleId || apos.number || 1}`)
+          extraVideos: apos.extraVideos && apos.extraVideos.length >= 2 ? apos.extraVideos : initExtraVideosForApostila(apos, `M\xF3dulo 0${apos.moduleId || apos.number || 1}`)
         };
       });
       if (!db.bonusApostilas || db.bonusApostilas.length === 0) {
@@ -5436,7 +5439,7 @@ function loadDatabase() {
           ...b,
           pagesCount: count,
           totalPages: count,
-          extraVideos: initExtraVideosForApostila(b, `B\xF4nus 0${b.number || 1}`)
+          extraVideos: b.extraVideos && b.extraVideos.length >= 2 ? b.extraVideos : initExtraVideosForApostila(b, `B\xF4nus 0${b.number || 1}`)
         };
       });
       db.activities = db.activities || initial.activities;
