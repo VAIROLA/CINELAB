@@ -230,16 +230,20 @@ export const CourseBannerPromo: React.FC<CourseBannerPromoProps> = ({
               <span>{t('banner.tagline')}</span>
             </div>
 
-            {/* Colossal Cinema Headline */}
-            <div>
-              <h2 className="text-3xl sm:text-5xl lg:text-7xl font-display font-black tracking-tight leading-[0.98] sm:leading-[0.95] text-white break-words">
-                {texts.headlineMain1} <br />
-                <span className="text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]">{texts.headlineMain2}</span>
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 drop-shadow-[0_4px_16px_rgba(245,158,11,0.5)]">
-                  {texts.headlineMain3}
+            {/* Cinema Headline - Ajustado com escala harmônica e sem quebra de palavras */}
+            <div className="space-y-1 sm:space-y-2">
+              <span className="block text-sm sm:text-lg lg:text-xl font-mono font-extrabold uppercase tracking-widest text-amber-400/90">
+                {texts.headlineMain1.trim()}
+              </span>
+              <h2 className="text-2xl sm:text-4xl lg:text-5xl font-display font-black tracking-tight leading-tight text-white flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                <span className="text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)] whitespace-nowrap">
+                  {texts.headlineMain2.trim()}
+                </span>
+                <span className="whitespace-nowrap text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 drop-shadow-[0_4px_16px_rgba(245,158,11,0.5)]">
+                  {texts.headlineMain3.trim()}
                 </span>
               </h2>
-              <p className="text-xs sm:text-base text-amber-200/90 font-mono font-bold tracking-wide mt-2 sm:mt-3 uppercase">
+              <p className="text-xs sm:text-sm text-amber-200/80 font-mono font-semibold tracking-wide uppercase pt-1">
                 {t('banner.headlineSubtitle')}
               </p>
             </div>
@@ -307,13 +311,13 @@ export const CourseBannerPromo: React.FC<CourseBannerPromoProps> = ({
           </div>
 
           {/* Right Column: Promotional Price Box */}
-          <div className="lg:col-span-5 max-w-full">
-            <div className="relative rounded-3xl bg-gradient-to-b from-neutral-900 via-neutral-950 to-[#0d0f14] border-2 border-amber-400 p-4 sm:p-8 shadow-2xl shadow-amber-500/10 text-center max-w-full overflow-hidden">
+          <div className="lg:col-span-5 max-w-full pt-4 sm:pt-5">
+            <div className="relative rounded-3xl bg-gradient-to-b from-neutral-900 via-neutral-950 to-[#0d0f14] border-2 border-amber-400 p-5 sm:p-8 pt-7 sm:pt-9 shadow-2xl shadow-amber-500/20 text-center max-w-full">
               
-              {/* Flash Stamp Banner */}
-              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-3 sm:px-5 py-1 rounded-full bg-gradient-to-r from-red-600 via-red-500 to-red-600 text-white text-[10px] sm:text-xs font-black uppercase tracking-widest shadow-lg shadow-red-600/40 border border-red-400 animate-pulse flex items-center gap-1.5 whitespace-nowrap max-w-[94%]">
-                <Tag className="w-3.5 h-3.5 shrink-0" />
-                <span className="truncate">{texts.limitedPromo}</span>
+              {/* Flash Stamp Banner - 100% visível, sobreposto sem corte */}
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20 px-4 sm:px-6 py-1.5 rounded-full bg-gradient-to-r from-red-600 via-red-500 to-red-600 text-white text-xs sm:text-sm font-black uppercase tracking-widest shadow-xl shadow-red-600/60 border-2 border-red-400 animate-pulse flex items-center gap-2 whitespace-nowrap max-w-[95%]">
+                <Tag className="w-4 h-4 shrink-0 text-white" />
+                <span className="truncate font-black">{texts.limitedPromo}</span>
               </div>
 
               {/* Price Content */}
