@@ -182,10 +182,14 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
   const defaultSlot2Title = `Vídeo Extra 02: Estudo de Caso & Exercício Técnico – ${apostila.title}`;
 
   const rawSlot1 = rawExtraVideos.find((v: any) => v.slot === 1);
-  const note1 = rawSlot1?.professorNotes !== undefined ? rawSlot1.professorNotes : (getLocalNotes(1) || '');
+  const note1 = (rawSlot1?.professorNotes && rawSlot1.professorNotes.trim() !== "")
+    ? rawSlot1.professorNotes.trim()
+    : (rawSlot1?.description && !rawSlot1.description.startsWith("Aprofundamento técnico dos conceitos") ? rawSlot1.description.trim() : (getLocalNotes(1) || ""));
 
   const rawSlot2 = rawExtraVideos.find((v: any) => v.slot === 2);
-  const note2 = rawSlot2?.professorNotes !== undefined ? rawSlot2.professorNotes : (getLocalNotes(2) || '');
+  const note2 = (rawSlot2?.professorNotes && rawSlot2.professorNotes.trim() !== "")
+    ? rawSlot2.professorNotes.trim()
+    : (rawSlot2?.description && !rawSlot2.description.startsWith("Exercício prático de aplicação") ? rawSlot2.description.trim() : (getLocalNotes(2) || ""));
 
   const slot1: ApostilaExtraVideo = rawSlot1 ? { ...rawSlot1, professorNotes: note1 } : {
     id: `ev-${apostila.id}-1`,
@@ -721,7 +725,7 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
                     <div className="flex items-center justify-between border-b border-neutral-800 pb-2">
                       <strong className="font-mono text-xs text-amber-300 uppercase tracking-wider flex items-center gap-2">
                         <FileEdit className="w-4 h-4 text-amber-400" />
-                        Escrever Orientação do Professor Tony de Luc:
+                        Escrever Orientação do Professor & Orientação ao Aluno:
                       </strong>
                       <button
                         type="button"
@@ -778,9 +782,9 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
                 ) : (
                   <div className="p-3.5 rounded-2xl bg-amber-950/25 border border-amber-500/30 text-xs text-amber-200/90 leading-relaxed font-sans relative group">
                     <div className="flex items-center justify-between gap-2 mb-1.5">
-                      <strong className="font-mono text-[10px] sm:text-[11px] text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+                      <strong className="font-mono text-[10.5px] sm:text-xs text-amber-400 uppercase tracking-wider flex items-center gap-1.5 font-bold">
                         <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                        Orientação do Professor Tony de Luc:
+                        Orientação do Professor &amp; Orientação ao Aluno:
                       </strong>
 
                       {/* Botão de Trocar e Escrever para o Administrador */}

@@ -503,12 +503,14 @@ app.get('/api/course/public-info', (req: Request, res: Response) => {
       coverUrl: a.coverUrl,
       fileSizeMb: a.fileSizeMb,
       isUnlocked: true,
-      status: 'available',
+      status: "available",
+      extraVideos: a.extraVideos && a.extraVideos.length > 0 ? a.extraVideos : initExtraVideosForApostila(a, a.title),
     })),
     bonusApostilas: db.bonusApostilas.map((b) => ({
       ...b,
       pagesCount: b.pagesCount || b.totalPages || (b.number === 1 ? 30 : 29),
       totalPages: b.totalPages || b.pagesCount || (b.number === 1 ? 30 : 29),
+      extraVideos: b.extraVideos && b.extraVideos.length > 0 ? b.extraVideos : initExtraVideosForApostila(b, b.title),
     })),
     now: now.toISOString(),
   });

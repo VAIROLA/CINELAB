@@ -177,12 +177,15 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
     } catch {}
   }, [trainingModalOpen]);
 
-  const handleOpenApostila = (item: Apostila, defaultTab: 'pdf' | 'text' | 'quiz' | 'extra-videos' = 'pdf') => {
+  const handleOpenApostila = (item: Apostila, defaultTab: "pdf" | "text" | "quiz" | "extra-videos" = "pdf") => {
     if (!isPaidStudent) {
       setAccessModalOpen(true);
       return;
     }
-    setSelectedApostila(item);
+    const fullItem = apostilas.find((a) => a.id === item.id || (item.moduleId && a.moduleId === item.moduleId)) ||
+                     bonusApostilas.find((b) => b.id === item.id || (item.number && b.number === item.number)) ||
+                     item;
+    setSelectedApostila(fullItem as Apostila);
     setModalTab(defaultTab);
   };
 
