@@ -230,20 +230,20 @@ export const CourseBannerPromo: React.FC<CourseBannerPromoProps> = ({
               <span>{t('banner.tagline')}</span>
             </div>
 
-            {/* Cinema Headline - Ajustado com escala harmônica e sem quebra de palavras */}
-            <div className="space-y-1 sm:space-y-2">
-              <span className="block text-sm sm:text-lg lg:text-xl font-mono font-extrabold uppercase tracking-widest text-amber-400/90">
-                {texts.headlineMain1.trim()}
-              </span>
-              <h2 className="text-2xl sm:text-4xl lg:text-5xl font-display font-black tracking-tight leading-tight text-white flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                <span className="text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)] whitespace-nowrap">
+            {/* Cinema Headline - "CURSO DE" em branco e proporcional ao CINEMA & AUDIOVISUAL */}
+            <div>
+              <h2 className="text-2xl sm:text-4xl lg:text-5xl font-display font-black tracking-tight leading-[1.08] sm:leading-[1.02] text-white">
+                <span className="block text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]">
+                  {texts.headlineMain1.trim()}
+                </span>
+                <span className="inline-block text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)] mr-2 sm:mr-3 whitespace-nowrap">
                   {texts.headlineMain2.trim()}
                 </span>
-                <span className="whitespace-nowrap text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 drop-shadow-[0_4px_16px_rgba(245,158,11,0.5)]">
+                <span className="inline-block whitespace-nowrap text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 drop-shadow-[0_4px_16px_rgba(245,158,11,0.5)]">
                   {texts.headlineMain3.trim()}
                 </span>
               </h2>
-              <p className="text-xs sm:text-sm text-amber-200/80 font-mono font-semibold tracking-wide uppercase pt-1">
+              <p className="text-xs sm:text-sm text-amber-200/90 font-mono font-bold tracking-wide mt-2 sm:mt-3 uppercase">
                 {t('banner.headlineSubtitle')}
               </p>
             </div>
