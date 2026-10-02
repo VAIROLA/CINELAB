@@ -12,7 +12,6 @@ import fs2 from "fs";
 import { execSync, exec } from "child_process";
 import multer from "multer";
 import { PDFDocument } from "pdf-lib";
-import { createServer as createViteServer } from "vite";
 
 // server/db.ts
 import fs from "fs";
@@ -9634,7 +9633,8 @@ Voc\xEA gostaria de aprofundar essa quest\xE3o em rela\xE7\xE3o a algum m\xF3dul
 Conte comigo para transformar suas ideias em cinema de verdade! \u{1F3AC}`;
 }
 async function startServer() {
-  if (process.env.NODE_ENV !== "production") {
+  if (process.env.NODE_ENV !== "production" && !process.env.VERCEL) {
+    const { createServer: createViteServer } = await import("vite");
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa"

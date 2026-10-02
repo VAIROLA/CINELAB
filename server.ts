@@ -4,7 +4,6 @@ import fs from 'fs';
 import { execSync, exec } from 'child_process';
 import multer from 'multer';
 import { PDFDocument } from 'pdf-lib';
-import { createServer as createViteServer } from 'vite';
 import {
   getDb,
   loadDatabase,
@@ -4165,7 +4164,8 @@ Conte comigo para transformar suas ideias em cinema de verdade! 🎬`;
 // 6. VITE & SPA FALLBACK SETUP
 // ----------------------------------------------------
 async function startServer() {
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV !== "production" && !process.env.VERCEL) {
+    const { createServer: createViteServer } = await import("vite");
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: 'spa',
