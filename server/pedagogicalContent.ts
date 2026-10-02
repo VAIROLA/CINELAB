@@ -301,6 +301,38 @@ export const pedagogicalApostilas: Apostila[] = [
     pdfUrl: '/materiais/cinelab-apostila-01.pdf',
     coverUrl: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=600&q=80',
     fileSizeMb: 18.5,
+    extraVideos: [
+    {
+        "id": "ev-apostila-1-1",
+        "slot": 1,
+        "title": "Vídeo Extra 01: Introdução ao Cinema e à Linguagem Audiovisual & Análise Prática - M- 1.1",
+        "videoUrl": "https://www.youtube.com/watch?v=q1U0eKOOwsQ",
+        "thumbnailUrl": "https://img.youtube.com/vi/q1U0eKOOwsQ/hqdefault.jpg",
+        "description": "O aluno deve observar como a história é contada principalmente através das imagens, expressões faciais, gestos e movimentos dos personagens, já que o filme pertence ao período do cinema mudo. Deve prestar atenção aos enquadramentos, composição das cenas, montagem, ritmo, atuação corporal e uso da música para perceber como o cinema consegue transmitir emoções e narrar acontecimentos sem depender de diálogos falados.",
+        "professorNotes": "O aluno deve observar como a história é contada principalmente através das imagens, expressões faciais, gestos e movimentos dos personagens, já que o filme pertence ao período do cinema mudo. Deve prestar atenção aos enquadramentos, composição das cenas, montagem, ritmo, atuação corporal e uso da música para perceber como o cinema consegue transmitir emoções e narrar acontecimentos sem depender de diálogos falados.",
+        "durationHours": 0,
+        "durationMinutes": 18,
+        "durationSeconds": 0,
+        "totalDurationSeconds": 1080,
+        "durationLabel": "00h 18m 00s",
+        "uploadedAt": "2026-10-02T03:08:34.759Z"
+    },
+    {
+        "id": "ev-apostila-1-2",
+        "slot": 2,
+        "title": "Vídeo Extra 02: Introdução ao Cinema e à Linguagem Audiovisual & Análise Prática - M- 1.2",
+        "videoUrl": "https://www.youtube.com/watch?v=i15UCTIdfwI",
+        "thumbnailUrl": "https://img.youtube.com/vi/i15UCTIdfwI/hqdefault.jpg",
+        "description": "O aluno deve observar como imagem, movimento, montagem, ritmo e som trabalham juntos para construir a narrativa. Deve prestar atenção especialmente às máquinas, ao ambiente da fábrica, aos movimentos repetitivos dos trabalhadores, aos enquadramentos, à montagem e aos efeitos sonoros, percebendo como Chaplin utiliza a linguagem audiovisual não apenas para contar uma história, mas também para transmitir ideias e críticas através das imagens.",
+        "professorNotes": "O aluno deve observar como imagem, movimento, montagem, ritmo e som trabalham juntos para construir a narrativa. Deve prestar atenção especialmente às máquinas, ao ambiente da fábrica, aos movimentos repetitivos dos trabalhadores, aos enquadramentos, à montagem e aos efeitos sonoros, percebendo como Chaplin utiliza a linguagem audiovisual não apenas para contar uma história, mas também para transmitir ideias e críticas através das imagens.",
+        "durationHours": 0,
+        "durationMinutes": 24,
+        "durationSeconds": 0,
+        "totalDurationSeconds": 1440,
+        "durationLabel": "00h 24m 00s",
+        "uploadedAt": "2026-10-02T03:08:34.760Z"
+    }
+],
     sections: [
       {
         id: 'sec-1-1',
@@ -422,6 +454,38 @@ Audiovisual é o amálgama indissociável entre luz projetada e ondas sonoras. A
     pdfUrl: '/uploads/apostilas/apostila-modulo-02-2-APOSTILA_HISTORIA_DO_CINEMA_-_COM-1790652429759.pdf',
     coverUrl: 'https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&w=600&q=80',
     fileSizeMb: 2.17,
+    extraVideos: [
+    {
+        "id": "ev-apostila-2-1",
+        "slot": 1,
+        "title": "Vídeo Extra 01: História do Cinema & Análise Prática - M- 2.1",
+        "videoUrl": "https://www.youtube.com/watch?v=qawVtd32DOQ",
+        "thumbnailUrl": "https://img.youtube.com/vi/qawVtd32DOQ/hqdefault.jpg",
+        "description": "O aluno deve observar o nascimento do cinema e o impacto visual da primeira exibição pública dos Irmãos Lumière com a chegada do trem na estação (1895). Analisar a profundidade de campo natural, a perspectiva diagonal da locomotiva aproximando-se da tela e o choque realista causado na plateia da época.",
+        "professorNotes": "O aluno deve observar o nascimento do cinema e o impacto visual da primeira exibição pública dos Irmãos Lumière com a chegada do trem na estação (1895). Analisar a profundidade de campo natural, a perspectiva diagonal da locomotiva aproximando-se da tela e o choque realista causado na plateia da época.",
+        "durationHours": 0,
+        "durationMinutes": 18,
+        "durationSeconds": 0,
+        "totalDurationSeconds": 1080,
+        "durationLabel": "00h 18m 00s",
+        "uploadedAt": "2026-10-02T03:08:34.760Z"
+    },
+    {
+        "id": "ev-apostila-2-2",
+        "slot": 2,
+        "title": "Vídeo Extra 02: História do Cinema & Análise Prática - M- 2.2",
+        "videoUrl": "https://www.youtube.com/watch?v=UHbpgsD8zCM",
+        "thumbnailUrl": "https://img.youtube.com/vi/UHbpgsD8zCM/hqdefault.jpg",
+        "description": "Identifique os efeitos utilizados e tentar imaginar como poderiam ter sido realizados na época. O aluno deve analisar as trucagens ópticas de Georges Méliès (parada de câmera, sobreposição e fusão) e compreender como os primeiros efeitos especiais moldaram a imaginação e a técnica cinematográfica mundial.",
+        "professorNotes": "Identifique os efeitos utilizados e tentar imaginar como poderiam ter sido realizados na época. O aluno deve analisar as trucagens ópticas de Georges Méliès (parada de câmera, sobreposição e fusão) e compreender como os primeiros efeitos especiais moldaram a imaginação e a técnica cinematográfica mundial.",
+        "durationHours": 0,
+        "durationMinutes": 24,
+        "durationSeconds": 0,
+        "totalDurationSeconds": 1440,
+        "durationLabel": "00h 24m 00s",
+        "uploadedAt": "2026-10-02T03:08:34.760Z"
+    }
+],
     sections: [
       {
         id: 'sec-2-1',
@@ -527,6 +591,38 @@ Com a chegada do som sincronizado em 1927 (*The Jazz Singer*), o cinema sofreu u
     pdfUrl: '/materiais/cinelab-apostila-03.pdf',
     coverUrl: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=600&q=80',
     fileSizeMb: 21.0,
+    extraVideos: [
+    {
+        "id": "ev-apostila-3-1",
+        "slot": 1,
+        "title": "Vídeo Extra 01: Roteiro e Criação de Personagens & Análise Prática - M- 3.1",
+        "videoUrl": "https://www.youtube.com/watch?v=q1U0eKOOwsQ",
+        "thumbnailUrl": "https://img.youtube.com/vi/q1U0eKOOwsQ/hqdefault.jpg",
+        "description": "O aluno deve observar a construção da curva dramática em 3 atos, o incidente incitante e a motivação interna dos personagens, analisando como o subtexto guia cada diálogo e decisão na cena.",
+        "professorNotes": "O aluno deve observar a construção da curva dramática em 3 atos, o incidente incitante e a motivação interna dos personagens, analisando como o subtexto guia cada diálogo e decisão na cena.",
+        "durationHours": 0,
+        "durationMinutes": 18,
+        "durationSeconds": 0,
+        "totalDurationSeconds": 1080,
+        "durationLabel": "00h 18m 00s",
+        "uploadedAt": "2026-10-02T03:08:34.760Z"
+    },
+    {
+        "id": "ev-apostila-3-2",
+        "slot": 2,
+        "title": "Vídeo Extra 02: Roteiro e Criação de Personagens & Análise Prática - M- 3.2",
+        "videoUrl": "https://www.youtube.com/watch?v=i15UCTIdfwI",
+        "thumbnailUrl": "https://img.youtube.com/vi/i15UCTIdfwI/hqdefault.jpg",
+        "description": "O aluno deve atentar para a formatação técnica internacional de roteiro (cabeçalho Master Scenes, rubrica no presente, transição e diálogo), identificando a economia descritiva e o ritmo da leitura visual.",
+        "professorNotes": "O aluno deve atentar para a formatação técnica internacional de roteiro (cabeçalho Master Scenes, rubrica no presente, transição e diálogo), identificando a economia descritiva e o ritmo da leitura visual.",
+        "durationHours": 0,
+        "durationMinutes": 24,
+        "durationSeconds": 0,
+        "totalDurationSeconds": 1440,
+        "durationLabel": "00h 24m 00s",
+        "uploadedAt": "2026-10-02T03:08:34.760Z"
+    }
+],
     sections: [
       {
         id: 'sec-3-1',
@@ -637,6 +733,38 @@ Com a chegada do som sincronizado em 1927 (*The Jazz Singer*), o cinema sofreu u
     pdfUrl: '/materiais/cinelab-apostila-04.pdf',
     coverUrl: 'https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?auto=format&fit=crop&w=600&q=80',
     fileSizeMb: 18.9,
+    extraVideos: [
+    {
+        "id": "ev-apostila-4-1",
+        "slot": 1,
+        "title": "Vídeo Extra 01: Direção e Direção de Atores & Análise Prática - M- 4.1",
+        "videoUrl": "https://www.youtube.com/watch?v=qawVtd32DOQ",
+        "thumbnailUrl": "https://img.youtube.com/vi/qawVtd32DOQ/hqdefault.jpg",
+        "description": "O aluno deve observar a interação entre o diretor e o elenco, prestando atenção à comunicação por ações físicas e verbos ativos, em vez de exigir sentimentos abstratos dos atores.",
+        "professorNotes": "O aluno deve observar a interação entre o diretor e o elenco, prestando atenção à comunicação por ações físicas e verbos ativos, em vez de exigir sentimentos abstratos dos atores.",
+        "durationHours": 0,
+        "durationMinutes": 18,
+        "durationSeconds": 0,
+        "totalDurationSeconds": 1080,
+        "durationLabel": "00h 18m 00s",
+        "uploadedAt": "2026-10-02T03:08:34.760Z"
+    },
+    {
+        "id": "ev-apostila-4-2",
+        "slot": 2,
+        "title": "Vídeo Extra 02: Direção e Direção de Atores & Análise Prática - M- 4.2",
+        "videoUrl": "https://www.youtube.com/watch?v=UHbpgsD8zCM",
+        "thumbnailUrl": "https://img.youtube.com/vi/UHbpgsD8zCM/hqdefault.jpg",
+        "description": "O aluno deve acompanhar a escolha do ponto de vista da câmera (POV), a marcação cênica (blocking) e a relação do enquadramento com a tensão psicológica dos personagens na cena.",
+        "professorNotes": "O aluno deve acompanhar a escolha do ponto de vista da câmera (POV), a marcação cênica (blocking) e a relação do enquadramento com a tensão psicológica dos personagens na cena.",
+        "durationHours": 0,
+        "durationMinutes": 24,
+        "durationSeconds": 0,
+        "totalDurationSeconds": 1440,
+        "durationLabel": "00h 24m 00s",
+        "uploadedAt": "2026-10-02T03:08:34.760Z"
+    }
+],
     sections: [
       {
         id: 'sec-4-1',
@@ -742,6 +870,38 @@ O ator não consegue interpretar "tristeza"; ele interpreta **ações e objetivo
     pdfUrl: '/materiais/cinelab-apostila-05.pdf',
     coverUrl: 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=600&q=80',
     fileSizeMb: 22.4,
+    extraVideos: [
+    {
+        "id": "ev-apostila-5-1",
+        "slot": 1,
+        "title": "Vídeo Extra 01: Fotografia, Câmera e Iluminação & Análise Prática - M- 5.1",
+        "videoUrl": "/videos/cinelab-intro-apresentacao.mp4",
+        "thumbnailUrl": "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80",
+        "description": "O aluno deve observar o sistema clássico de iluminação em três pontos (Key Light, Fill Light e Backlight), além do uso de sombras, temperatura de cor e profundidade de campo.",
+        "professorNotes": "O aluno deve observar o sistema clássico de iluminação em três pontos (Key Light, Fill Light e Backlight), além do uso de sombras, temperatura de cor e profundidade de campo.",
+        "durationHours": 0,
+        "durationMinutes": 18,
+        "durationSeconds": 0,
+        "totalDurationSeconds": 1080,
+        "durationLabel": "00h 18m 00s",
+        "uploadedAt": "2026-10-02T03:08:34.760Z"
+    },
+    {
+        "id": "ev-apostila-5-2",
+        "slot": 2,
+        "title": "Vídeo Extra 02: Fotografia, Câmera e Iluminação & Análise Prática - M- 5.2",
+        "videoUrl": "/videos/cinelab-intro-apresentacao.mp4",
+        "thumbnailUrl": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80",
+        "description": "O aluno deve analisar os movimentos de câmera (panorâmica, travelling, dolly e câmera na mão), percebendo como a fluidez do enquadramento dita o ritmo emocional do espectador.",
+        "professorNotes": "O aluno deve analisar os movimentos de câmera (panorâmica, travelling, dolly e câmera na mão), percebendo como a fluidez do enquadramento dita o ritmo emocional do espectador.",
+        "durationHours": 0,
+        "durationMinutes": 24,
+        "durationSeconds": 0,
+        "totalDurationSeconds": 1440,
+        "durationLabel": "00h 24m 00s",
+        "uploadedAt": "2026-10-02T03:08:34.760Z"
+    }
+],
     sections: [
       {
         id: 'sec-5-1',
@@ -917,6 +1077,38 @@ O ator não consegue interpretar "tristeza"; ele interpreta **ações e objetivo
     pdfUrl: '/materiais/cinelab-apostila-06.pdf',
     coverUrl: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=600&q=80',
     fileSizeMb: 18.1,
+    extraVideos: [
+    {
+        "id": "ev-apostila-6-1",
+        "slot": 1,
+        "title": "Vídeo Extra 01: Som e Trilha Sonora & Análise Prática - M- 6.1",
+        "videoUrl": "/videos/cinelab-intro-apresentacao.mp4",
+        "thumbnailUrl": "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80",
+        "description": "O aluno deve identificar a captação de diálogo com microfone direcional (Boom), a captação do som ambiente (room tone) e a importância do silêncio como elemento dramático.",
+        "professorNotes": "O aluno deve identificar a captação de diálogo com microfone direcional (Boom), a captação do som ambiente (room tone) e a importância do silêncio como elemento dramático.",
+        "durationHours": 0,
+        "durationMinutes": 18,
+        "durationSeconds": 0,
+        "totalDurationSeconds": 1080,
+        "durationLabel": "00h 18m 00s",
+        "uploadedAt": "2026-10-02T03:08:34.760Z"
+    },
+    {
+        "id": "ev-apostila-6-2",
+        "slot": 2,
+        "title": "Vídeo Extra 02: Som e Trilha Sonora & Análise Prática - M- 6.2",
+        "videoUrl": "/videos/cinelab-intro-apresentacao.mp4",
+        "thumbnailUrl": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80",
+        "description": "O aluno deve observar a construção das camadas sonoras (foley, efeitos sonoros diegéticos e não-diegéticos) e a harmonia entre trilha musical e diálogos.",
+        "professorNotes": "O aluno deve observar a construção das camadas sonoras (foley, efeitos sonoros diegéticos e não-diegéticos) e a harmonia entre trilha musical e diálogos.",
+        "durationHours": 0,
+        "durationMinutes": 24,
+        "durationSeconds": 0,
+        "totalDurationSeconds": 1440,
+        "durationLabel": "00h 24m 00s",
+        "uploadedAt": "2026-10-02T03:08:34.760Z"
+    }
+],
     sections: [
       {
         id: 'sec-6-1',
@@ -1024,6 +1216,38 @@ Grave sempre **pelo menos 60 segundos de room tone absoluto** com a equipe imóv
     pdfUrl: '/materiais/cinelab-apostila-07.pdf',
     coverUrl: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=600&q=80',
     fileSizeMb: 20.5,
+    extraVideos: [
+    {
+        "id": "ev-apostila-7-1",
+        "slot": 1,
+        "title": "Vídeo Extra 01: Montagem e Pós-Produção & Análise Prática - M- 7.1",
+        "videoUrl": "/videos/cinelab-intro-apresentacao.mp4",
+        "thumbnailUrl": "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80",
+        "description": "O aluno deve observar a regra dos 180 graus, cortes em ação, elipses temporais e a montagem paralela, percebendo como o corte cria sentido novo entre duas tomadas.",
+        "professorNotes": "O aluno deve observar a regra dos 180 graus, cortes em ação, elipses temporais e a montagem paralela, percebendo como o corte cria sentido novo entre duas tomadas.",
+        "durationHours": 0,
+        "durationMinutes": 18,
+        "durationSeconds": 0,
+        "totalDurationSeconds": 1080,
+        "durationLabel": "00h 18m 00s",
+        "uploadedAt": "2026-10-02T03:08:34.760Z"
+    },
+    {
+        "id": "ev-apostila-7-2",
+        "slot": 2,
+        "title": "Vídeo Extra 02: Montagem e Pós-Produção & Análise Prática - M- 7.2",
+        "videoUrl": "/videos/cinelab-intro-apresentacao.mp4",
+        "thumbnailUrl": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80",
+        "description": "O aluno deve atentar para a correção de cor, curvas de gama e color grading estético, unificando a identidade visual das diárias de filmagem.",
+        "professorNotes": "O aluno deve atentar para a correção de cor, curvas de gama e color grading estético, unificando a identidade visual das diárias de filmagem.",
+        "durationHours": 0,
+        "durationMinutes": 24,
+        "durationSeconds": 0,
+        "totalDurationSeconds": 1440,
+        "durationLabel": "00h 24m 00s",
+        "uploadedAt": "2026-10-02T03:08:34.760Z"
+    }
+],
     sections: [
       {
         id: 'sec-7-1',
@@ -1132,6 +1356,38 @@ A montagem é o coração da linguagem cinematográfica porque cria pensamento n
     pdfUrl: '/materiais/cinelab-apostila-08.pdf',
     coverUrl: 'https://images.unsplash.com/photo-1535016120720-40c646be5580?auto=format&fit=crop&w=600&q=80',
     fileSizeMb: 19.4,
+    extraVideos: [
+    {
+        "id": "ev-apostila-8-1",
+        "slot": 1,
+        "title": "Vídeo Extra 01: Produção Executiva e Planejamento & Análise Prática - M- 8.1",
+        "videoUrl": "/videos/cinelab-intro-apresentacao.mp4",
+        "thumbnailUrl": "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80",
+        "description": "O aluno deve observar a planilha orçamentária por etapas (desenvolvimento, pré-produção, produção e pós), cronograma de filmagem e gestão de equipe.",
+        "professorNotes": "O aluno deve observar a planilha orçamentária por etapas (desenvolvimento, pré-produção, produção e pós), cronograma de filmagem e gestão de equipe.",
+        "durationHours": 0,
+        "durationMinutes": 18,
+        "durationSeconds": 0,
+        "totalDurationSeconds": 1080,
+        "durationLabel": "00h 18m 00s",
+        "uploadedAt": "2026-10-02T03:08:34.760Z"
+    },
+    {
+        "id": "ev-apostila-8-2",
+        "slot": 2,
+        "title": "Vídeo Extra 02: Produção Executiva e Planejamento & Análise Prática - M- 8.2",
+        "videoUrl": "/videos/cinelab-intro-apresentacao.mp4",
+        "thumbnailUrl": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80",
+        "description": "O aluno deve analisar a estrutura da Ordem do Dia (Call Sheet), autorizações de locação, direitos de imagem e logística diária de produção no set.",
+        "professorNotes": "O aluno deve analisar a estrutura da Ordem do Dia (Call Sheet), autorizações de locação, direitos de imagem e logística diária de produção no set.",
+        "durationHours": 0,
+        "durationMinutes": 24,
+        "durationSeconds": 0,
+        "totalDurationSeconds": 1440,
+        "durationLabel": "00h 24m 00s",
+        "uploadedAt": "2026-10-02T03:08:34.760Z"
+    }
+],
     sections: [
       {
         id: 'sec-8-1',
@@ -1243,6 +1499,38 @@ A montagem é o coração da linguagem cinematográfica porque cria pensamento n
     pdfUrl: '/materiais/cinelab-apostila-09.pdf',
     coverUrl: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=600&q=80',
     fileSizeMb: 19.8,
+    extraVideos: [
+    {
+        "id": "ev-apostila-9-1",
+        "slot": 1,
+        "title": "Vídeo Extra 01: Distribuição, Festivais e Mercado Audiovisual & Análise Prática - M- 9.1",
+        "videoUrl": "/videos/cinelab-intro-apresentacao.mp4",
+        "thumbnailUrl": "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80",
+        "description": "O aluno deve observar os circuitos de festivais nacionais e internacionais, janelas de exibição, plataformas de streaming e preparação de press kit oficial.",
+        "professorNotes": "O aluno deve observar os circuitos de festivais nacionais e internacionais, janelas de exibição, plataformas de streaming e preparação de press kit oficial.",
+        "durationHours": 0,
+        "durationMinutes": 18,
+        "durationSeconds": 0,
+        "totalDurationSeconds": 1080,
+        "durationLabel": "00h 18m 00s",
+        "uploadedAt": "2026-10-02T03:08:34.760Z"
+    },
+    {
+        "id": "ev-apostila-9-2",
+        "slot": 2,
+        "title": "Vídeo Extra 02: Distribuição, Festivais e Mercado Audiovisual & Análise Prática - M- 9.2",
+        "videoUrl": "/videos/cinelab-intro-apresentacao.mp4",
+        "thumbnailUrl": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80",
+        "description": "O aluno deve atentar para a apresentação de projetos (Pitch Deck de 5 a 10 minutos), logline comercial, sinopse de venda e negociação com distribuidoras.",
+        "professorNotes": "O aluno deve atentar para a apresentação de projetos (Pitch Deck de 5 a 10 minutos), logline comercial, sinopse de venda e negociação com distribuidoras.",
+        "durationHours": 0,
+        "durationMinutes": 24,
+        "durationSeconds": 0,
+        "totalDurationSeconds": 1440,
+        "durationLabel": "00h 24m 00s",
+        "uploadedAt": "2026-10-02T03:08:34.760Z"
+    }
+],
     sections: [
       {
         id: 'sec-9-1',
@@ -1352,6 +1640,38 @@ A maioria dos festivais de ponta (Gramado, Tiradentes, Berlim, Clermont-Ferrand)
     pdfUrl: '/materiais/cinelab-apostila-10.pdf',
     coverUrl: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=600&q=80',
     fileSizeMb: 23.5,
+    extraVideos: [
+    {
+        "id": "ev-apostila-10-1",
+        "slot": 1,
+        "title": "Vídeo Extra 01: Projeto Final & Análise Prática - M- 10.1",
+        "videoUrl": "/videos/cinelab-intro-apresentacao.mp4",
+        "thumbnailUrl": "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80",
+        "description": "O aluno deve revisar o checklist completo para filmagem do curta-metragem: roteiro finalizado, decupagem plano a plano, plano de filmagem e testes de equipamento.",
+        "professorNotes": "O aluno deve revisar o checklist completo para filmagem do curta-metragem: roteiro finalizado, decupagem plano a plano, plano de filmagem e testes de equipamento.",
+        "durationHours": 0,
+        "durationMinutes": 18,
+        "durationSeconds": 0,
+        "totalDurationSeconds": 1080,
+        "durationLabel": "00h 18m 00s",
+        "uploadedAt": "2026-10-02T03:08:34.760Z"
+    },
+    {
+        "id": "ev-apostila-10-2",
+        "slot": 2,
+        "title": "Vídeo Extra 02: Projeto Final & Análise Prática - M- 10.2",
+        "videoUrl": "/videos/cinelab-intro-apresentacao.mp4",
+        "thumbnailUrl": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80",
+        "description": "O aluno deve acompanhar as diretrizes para exportação do Master em ProRes/H.264, trailer oficial, cartaz de divulgação e submissão para a Mostra CINELAB.",
+        "professorNotes": "O aluno deve acompanhar as diretrizes para exportação do Master em ProRes/H.264, trailer oficial, cartaz de divulgação e submissão para a Mostra CINELAB.",
+        "durationHours": 0,
+        "durationMinutes": 24,
+        "durationSeconds": 0,
+        "totalDurationSeconds": 1440,
+        "durationLabel": "00h 24m 00s",
+        "uploadedAt": "2026-10-02T03:08:34.760Z"
+    }
+],
     sections: [
       {
         id: 'sec-10-1',
@@ -1469,6 +1789,38 @@ export const pedagogicalBonusApostilas: BonusApostila[] = [
     pdfUrl: '/materiais/cinelab-bonus-01-glossario-planos.pdf',
     coverUrl: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=600&q=80',
     unlockedByDefault: false,
+    extraVideos: [
+    {
+        "id": "ev-bonus-01-1",
+        "slot": 1,
+        "title": "Vídeo Extra 01: Estudo Dirigido & Análise Prática – Bônus 01",
+        "description": "Análise técnica e decupagem comentada pelo Professor Cineasta Tony de Luc para aprofundar os conceitos teóricos desta apostila.",
+        "videoUrl": "/videos/cinelab-intro-apresentacao.mp4",
+        "thumbnailUrl": "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80",
+        "durationMinutes": 18,
+        "durationLabel": "00h 18m 00s",
+        "professorNotes": "",
+        "uploadedAt": "2026-09-29T13:12:25.294Z",
+        "durationHours": 0,
+        "durationSeconds": 0,
+        "totalDurationSeconds": 1080
+    },
+    {
+        "id": "ev-bonus-01-2",
+        "slot": 2,
+        "title": "Vídeo Extra 02: Estudo de Caso & Exercício Técnico – Bônus 01",
+        "description": "Demonstração em set de filmagem com resolução prática de problemas de decupagem e linguagem cinematográfica.",
+        "videoUrl": "",
+        "thumbnailUrl": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80",
+        "durationMinutes": 24,
+        "durationLabel": "00h 24m 00s",
+        "professorNotes": "",
+        "uploadedAt": "2026-09-29T13:12:25.294Z",
+        "durationHours": 0,
+        "durationSeconds": 0,
+        "totalDurationSeconds": 1440
+    }
+],
     notes:
       'Liberado automaticamente a partir da Etapa 03 (junto com a Apostila 03). Acesso permanente mesmo após a conclusão do curso.',
     termsGlossary: [
@@ -1553,6 +1905,38 @@ export const pedagogicalBonusApostilas: BonusApostila[] = [
     pdfUrl: '/materiais/cinelab-bonus-02-glossario-roteiro.pdf',
     coverUrl: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=600&q=80',
     unlockedByDefault: false,
+    extraVideos: [
+    {
+        "id": "ev-bonus-02-1",
+        "slot": 1,
+        "title": "Vídeo Extra 01: Estudo Dirigido & Análise Prática – Bônus 02",
+        "description": "Análise técnica e decupagem comentada pelo Professor Cineasta Tony de Luc para aprofundar os conceitos teóricos desta apostila.",
+        "videoUrl": "/videos/cinelab-intro-apresentacao.mp4",
+        "thumbnailUrl": "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80",
+        "durationMinutes": 18,
+        "durationLabel": "00h 18m 00s",
+        "professorNotes": "",
+        "uploadedAt": "2026-09-29T13:12:25.299Z",
+        "durationHours": 0,
+        "durationSeconds": 0,
+        "totalDurationSeconds": 1080
+    },
+    {
+        "id": "ev-bonus-02-2",
+        "slot": 2,
+        "title": "Vídeo Extra 02: Estudo de Caso & Exercício Técnico – Bônus 02",
+        "description": "Demonstração em set de filmagem com resolução prática de problemas de decupagem e linguagem cinematográfica.",
+        "videoUrl": "",
+        "thumbnailUrl": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80",
+        "durationMinutes": 24,
+        "durationLabel": "00h 24m 00s",
+        "professorNotes": "",
+        "uploadedAt": "2026-09-29T13:12:25.299Z",
+        "durationHours": 0,
+        "durationSeconds": 0,
+        "totalDurationSeconds": 1440
+    }
+],
     notes:
       'Liberado automaticamente a partir da Etapa 03 (junto com a Apostila 03). Acesso permanente mesmo após a conclusão do curso.',
     termsGlossary: [
@@ -1632,6 +2016,38 @@ export const pedagogicalBonusApostilas: BonusApostila[] = [
     pdfUrl: '/uploads/apostilas/apostila-bonus-03-analise-filmica.pdf',
     coverUrl: 'https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&w=600&q=80',
     unlockedByDefault: false,
+    extraVideos: [
+    {
+        "id": "ev-bonus-03-1",
+        "slot": 1,
+        "title": "Vídeo Extra 01: Estudo Dirigido & Análise Prática – Bônus 03",
+        "description": "Análise técnica e decupagem comentada pelo Professor Cineasta Tony de Luc para aprofundar os conceitos teóricos desta apostila.",
+        "videoUrl": "/videos/cinelab-intro-apresentacao.mp4",
+        "thumbnailUrl": "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80",
+        "durationMinutes": 18,
+        "durationLabel": "00h 18m 00s",
+        "professorNotes": "",
+        "uploadedAt": "2026-09-29T13:12:25.303Z",
+        "durationHours": 0,
+        "durationSeconds": 0,
+        "totalDurationSeconds": 1080
+    },
+    {
+        "id": "ev-bonus-03-2",
+        "slot": 2,
+        "title": "Vídeo Extra 02: Estudo de Caso & Exercício Técnico – Bônus 03",
+        "description": "Demonstração em set de filmagem com resolução prática de problemas de decupagem e linguagem cinematográfica.",
+        "videoUrl": "",
+        "thumbnailUrl": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80",
+        "durationMinutes": 24,
+        "durationLabel": "00h 24m 00s",
+        "professorNotes": "",
+        "uploadedAt": "2026-09-29T13:12:25.303Z",
+        "durationHours": 0,
+        "durationSeconds": 0,
+        "totalDurationSeconds": 1440
+    }
+],
     notes:
       'Apostila bônus especial com o método completo das 6 camadas para análise técnica e crítica de cinema.',
     termsGlossary: [
