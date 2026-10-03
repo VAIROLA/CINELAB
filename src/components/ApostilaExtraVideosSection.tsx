@@ -164,6 +164,28 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
     return canned.includes(text.trim());
   };
 
+  const getSlotStorageKey = (aposId: string | number, slotNum: number) =>
+    `cinelab_extra_video_${aposId}_slot_${slotNum}`;
+
+  const loadSlotFromStorage = (aposId: string | number, slotNum: number): Partial<ApostilaExtraVideo> | null => {
+    try {
+      const data = localStorage.getItem(getSlotStorageKey(aposId, slotNum));
+      if (!data) return null;
+      return JSON.parse(data);
+    } catch {
+      return null;
+    }
+  };
+
+  const saveSlotToStorage = (aposId: string | number, slotNum: number, video: Partial<ApostilaExtraVideo>) => {
+    try {
+      localStorage.setItem(getSlotStorageKey(aposId, slotNum), JSON.stringify(video));
+      if (video.professorNotes !== undefined) {
+        localStorage.setItem(`cinelab_notes_${aposId}_${slotNum}`, video.professorNotes);
+      }
+    } catch {}
+  };
+
   const getLocalNotes = (slotNum: number): string => {
     try {
       return localStorage.getItem(`cinelab_notes_${apostila.id}_${slotNum}`) || "";
@@ -183,24 +205,89 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
 
   const localNote1 = getLocalNotes(1);
   const localNote2 = getLocalNotes(2);
+  const storedSlot1 = loadSlotFromStorage(apostila.id, 1);
+  const storedSlot2 = loadSlotFromStorage(apostila.id, 2);
 
   const slot1: ApostilaExtraVideo = {
     ...resolvedSlot1,
+    title: (storedSlot1?.title && !storedSlot1.title.includes('Módulo 0')) ? storedSlot1.title : resolvedSlot1.title,
+    description: storedSlot1?.description || resolvedSlot1.description,
+    videoUrl: storedSlot1?.videoUrl || resolvedSlot1.videoUrl,
+    thumbnailUrl: storedSlot1?.thumbnailUrl || resolvedSlot1.thumbnailUrl,
+    durationHours: storedSlot1?.durationHours ?? resolvedSlot1.durationHours,
+    durationMinutes: storedSlot1?.durationMinutes ?? resolvedSlot1.durationMinutes,
+    durationSeconds: storedSlot1?.durationSeconds ?? resolvedSlot1.durationSeconds,
+    durationLabel: storedSlot1?.durationLabel || resolvedSlot1.durationLabel,
     professorNotes:
       resolvedSlot1.professorNotes && resolvedSlot1.professorNotes.trim() !== ""
         ? resolvedSlot1.professorNotes
-        : (localNote1 && !isCannedPhrase(localNote1) ? localNote1 : resolvedSlot1.professorNotes),
+        : (localNote1 && !isCannedPhrase(localNote1)
+            ? localNote1
+            : (storedSlot1?.professorNotes && !isCannedPhrase(storedSlot1.professorNotes) ? storedSlot1.professorNotes : resolvedSlot1.professorNotes)),
   };
 
   const slot2: ApostilaExtraVideo = {
     ...resolvedSlot2,
+    title: (storedSlot2?.title && !storedSlot2.title.includes('Módulo 0')) ? storedSlot2.title : resolvedSlot2.title,
+    description: storedSlot2?.description || resolvedSlot2.description,
+    videoUrl: storedSlot2?.videoUrl || resolvedSlot2.videoUrl,
+    thumbnailUrl: storedSlot2?.thumbnailUrl || resolvedSlot2.thumbnailUrl,
+    durationHours: storedSlot2?.durationHours ?? resolvedSlot2.durationHours,
+    durationMinutes: storedSlot2?.durationMinutes ?? resolvedSlot2.durationMinutes,
+    durationSeconds: storedSlot2?.durationSeconds ?? resolvedSlot2.durationSeconds,
+    durationLabel: storedSlot2?.durationLabel || resolvedSlot2.durationLabel,
     professorNotes:
       resolvedSlot2.professorNotes && resolvedSlot2.professorNotes.trim() !== ""
         ? resolvedSlot2.professorNotes
-        : (localNote2 && !isCannedPhrase(localNote2) ? localNote2 : resolvedSlot2.professorNotes),
+        : (localNote2 && !isCannedPhrase(localNote2)
+            ? localNote2
+            : (storedSlot2?.professorNotes && !isCannedPhrase(storedSlot2.professorNotes) ? storedSlot2.professorNotes : resolvedSlot2.professorNotes)),
   };
 
   const extraVideos = [slot1, slot2];
+
+  // Blindagem de mesclagem para impedir que salvar Slot 1 apague Slot 2 e vice-versa
+  const mergeSlotsSafely = (
+    savedSlotNum: 1 | 2,
+    savedVideo: ApostilaExtraVideo,
+    serverVideos?: ApostilaExtraVideo[]
+  ): ApostilaExtraVideo[] => {
+    const otherSlotNum: 1 | 2 = savedSlotNum === 1 ? 2 : 1;
+    const currentOther = extraVideos.find((v) => v.slot === otherSlotNum);
+    const serverOther = serverVideos?.find((v) => v.slot === otherSlotNum);
+    const storedOther = loadSlotFromStorage(apostila.id, otherSlotNum);
+
+    // O slot salvo é SEMPRE o novo savedVideo e já é garantido no storage
+    saveSlotToStorage(apostila.id, savedSlotNum, savedVideo);
+
+    // Para o outro slot: NUNCA permitir que seja apagado ou limpo!
+    let preservedOther: ApostilaExtraVideo;
+    if (serverOther && serverOther.videoUrl && serverOther.videoUrl.trim() !== '') {
+      preservedOther = {
+        ...currentOther,
+        ...serverOther,
+        professorNotes: serverOther.professorNotes || currentOther?.professorNotes || (storedOther?.professorNotes as string) || '',
+      };
+    } else if (currentOther && (currentOther.videoUrl || currentOther.professorNotes)) {
+      preservedOther = {
+        ...currentOther,
+        professorNotes: currentOther.professorNotes || (storedOther?.professorNotes as string) || '',
+      };
+    } else if (storedOther && (storedOther.videoUrl || storedOther.professorNotes)) {
+      preservedOther = {
+        ...(currentOther || {}),
+        ...storedOther,
+      } as ApostilaExtraVideo;
+    } else {
+      preservedOther = serverOther || currentOther!;
+    }
+
+    if (preservedOther) {
+      saveSlotToStorage(apostila.id, otherSlotNum, preservedOther);
+    }
+
+    return savedSlotNum === 1 ? [savedVideo, preservedOther] : [preservedOther, savedVideo];
+  };
 
   // Abertura do Modal de Edição Geral
   const handleStartEdit = (video: ApostilaExtraVideo) => {
@@ -274,7 +361,12 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
       const totalSecs = safeH * 3600 + safeM * 60 + safeS;
       const formattedLabel = formatHms(safeH, safeM, safeS);
 
-      const res = await api.updateApostilaExtraVideo(apostila.id, slot, {
+      const otherSlotNum: 1 | 2 = slot === 1 ? 2 : 1;
+      const otherSlotData = extraVideos.find((v) => v.slot === otherSlotNum);
+
+      const payloadVideo: ApostilaExtraVideo = {
+        id: `ev-${apostila.id}-slot-${slot}`,
+        slot,
         title: ytTitle.trim() || `Vídeo Extra 0${slot}: Estudo Dirigido – YouTube`,
         description: ytDescription.trim(),
         videoUrl: canonicalYtUrl,
@@ -285,10 +377,27 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
         totalDurationSeconds: totalSecs,
         durationLabel: formattedLabel,
         professorNotes: ytProfessorNotes.trim(),
+        uploadedAt: new Date().toISOString(),
+      };
+
+      const res = await api.updateApostilaExtraVideo(apostila.id, slot, {
+        title: payloadVideo.title,
+        description: payloadVideo.description,
+        videoUrl: payloadVideo.videoUrl,
+        thumbnailUrl: payloadVideo.thumbnailUrl,
+        durationHours: safeH,
+        durationMinutes: safeM,
+        durationSeconds: safeS,
+        totalDurationSeconds: totalSecs,
+        durationLabel: formattedLabel,
+        professorNotes: payloadVideo.professorNotes,
+        otherSlotData,
       });
 
+      const safeVideos = mergeSlotsSafely(slot, res.extraVideo || payloadVideo, res.extraVideos);
+
       if (onApostilaUpdated) {
-        onApostilaUpdated(res.apostila || { ...apostila, extraVideos: res.extraVideos });
+        onApostilaUpdated(res.apostila ? { ...res.apostila, extraVideos: safeVideos } : { ...apostila, extraVideos: safeVideos });
       }
 
       saveLocalNotes(slot, ytProfessorNotes.trim());
@@ -320,7 +429,12 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
         thumb = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
       }
 
-      const res = await api.updateApostilaExtraVideo(apostila.id, slot, {
+      const otherSlotNum: 1 | 2 = slot === 1 ? 2 : 1;
+      const otherSlotData = extraVideos.find((v) => v.slot === otherSlotNum);
+
+      const payloadVideo: ApostilaExtraVideo = {
+        id: `ev-${apostila.id}-slot-${slot}`,
+        slot,
         title: formTitle.trim(),
         description: formDescription.trim(),
         videoUrl: trimmedUrl,
@@ -331,11 +445,29 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
         totalDurationSeconds: totalSecs,
         durationLabel: formattedLabel,
         professorNotes: formProfessorNotes.trim(),
+        uploadedAt: new Date().toISOString(),
+      };
+
+      const res = await api.updateApostilaExtraVideo(apostila.id, slot, {
+        title: payloadVideo.title,
+        description: payloadVideo.description,
+        videoUrl: payloadVideo.videoUrl,
+        thumbnailUrl: payloadVideo.thumbnailUrl,
+        durationHours: safeH,
+        durationMinutes: safeM,
+        durationSeconds: safeS,
+        totalDurationSeconds: totalSecs,
+        durationLabel: formattedLabel,
+        professorNotes: payloadVideo.professorNotes,
+        otherSlotData,
       });
 
+      const safeVideos = mergeSlotsSafely(slot, res.extraVideo || payloadVideo, res.extraVideos);
+
       if (onApostilaUpdated) {
-        onApostilaUpdated(res.apostila || { ...apostila, extraVideos: res.extraVideos });
+        onApostilaUpdated(res.apostila ? { ...res.apostila, extraVideos: safeVideos } : { ...apostila, extraVideos: safeVideos });
       }
+
       saveLocalNotes(slot, formProfessorNotes.trim());
       setSuccessMsg(`Informações do Vídeo Extra 0${slot} salvas com sucesso!`);
       setEditingSlot(null);
@@ -351,12 +483,25 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
       setIsSavingNotes(true);
       setErrorMsg(null);
 
+      const otherSlotNum: 1 | 2 = slot === 1 ? 2 : 1;
+      const otherSlotData = extraVideos.find((v) => v.slot === otherSlotNum);
+      const currentSlotData = extraVideos.find((v) => v.slot === slot);
+
       const res = await api.updateApostilaExtraVideo(apostila.id, slot, {
         professorNotes: notesText.trim(),
+        otherSlotData,
       });
 
+      const updatedThisSlot: ApostilaExtraVideo = {
+        ...(currentSlotData || {}),
+        slot,
+        professorNotes: notesText.trim(),
+      } as ApostilaExtraVideo;
+
+      const safeVideos = mergeSlotsSafely(slot, res.extraVideo || updatedThisSlot, res.extraVideos);
+
       if (onApostilaUpdated) {
-        onApostilaUpdated(res.apostila || { ...apostila, extraVideos: res.extraVideos });
+        onApostilaUpdated(res.apostila ? { ...res.apostila, extraVideos: safeVideos } : { ...apostila, extraVideos: safeVideos });
       }
 
       saveLocalNotes(slot, notesText.trim());
@@ -403,6 +548,8 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
       setUploadingSlot(slot);
       setUploadProgress(0);
 
+      const otherSlotNum: 1 | 2 = slot === 1 ? 2 : 1;
+      const otherSlotData = extraVideos.find((v) => v.slot === otherSlotNum);
       const currentVid = extraVideos.find((v) => v.slot === slot);
       const parsed = parseHmsFromVideo(currentVid);
 
@@ -421,11 +568,14 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
         durationSeconds: finalS,
         durationLabel: finalLabel,
         professorNotes: currentVid?.professorNotes,
+        otherSlotData,
         onProgress: (p) => setUploadProgress(p),
       });
 
+      const safeVideos = mergeSlotsSafely(slot, res.extraVideo, res.extraVideos);
+
       if (onApostilaUpdated) {
-        onApostilaUpdated(res.apostila || { ...apostila, extraVideos: res.extraVideos });
+        onApostilaUpdated(res.apostila ? { ...res.apostila, extraVideos: safeVideos } : { ...apostila, extraVideos: safeVideos });
       }
       setSuccessMsg(`Arquivo de vídeo para o Local 0${slot} subido com sucesso! (${finalLabel})`);
       setTimeout(() => setSuccessMsg(null), 4000);
@@ -444,9 +594,20 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
     }
     try {
       setErrorMsg(null);
+      const otherSlotNum: 1 | 2 = slot === 1 ? 2 : 1;
+      const otherSlotData = extraVideos.find((v) => v.slot === otherSlotNum);
+
+      localStorage.removeItem(getSlotStorageKey(apostila.id, slot));
+      localStorage.removeItem(`cinelab_notes_${apostila.id}_${slot}`);
+
       const res = await api.deleteApostilaExtraVideo(apostila.id, slot);
+
+      const safeVideos: ApostilaExtraVideo[] = slot === 1
+        ? [res.extraVideos?.find((v: any) => v.slot === 1) || { ...extraVideos[0], videoUrl: '' }, otherSlotData!]
+        : [otherSlotData!, res.extraVideos?.find((v: any) => v.slot === 2) || { ...extraVideos[1], videoUrl: '' }];
+
       if (onApostilaUpdated) {
-        onApostilaUpdated(res.apostila || { ...apostila, extraVideos: res.extraVideos });
+        onApostilaUpdated(res.apostila ? { ...res.apostila, extraVideos: safeVideos } : { ...apostila, extraVideos: safeVideos });
       }
       setSuccessMsg(`Vídeo do Local 0${slot} removido.`);
       setTimeout(() => setSuccessMsg(null), 4000);

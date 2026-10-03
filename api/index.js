@@ -8709,6 +8709,28 @@ function findTargetApostila(db2, rawId) {
   if (foundBonus) return { apostila: foundBonus, isBonus: true };
   return { apostila: null, isBonus: false };
 }
+const extraVideosRegistryPath = path2.join(process.cwd(), "data", "extra-videos-registry.json");
+function getExtraVideosRegistry() {
+  try {
+    if (fs2.existsSync(extraVideosRegistryPath)) {
+      return JSON.parse(fs2.readFileSync(extraVideosRegistryPath, "utf-8"));
+    }
+  } catch (err) {
+    console.warn("Notice reading extra-videos-registry.json:", err);
+  }
+  return {};
+}
+function saveExtraVideosRegistry(reg) {
+  try {
+    const dir = path2.dirname(extraVideosRegistryPath);
+    if (!fs2.existsSync(dir)) {
+      fs2.mkdirSync(dir, { recursive: true });
+    }
+    fs2.writeFileSync(extraVideosRegistryPath, JSON.stringify(reg, null, 2), "utf-8");
+  } catch (err) {
+    console.warn("Notice saving extra-videos-registry.json:", err);
+  }
+}
 app.post("/api/admin/apostilas/extra-video/upload", requireAdmin, (req, res) => {
   videoUpload.single("video")(req, res, (err) => {
     if (err) {
@@ -8721,6 +8743,7 @@ app.post("/api/admin/apostilas/extra-video/upload", requireAdmin, (req, res) => 
     const db2 = getDb();
     const rawAposId = req.body.apostilaId || req.body.moduleId;
     const slot = Number(req.body.slot) === 2 ? 2 : 1;
+    const otherSlot = slot === 1 ? 2 : 1;
     const { apostila, isBonus } = findTargetApostila(db2, rawAposId);
     if (!apostila) {
       return res.status(404).json({ error: "Apostila correspondente n\xE3o encontrada para vincular o v\xEDdeo extra." });
@@ -8765,6 +8788,57 @@ app.post("/api/admin/apostilas/extra-video/upload", requireAdmin, (req, res) => 
     } else {
       apostila.extraVideos.push(updatedVideo);
     }
+
+    const reg = getExtraVideosRegistry();
+    const modNum = apostila.moduleId || apostila.number || 1;
+    const thisKeys = [`${apostila.id}_slot_${slot}`, `mod-${modNum}_slot_${slot}`, `${modNum}_slot_${slot}`];
+    const otherKeys = [`${apostila.id}_slot_${otherSlot}`, `mod-${modNum}_slot_${otherSlot}`, `${modNum}_slot_${otherSlot}`];
+
+    for (const k of thisKeys) {
+      reg[k] = updatedVideo;
+    }
+
+    let parsedOther = req.body.otherSlotData;
+    if (typeof parsedOther === "string") {
+      try { parsedOther = JSON.parse(parsedOther); } catch {}
+    }
+
+    const otherSlotIdx = apostila.extraVideos.findIndex((v) => v.slot === otherSlot);
+    const otherVideo = otherSlotIdx !== -1 ? apostila.extraVideos[otherSlotIdx] : null;
+
+    if (parsedOther && typeof parsedOther === "object" && (parsedOther.videoUrl || parsedOther.professorNotes || parsedOther.title)) {
+      const mergedOther = {
+        ...(otherVideo || {}),
+        ...parsedOther,
+        id: otherVideo?.id || parsedOther.id || `ev-${apostila.id}-slot-${otherSlot}`,
+        slot: otherSlot
+      };
+      if (otherSlotIdx !== -1) {
+        apostila.extraVideos[otherSlotIdx] = mergedOther;
+      } else {
+        apostila.extraVideos.push(mergedOther);
+      }
+      for (const k of otherKeys) {
+        reg[k] = mergedOther;
+      }
+    } else {
+      const regOther = otherKeys.map((k) => reg[k]).find((v) => v && (v.videoUrl || v.professorNotes));
+      if (regOther) {
+        const restoredOther = {
+          ...(otherVideo || {}),
+          ...regOther,
+          id: otherVideo?.id || regOther.id || `ev-${apostila.id}-slot-${otherSlot}`,
+          slot: otherSlot
+        };
+        if (otherSlotIdx !== -1) {
+          apostila.extraVideos[otherSlotIdx] = restoredOther;
+        } else {
+          apostila.extraVideos.push(restoredOther);
+        }
+      }
+    }
+
+    saveExtraVideosRegistry(reg);
     saveDatabase();
     console.log(`[ExtraVideo] Upload conclu\xEDdo para Apostila ${apostila.id} no Slot ${slot}: ${fileUrl}`);
     return res.json({
@@ -8795,6 +8869,7 @@ app.put("/api/admin/apostilas/:id/extra-video/:slot", requireAdmin, (req, res) =
   const db2 = getDb();
   const rawId = req.params.id;
   const slot = Number(req.params.slot) === 2 ? 2 : 1;
+  const otherSlot = slot === 1 ? 2 : 1;
   const {
     title,
     description,
@@ -8804,7 +8879,8 @@ app.put("/api/admin/apostilas/:id/extra-video/:slot", requireAdmin, (req, res) =
     durationMinutes,
     durationSeconds,
     durationLabel,
-    professorNotes
+    professorNotes,
+    otherSlotData
   } = req.body;
   const { apostila, isBonus } = findTargetApostila(db2, rawId);
   if (!apostila) {
@@ -8863,7 +8939,59 @@ app.put("/api/admin/apostilas/:id/extra-video/:slot", requireAdmin, (req, res) =
   } else {
     apostila.extraVideos.push(updatedVideo);
   }
+
+  const reg = getExtraVideosRegistry();
+  const modNum = apostila.moduleId || apostila.number || 1;
+  const thisKeys = [`${apostila.id}_slot_${slot}`, `mod-${modNum}_slot_${slot}`, `${modNum}_slot_${slot}`];
+  const otherKeys = [`${apostila.id}_slot_${otherSlot}`, `mod-${modNum}_slot_${otherSlot}`, `${modNum}_slot_${otherSlot}`];
+
+  for (const k of thisKeys) {
+    reg[k] = updatedVideo;
+  }
+
+  let parsedOther = otherSlotData;
+  if (typeof parsedOther === "string") {
+    try { parsedOther = JSON.parse(parsedOther); } catch {}
+  }
+
+  const otherSlotIdx = apostila.extraVideos.findIndex((v) => v.slot === otherSlot);
+  const otherVideo = otherSlotIdx !== -1 ? apostila.extraVideos[otherSlotIdx] : null;
+
+  if (parsedOther && typeof parsedOther === "object" && (parsedOther.videoUrl || parsedOther.professorNotes || parsedOther.title)) {
+    const mergedOther = {
+      ...(otherVideo || {}),
+      ...parsedOther,
+      id: otherVideo?.id || parsedOther.id || `ev-${apostila.id}-slot-${otherSlot}`,
+      slot: otherSlot
+    };
+    if (otherSlotIdx !== -1) {
+      apostila.extraVideos[otherSlotIdx] = mergedOther;
+    } else {
+      apostila.extraVideos.push(mergedOther);
+    }
+    for (const k of otherKeys) {
+      reg[k] = mergedOther;
+    }
+  } else {
+    const regOther = otherKeys.map((k) => reg[k]).find((v) => v && (v.videoUrl || v.professorNotes));
+    if (regOther) {
+      const restoredOther = {
+        ...(otherVideo || {}),
+        ...regOther,
+        id: otherVideo?.id || regOther.id || `ev-${apostila.id}-slot-${otherSlot}`,
+        slot: otherSlot
+      };
+      if (otherSlotIdx !== -1) {
+        apostila.extraVideos[otherSlotIdx] = restoredOther;
+      } else {
+        apostila.extraVideos.push(restoredOther);
+      }
+    }
+  }
+
+  saveExtraVideosRegistry(reg);
   saveDatabase();
+
   return res.json({
     success: true,
     slot,
@@ -8886,6 +9014,14 @@ app.delete("/api/admin/apostilas/:id/extra-video/:slot", requireAdmin, (req, res
   if (slotIdx !== -1) {
     apostila.extraVideos[slotIdx].videoUrl = "";
   }
+
+  const reg = getExtraVideosRegistry();
+  const modNum = apostila.moduleId || apostila.number || 1;
+  delete reg[`${apostila.id}_slot_${slot}`];
+  delete reg[`mod-${modNum}_slot_${slot}`];
+  delete reg[`${modNum}_slot_${slot}`];
+  saveExtraVideosRegistry(reg);
+
   saveDatabase();
   return res.json({
     success: true,

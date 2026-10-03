@@ -320,6 +320,7 @@ export const api = {
       totalDurationSeconds?: number;
       durationLabel?: string;
       professorNotes?: string;
+      otherSlotData?: Partial<ApostilaExtraVideo>;
     }
   ) =>
     request<{
@@ -655,6 +656,7 @@ export const api = {
       durationSeconds?: number;
       durationLabel?: string;
       professorNotes?: string;
+      otherSlotData?: Partial<ApostilaExtraVideo>;
       onProgress?: (percent: number) => void;
     }
   ): Promise<{
@@ -676,6 +678,7 @@ export const api = {
       if (options?.durationSeconds !== undefined) formData.append('durationSeconds', String(options.durationSeconds));
       if (options?.durationLabel) formData.append('durationLabel', options.durationLabel);
       if (options?.professorNotes) formData.append('professorNotes', options.professorNotes);
+      if (options?.otherSlotData) formData.append('otherSlotData', JSON.stringify(options.otherSlotData));
       formData.append('video', file);
 
       const xhr = new XMLHttpRequest();
