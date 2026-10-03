@@ -23,25 +23,25 @@ export const CANONICAL_EXTRA_VIDEOS_MAP: Record<string, [CanonicalExtraVideoItem
       videoUrl: 'https://www.youtube.com/watch?v=q1U0eKOOwsQ',
       thumbnailUrl: 'https://img.youtube.com/vi/q1U0eKOOwsQ/hqdefault.jpg',
       durationHours: 0,
-      durationMinutes: 18,
-      durationSeconds: 0,
-      totalDurationSeconds: 1080,
-      durationLabel: '00h 18m 00s',
-      description: 'Análise técnica e decupagem comentada pelo Professor Cineasta Tony de Luc para aprofundar os conceitos teóricos desta apostila.',
-      professorNotes: 'O aluno deve observar como a história é contada principalmente através das imagens, expressões faciais, gestos e movimentos dos personagens, já que o filme pertence ao período do cinema mudo. Deve prestar atenção aos enquadramentos, composição das cenas, montagem, ritmo, atuação corporal e uso da música para perceber como o cinema consegue transmitir emoções e narrar acontecimentos sem depender de diálogos falados.',
+      durationMinutes: 52,
+      durationSeconds: 48,
+      totalDurationSeconds: 3168,
+      durationLabel: '00h 52m 48s',
+      description: 'O aluno deve observar como a história é contada principalmente através das imagens, expressões faciais, gestos e movimentos dos personagens, já que o filme pertence ao período do cinema mudo. Deve prestar atenção aos enquadramentos, composição das cenas, montagem, ritmo, atuação corporal e uso da música para perceber como o cinema consegue transmitir emoções e narrar acontecimentos sem depender de diálogos falados.',
+      professorNotes: 'Como Chaplin consegue fazer o espectador compreender a história e sentir emoção utilizando principalmente imagens, gestos e expressões?\nO ALUNO DEVE COM O FILME O Garoto, aprender a ler uma história através das imagens.',
     },
     {
       slot: 2,
       title: 'Vídeo Extra 02: Introdução ao Cinema e à Linguagem Audiovisual & Análise Prática - M- 1.2',
       videoUrl: 'https://www.youtube.com/watch?v=i15UCTIdfwI',
       thumbnailUrl: 'https://img.youtube.com/vi/i15UCTIdfwI/hqdefault.jpg',
-      durationHours: 0,
-      durationMinutes: 24,
-      durationSeconds: 0,
-      totalDurationSeconds: 1440,
-      durationLabel: '00h 24m 00s',
-      description: 'Exercício prático de aplicação em set de filmagem com demonstração passo a passo da metodologia do CINELAB.',
-      professorNotes: 'O aluno deve observar como imagem, movimento, montagem, ritmo e som trabalham juntos para construir a narrativa. Deve prestar atenção especialmente às máquinas, ao ambiente da fábrica, aos movimentos repetitivos dos trabalhadores, aos enquadramentos, à montagem e aos efeitos sonoros, percebendo como Chaplin utiliza a linguagem audiovisual não apenas para contar uma história, mas também para transmitir ideias e críticas através das imagens.',
+      durationHours: 1,
+      durationMinutes: 26,
+      durationSeconds: 52,
+      totalDurationSeconds: 5212,
+      durationLabel: '01h 26m 52s',
+      description: 'O aluno deve observar como imagem, movimento, montagem, ritmo e som trabalham juntos para construir a narrativa. Deve prestar atenção especialmente às máquinas, ao ambiente da fábrica, aos movimentos repetitivos dos trabalhadores, aos enquadramentos, à montagem e aos efeitos sonoros, percebendo como Chaplin utiliza a linguagem audiovisual não apenas para contar uma história, mas também para transmitir ideias e críticas através das imagens.',
+      professorNotes: 'Como Chaplin utiliza a imagem, o movimento, o ritmo e o som para transmitir uma ideia sem precisar explicar tudo através de diálogos?\nO ALUNO DEVE COM O FILME Tempos Modernos, perceber como imagem + movimento + montagem + som constroem significado.',
     },
   ],
 
@@ -70,7 +70,7 @@ export const CANONICAL_EXTRA_VIDEOS_MAP: Record<string, [CanonicalExtraVideoItem
       durationSeconds: 0,
       totalDurationSeconds: 1440,
       durationLabel: '00h 24m 00s',
-      description: 'Exercício prático de aplicação em set de filmagem com demonstração passo a passo da metodologia do CINELAB.',
+      description: 'Identifique os efeitos utilizados e tentar imaginar como poderiam ter sido realizados na época.',
       professorNotes: 'Identifique os efeitos utilizados e tentar imaginar como poderiam ter sido realizados na época. O aluno deve analisar as trucagens ópticas de Georges Méliès (parada de câmera, sobreposição e fusão) e compreender como os primeiros efeitos especiais moldaram a imaginação e a técnica cinematográfica mundial.',
     },
   ],
@@ -80,28 +80,28 @@ export const CANONICAL_EXTRA_VIDEOS_MAP: Record<string, [CanonicalExtraVideoItem
     {
       slot: 1,
       title: 'Vídeo Extra 01: Roteiro e Criação de Personagens & Análise Prática - M- 3.1',
-      videoUrl: 'https://www.youtube.com/watch?v=q1U0eKOOwsQ',
-      thumbnailUrl: 'https://img.youtube.com/vi/q1U0eKOOwsQ/hqdefault.jpg',
+      videoUrl: '',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80',
       durationHours: 0,
       durationMinutes: 18,
       durationSeconds: 0,
       totalDurationSeconds: 1080,
       durationLabel: '00h 18m 00s',
       description: 'Análise técnica e decupagem comentada pelo Professor Cineasta Tony de Luc para aprofundar os conceitos teóricos desta apostila.',
-      professorNotes: 'O aluno deve observar a construção da curva dramática em 3 atos, o incidente incitante e a motivação interna dos personagens, analisando como o subtexto guia cada diálogo e decisão na cena.',
+      professorNotes: '',
     },
     {
       slot: 2,
       title: 'Vídeo Extra 02: Roteiro e Criação de Personagens & Análise Prática - M- 3.2',
-      videoUrl: 'https://www.youtube.com/watch?v=i15UCTIdfwI',
-      thumbnailUrl: 'https://img.youtube.com/vi/i15UCTIdfwI/hqdefault.jpg',
+      videoUrl: '',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80',
       durationHours: 0,
       durationMinutes: 24,
       durationSeconds: 0,
       totalDurationSeconds: 1440,
       durationLabel: '00h 24m 00s',
       description: 'Exercício prático de aplicação em set de filmagem com demonstração passo a passo da metodologia do CINELAB.',
-      professorNotes: 'O aluno deve atentar para a formatação técnica internacional de roteiro (cabeçalho Master Scenes, rubrica no presente, transição e diálogo), identificando a economia descritiva e o ritmo da leitura visual.',
+      professorNotes: '',
     },
   ],
 
@@ -110,28 +110,28 @@ export const CANONICAL_EXTRA_VIDEOS_MAP: Record<string, [CanonicalExtraVideoItem
     {
       slot: 1,
       title: 'Vídeo Extra 01: Direção e Direção de Atores & Análise Prática - M- 4.1',
-      videoUrl: 'https://www.youtube.com/watch?v=qawVtd32DOQ',
-      thumbnailUrl: 'https://img.youtube.com/vi/qawVtd32DOQ/hqdefault.jpg',
+      videoUrl: '',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?auto=format&fit=crop&w=800&q=80',
       durationHours: 0,
       durationMinutes: 18,
       durationSeconds: 0,
       totalDurationSeconds: 1080,
       durationLabel: '00h 18m 00s',
       description: 'Análise técnica e decupagem comentada pelo Professor Cineasta Tony de Luc para aprofundar os conceitos teóricos desta apostila.',
-      professorNotes: 'O aluno deve observar a interação entre o diretor e o elenco, prestando atenção à comunicação por ações físicas e verbos ativos, em vez de exigir sentimentos abstratos dos atores.',
+      professorNotes: '',
     },
     {
       slot: 2,
       title: 'Vídeo Extra 02: Direção e Direção de Atores & Análise Prática - M- 4.2',
-      videoUrl: 'https://www.youtube.com/watch?v=UHbpgsD8zCM',
-      thumbnailUrl: 'https://img.youtube.com/vi/UHbpgsD8zCM/hqdefault.jpg',
+      videoUrl: '',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?auto=format&fit=crop&w=800&q=80',
       durationHours: 0,
       durationMinutes: 24,
       durationSeconds: 0,
       totalDurationSeconds: 1440,
       durationLabel: '00h 24m 00s',
       description: 'Exercício prático de aplicação em set de filmagem com demonstração passo a passo da metodologia do CINELAB.',
-      professorNotes: 'O aluno deve acompanhar a escolha do ponto de vista da câmera (POV), a marcação cênica (blocking) e a relação do enquadramento com a tensão psicológica dos personagens na cena.',
+      professorNotes: '',
     },
   ],
 
@@ -482,34 +482,31 @@ export function resolveApostilaExtraVideos(
       uploadedAt: new Date().toISOString(),
     };
   } else {
-    // Check if title needs healing (legacy title format)
+    // Check if title needs healing (only if really missing or generic default)
     const isLegacyTitle1 =
       !rawSlot1.title ||
-      rawSlot1.title.includes('Estudo Dirigido & Análise Prática') ||
-      rawSlot1.title.includes('Módulo 0') ||
-      !rawSlot1.title.includes('- M-') && !rawSlot1.title.includes('- B-');
+      rawSlot1.title.includes('Estudo Dirigido & Análise Prática – Módulo') ||
+      rawSlot1.title.includes('Módulo 0');
 
     const effectiveTitle1 = isLegacyTitle1 ? can1.title : rawSlot1.title;
 
-    // Check if videoUrl was accidentally replaced by welcome video
-    const isBogusUrl1 =
-      !rawSlot1.videoUrl ||
-      rawSlot1.videoUrl === '' ||
-      (can1.videoUrl.includes('youtube.com') && rawSlot1.videoUrl.includes('cinelab-intro-apresentacao.mp4'));
+    // Only fallback to canonical if current is intro video when canonical is a designated YouTube video
+    const shouldFallbackUrl1 =
+      Boolean(can1.videoUrl && can1.videoUrl.includes('youtube.com') && (!rawSlot1.videoUrl || rawSlot1.videoUrl.includes('cinelab-intro-apresentacao.mp4')));
 
-    const effectiveUrl1 = isBogusUrl1 ? can1.videoUrl : rawSlot1.videoUrl;
+    const effectiveUrl1 = shouldFallbackUrl1 ? can1.videoUrl : (rawSlot1.videoUrl || '');
 
-    // Check if professor notes are missing or empty
+    // Preserve professor notes: prioritize what is in rawSlot1
     const effectiveNotes1 =
-      rawSlot1.professorNotes && rawSlot1.professorNotes.trim() !== ''
-        ? rawSlot1.professorNotes.trim()
+      rawSlot1.professorNotes !== undefined && rawSlot1.professorNotes !== null
+        ? rawSlot1.professorNotes
         : can1.professorNotes;
 
     slot1 = {
       ...rawSlot1,
       title: effectiveTitle1,
       videoUrl: effectiveUrl1,
-      thumbnailUrl: isBogusUrl1 ? can1.thumbnailUrl : (rawSlot1.thumbnailUrl || can1.thumbnailUrl),
+      thumbnailUrl: shouldFallbackUrl1 ? can1.thumbnailUrl : (rawSlot1.thumbnailUrl || can1.thumbnailUrl),
       professorNotes: effectiveNotes1,
       durationLabel: rawSlot1.durationLabel || can1.durationLabel,
       durationHours: rawSlot1.durationHours ?? can1.durationHours,
@@ -541,28 +538,28 @@ export function resolveApostilaExtraVideos(
     // Check if title needs healing
     const isLegacyTitle2 =
       !rawSlot2.title ||
-      rawSlot2.title.includes('Estudo de Caso & Exercício Técnico') ||
-      rawSlot2.title.includes('Módulo 0') ||
-      !rawSlot2.title.includes('- M-') && !rawSlot2.title.includes('- B-');
+      rawSlot2.title.includes('Estudo de Caso & Exercício Técnico – Módulo') ||
+      rawSlot2.title.includes('Módulo 0');
 
     const effectiveTitle2 = isLegacyTitle2 ? can2.title : rawSlot2.title;
 
-    // Check if videoUrl was lost
-    const isBogusUrl2 =
-      (!rawSlot2.videoUrl || rawSlot2.videoUrl === '') && can2.videoUrl !== '';
+    // Only fallback to canonical if designated YouTube video is missing
+    const shouldFallbackUrl2 =
+      Boolean(can2.videoUrl && can2.videoUrl.includes('youtube.com') && (!rawSlot2.videoUrl || rawSlot2.videoUrl === ''));
 
-    const effectiveUrl2 = isBogusUrl2 ? can2.videoUrl : rawSlot2.videoUrl;
+    const effectiveUrl2 = shouldFallbackUrl2 ? can2.videoUrl : (rawSlot2.videoUrl || '');
 
+    // Preserve professor notes: prioritize what is in rawSlot2
     const effectiveNotes2 =
-      rawSlot2.professorNotes && rawSlot2.professorNotes.trim() !== ''
-        ? rawSlot2.professorNotes.trim()
+      rawSlot2.professorNotes !== undefined && rawSlot2.professorNotes !== null
+        ? rawSlot2.professorNotes
         : can2.professorNotes;
 
     slot2 = {
       ...rawSlot2,
       title: effectiveTitle2,
       videoUrl: effectiveUrl2,
-      thumbnailUrl: isBogusUrl2 ? can2.thumbnailUrl : (rawSlot2.thumbnailUrl || can2.thumbnailUrl),
+      thumbnailUrl: shouldFallbackUrl2 ? can2.thumbnailUrl : (rawSlot2.thumbnailUrl || can2.thumbnailUrl),
       professorNotes: effectiveNotes2,
       durationLabel: rawSlot2.durationLabel || can2.durationLabel,
       durationHours: rawSlot2.durationHours ?? can2.durationHours,

@@ -272,53 +272,54 @@ export function initExtraVideosForApostila(apos: any, defaultSuffix: string): Ap
   let slot1 = existing.find((v: any) => v.slot === 1) || (pedVideos[0] ? { ...pedVideos[0] } : null);
   let slot2 = existing.find((v: any) => v.slot === 2) || (pedVideos[1] ? { ...pedVideos[1] } : null);
 
-  // If slot 1 has old/legacy title or welcome video instead of the real video:
-  const isInvalidSlot1 = !slot1 || !slot1.videoUrl ||
-    slot1.title?.includes("Estudo Dirigido") ||
-    slot1.title?.includes("Módulo 0") ||
-    (!slot1.title?.includes("- M-") && !slot1.title?.includes("- B-")) ||
-    (modNum === 2 && slot1.videoUrl.includes("cinelab-intro-apresentacao.mp4")) ||
-    (pedVideos[0]?.videoUrl?.includes("youtube.com") && slot1.videoUrl.includes("cinelab-intro-apresentacao.mp4"));
-
-  if (isInvalidSlot1) {
+  // If slot 1 is completely missing, create it
+  if (!slot1) {
     if (pedVideos[0]) {
-      slot1 = {
-        ...pedVideos[0],
-        ...(slot1?.professorNotes && slot1.professorNotes.trim() !== "" ? { professorNotes: slot1.professorNotes } : {}),
-      };
+      slot1 = { ...pedVideos[0] };
     } else {
       slot1 = {
         id: `ev-${apos.id || "apos"}-1`,
         slot: 1,
         title: `Vídeo Extra 01: ${cleanAposTitle} & Análise Prática - ${modPrefix}.1`,
         description: `Análise técnica e decupagem comentada pelo Professor Cineasta Tony de Luc para aprofundar os conceitos teóricos desta apostila.`,
-        videoUrl: modNum === 2 ? "https://www.youtube.com/watch?v=qawVtd32DOQ" : "/videos/cinelab-intro-apresentacao.mp4",
+        videoUrl: modNum === 2 ? "https://www.youtube.com/watch?v=qawVtd32DOQ" : "",
         thumbnailUrl: modNum === 2 ? "https://img.youtube.com/vi/qawVtd32DOQ/hqdefault.jpg" : "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80",
         durationHours: 0,
         durationMinutes: 18,
         durationSeconds: 0,
         totalDurationSeconds: 18 * 60,
         durationLabel: "00h 18m 00s",
-        professorNotes: (slot1?.professorNotes && slot1.professorNotes.trim() !== "") ? slot1.professorNotes : (pedVideos[0]?.professorNotes || ""),
+        professorNotes: "",
         uploadedAt: new Date().toISOString(),
       };
     }
+  } else {
+    // Slot 1 exists: only heal title if strictly legacy generic
+    if (!slot1.title || slot1.title.includes("Estudo Dirigido & Análise Prática – Módulo") || slot1.title.includes("Módulo 0")) {
+      slot1.title = pedVideos[0]?.title || `Vídeo Extra 01: ${cleanAposTitle} & Análise Prática - ${modPrefix}.1`;
+    }
+    // Only set YouTube video for module 1 or 2 if missing
+    if (modNum === 1 && (!slot1.videoUrl || slot1.videoUrl.includes("cinelab-intro-apresentacao.mp4"))) {
+      slot1.videoUrl = "https://www.youtube.com/watch?v=q1U0eKOOwsQ";
+      slot1.thumbnailUrl = "https://img.youtube.com/vi/q1U0eKOOwsQ/hqdefault.jpg";
+      slot1.durationHours = 0;
+      slot1.durationMinutes = 52;
+      slot1.durationSeconds = 48;
+      slot1.totalDurationSeconds = 3168;
+      slot1.durationLabel = "00h 52m 48s";
+      if (!slot1.professorNotes || slot1.professorNotes.trim() === "") {
+        slot1.professorNotes = "Como Chaplin consegue fazer o espectador compreender a história e sentir emoção utilizando principalmente imagens, gestos e expressões?\nO ALUNO DEVE COM O FILME O Garoto, aprender a ler uma história através das imagens.";
+      }
+    } else if (modNum === 2 && (!slot1.videoUrl || slot1.videoUrl.includes("cinelab-intro-apresentacao.mp4"))) {
+      slot1.videoUrl = "https://www.youtube.com/watch?v=qawVtd32DOQ";
+      slot1.thumbnailUrl = "https://img.youtube.com/vi/qawVtd32DOQ/hqdefault.jpg";
+    }
   }
 
-  // If slot 2 has old/legacy title or missing video:
-  const isInvalidSlot2 = !slot2 ||
-    slot2.title?.includes("Estudo de Caso") ||
-    slot2.title?.includes("Módulo 0") ||
-    (!slot2.title?.includes("- M-") && !slot2.title?.includes("- B-")) ||
-    (!slot2.videoUrl && pedVideos[1]?.videoUrl) ||
-    (pedVideos[1]?.videoUrl?.includes("youtube.com") && !slot2.videoUrl);
-
-  if (isInvalidSlot2) {
+  // If slot 2 is completely missing, create it
+  if (!slot2) {
     if (pedVideos[1]) {
-      slot2 = {
-        ...pedVideos[1],
-        ...(slot2?.professorNotes && slot2.professorNotes.trim() !== "" ? { professorNotes: slot2.professorNotes } : {}),
-      };
+      slot2 = { ...pedVideos[1] };
     } else {
       slot2 = {
         id: `ev-${apos.id || "apos"}-2`,
@@ -332,9 +333,30 @@ export function initExtraVideosForApostila(apos: any, defaultSuffix: string): Ap
         durationSeconds: 0,
         totalDurationSeconds: 24 * 60,
         durationLabel: "00h 24m 00s",
-        professorNotes: (slot2?.professorNotes && slot2.professorNotes.trim() !== "") ? slot2.professorNotes : (pedVideos[1]?.professorNotes || ""),
+        professorNotes: "",
         uploadedAt: new Date().toISOString(),
       };
+    }
+  } else {
+    // Slot 2 exists: only heal title if strictly legacy generic
+    if (!slot2.title || slot2.title.includes("Estudo de Caso & Exercício Técnico – Módulo") || slot2.title.includes("Módulo 0")) {
+      slot2.title = pedVideos[1]?.title || `Vídeo Extra 02: ${cleanAposTitle} & Análise Prática - ${modPrefix}.2`;
+    }
+    // Only set YouTube video for module 1 or 2 if missing
+    if (modNum === 1 && (!slot2.videoUrl || slot2.videoUrl === "")) {
+      slot2.videoUrl = "https://www.youtube.com/watch?v=i15UCTIdfwI";
+      slot2.thumbnailUrl = "https://img.youtube.com/vi/i15UCTIdfwI/hqdefault.jpg";
+      slot2.durationHours = 1;
+      slot2.durationMinutes = 26;
+      slot2.durationSeconds = 52;
+      slot2.totalDurationSeconds = 5212;
+      slot2.durationLabel = "01h 26m 52s";
+      if (!slot2.professorNotes || slot2.professorNotes.trim() === "") {
+        slot2.professorNotes = "Como Chaplin utiliza a imagem, o movimento, o ritmo e o som para transmitir uma ideia sem precisar explicar tudo através de diálogos?\nO ALUNO DEVE COM O FILME Tempos Modernos, perceber como imagem + movimento + montagem + som constroem significado.";
+      }
+    } else if (modNum === 2 && (!slot2.videoUrl || slot2.videoUrl === "")) {
+      slot2.videoUrl = "https://www.youtube.com/watch?v=UHbpgsD8zCM";
+      slot2.thumbnailUrl = "https://img.youtube.com/vi/UHbpgsD8zCM/hqdefault.jpg";
     }
   }
 

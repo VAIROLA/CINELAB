@@ -827,12 +827,12 @@ var pedagogicalApostilas = [
         "videoUrl": "https://www.youtube.com/watch?v=q1U0eKOOwsQ",
         "thumbnailUrl": "https://img.youtube.com/vi/q1U0eKOOwsQ/hqdefault.jpg",
         "description": "O aluno deve observar como a hist\xF3ria \xE9 contada principalmente atrav\xE9s das imagens, express\xF5es faciais, gestos e movimentos dos personagens, j\xE1 que o filme pertence ao per\xEDodo do cinema mudo. Deve prestar aten\xE7\xE3o aos enquadramentos, composi\xE7\xE3o das cenas, montagem, ritmo, atua\xE7\xE3o corporal e uso da m\xFAsica para perceber como o cinema consegue transmitir emo\xE7\xF5es e narrar acontecimentos sem depender de di\xE1logos falados.",
-        "professorNotes": "O aluno deve observar como a hist\xF3ria \xE9 contada principalmente atrav\xE9s das imagens, express\xF5es faciais, gestos e movimentos dos personagens, j\xE1 que o filme pertence ao per\xEDodo do cinema mudo. Deve prestar aten\xE7\xE3o aos enquadramentos, composi\xE7\xE3o das cenas, montagem, ritmo, atua\xE7\xE3o corporal e uso da m\xFAsica para perceber como o cinema consegue transmitir emo\xE7\xF5es e narrar acontecimentos sem depender de di\xE1logos falados.",
+        "professorNotes": "Como Chaplin consegue fazer o espectador compreender a hist\xF3ria e sentir emo\xE7\xE3o utilizando principalmente imagens, gestos e express\xF5es?\nO ALUNO DEVE COM O FILME O Garoto, aprender a ler uma hist\xF3ria atrav\xE9s das imagens.",
         "durationHours": 0,
-        "durationMinutes": 18,
-        "durationSeconds": 0,
-        "totalDurationSeconds": 1080,
-        "durationLabel": "00h 18m 00s",
+        "durationMinutes": 52,
+        "durationSeconds": 48,
+        "totalDurationSeconds": 3168,
+        "durationLabel": "00h 52m 48s",
         "uploadedAt": "2026-10-02T03:08:34.759Z"
       },
       {
@@ -842,12 +842,12 @@ var pedagogicalApostilas = [
         "videoUrl": "https://www.youtube.com/watch?v=i15UCTIdfwI",
         "thumbnailUrl": "https://img.youtube.com/vi/i15UCTIdfwI/hqdefault.jpg",
         "description": "O aluno deve observar como imagem, movimento, montagem, ritmo e som trabalham juntos para construir a narrativa. Deve prestar aten\xE7\xE3o especialmente \xE0s m\xE1quinas, ao ambiente da f\xE1brica, aos movimentos repetitivos dos trabalhadores, aos enquadramentos, \xE0 montagem e aos efeitos sonoros, percebendo como Chaplin utiliza a linguagem audiovisual n\xE3o apenas para contar uma hist\xF3ria, mas tamb\xE9m para transmitir ideias e cr\xEDticas atrav\xE9s das imagens.",
-        "professorNotes": "O aluno deve observar como imagem, movimento, montagem, ritmo e som trabalham juntos para construir a narrativa. Deve prestar aten\xE7\xE3o especialmente \xE0s m\xE1quinas, ao ambiente da f\xE1brica, aos movimentos repetitivos dos trabalhadores, aos enquadramentos, \xE0 montagem e aos efeitos sonoros, percebendo como Chaplin utiliza a linguagem audiovisual n\xE3o apenas para contar uma hist\xF3ria, mas tamb\xE9m para transmitir ideias e cr\xEDticas atrav\xE9s das imagens.",
-        "durationHours": 0,
-        "durationMinutes": 24,
-        "durationSeconds": 0,
-        "totalDurationSeconds": 1440,
-        "durationLabel": "00h 24m 00s",
+        "professorNotes": "Como Chaplin utiliza a imagem, o movimento, o ritmo e o som para transmitir uma ideia sem precisar explicar tudo atrav\xE9s de di\xE1logos?\nO ALUNO DEVE COM O FILME Tempos Modernos, perceber como imagem + movimento + montagem + som constroem significado.",
+        "durationHours": 1,
+        "durationMinutes": 26,
+        "durationSeconds": 52,
+        "totalDurationSeconds": 5212,
+        "durationLabel": "01h 26m 52s",
         "uploadedAt": "2026-10-02T03:08:34.760Z"
       }
     ],
@@ -1097,10 +1097,10 @@ Com a chegada do som sincronizado em 1927 (*The Jazz Singer*), o cinema sofreu u
         "id": "ev-apostila-3-1",
         "slot": 1,
         "title": "V\xEDdeo Extra 01: Roteiro e Cria\xE7\xE3o de Personagens & An\xE1lise Pr\xE1tica - M- 3.1",
-        "videoUrl": "https://www.youtube.com/watch?v=q1U0eKOOwsQ",
-        "thumbnailUrl": "https://img.youtube.com/vi/q1U0eKOOwsQ/hqdefault.jpg",
-        "description": "O aluno deve observar a constru\xE7\xE3o da curva dram\xE1tica em 3 atos, o incidente incitante e a motiva\xE7\xE3o interna dos personagens, analisando como o subtexto guia cada di\xE1logo e decis\xE3o na cena.",
-        "professorNotes": "O aluno deve observar a constru\xE7\xE3o da curva dram\xE1tica em 3 atos, o incidente incitante e a motiva\xE7\xE3o interna dos personagens, analisando como o subtexto guia cada di\xE1logo e decis\xE3o na cena.",
+        "videoUrl": "",
+        "thumbnailUrl": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80",
+        "description": "An\xE1lise t\xE9cnica e decupagem comentada pelo Professor Cineasta Tony de Luc para aprofundar os conceitos te\xF3ricos desta apostila.",
+        "professorNotes": "",
         "durationHours": 0,
         "durationMinutes": 18,
         "durationSeconds": 0,
@@ -1112,10 +1112,10 @@ Com a chegada do som sincronizado em 1927 (*The Jazz Singer*), o cinema sofreu u
         "id": "ev-apostila-3-2",
         "slot": 2,
         "title": "V\xEDdeo Extra 02: Roteiro e Cria\xE7\xE3o de Personagens & An\xE1lise Pr\xE1tica - M- 3.2",
-        "videoUrl": "https://www.youtube.com/watch?v=i15UCTIdfwI",
-        "thumbnailUrl": "https://img.youtube.com/vi/i15UCTIdfwI/hqdefault.jpg",
-        "description": "O aluno deve atentar para a formata\xE7\xE3o t\xE9cnica internacional de roteiro (cabe\xE7alho Master Scenes, rubrica no presente, transi\xE7\xE3o e di\xE1logo), identificando a economia descritiva e o ritmo da leitura visual.",
-        "professorNotes": "O aluno deve atentar para a formata\xE7\xE3o t\xE9cnica internacional de roteiro (cabe\xE7alho Master Scenes, rubrica no presente, transi\xE7\xE3o e di\xE1logo), identificando a economia descritiva e o ritmo da leitura visual.",
+        "videoUrl": "",
+        "thumbnailUrl": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80",
+        "description": "Exerc\xEDcio pr\xE1tico de aplica\xE7\xE3o em set de filmagem com demonstra\xE7\xE3o passo a passo da metodologia do CINELAB.",
+        "professorNotes": "",
         "durationHours": 0,
         "durationMinutes": 24,
         "durationSeconds": 0,
@@ -1231,10 +1231,10 @@ Com a chegada do som sincronizado em 1927 (*The Jazz Singer*), o cinema sofreu u
         "id": "ev-apostila-4-1",
         "slot": 1,
         "title": "V\xEDdeo Extra 01: Dire\xE7\xE3o e Dire\xE7\xE3o de Atores & An\xE1lise Pr\xE1tica - M- 4.1",
-        "videoUrl": "https://www.youtube.com/watch?v=qawVtd32DOQ",
-        "thumbnailUrl": "https://img.youtube.com/vi/qawVtd32DOQ/hqdefault.jpg",
-        "description": "O aluno deve observar a intera\xE7\xE3o entre o diretor e o elenco, prestando aten\xE7\xE3o \xE0 comunica\xE7\xE3o por a\xE7\xF5es f\xEDsicas e verbos ativos, em vez de exigir sentimentos abstratos dos atores.",
-        "professorNotes": "O aluno deve observar a intera\xE7\xE3o entre o diretor e o elenco, prestando aten\xE7\xE3o \xE0 comunica\xE7\xE3o por a\xE7\xF5es f\xEDsicas e verbos ativos, em vez de exigir sentimentos abstratos dos atores.",
+        "videoUrl": "",
+        "thumbnailUrl": "https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?auto=format&fit=crop&w=800&q=80",
+        "description": "An\xE1lise t\xE9cnica e decupagem comentada pelo Professor Cineasta Tony de Luc para aprofundar os conceitos te\xF3ricos desta apostila.",
+        "professorNotes": "",
         "durationHours": 0,
         "durationMinutes": 18,
         "durationSeconds": 0,
@@ -1246,10 +1246,10 @@ Com a chegada do som sincronizado em 1927 (*The Jazz Singer*), o cinema sofreu u
         "id": "ev-apostila-4-2",
         "slot": 2,
         "title": "V\xEDdeo Extra 02: Dire\xE7\xE3o e Dire\xE7\xE3o de Atores & An\xE1lise Pr\xE1tica - M- 4.2",
-        "videoUrl": "https://www.youtube.com/watch?v=UHbpgsD8zCM",
-        "thumbnailUrl": "https://img.youtube.com/vi/UHbpgsD8zCM/hqdefault.jpg",
-        "description": "O aluno deve acompanhar a escolha do ponto de vista da c\xE2mera (POV), a marca\xE7\xE3o c\xEAnica (blocking) e a rela\xE7\xE3o do enquadramento com a tens\xE3o psicol\xF3gica dos personagens na cena.",
-        "professorNotes": "O aluno deve acompanhar a escolha do ponto de vista da c\xE2mera (POV), a marca\xE7\xE3o c\xEAnica (blocking) e a rela\xE7\xE3o do enquadramento com a tens\xE3o psicol\xF3gica dos personagens na cena.",
+        "videoUrl": "",
+        "thumbnailUrl": "https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?auto=format&fit=crop&w=800&q=80",
+        "description": "Exerc\xEDcio pr\xE1tico de aplica\xE7\xE3o em set de filmagem com demonstra\xE7\xE3o passo a passo da metodologia do CINELAB.",
+        "professorNotes": "",
         "durationHours": 0,
         "durationMinutes": 24,
         "durationSeconds": 0,
@@ -5367,38 +5367,51 @@ function initExtraVideosForApostila(apos, defaultSuffix) {
   const cleanAposTitle = (apos.title || defaultSuffix).replace(/^Apostila\s*\d+\s*:\s*/i, "").trim();
   let slot1 = existing.find((v) => v.slot === 1) || (pedVideos[0] ? { ...pedVideos[0] } : null);
   let slot2 = existing.find((v) => v.slot === 2) || (pedVideos[1] ? { ...pedVideos[1] } : null);
-  const isInvalidSlot1 = !slot1 || !slot1.videoUrl || slot1.title?.includes("Estudo Dirigido") || slot1.title?.includes("M\xF3dulo 0") || !slot1.title?.includes("- M-") && !slot1.title?.includes("- B-") || modNum === 2 && slot1.videoUrl.includes("cinelab-intro-apresentacao.mp4") || pedVideos[0]?.videoUrl?.includes("youtube.com") && slot1.videoUrl.includes("cinelab-intro-apresentacao.mp4");
-  if (isInvalidSlot1) {
+
+  if (!slot1) {
     if (pedVideos[0]) {
-      slot1 = {
-        ...pedVideos[0],
-        ...slot1?.professorNotes && slot1.professorNotes.trim() !== "" ? { professorNotes: slot1.professorNotes } : {}
-      };
+      slot1 = { ...pedVideos[0] };
     } else {
       slot1 = {
         id: `ev-${apos.id || "apos"}-1`,
         slot: 1,
         title: `V\xEDdeo Extra 01: ${cleanAposTitle} & An\xE1lise Pr\xE1tica - ${modPrefix}.1`,
         description: `An\xE1lise t\xE9cnica e decupagem comentada pelo Professor Cineasta Tony de Luc para aprofundar os conceitos te\xF3ricos desta apostila.`,
-        videoUrl: modNum === 2 ? "https://www.youtube.com/watch?v=qawVtd32DOQ" : "/videos/cinelab-intro-apresentacao.mp4",
+        videoUrl: modNum === 2 ? "https://www.youtube.com/watch?v=qawVtd32DOQ" : "",
         thumbnailUrl: modNum === 2 ? "https://img.youtube.com/vi/qawVtd32DOQ/hqdefault.jpg" : "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80",
         durationHours: 0,
         durationMinutes: 18,
         durationSeconds: 0,
         totalDurationSeconds: 18 * 60,
         durationLabel: "00h 18m 00s",
-        professorNotes: slot1?.professorNotes && slot1.professorNotes.trim() !== "" ? slot1.professorNotes : pedVideos[0]?.professorNotes || "",
+        professorNotes: "",
         uploadedAt: (/* @__PURE__ */ new Date()).toISOString()
       };
     }
+  } else {
+    if (!slot1.title || slot1.title.includes("Estudo Dirigido & An\xE1lise Pr\xE1tica \u2013 M\xF3dulo") || slot1.title.includes("M\xF3dulo 0")) {
+      slot1.title = pedVideos[0]?.title || `V\xEDdeo Extra 01: ${cleanAposTitle} & An\xE1lise Pr\xE1tica - ${modPrefix}.1`;
+    }
+    if (modNum === 1 && (!slot1.videoUrl || slot1.videoUrl.includes("cinelab-intro-apresentacao.mp4"))) {
+      slot1.videoUrl = "https://www.youtube.com/watch?v=q1U0eKOOwsQ";
+      slot1.thumbnailUrl = "https://img.youtube.com/vi/q1U0eKOOwsQ/hqdefault.jpg";
+      slot1.durationHours = 0;
+      slot1.durationMinutes = 52;
+      slot1.durationSeconds = 48;
+      slot1.totalDurationSeconds = 3168;
+      slot1.durationLabel = "00h 52m 48s";
+      if (!slot1.professorNotes || slot1.professorNotes.trim() === "") {
+        slot1.professorNotes = "Como Chaplin consegue fazer o espectador compreender a hist\xF3ria e sentir emo\xE7\xE3o utilizando principalmente imagens, gestos e express\xF5es?\nO ALUNO DEVE COM O FILME O Garoto, aprender a ler uma hist\xF3ria atrav\xE9s das imagens.";
+      }
+    } else if (modNum === 2 && (!slot1.videoUrl || slot1.videoUrl.includes("cinelab-intro-apresentacao.mp4"))) {
+      slot1.videoUrl = "https://www.youtube.com/watch?v=qawVtd32DOQ";
+      slot1.thumbnailUrl = "https://img.youtube.com/vi/qawVtd32DOQ/hqdefault.jpg";
+    }
   }
-  const isInvalidSlot2 = !slot2 || slot2.title?.includes("Estudo de Caso") || slot2.title?.includes("M\xF3dulo 0") || !slot2.title?.includes("- M-") && !slot2.title?.includes("- B-") || !slot2.videoUrl && pedVideos[1]?.videoUrl || pedVideos[1]?.videoUrl?.includes("youtube.com") && !slot2.videoUrl;
-  if (isInvalidSlot2) {
+
+  if (!slot2) {
     if (pedVideos[1]) {
-      slot2 = {
-        ...pedVideos[1],
-        ...slot2?.professorNotes && slot2.professorNotes.trim() !== "" ? { professorNotes: slot2.professorNotes } : {}
-      };
+      slot2 = { ...pedVideos[1] };
     } else {
       slot2 = {
         id: `ev-${apos.id || "apos"}-2`,
@@ -5412,11 +5425,31 @@ function initExtraVideosForApostila(apos, defaultSuffix) {
         durationSeconds: 0,
         totalDurationSeconds: 24 * 60,
         durationLabel: "00h 24m 00s",
-        professorNotes: slot2?.professorNotes && slot2.professorNotes.trim() !== "" ? slot2.professorNotes : pedVideos[1]?.professorNotes || "",
+        professorNotes: "",
         uploadedAt: (/* @__PURE__ */ new Date()).toISOString()
       };
     }
+  } else {
+    if (!slot2.title || slot2.title.includes("Estudo de Caso & Exerc\xEDcio T\xE9cnico \u2013 M\xF3dulo") || slot2.title.includes("M\xF3dulo 0")) {
+      slot2.title = pedVideos[1]?.title || `V\xEDdeo Extra 02: ${cleanAposTitle} & An\xE1lise Pr\xE1tica - ${modPrefix}.2`;
+    }
+    if (modNum === 1 && (!slot2.videoUrl || slot2.videoUrl === "")) {
+      slot2.videoUrl = "https://www.youtube.com/watch?v=i15UCTIdfwI";
+      slot2.thumbnailUrl = "https://img.youtube.com/vi/i15UCTIdfwI/hqdefault.jpg";
+      slot2.durationHours = 1;
+      slot2.durationMinutes = 26;
+      slot2.durationSeconds = 52;
+      slot2.totalDurationSeconds = 5212;
+      slot2.durationLabel = "01h 26m 52s";
+      if (!slot2.professorNotes || slot2.professorNotes.trim() === "") {
+        slot2.professorNotes = "Como Chaplin utiliza a imagem, o movimento, o ritmo e o som para transmitir uma ideia sem precisar explicar tudo atrav\xE9s de di\xE1logos?\nO ALUNO DEVE COM O FILME Tempos Modernos, perceber como imagem + movimento + montagem + som constroem significado.";
+      }
+    } else if (modNum === 2 && (!slot2.videoUrl || slot2.videoUrl === "")) {
+      slot2.videoUrl = "https://www.youtube.com/watch?v=UHbpgsD8zCM";
+      slot2.thumbnailUrl = "https://img.youtube.com/vi/UHbpgsD8zCM/hqdefault.jpg";
+    }
   }
+
   return [slot1, slot2];
 }
 function loadDatabase() {
