@@ -150,6 +150,23 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
   const [ytProfessorNotes, setYtProfessorNotes] = useState('');
   const [isSavingYoutube, setIsSavingYoutube] = useState(false);
 
+  // Sincronização manual com GitHub / Vercel para persistência no mobile
+  const [isSyncingGithub, setIsSyncingGithub] = useState(false);
+
+  const handleSyncGithub = async () => {
+    try {
+      setIsSyncingGithub(true);
+      setErrorMsg(null);
+      const res = await api.syncToGithub();
+      setSuccessMsg(res.message || 'Dados sincronizados com o GitHub e enviados para deploy na Vercel!');
+      setTimeout(() => setSuccessMsg(null), 6000);
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Erro ao sincronizar com GitHub');
+    } finally {
+      setIsSyncingGithub(false);
+    }
+  };
+
   const rawExtraVideos = (apostila as any)?.extraVideos || [];
 
   // Helper to recognize and eliminate fake canned phrases
@@ -668,9 +685,25 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
         </div>
 
         {isAdmin && (
-          <div className="flex items-center gap-2 font-mono text-[11px] text-amber-400 bg-neutral-950/80 px-3 py-1.5 rounded-xl border border-neutral-800 shrink-0">
-            <Shield className="w-3.5 h-3.5" />
-            <span>Modo Administrador: Edição Livre de Orientações &amp; Vídeos</span>
+          <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center gap-2 font-mono text-[11px] text-amber-400 bg-neutral-950/80 px-3 py-1.5 rounded-xl border border-neutral-800 shrink-0">
+              <Shield className="w-3.5 h-3.5" />
+              <span>Modo Administrador: Edição Livre</span>
+            </div>
+            <button
+              type="button"
+              onClick={handleSyncGithub}
+              disabled={isSyncingGithub}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-xl font-mono text-xs font-bold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-lg shadow-emerald-950/40 border border-emerald-400/40 transition-all cursor-pointer disabled:opacity-50"
+              title="Salva e sincroniza permanentemente no GitHub e na Vercel para que todos os vídeos e textos apareçam imediatamente no celular"
+            >
+              {isSyncingGithub ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <RefreshCw className="w-3.5 h-3.5" />
+              )}
+              <span>{isSyncingGithub ? 'Sincronizando...' : 'Sincronizar no Celular (GitHub / Vercel)'}</span>
+            </button>
           </div>
         )}
       </div>

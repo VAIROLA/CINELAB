@@ -986,4 +986,11 @@ export const api = {
       method: 'POST',
       body: JSON.stringify(data),
     }),
+
+  // GitHub & Vercel Cloud Sync for mobile persistence
+  syncToGithub: () =>
+    request<{ success: boolean; syncedRegistry: boolean; syncedDb: boolean; message: string }>(
+      '/api/admin/sync-to-github',
+      { method: 'POST' }
+    ),
 };

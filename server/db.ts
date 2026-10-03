@@ -298,8 +298,21 @@ export function initExtraVideosForApostila(apos: any, defaultSuffix: string): Ap
     if (!slot1.title || slot1.title.includes("Estudo Dirigido & Análise Prática – Módulo") || slot1.title.includes("Módulo 0")) {
       slot1.title = pedVideos[0]?.title || `Vídeo Extra 01: ${cleanAposTitle} & Análise Prática - ${modPrefix}.1`;
     }
-    // Only set YouTube video for module 1 or 2 if missing
-    if (modNum === 1 && (!slot1.videoUrl || slot1.videoUrl.includes("cinelab-intro-apresentacao.mp4"))) {
+    // If slot 1 has empty videoUrl or placeholder and pedagogical video exists, hydrate it
+    if ((!slot1.videoUrl || slot1.videoUrl.trim() === "" || slot1.videoUrl.includes("cinelab-intro-apresentacao.mp4")) && pedVideos[0]?.videoUrl) {
+      slot1.videoUrl = pedVideos[0].videoUrl;
+      slot1.thumbnailUrl = pedVideos[0].thumbnailUrl || slot1.thumbnailUrl;
+      slot1.title = pedVideos[0].title || slot1.title;
+      slot1.description = pedVideos[0].description || slot1.description;
+      slot1.durationHours = pedVideos[0].durationHours ?? slot1.durationHours;
+      slot1.durationMinutes = pedVideos[0].durationMinutes ?? slot1.durationMinutes;
+      slot1.durationSeconds = pedVideos[0].durationSeconds ?? slot1.durationSeconds;
+      slot1.totalDurationSeconds = pedVideos[0].totalDurationSeconds ?? slot1.totalDurationSeconds;
+      slot1.durationLabel = pedVideos[0].durationLabel || slot1.durationLabel;
+      if (!slot1.professorNotes || slot1.professorNotes.trim() === "") {
+        slot1.professorNotes = pedVideos[0].professorNotes || "";
+      }
+    } else if (modNum === 1 && (!slot1.videoUrl || slot1.videoUrl.includes("cinelab-intro-apresentacao.mp4"))) {
       slot1.videoUrl = "https://www.youtube.com/watch?v=q1U0eKOOwsQ";
       slot1.thumbnailUrl = "https://img.youtube.com/vi/q1U0eKOOwsQ/hqdefault.jpg";
       slot1.durationHours = 0;
@@ -342,8 +355,21 @@ export function initExtraVideosForApostila(apos: any, defaultSuffix: string): Ap
     if (!slot2.title || slot2.title.includes("Estudo de Caso & Exercício Técnico – Módulo") || slot2.title.includes("Módulo 0")) {
       slot2.title = pedVideos[1]?.title || `Vídeo Extra 02: ${cleanAposTitle} & Análise Prática - ${modPrefix}.2`;
     }
-    // Only set YouTube video for module 1 or 2 if missing
-    if (modNum === 1 && (!slot2.videoUrl || slot2.videoUrl === "")) {
+    // If slot 2 has empty videoUrl or placeholder and pedagogical video exists, hydrate it
+    if ((!slot2.videoUrl || slot2.videoUrl.trim() === "" || slot2.videoUrl.includes("cinelab-intro-apresentacao.mp4")) && pedVideos[1]?.videoUrl) {
+      slot2.videoUrl = pedVideos[1].videoUrl;
+      slot2.thumbnailUrl = pedVideos[1].thumbnailUrl || slot2.thumbnailUrl;
+      slot2.title = pedVideos[1].title || slot2.title;
+      slot2.description = pedVideos[1].description || slot2.description;
+      slot2.durationHours = pedVideos[1].durationHours ?? slot2.durationHours;
+      slot2.durationMinutes = pedVideos[1].durationMinutes ?? slot2.durationMinutes;
+      slot2.durationSeconds = pedVideos[1].durationSeconds ?? slot2.durationSeconds;
+      slot2.totalDurationSeconds = pedVideos[1].totalDurationSeconds ?? slot2.totalDurationSeconds;
+      slot2.durationLabel = pedVideos[1].durationLabel || slot2.durationLabel;
+      if (!slot2.professorNotes || slot2.professorNotes.trim() === "") {
+        slot2.professorNotes = pedVideos[1].professorNotes || "";
+      }
+    } else if (modNum === 1 && (!slot2.videoUrl || slot2.videoUrl === "")) {
       slot2.videoUrl = "https://www.youtube.com/watch?v=i15UCTIdfwI";
       slot2.thumbnailUrl = "https://img.youtube.com/vi/i15UCTIdfwI/hqdefault.jpg";
       slot2.durationHours = 1;
