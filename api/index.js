@@ -7124,12 +7124,22 @@ app.get("/api/course/public-info", (req, res) => {
       status: "available",
       extraVideos: a.extraVideos && a.extraVideos.length > 0 ? a.extraVideos : initExtraVideosForApostila(a, a.title)
     })),
-    bonusApostilas: db2.bonusApostilas.map((b) => ({
-      ...b,
-      pagesCount: b.pagesCount || b.totalPages || (b.number === 1 ? 30 : 29),
-      totalPages: b.totalPages || b.pagesCount || (b.number === 1 ? 30 : 29),
-      extraVideos: b.extraVideos && b.extraVideos.length > 0 ? b.extraVideos : initExtraVideosForApostila(b, b.title)
-    })),
+    bonusApostilas: db2.bonusApostilas.map((b) => {
+      const requiredModule = b.requiredModule || (b.number === 1 || b.number === 2 ? 3 : 6);
+      const timeline = calculateModuleTimeline(requiredModule);
+      const isUnlocked = timeline.status !== "locked";
+      return {
+        ...b,
+        requiredModule,
+        isUnlocked,
+        status: isUnlocked ? "available" : "locked",
+        unlockDate: timeline.startDate.toISOString(),
+        startDate: timeline.startDate.toISOString(),
+        pagesCount: b.pagesCount || b.totalPages || (b.number === 1 ? 30 : 29),
+        totalPages: b.totalPages || b.pagesCount || (b.number === 1 ? 30 : 29),
+        extraVideos: b.extraVideos && b.extraVideos.length > 0 ? b.extraVideos : initExtraVideosForApostila(b, b.title)
+      };
+    }),
     now: now.toISOString()
   });
 });
@@ -7461,13 +7471,16 @@ app.get("/api/student/dashboard", requireActiveStudent, (req, res) => {
     Math.round(completedModulesCount / 10 * 50 + totalSubmissions / 10 * 50)
   );
   const bonusWithStatus = db2.bonusApostilas.map((b) => {
-    const requiredModule = b.number === 1 ? 5 : 8;
+    const requiredModule = b.requiredModule || (b.number === 1 || b.number === 2 ? 3 : 6);
     const reqTimeline = calculateModuleTimeline(requiredModule);
     const isUnlocked = reqTimeline.status !== "locked";
     return {
       ...b,
+      requiredModule,
+      isUnlocked,
       status: isUnlocked ? "available" : "locked",
-      unlockDate: reqTimeline.startDate.toISOString()
+      unlockDate: reqTimeline.startDate.toISOString(),
+      startDate: reqTimeline.startDate.toISOString()
     };
   });
   const passingGrade = db2.settings.minPassingGrade;
@@ -7708,7 +7721,7 @@ app.get("/api/student/bonus-apostilas", requireActiveStudent, (req, res) => {
   const { user } = authenticate(req);
   const db2 = getDb();
   const bonuses = db2.bonusApostilas.map((b) => {
-    const requiredModule = b.number === 1 ? 5 : 8;
+    const requiredModule = b.requiredModule || (b.number === 1 || b.number === 2 ? 3 : 6);
     const timeline = calculateModuleTimeline(requiredModule);
     const isUnlocked = timeline.status !== "locked" || user?.role === "admin";
     return {

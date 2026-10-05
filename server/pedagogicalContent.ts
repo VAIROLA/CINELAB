@@ -1789,6 +1789,7 @@ export const pedagogicalBonusApostilas: BonusApostila[] = [
     pdfUrl: '/materiais/cinelab-bonus-01-glossario-planos.pdf',
     coverUrl: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=600&q=80',
     unlockedByDefault: false,
+    requiredModule: 3,
     extraVideos: [
     {
         "id": "ev-bonus-01-1",
@@ -1905,6 +1906,7 @@ export const pedagogicalBonusApostilas: BonusApostila[] = [
     pdfUrl: '/materiais/cinelab-bonus-02-glossario-roteiro.pdf',
     coverUrl: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=600&q=80',
     unlockedByDefault: false,
+    requiredModule: 3,
     extraVideos: [
     {
         "id": "ev-bonus-02-1",
@@ -2016,6 +2018,7 @@ export const pedagogicalBonusApostilas: BonusApostila[] = [
     pdfUrl: '/uploads/apostilas/apostila-bonus-03-analise-filmica.pdf',
     coverUrl: 'https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&w=600&q=80',
     unlockedByDefault: false,
+    requiredModule: 6,
     extraVideos: [
     {
         "id": "ev-bonus-03-1",

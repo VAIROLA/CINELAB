@@ -331,7 +331,8 @@ export const initialBonusApostilas: BonusApostila[] = [
     pdfUrl: '/materiais/cinelab-bonus-01-glossario-planos.pdf',
     coverUrl: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=600&q=80',
     unlockedByDefault: false,
-    notes: 'Conteúdo bônus especial liberado para alunos a partir do Módulo 05.',
+    requiredModule: 3,
+    notes: 'Liberado automaticamente a partir da Etapa 03 (junto com a Apostila 03). Acesso permanente mesmo após a conclusão do curso.',
   },
   {
     id: 'bonus-02',
@@ -343,7 +344,21 @@ export const initialBonusApostilas: BonusApostila[] = [
     pdfUrl: '/materiais/cinelab-bonus-02-glossario-roteiro.pdf',
     coverUrl: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=600&q=80',
     unlockedByDefault: false,
-    notes: 'Conteúdo bônus especial liberado ao atingir a reta final da formação (Módulo 08).',
+    requiredModule: 3,
+    notes: 'Liberado automaticamente a partir da Etapa 03 (junto com a Apostila 03). Acesso permanente mesmo após a conclusão do curso.',
+  },
+  {
+    id: 'bonus-03',
+    number: 3,
+    title: 'Método de Análise Fílmica em 6 Camadas',
+    description:
+      'A metodologia analítica do CINELAB em 6 camadas: Narrativa, Personagem, Espaço, Imagem (Fotografia), Som e Montagem para dissecar qualquer obra audiovisual como realizador.',
+    pagesCount: 24,
+    pdfUrl: '/uploads/apostilas/apostila-bonus-03-analise-filmica.pdf',
+    coverUrl: 'https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&w=600&q=80',
+    unlockedByDefault: false,
+    requiredModule: 6,
+    notes: 'Apostila bônus especial com o método completo das 6 camadas para análise técnica e crítica de cinema liberada a partir do Módulo 06.',
   },
 ];
 

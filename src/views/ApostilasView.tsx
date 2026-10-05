@@ -1453,7 +1453,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
         {/* CARDS COM O NOME DAS APOSTILAS E NÚMERO DE PÁGINAS */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {bonusApostilas.map((b) => {
-            const reqMod = b.requiredModule || (b.number === 1 ? 5 : b.number === 2 ? 8 : 6);
+            const reqMod = b.requiredModule || (b.number === 1 || b.number === 2 ? 3 : 6);
             const isUnlocked = b.isUnlocked;
             const unlockMs = b.startDate ? new Date(b.startDate).getTime() : 0;
             const isWaiting = effectiveNow < unlockMs;
