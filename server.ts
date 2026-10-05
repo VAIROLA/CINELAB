@@ -2652,7 +2652,7 @@ function saveExtraVideosRegistry(reg: Record<string, any>) {
     console.warn('Notice saving extra-videos-registry.json:', err);
   }
   // Sincroniza com GitHub em segundo plano para persistência na nuvem e deploy na Vercel
-  syncFileToGitHub('data/extra-videos-registry.json', 'chore(sync): atualizar extra-videos-registry.json [skip ci]').catch(() => {});
+  syncFileToGitHub('data/extra-videos-registry.json', 'chore(sync): atualizar extra-videos-registry.json').catch(() => {});
 }
 
 // Upload Direto de Vídeo Extra para Estudo da Apostila (Slot 1 ou Slot 2)
@@ -2948,7 +2948,7 @@ app.put('/api/admin/apostilas/:id/extra-video/:slot', requireAdmin, (req: Reques
 
   saveExtraVideosRegistry(reg);
   saveDatabase();
-  syncFileToGitHub('data/cinelab-db.json', `chore(sync): atualizar banco cinelab apostila ${apostila.id} slot ${slot} [skip ci]`).catch(() => {});
+  syncFileToGitHub('data/cinelab-db.json', `chore(sync): atualizar banco cinelab apostila ${apostila.id} slot ${slot}`).catch(() => {});
 
   return res.json({
     success: true,

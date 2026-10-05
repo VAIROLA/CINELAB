@@ -236,11 +236,11 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
     durationSeconds: storedSlot1?.durationSeconds ?? resolvedSlot1.durationSeconds,
     durationLabel: storedSlot1?.durationLabel || resolvedSlot1.durationLabel,
     professorNotes:
-      resolvedSlot1.professorNotes && resolvedSlot1.professorNotes.trim() !== ""
-        ? resolvedSlot1.professorNotes
-        : (localNote1 && !isCannedPhrase(localNote1)
-            ? localNote1
-            : (storedSlot1?.professorNotes && !isCannedPhrase(storedSlot1.professorNotes) ? storedSlot1.professorNotes : resolvedSlot1.professorNotes)),
+      (localNote1 && localNote1.trim() !== "" && !isCannedPhrase(localNote1))
+        ? localNote1
+        : (storedSlot1?.professorNotes && storedSlot1.professorNotes.trim() !== "" && !isCannedPhrase(storedSlot1.professorNotes))
+        ? storedSlot1.professorNotes
+        : resolvedSlot1.professorNotes,
   };
 
   const slot2: ApostilaExtraVideo = {
@@ -254,11 +254,11 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
     durationSeconds: storedSlot2?.durationSeconds ?? resolvedSlot2.durationSeconds,
     durationLabel: storedSlot2?.durationLabel || resolvedSlot2.durationLabel,
     professorNotes:
-      resolvedSlot2.professorNotes && resolvedSlot2.professorNotes.trim() !== ""
-        ? resolvedSlot2.professorNotes
-        : (localNote2 && !isCannedPhrase(localNote2)
-            ? localNote2
-            : (storedSlot2?.professorNotes && !isCannedPhrase(storedSlot2.professorNotes) ? storedSlot2.professorNotes : resolvedSlot2.professorNotes)),
+      (localNote2 && localNote2.trim() !== "" && !isCannedPhrase(localNote2))
+        ? localNote2
+        : (storedSlot2?.professorNotes && storedSlot2.professorNotes.trim() !== "" && !isCannedPhrase(storedSlot2.professorNotes))
+        ? storedSlot2.professorNotes
+        : resolvedSlot2.professorNotes,
   };
 
   const extraVideos = [slot1, slot2];
@@ -641,7 +641,7 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
   const getEmbedUrl = (url: string) => {
     const ytId = extractYoutubeId(url);
     if (ytId) {
-      return `https://www.youtube-nocookie.com/embed/${ytId}?rel=0&modestbranding=1&playsinline=1`;
+      return `https://www.youtube.com/embed/${ytId}?rel=0&playsinline=1&enablejsapi=1`;
     }
     if (url.includes('vimeo.com/')) {
       const vimeoId = url.split('vimeo.com/')[1]?.split('?')[0];
@@ -690,20 +690,6 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
               <Shield className="w-3.5 h-3.5" />
               <span>Modo Administrador: Edição Livre</span>
             </div>
-            <button
-              type="button"
-              onClick={handleSyncGithub}
-              disabled={isSyncingGithub}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-xl font-mono text-xs font-bold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-lg shadow-emerald-950/40 border border-emerald-400/40 transition-all cursor-pointer disabled:opacity-50"
-              title="Salva e sincroniza permanentemente no GitHub e na Vercel para que todos os vídeos e textos apareçam imediatamente no celular"
-            >
-              {isSyncingGithub ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              ) : (
-                <RefreshCw className="w-3.5 h-3.5" />
-              )}
-              <span>{isSyncingGithub ? 'Sincronizando...' : 'Sincronizar no Celular (GitHub / Vercel)'}</span>
-            </button>
           </div>
         )}
       </div>

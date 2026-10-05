@@ -321,7 +321,7 @@ export function initExtraVideosForApostila(apos: any, defaultSuffix: string): Ap
       slot1.totalDurationSeconds = 3168;
       slot1.durationLabel = "00h 52m 48s";
       if (!slot1.professorNotes || slot1.professorNotes.trim() === "") {
-        slot1.professorNotes = "Como Chaplin consegue fazer o espectador compreender a história e sentir emoção utilizando principalmente imagens, gestos e expressões?\nO ALUNO DEVE COM O FILME O Garoto, aprender a ler uma história através das imagens.";
+        slot1.professorNotes = pedVideos[0]?.professorNotes || "";
       }
     } else if (modNum === 2 && (!slot1.videoUrl || slot1.videoUrl.includes("cinelab-intro-apresentacao.mp4"))) {
       slot1.videoUrl = "https://www.youtube.com/watch?v=qawVtd32DOQ";
@@ -337,7 +337,7 @@ export function initExtraVideosForApostila(apos: any, defaultSuffix: string): Ap
       slot2 = {
         id: `ev-${apos.id || "apos"}-2`,
         slot: 2,
-        title: `Vídeo Extra 02: ${cleanAposTitle} & Análise Prática - ${modPrefix}.2`,
+        title: `Vídeo Extra 02: ${cleanAposTitle} - ${modPrefix}.2`,
         description: `Exercício prático de aplicação em set de filmagem com demonstração passo a passo da metodologia do CINELAB.`,
         videoUrl: modNum === 2 ? "https://www.youtube.com/watch?v=UHbpgsD8zCM" : "",
         thumbnailUrl: modNum === 2 ? "https://img.youtube.com/vi/UHbpgsD8zCM/hqdefault.jpg" : "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80",
@@ -353,7 +353,7 @@ export function initExtraVideosForApostila(apos: any, defaultSuffix: string): Ap
   } else {
     // Slot 2 exists: only heal title if strictly legacy generic
     if (!slot2.title || slot2.title.includes("Estudo de Caso & Exercício Técnico – Módulo") || slot2.title.includes("Módulo 0")) {
-      slot2.title = pedVideos[1]?.title || `Vídeo Extra 02: ${cleanAposTitle} & Análise Prática - ${modPrefix}.2`;
+      slot2.title = pedVideos[1]?.title || `Vídeo Extra 02: ${cleanAposTitle} - ${modPrefix}.2`;
     }
     // If slot 2 has empty videoUrl or placeholder and pedagogical video exists, hydrate it
     if ((!slot2.videoUrl || slot2.videoUrl.trim() === "" || slot2.videoUrl.includes("cinelab-intro-apresentacao.mp4")) && pedVideos[1]?.videoUrl) {
@@ -378,7 +378,7 @@ export function initExtraVideosForApostila(apos: any, defaultSuffix: string): Ap
       slot2.totalDurationSeconds = 5212;
       slot2.durationLabel = "01h 26m 52s";
       if (!slot2.professorNotes || slot2.professorNotes.trim() === "") {
-        slot2.professorNotes = "Como Chaplin utiliza a imagem, o movimento, o ritmo e o som para transmitir uma ideia sem precisar explicar tudo através de diálogos?\nO ALUNO DEVE COM O FILME Tempos Modernos, perceber como imagem + movimento + montagem + som constroem significado.";
+        slot2.professorNotes = pedVideos[1]?.professorNotes || "";
       }
     } else if (modNum === 2 && (!slot2.videoUrl || slot2.videoUrl === "")) {
       slot2.videoUrl = "https://www.youtube.com/watch?v=UHbpgsD8zCM";
