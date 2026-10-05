@@ -389,9 +389,6 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, settings }) => {
         <div className="border-t border-neutral-800/80 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-neutral-500">
           <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-center sm:text-left">
             <p>{settings?.footerCopyright || defaultCopyright}</p>
-            {settings?.companyCnpj && (
-              <span className="font-mono text-neutral-500">CNPJ: {settings.companyCnpj}</span>
-            )}
           </div>
           <div className="flex items-center gap-4 text-center sm:text-right">
             <span>{settings?.footerDisclaimer || defaultDisclaimer}</span>

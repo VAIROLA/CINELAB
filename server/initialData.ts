@@ -46,7 +46,7 @@ export const initialCourseSettings: CourseSettings = {
   footerOfficialBadge: 'Plataforma EAD Oficial',
   footerCopyright: '© 2026 CINELAB – Cinema & Audiovisual. Todos os direitos reservados.',
   footerDisclaimer: 'Regras pedagógicas validadas por cronograma • Certificação Profissional',
-  companyCnpj: '48.912.834/0001-02',
+  companyCnpj: '',
   companyAddress: 'Rio de Janeiro, RJ • Plataforma Digital Nacional',
   instagramUrl: 'https://instagram.com/cinelab.cinema',
   youtubeUrl: 'https://www.youtube.com/@TVDIVERSIDADE',
