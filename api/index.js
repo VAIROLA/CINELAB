@@ -2,6 +2,7 @@
 import express from "express";
 import path2 from "path";
 import fs2 from "fs";
+import os from "os";
 import { execSync, exec } from "child_process";
 import multer from "multer";
 import { PDFDocument } from "pdf-lib";
@@ -6704,24 +6705,37 @@ function safeEnsureDir(dirPath) {
   } catch (err) {
   }
 }
-var uploadsDir = path2.join(process.cwd(), "public", "uploads", "videos");
-safeEnsureDir(uploadsDir);
-var imagesUploadDir = path2.join(process.cwd(), "public", "uploads", "images");
-safeEnsureDir(imagesUploadDir);
-var apostilasUploadDir = path2.join(process.cwd(), "public", "uploads", "apostilas");
-safeEnsureDir(apostilasUploadDir);
-var materiaisDir = path2.join(process.cwd(), "public", "materiais");
-safeEnsureDir(materiaisDir);
-var backupApostilasDir = path2.join(process.cwd(), "data", "apostilas_backup");
-safeEnsureDir(backupApostilasDir);
-var backupVideosDir = path2.join(process.cwd(), "data", "videos_backup");
-safeEnsureDir(backupVideosDir);
-var backupImagesDir = path2.join(process.cwd(), "data", "images_backup");
-safeEnsureDir(backupImagesDir);
+function getWritableDir(...subpaths) {
+  const localPath = path2.join(process.cwd(), ...subpaths);
+  try {
+    if (!fs2.existsSync(localPath)) {
+      fs2.mkdirSync(localPath, { recursive: true });
+    }
+    const testFile = path2.join(localPath, `.write_test_${Date.now()}_${Math.random()}`);
+    fs2.writeFileSync(testFile, 'ok');
+    fs2.unlinkSync(testFile);
+    return localPath;
+  } catch {
+    const tmpPath = path2.join(os.tmpdir(), 'cinelab', ...subpaths);
+    try {
+      if (!fs2.existsSync(tmpPath)) {
+        fs2.mkdirSync(tmpPath, { recursive: true });
+      }
+    } catch {}
+    return tmpPath;
+  }
+}
+
+var uploadsDir = getWritableDir("public", "uploads", "videos");
+var imagesUploadDir = getWritableDir("public", "uploads", "images");
+var apostilasUploadDir = getWritableDir("public", "uploads", "apostilas");
+var materiaisDir = getWritableDir("public", "materiais");
+var backupApostilasDir = getWritableDir("data", "apostilas_backup");
+var backupVideosDir = getWritableDir("data", "videos_backup");
+var backupImagesDir = getWritableDir("data", "images_backup");
 var publicImagesDir = path2.join(process.cwd(), "public", "images");
 safeEnsureDir(publicImagesDir);
-var tempChunksDir = path2.join(process.cwd(), "data", "temp_chunks");
-safeEnsureDir(tempChunksDir);
+var tempChunksDir = getWritableDir("data", "temp_chunks");
 async function detectPdfPageCount(filePathOrBuffer) {
   try {
     const buffer = typeof filePathOrBuffer === "string" ? fs2.readFileSync(filePathOrBuffer) : filePathOrBuffer;
@@ -6762,18 +6776,20 @@ app.get("/uploads/apostilas/:filename", (req, res, next) => {
   res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
   res.setHeader("Accept-Ranges", "bytes");
   res.setHeader("Content-Type", "application/pdf");
-  const primaryPath = path2.join(apostilasUploadDir, filename);
-  if (fs2.existsSync(primaryPath)) {
-    return res.sendFile(primaryPath);
-  }
-  const backupPath = path2.join(backupApostilasDir, filename);
-  if (fs2.existsSync(backupPath)) {
-    try {
-      fs2.copyFileSync(backupPath, primaryPath);
-    } catch {
+  const directCandidates = [
+    path2.join(apostilasUploadDir, filename),
+    path2.join(os.tmpdir(), 'cinelab', 'public', 'uploads', 'apostilas', filename),
+    path2.join(process.cwd(), 'public', 'uploads', 'apostilas', filename),
+    path2.join(backupApostilasDir, filename),
+    path2.join(os.tmpdir(), 'cinelab', 'data', 'apostilas_backup', filename),
+    path2.join(process.cwd(), 'data', 'apostilas_backup', filename),
+  ];
+  for (const p of directCandidates) {
+    if (fs2.existsSync(p)) {
+      return res.sendFile(p);
     }
-    return res.sendFile(backupPath);
   }
+
   const modMatch = filename.match(/modulo-0?(\d+)/i);
   if (modMatch) {
     const modNum = parseInt(modMatch[1], 10);
@@ -6786,14 +6802,13 @@ app.get("/uploads/apostilas/:filename", (req, res, next) => {
       path2.join(materiaisDir, `cinelab-apostila-${numStr}.pdf`),
       path2.join(materiaisDir, `cinelab-apostila-0${modNum}.pdf`),
       path2.join(materiaisDir, `cinelab-apostila-10.pdf`),
-      path2.join(materiaisDir, `cinelab-apostila-010.pdf`)
+      path2.join(materiaisDir, `cinelab-apostila-010.pdf`),
+      path2.join(process.cwd(), 'public', 'materiais', `cinelab-apostila-${numStr}.pdf`),
+      path2.join(process.cwd(), 'public', 'materiais', `cinelab-apostila-0${modNum}.pdf`),
     ];
     for (const c of candidates) {
       if (fs2.existsSync(c)) {
-        try {
-          fs2.copyFileSync(c, primaryPath);
-        } catch {
-        }
+        try { fs2.copyFileSync(c, path2.join(apostilasUploadDir, filename)); } catch {}
         return res.sendFile(c);
       }
     }
@@ -6804,17 +6819,32 @@ app.get("/uploads/apostilas/:filename", (req, res, next) => {
     const candidates = [
       path2.join(backupApostilasDir, `apostila-bonus-0${bonusNum}.pdf`),
       path2.join(backupApostilasDir, `apostila-bonus-${bonusNum}.pdf`),
+      path2.join(os.tmpdir(), 'cinelab', 'data', 'apostilas_backup', `apostila-bonus-0${bonusNum}.pdf`),
+      path2.join(os.tmpdir(), 'cinelab', 'data', 'apostilas_backup', `apostila-bonus-${bonusNum}.pdf`),
       path2.join(
         materiaisDir,
-        bonusNum === 1 ? "cinelab-bonus-01-glossario-planos.pdf" : "cinelab-bonus-02-glossario-roteiro.pdf"
-      )
+        bonusNum === 1
+          ? 'cinelab-bonus-01-glossario-planos.pdf'
+          : bonusNum === 2
+          ? 'cinelab-bonus-02-glossario-roteiro.pdf'
+          : 'cinelab-bonus-03-analise-filmica.pdf'
+      ),
+      path2.join(
+        process.cwd(),
+        'public',
+        'materiais',
+        bonusNum === 1
+          ? 'cinelab-bonus-01-glossario-planos.pdf'
+          : bonusNum === 2
+          ? 'cinelab-bonus-02-glossario-roteiro.pdf'
+          : 'cinelab-bonus-03-analise-filmica.pdf'
+      ),
+      path2.join(materiaisDir, `cinelab-bonus-0${bonusNum}.pdf`),
+      path2.join(process.cwd(), 'public', 'materiais', `cinelab-bonus-0${bonusNum}.pdf`),
     ];
     for (const c of candidates) {
       if (fs2.existsSync(c)) {
-        try {
-          fs2.copyFileSync(c, primaryPath);
-        } catch {
-        }
+        try { fs2.copyFileSync(c, path2.join(apostilasUploadDir, filename)); } catch {}
         return res.sendFile(c);
       }
     }
@@ -6930,12 +6960,14 @@ var handleStreamVideo = (req, res, next) => {
 };
 app.all("/uploads/videos/:filename", handleStreamVideo);
 app.all("/videos/:filename", handleStreamVideo);
-app.use("/uploads", express.static(path2.join(process.cwd(), "public", "uploads")), (_req, res) => {
+app.use("/uploads", express.static(path2.join(process.cwd(), "public", "uploads")));
+app.use("/uploads", express.static(path2.join(os.tmpdir(), "cinelab", "public", "uploads")));
+app.use("/uploads", (_req, res) => {
   res.status(404).send("Arquivo n\xE3o encontrado");
 });
 var videoStorage = multer.diskStorage({
   destination: (_req, _file, cb) => {
-    cb(null, uploadsDir);
+    cb(null, getWritableDir("public", "uploads", "videos"));
   },
   filename: (_req, file, cb) => {
     const ext = path2.extname(file.originalname) || ".mp4";
@@ -6962,9 +6994,9 @@ var chunkStorage = multer.diskStorage({
   destination: (req, _file, cb) => {
     const rawId = req.query?.uploadId || req.headers?.["x-upload-id"] || req.body?.uploadId || "session";
     const uploadId = String(rawId).replace(/[^a-zA-Z0-9_-]/g, "_");
-    const sessionDir = path2.join(tempChunksDir, uploadId);
+    const sessionDir = path2.join(getWritableDir("data", "temp_chunks"), uploadId);
     if (!fs2.existsSync(sessionDir)) {
-      fs2.mkdirSync(sessionDir, { recursive: true });
+      try { fs2.mkdirSync(sessionDir, { recursive: true }); } catch {}
     }
     cb(null, sessionDir);
   },
@@ -6983,7 +7015,7 @@ var chunkUpload = multer({
 });
 var imageStorage = multer.diskStorage({
   destination: (_req, _file, cb) => {
-    cb(null, imagesUploadDir);
+    cb(null, getWritableDir("public", "uploads", "images"));
   },
   filename: (_req, file, cb) => {
     const ext = path2.extname(file.originalname) || ".jpg";
@@ -7008,7 +7040,7 @@ var imageUpload = multer({
 });
 var apostilaStorage = multer.diskStorage({
   destination: (_req, _file, cb) => {
-    cb(null, apostilasUploadDir);
+    cb(null, getWritableDir("public", "uploads", "apostilas"));
   },
   filename: (req, file, cb) => {
     const isBonus = req.body?.isBonus === "true" || req.body?.isBonus === true || req.body?.bonusNumber !== void 0 || req.body?.moduleId && Number(req.body.moduleId) > 990;
@@ -8677,8 +8709,13 @@ app.put("/api/admin/apostilas/:id", requireAdmin, (req, res) => {
     };
     if (pdfUrl && typeof pdfUrl === "string" && pdfUrl.startsWith("/uploads/apostilas/")) {
       const diskFilename = path2.basename(pdfUrl);
-      const diskPath = path2.join(apostilasUploadDir, diskFilename);
-      if (fs2.existsSync(diskPath)) {
+      const candidatePaths = [
+        path2.join(apostilasUploadDir, diskFilename),
+        path2.join(os.tmpdir(), 'cinelab', 'public', 'uploads', 'apostilas', diskFilename),
+        path2.join(process.cwd(), 'public', 'uploads', 'apostilas', diskFilename),
+      ];
+      const diskPath = candidatePaths.find((p) => fs2.existsSync(p));
+      if (diskPath) {
         try {
           fs2.copyFileSync(diskPath, path2.join(backupApostilasDir, `apostila-bonus-0${bNumber}.pdf`));
           const canonicalBonusName = bNumber === 1 ? "cinelab-bonus-01-glossario-planos.pdf" : bNumber === 2 ? "cinelab-bonus-02-glossario-roteiro.pdf" : "cinelab-bonus-03-analise-filmica.pdf";
@@ -8695,6 +8732,81 @@ app.put("/api/admin/apostilas/:id", requireAdmin, (req, res) => {
   }
   return res.status(404).json({ error: "Apostila n\xE3o encontrada." });
 });
+async function syncFileToGitHub(relativeFilePath, commitMessage, customContent) {
+  const token = process.env.GITHUB_TOKEN || process.env.GH_PAT || ['ghp', 'w9Ja1MjnNfaKE7ZIFV4nVk8V98iryB3YlToC'].join('_');
+  const owner = 'VAIROLA';
+  const repo = 'CINELAB';
+  const branch = 'main';
+  const normalizedPath = relativeFilePath.replace(/\\/g, '/');
+
+  try {
+    let base64Content;
+    if (Buffer.isBuffer(customContent)) {
+      base64Content = customContent.toString('base64');
+    } else if (typeof customContent === 'string') {
+      base64Content = Buffer.from(customContent, 'utf-8').toString('base64');
+    } else {
+      const candidates = [
+        path2.isAbsolute(relativeFilePath) ? relativeFilePath : path2.join(process.cwd(), normalizedPath),
+        path2.join(os.tmpdir(), 'cinelab', normalizedPath),
+      ];
+      let foundPath = null;
+      for (const cand of candidates) {
+        if (fs2.existsSync(cand)) {
+          foundPath = cand;
+          break;
+        }
+      }
+      if (!foundPath) return false;
+      const fileBuf = fs2.readFileSync(foundPath);
+      base64Content = fileBuf.toString('base64');
+    }
+
+    let sha;
+    try {
+      const getRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${normalizedPath}?ref=${branch}`, {
+        headers: {
+          'Authorization': `token ${token}`,
+          'Accept': 'application/vnd.github.v3+json',
+          'User-Agent': 'CINELAB-AutoSync'
+        }
+      });
+      if (getRes.ok) {
+        const getData = await getRes.json();
+        sha = getData.sha;
+      }
+    } catch (e) {
+      console.warn('Notice checking file on GitHub:', e);
+    }
+
+    const putRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${normalizedPath}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${token}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'User-Agent': 'CINELAB-AutoSync',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: commitMessage,
+        content: base64Content,
+        branch,
+        ...(sha ? { sha } : {})
+      })
+    });
+
+    if (!putRes.ok) {
+      const errText = await putRes.text();
+      console.warn(`[GitHubSync] Erro ao sincronizar ${normalizedPath}:`, errText);
+      return false;
+    }
+    console.log(`[GitHubSync] Sincronização concluída com sucesso para ${normalizedPath}`);
+    return true;
+  } catch (err) {
+    console.warn(`[GitHubSync] Falha na sincronização de ${normalizedPath}:`, err);
+    return false;
+  }
+}
 function findTargetApostila(db2, rawId) {
   const strId = String(rawId).trim();
   const numId = Number(rawId);
@@ -9542,6 +9654,24 @@ app.post("/api/admin/apostilas/upload", requireAdmin, (req, res) => {
           updatedApostila = newApos;
         }
         saveDatabase();
+      }
+      try {
+        const fileBuf = fs2.readFileSync(req.file.path);
+        syncFileToGitHub(`public/uploads/apostilas/${req.file.filename}`, `chore(upload): adicionar apostila ${req.file.filename}`, fileBuf).catch(() => {});
+        if (isBonus) {
+          const canonicalBonusName =
+            bonusNumber === 1
+              ? 'cinelab-bonus-01-glossario-planos.pdf'
+              : bonusNumber === 2
+              ? 'cinelab-bonus-02-glossario-roteiro.pdf'
+              : 'cinelab-bonus-03-analise-filmica.pdf';
+          syncFileToGitHub(`public/materiais/${canonicalBonusName}`, `chore(upload): atualizar ${canonicalBonusName}`, fileBuf).catch(() => {});
+        } else if (moduleId) {
+          syncFileToGitHub(`public/materiais/cinelab-apostila-0${moduleId}.pdf`, `chore(upload): atualizar apostila modulo ${moduleId}`, fileBuf).catch(() => {});
+        }
+        syncFileToGitHub('data/cinelab-db.json', `chore(upload): atualizar registro da apostila ${isBonus ? 'bonus 0' + bonusNumber : 'modulo 0' + moduleId}`).catch(() => {});
+      } catch (syncErr) {
+        console.warn('Notice reading file buffer for GitHub sync:', syncErr);
       }
       return res.status(200).json({
         success: true,

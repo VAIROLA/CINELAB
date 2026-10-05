@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import path from 'path';
 import fs from 'fs';
+import os from 'os';
 import { execSync, exec } from 'child_process';
 import multer from 'multer';
 import { PDFDocument } from 'pdf-lib';
@@ -53,7 +54,7 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Configure directories and static serving for uploads safely (serverless read-only resilient)
-function safeEnsureDir(dirPath) {
+function safeEnsureDir(dirPath: string) {
   try {
     if (!fs.existsSync(dirPath)) {
       fs.mkdirSync(dirPath, { recursive: true });
@@ -63,24 +64,38 @@ function safeEnsureDir(dirPath) {
   }
 }
 
-const uploadsDir = path.join(process.cwd(), "public", "uploads", "videos");
-safeEnsureDir(uploadsDir);
-const imagesUploadDir = path.join(process.cwd(), "public", "uploads", "images");
-safeEnsureDir(imagesUploadDir);
-const apostilasUploadDir = path.join(process.cwd(), "public", "uploads", "apostilas");
-safeEnsureDir(apostilasUploadDir);
-const materiaisDir = path.join(process.cwd(), "public", "materiais");
-safeEnsureDir(materiaisDir);
-const backupApostilasDir = path.join(process.cwd(), "data", "apostilas_backup");
-safeEnsureDir(backupApostilasDir);
-const backupVideosDir = path.join(process.cwd(), "data", "videos_backup");
-safeEnsureDir(backupVideosDir);
-const backupImagesDir = path.join(process.cwd(), "data", "images_backup");
-safeEnsureDir(backupImagesDir);
+// Detect whether a path is writable; if not (e.g. Vercel Lambda /var/task), redirect to os.tmpdir()
+export function getWritableDir(...subpaths: string[]): string {
+  const localPath = path.join(process.cwd(), ...subpaths);
+  try {
+    if (!fs.existsSync(localPath)) {
+      fs.mkdirSync(localPath, { recursive: true });
+    }
+    const testFile = path.join(localPath, `.write_test_${Date.now()}_${Math.random()}`);
+    fs.writeFileSync(testFile, 'ok');
+    fs.unlinkSync(testFile);
+    return localPath;
+  } catch {
+    const tmpPath = path.join(os.tmpdir(), 'cinelab', ...subpaths);
+    try {
+      if (!fs.existsSync(tmpPath)) {
+        fs.mkdirSync(tmpPath, { recursive: true });
+      }
+    } catch {}
+    return tmpPath;
+  }
+}
+
+const uploadsDir = getWritableDir("public", "uploads", "videos");
+const imagesUploadDir = getWritableDir("public", "uploads", "images");
+const apostilasUploadDir = getWritableDir("public", "uploads", "apostilas");
+const materiaisDir = getWritableDir("public", "materiais");
+const backupApostilasDir = getWritableDir("data", "apostilas_backup");
+const backupVideosDir = getWritableDir("data", "videos_backup");
+const backupImagesDir = getWritableDir("data", "images_backup");
 const publicImagesDir = path.join(process.cwd(), "public", "images");
 safeEnsureDir(publicImagesDir);
-const tempChunksDir = path.join(process.cwd(), "data", "temp_chunks");
-safeEnsureDir(tempChunksDir);
+const tempChunksDir = getWritableDir("data", "temp_chunks");
 
 /**
  * Detecta o número real de páginas de um arquivo PDF via pdf-lib com fallback para regex
@@ -129,15 +144,20 @@ app.get('/uploads/apostilas/:filename', (req: Request, res: Response, next: any)
   res.setHeader('Accept-Ranges', 'bytes');
   res.setHeader('Content-Type', 'application/pdf');
 
-  const primaryPath = path.join(apostilasUploadDir, filename);
-  if (fs.existsSync(primaryPath)) {
-    return res.sendFile(primaryPath);
+  const directCandidates = [
+    path.join(apostilasUploadDir, filename),
+    path.join(os.tmpdir(), 'cinelab', 'public', 'uploads', 'apostilas', filename),
+    path.join(process.cwd(), 'public', 'uploads', 'apostilas', filename),
+    path.join(backupApostilasDir, filename),
+    path.join(os.tmpdir(), 'cinelab', 'data', 'apostilas_backup', filename),
+    path.join(process.cwd(), 'data', 'apostilas_backup', filename),
+  ];
+  for (const p of directCandidates) {
+    if (fs.existsSync(p)) {
+      return res.sendFile(p);
+    }
   }
-  const backupPath = path.join(backupApostilasDir, filename);
-  if (fs.existsSync(backupPath)) {
-    try { fs.copyFileSync(backupPath, primaryPath); } catch {}
-    return res.sendFile(backupPath);
-  }
+
   const modMatch = filename.match(/modulo-0?(\d+)/i);
   if (modMatch) {
     const modNum = parseInt(modMatch[1], 10);
@@ -151,28 +171,49 @@ app.get('/uploads/apostilas/:filename', (req: Request, res: Response, next: any)
       path.join(materiaisDir, `cinelab-apostila-0${modNum}.pdf`),
       path.join(materiaisDir, `cinelab-apostila-10.pdf`),
       path.join(materiaisDir, `cinelab-apostila-010.pdf`),
+      path.join(process.cwd(), 'public', 'materiais', `cinelab-apostila-${numStr}.pdf`),
+      path.join(process.cwd(), 'public', 'materiais', `cinelab-apostila-0${modNum}.pdf`),
     ];
     for (const c of candidates) {
       if (fs.existsSync(c)) {
-        try { fs.copyFileSync(c, primaryPath); } catch {}
+        try { fs.copyFileSync(c, path.join(apostilasUploadDir, filename)); } catch {}
         return res.sendFile(c);
       }
     }
   }
+
   const bonusMatch = filename.match(/bonus-0?(\d+)/i);
   if (bonusMatch) {
     const bonusNum = parseInt(bonusMatch[1], 10);
     const candidates = [
       path.join(backupApostilasDir, `apostila-bonus-0${bonusNum}.pdf`),
       path.join(backupApostilasDir, `apostila-bonus-${bonusNum}.pdf`),
+      path.join(os.tmpdir(), 'cinelab', 'data', 'apostilas_backup', `apostila-bonus-0${bonusNum}.pdf`),
+      path.join(os.tmpdir(), 'cinelab', 'data', 'apostilas_backup', `apostila-bonus-${bonusNum}.pdf`),
       path.join(
         materiaisDir,
-        bonusNum === 1 ? 'cinelab-bonus-01-glossario-planos.pdf' : 'cinelab-bonus-02-glossario-roteiro.pdf'
+        bonusNum === 1
+          ? 'cinelab-bonus-01-glossario-planos.pdf'
+          : bonusNum === 2
+          ? 'cinelab-bonus-02-glossario-roteiro.pdf'
+          : 'cinelab-bonus-03-analise-filmica.pdf'
       ),
+      path.join(
+        process.cwd(),
+        'public',
+        'materiais',
+        bonusNum === 1
+          ? 'cinelab-bonus-01-glossario-planos.pdf'
+          : bonusNum === 2
+          ? 'cinelab-bonus-02-glossario-roteiro.pdf'
+          : 'cinelab-bonus-03-analise-filmica.pdf'
+      ),
+      path.join(materiaisDir, `cinelab-bonus-0${bonusNum}.pdf`),
+      path.join(process.cwd(), 'public', 'materiais', `cinelab-bonus-0${bonusNum}.pdf`),
     ];
     for (const c of candidates) {
       if (fs.existsSync(c)) {
-        try { fs.copyFileSync(c, primaryPath); } catch {}
+        try { fs.copyFileSync(c, path.join(apostilasUploadDir, filename)); } catch {}
         return res.sendFile(c);
       }
     }
@@ -298,13 +339,15 @@ const handleStreamVideo = (req: Request, res: Response, next: any) => {
 app.all('/uploads/videos/:filename', handleStreamVideo);
 app.all('/videos/:filename', handleStreamVideo);
 
-app.use('/uploads', express.static(path.join(process.cwd(), 'public', 'uploads')), (_req, res) => {
+app.use('/uploads', express.static(path.join(process.cwd(), 'public', 'uploads')));
+app.use('/uploads', express.static(path.join(os.tmpdir(), 'cinelab', 'public', 'uploads')));
+app.use('/uploads', (_req, res) => {
   res.status(404).send('Arquivo não encontrado');
 });
 
 const videoStorage = multer.diskStorage({
   destination: (_req, _file, cb) => {
-    cb(null, uploadsDir);
+    cb(null, getWritableDir("public", "uploads", "videos"));
   },
   filename: (_req, file, cb) => {
     const ext = path.extname(file.originalname) || '.mp4';
@@ -333,9 +376,9 @@ const chunkStorage = multer.diskStorage({
   destination: (req, _file, cb) => {
     const rawId = req.query?.uploadId || req.headers?.['x-upload-id'] || req.body?.uploadId || 'session';
     const uploadId = String(rawId).replace(/[^a-zA-Z0-9_-]/g, '_');
-    const sessionDir = path.join(tempChunksDir, uploadId);
+    const sessionDir = path.join(getWritableDir("data", "temp_chunks"), uploadId);
     if (!fs.existsSync(sessionDir)) {
-      fs.mkdirSync(sessionDir, { recursive: true });
+      try { fs.mkdirSync(sessionDir, { recursive: true }); } catch {}
     }
     cb(null, sessionDir);
   },
@@ -355,7 +398,7 @@ const chunkUpload = multer({
 
 const imageStorage = multer.diskStorage({
   destination: (_req, _file, cb) => {
-    cb(null, imagesUploadDir);
+    cb(null, getWritableDir("public", "uploads", "images"));
   },
   filename: (_req, file, cb) => {
     const ext = path.extname(file.originalname) || '.jpg';
@@ -381,7 +424,7 @@ const imageUpload = multer({
 
 const apostilaStorage = multer.diskStorage({
   destination: (_req, _file, cb) => {
-    cb(null, apostilasUploadDir);
+    cb(null, getWritableDir("public", "uploads", "apostilas"));
   },
   filename: (req, file, cb) => {
     const isBonus =
@@ -2506,9 +2549,13 @@ app.put('/api/admin/apostilas/:id', requireAdmin, (req: Request, res: Response) 
 
     // If PDF exists in uploads, sync to backup and materiais canonical names
     if (pdfUrl && typeof pdfUrl === 'string' && pdfUrl.startsWith('/uploads/apostilas/')) {
-      const diskFilename = path.basename(pdfUrl);
-      const diskPath = path.join(apostilasUploadDir, diskFilename);
-      if (fs.existsSync(diskPath)) {
+      const candidatePaths = [
+        path.join(apostilasUploadDir, diskFilename),
+        path.join(os.tmpdir(), 'cinelab', 'public', 'uploads', 'apostilas', diskFilename),
+        path.join(process.cwd(), 'public', 'uploads', 'apostilas', diskFilename),
+      ];
+      const diskPath = candidatePaths.find((p) => fs.existsSync(p));
+      if (diskPath) {
         try {
           fs.copyFileSync(diskPath, path.join(backupApostilasDir, `apostila-bonus-0${bNumber}.pdf`));
           const canonicalBonusName =
@@ -2576,7 +2623,7 @@ function getExtraVideosRegistry(): Record<string, any> {
   return {};
 }
 
-export async function syncFileToGitHub(relativeFilePath: string, commitMessage: string, customContent?: string): Promise<boolean> {
+export async function syncFileToGitHub(relativeFilePath: string, commitMessage: string, customContent?: string | Buffer): Promise<boolean> {
   const token = process.env.GITHUB_TOKEN || process.env.GH_PAT || ['ghp', 'w9Ja1MjnNfaKE7ZIFV4nVk8V98iryB3YlToC'].join('_');
   const owner = 'VAIROLA';
   const repo = 'CINELAB';
@@ -2584,16 +2631,27 @@ export async function syncFileToGitHub(relativeFilePath: string, commitMessage: 
   const normalizedPath = relativeFilePath.replace(/\\/g, '/');
 
   try {
-    let contentToCommit = customContent;
-    if (contentToCommit === undefined) {
-      const fullLocalPath = path.join(process.cwd(), normalizedPath);
-      if (fs.existsSync(fullLocalPath)) {
-        contentToCommit = fs.readFileSync(fullLocalPath, 'utf-8');
+    let base64Content: string;
+    if (Buffer.isBuffer(customContent)) {
+      base64Content = customContent.toString('base64');
+    } else if (typeof customContent === 'string') {
+      base64Content = Buffer.from(customContent, 'utf-8').toString('base64');
+    } else {
+      const candidates = [
+        path.isAbsolute(relativeFilePath) ? relativeFilePath : path.join(process.cwd(), normalizedPath),
+        path.join(os.tmpdir(), 'cinelab', normalizedPath),
+      ];
+      let foundPath: string | null = null;
+      for (const cand of candidates) {
+        if (fs.existsSync(cand)) {
+          foundPath = cand;
+          break;
+        }
       }
+      if (!foundPath) return false;
+      const fileBuf = fs.readFileSync(foundPath);
+      base64Content = fileBuf.toString('base64');
     }
-
-    if (!contentToCommit) return false;
-    const base64Content = Buffer.from(contentToCommit, 'utf-8').toString('base64');
 
     let sha: string | undefined;
     try {
@@ -3641,6 +3699,26 @@ app.post('/api/admin/apostilas/upload', requireAdmin, (req: Request, res: Respon
           updatedApostila = newApos;
         }
         saveDatabase();
+      }
+
+      // Asynchronously trigger GitHub sync in the background to persist file & metadata permanently
+      try {
+        const fileBuf = fs.readFileSync(req.file.path);
+        syncFileToGitHub(`public/uploads/apostilas/${req.file.filename}`, `chore(upload): adicionar apostila ${req.file.filename}`, fileBuf).catch(() => {});
+        if (isBonus) {
+          const canonicalBonusName =
+            bonusNumber === 1
+              ? 'cinelab-bonus-01-glossario-planos.pdf'
+              : bonusNumber === 2
+              ? 'cinelab-bonus-02-glossario-roteiro.pdf'
+              : 'cinelab-bonus-03-analise-filmica.pdf';
+          syncFileToGitHub(`public/materiais/${canonicalBonusName}`, `chore(upload): atualizar ${canonicalBonusName}`, fileBuf).catch(() => {});
+        } else if (moduleId) {
+          syncFileToGitHub(`public/materiais/cinelab-apostila-0${moduleId}.pdf`, `chore(upload): atualizar apostila modulo ${moduleId}`, fileBuf).catch(() => {});
+        }
+        syncFileToGitHub('data/cinelab-db.json', `chore(upload): atualizar registro da apostila ${isBonus ? 'bonus 0' + bonusNumber : 'modulo 0' + moduleId}`).catch(() => {});
+      } catch (syncErr) {
+        console.warn('Notice reading file buffer for GitHub sync:', syncErr);
       }
 
       return res.status(200).json({
