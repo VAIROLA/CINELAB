@@ -14,6 +14,7 @@ import {
   initExtraVideosForApostila,
   logEmail,
   logVisitor,
+  initSupabaseData,
 } from './server/db.js';
 import {
   User,
@@ -31,9 +32,18 @@ import { APOSTILA_SECTION_TRANSLATIONS } from './src/i18n/apostilaContentTransla
 
 // Initialize DB
 loadDatabase();
+initSupabaseData().catch(() => {});
 
 const app = express();
 const PORT = 3000;
+
+// Garante que o estado persistente do Supabase esteja carregado em rotas de API
+app.use(async (req, res, next) => {
+  if (req.path.startsWith('/api/')) {
+    await initSupabaseData();
+  }
+  next();
+});
 
 // Permissive CORS for media streaming and API requests in preview iframes
 app.use((req, res, next) => {

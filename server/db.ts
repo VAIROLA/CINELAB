@@ -37,6 +37,7 @@ import {
   pedagogicalReadings,
 } from './pedagogicalContent.js';
 import { pedagogicalEvaluations } from './pedagogicalEvaluations.js';
+import { loadStateFromSupabase, saveStateToSupabase } from './supabaseSync.js';
 
 interface DatabaseSchema {
   settings: CourseSettings;
@@ -941,11 +942,56 @@ export function saveDatabase(): void {
     } catch (wErr) {
       console.warn('Could not mirror to WELCOME_CONFIG_FILE:', wErr);
     }
+
+    // Sincroniza em segundo plano com o banco Postgres no Supabase
+    saveStateToSupabase(db).catch((err: any) => {
+      console.warn('[Supabase] Falha no salvamento assíncrono em nuvem:', err?.message || err);
+    });
   } catch (err: any) {
     if (err?.code !== 'EROFS') {
       console.error('Error saving database to file:', err);
     }
   }
+}
+
+let supabaseHydrated = false;
+let hydratingPromise: Promise<void> | null = null;
+
+export async function initSupabaseData(): Promise<void> {
+  if (supabaseHydrated) return;
+  if (!hydratingPromise) {
+    hydratingPromise = (async () => {
+      try {
+        const cloudState = await loadStateFromSupabase();
+        if (cloudState && cloudState.users && Array.isArray(cloudState.users)) {
+          if (!db) {
+            db = cloudState;
+          } else {
+            if (cloudState.users) db.users = cloudState.users;
+            if (cloudState.enrollments) db.enrollments = cloudState.enrollments;
+            if (cloudState.payments) db.payments = cloudState.payments;
+            if (cloudState.submissions) db.submissions = cloudState.submissions;
+            if (cloudState.certificates) db.certificates = cloudState.certificates;
+            if (cloudState.settings) db.settings = { ...db.settings, ...cloudState.settings };
+            if (cloudState.apostilas && Array.isArray(cloudState.apostilas)) db.apostilas = cloudState.apostilas;
+            if (cloudState.bonusApostilas && Array.isArray(cloudState.bonusApostilas)) db.bonusApostilas = cloudState.bonusApostilas;
+            if (cloudState.films && Array.isArray(cloudState.films)) db.films = cloudState.films;
+            if (cloudState.videos && Array.isArray(cloudState.videos)) db.videos = cloudState.videos;
+            if (cloudState.evaluations && Array.isArray(cloudState.evaluations)) db.evaluations = cloudState.evaluations;
+            if (cloudState.activities && Array.isArray(cloudState.activities)) db.activities = cloudState.activities;
+            if (cloudState.studentActivities) db.studentActivities = cloudState.studentActivities;
+            if (cloudState.visitors && Array.isArray(cloudState.visitors)) db.visitors = cloudState.visitors;
+          }
+          console.log(`[Supabase] Dados sincronizados da nuvem Postgres (${db.users.length} usuários, ${db.enrollments.length} matrículas).`);
+        }
+      } catch (err: any) {
+        console.warn('[Supabase] Falha ao sincronizar com nuvem na inicialização:', err?.message || err);
+      } finally {
+        supabaseHydrated = true;
+      }
+    })();
+  }
+  await hydratingPromise;
 }
 
 export function getDb(): DatabaseSchema {

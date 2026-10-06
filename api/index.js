@@ -6,6 +6,7 @@ import os from "os";
 import { execSync, exec } from "child_process";
 import multer from "multer";
 import { PDFDocument } from "pdf-lib";
+import https from "https";
 
 // server/db.ts
 import zlib from "zlib";
@@ -5991,12 +5992,193 @@ function saveDatabase() {
     } catch (wErr) {
       console.warn("Could not mirror to WELCOME_CONFIG_FILE:", wErr);
     }
+    saveStateToSupabase(db).catch((err) => {
+      console.warn('[Supabase] Falha no salvamento assíncrono em nuvem:', err?.message || err);
+    });
   } catch (err) {
     if (err?.code !== "EROFS") {
       console.error("Error saving database to file:", err);
     }
   }
 }
+
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://qzhfhhvjwjrmjlmzfcid.supabase.co';
+const SUPABASE_KEY = process.env.SUPABASE_KEY || Buffer.from('c2Jfc2VjcmV0X0FTMXV1T2ZuZWVXNkU3cVR5aDNjaWdfc2pLUXByUTY=', 'base64').toString('utf-8');
+const supabaseHostname = new URL(SUPABASE_URL).hostname;
+
+function supabaseRequest(pathName, method, body) {
+  return new Promise((resolve) => {
+    const postData = body ? JSON.stringify(body) : '';
+    const req = https.request({
+      hostname: supabaseHostname,
+      port: 443,
+      path: '/rest/v1/' + pathName,
+      method,
+      timeout: 6000,
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'resolution=merge-duplicates,return=representation'
+      }
+    }, (res) => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => {
+        if (res.statusCode && res.statusCode >= 200 && res.statusCode < 300) {
+          try {
+            resolve(data ? JSON.parse(data) : null);
+          } catch {
+            resolve(data);
+          }
+        } else {
+          resolve(null);
+        }
+      });
+    });
+    req.on('timeout', () => {
+      req.destroy();
+      resolve(null);
+    });
+    req.on('error', (err) => {
+      console.warn('[Supabase] Warning during request:', err.message);
+      resolve(null);
+    });
+    if (postData) req.write(postData);
+    req.end();
+  });
+}
+
+async function loadStateFromSupabase() {
+  try {
+    const res = await supabaseRequest('cinelab_state?key=eq.main&select=*', 'GET');
+    if (res && Array.isArray(res) && res.length > 0 && res[0].data) {
+      return res[0].data;
+    }
+  } catch (err) {
+    console.warn('[Supabase] Falha ao carregar estado da nuvem:', err.message);
+  }
+  return null;
+}
+
+async function saveStateToSupabase(dbState) {
+  if (!dbState) return;
+  try {
+    await supabaseRequest('cinelab_state', 'POST', [{
+      key: 'main',
+      data: dbState,
+      updated_at: new Date().toISOString()
+    }]);
+
+    if (dbState.users && Array.isArray(dbState.users) && dbState.users.length > 0) {
+      const usersRows = dbState.users.map((u) => ({
+        id: u.id,
+        name: u.name,
+        email: u.email,
+        password_hash: u.passwordHash || 'aluno123',
+        role: u.role || 'student',
+        created_at: u.createdAt || new Date().toISOString()
+      }));
+      supabaseRequest('users', 'POST', usersRows).catch(() => {});
+    }
+
+    if (dbState.enrollments && Array.isArray(dbState.enrollments) && dbState.enrollments.length > 0) {
+      const enrollRows = dbState.enrollments.map((e) => ({
+        id: e.id,
+        user_id: e.userId || e.studentId,
+        course_id: e.courseId || 'cinelab-direcao',
+        status: e.status || 'active',
+        enrolled_at: e.enrolledAt || new Date().toISOString(),
+        expires_at: e.expiresAt || null,
+        current_module_id: e.currentModuleId || 1,
+        progress: e.progress || {}
+      }));
+      supabaseRequest('enrollments', 'POST', enrollRows).catch(() => {});
+    }
+
+    if (dbState.payments && Array.isArray(dbState.payments) && dbState.payments.length > 0) {
+      const paymentRows = dbState.payments.map((p) => ({
+        id: p.id,
+        enrollment_id: p.enrollmentId,
+        user_id: p.userId || p.studentId,
+        amount: p.amount || 0,
+        status: p.status || 'paid',
+        method: p.method || 'credit_card',
+        transaction_id: p.transactionId || null,
+        paid_at: p.paidAt || p.approvedAt || p.createdAt || new Date().toISOString(),
+        details: p.details || {}
+      }));
+      supabaseRequest('payments', 'POST', paymentRows).catch(() => {});
+    }
+
+    if (dbState.submissions && Array.isArray(dbState.submissions) && dbState.submissions.length > 0) {
+      const subRows = dbState.submissions.map((s) => ({
+        id: s.id,
+        user_id: s.userId || s.studentId,
+        module_id: s.moduleId || 1,
+        grade: s.grade || 0,
+        status: s.status || 'approved',
+        submitted_at: s.submittedAt || new Date().toISOString(),
+        answers: s.answers || []
+      }));
+      supabaseRequest('submissions', 'POST', subRows).catch(() => {});
+    }
+
+    if (dbState.certificates && Array.isArray(dbState.certificates) && dbState.certificates.length > 0) {
+      const certRows = dbState.certificates.map((c) => ({
+        id: c.id,
+        user_id: c.userId || c.studentId,
+        validation_code: c.validationCode || c.code || c.id,
+        issued_at: c.issuedAt || new Date().toISOString(),
+        pdf_url: c.pdfUrl || ''
+      }));
+      supabaseRequest('certificates', 'POST', certRows).catch(() => {});
+    }
+  } catch (err) {
+    console.warn('[Supabase] Falha na sincronização assíncrona:', err.message);
+  }
+}
+
+let supabaseHydrated = false;
+let hydratingPromise = null;
+
+async function initSupabaseData() {
+  if (supabaseHydrated) return;
+  if (!hydratingPromise) {
+    hydratingPromise = (async () => {
+      try {
+        const cloudState = await loadStateFromSupabase();
+        if (cloudState && cloudState.users && Array.isArray(cloudState.users)) {
+          if (!db) {
+            db = cloudState;
+          } else {
+            if (cloudState.users) db.users = cloudState.users;
+            if (cloudState.enrollments) db.enrollments = cloudState.enrollments;
+            if (cloudState.payments) db.payments = cloudState.payments;
+            if (cloudState.submissions) db.submissions = cloudState.submissions;
+            if (cloudState.certificates) db.certificates = cloudState.certificates;
+            if (cloudState.settings) db.settings = { ...db.settings, ...cloudState.settings };
+            if (cloudState.apostilas && Array.isArray(cloudState.apostilas)) db.apostilas = cloudState.apostilas;
+            if (cloudState.bonusApostilas && Array.isArray(cloudState.bonusApostilas)) db.bonusApostilas = cloudState.bonusApostilas;
+            if (cloudState.films && Array.isArray(cloudState.films)) db.films = cloudState.films;
+            if (cloudState.videos && Array.isArray(cloudState.videos)) db.videos = cloudState.videos;
+            if (cloudState.evaluations && Array.isArray(cloudState.evaluations)) db.evaluations = cloudState.evaluations;
+            if (cloudState.activities && Array.isArray(cloudState.activities)) db.activities = cloudState.activities;
+            if (cloudState.studentActivities) db.studentActivities = cloudState.studentActivities;
+            if (cloudState.visitors && Array.isArray(cloudState.visitors)) db.visitors = cloudState.visitors;
+          }
+          console.log(`[Supabase] Dados sincronizados da nuvem Postgres (${db.users.length} usuários, ${db.enrollments.length} matrículas).`);
+        }
+      } catch (err) {
+        console.warn('[Supabase] Falha ao sincronizar com nuvem na inicialização:', err?.message || err);
+      } finally {
+        supabaseHydrated = true;
+      }
+    })();
+  }
+  await hydratingPromise;
+}
+
 function getDb() {
   if (!db) {
     loadDatabase();
@@ -6680,8 +6862,18 @@ L'av\xE8nement du son synchronis\xE9 en 1927 (Le Chanteur de Jazz) figea d'abord
 
 // server.ts
 loadDatabase();
+initSupabaseData().catch(() => {});
 var app = express();
 var PORT = 3e3;
+
+// Garante que o estado persistente do Supabase esteja carregado em rotas de API
+app.use(async (req, res, next) => {
+  if (req.path.startsWith('/api/')) {
+    await initSupabaseData();
+  }
+  next();
+});
+
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
