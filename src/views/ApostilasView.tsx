@@ -416,9 +416,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
           };
         });
         setApostilas(getMergedApostilasWithVault(mappedApos));
-        if (info.bonusApostilas && info.bonusApostilas.length > 0) {
-          setBonusApostilas(getMergedBonusWithVault(info.bonusApostilas));
-        }
+        setBonusApostilas(getMergedBonusWithVault(info.bonusApostilas || []));
       } else {
         const mappedApos: Apostila[] = info.modules.map((m: any) => {
           const num = m.number || m.id;
@@ -452,7 +450,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
 
         const initialBonusList = [
           {
-            id: 'bonus-1',
+            id: 'bonus-01',
             number: 1,
             code: 'BÔNUS 01',
             title: 'Glossário Completo de Planos',
@@ -462,11 +460,11 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
             totalPages: 30,
             pagesCount: 30,
             pdfUrl: '/materiais/cinelab-bonus-01-glossario-planos.pdf',
-            isUnlocked: mod5 ? mod5.status !== 'locked' : false,
-            unlockDate: mod5?.startDate || '',
+            isUnlocked: true,
+            unlockDate: '',
           },
           {
-            id: 'bonus-2',
+            id: 'bonus-02',
             number: 2,
             code: 'BÔNUS 02',
             title: 'Glossário Completo de Roteiro',
@@ -476,8 +474,22 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
             totalPages: 29,
             pagesCount: 29,
             pdfUrl: '/materiais/cinelab-bonus-02-glossario-roteiro.pdf',
-            isUnlocked: mod8 ? mod8.status !== 'locked' : false,
-            unlockDate: mod8?.startDate || '',
+            isUnlocked: true,
+            unlockDate: '',
+          },
+          {
+            id: 'bonus-03',
+            number: 3,
+            code: 'BÔNUS 03',
+            title: 'Método de Análise Fílmica em 6 Camadas',
+            subtitle: 'Guia Completo de Análise Crítica e Decupagem de Obras Audiovisuais',
+            summary: 'A metodologia analítica do CINELAB em 6 camadas: Narrativa, Personagem, Espaço, Imagem (Fotografia), Som e Montagem para dissecar qualquer obra audiovisual como realizador.',
+            description: 'A metodologia analítica do CINELAB em 6 camadas: Narrativa, Personagem, Espaço, Imagem (Fotografia), Som e Montagem para dissecar qualquer obra audiovisual como realizador.',
+            totalPages: 27,
+            pagesCount: 27,
+            pdfUrl: '/materiais/cinelab-bonus-03-analise-filmica.pdf',
+            isUnlocked: true,
+            unlockDate: '',
           },
         ];
         setBonusApostilas(getMergedBonusWithVault(initialBonusList as any));
@@ -1353,7 +1365,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                   >
                     <option value={1}>Apostila Bônus 01 (Glossário de Planos - 30 págs)</option>
                     <option value={2}>Apostila Bônus 02 (Glossário de Roteiro - 29 págs)</option>
-                    <option value={3}>Nova Apostila Bônus 03</option>
+                    <option value={3}>Apostila Bônus 03 (Método de Análise Fílmica em 6 Camadas - 27 págs)</option>
                     <option value={4}>Nova Apostila Bônus 04</option>
                   </select>
                 </div>
@@ -1503,9 +1515,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                   ? (b.summary || b.description)
                   : (bTrans?.summary || (b.number === 1 ? 'Guia permanente de consulta técnica para decupagem cinematográfica, escalas de planos e movimentos de câmera.' : b.number === 2 ? 'Guia permanente de consulta dramatúrgica: da criação de premissa, storyline e sinopse à escaleta e roteiro final.' : 'A metodologia analítica do CINELAB em 6 camadas para dissecar qualquer obra audiovisual como realizador.')))
               : (bTrans?.summary || b.summary || b.description);
-            const displayPages = (b.pagesCount && b.pagesCount !== 35 && b.pagesCount !== 40 && b.pagesCount !== 96 && b.pagesCount !== 104)
-              ? b.pagesCount
-              : ((b.totalPages && b.totalPages !== 35 && b.totalPages !== 40 && b.totalPages !== 96 && b.totalPages !== 104) ? b.totalPages : (b.number === 1 ? 30 : b.number === 2 ? 29 : 24));
+            const displayPages = (b.pagesCount && b.pagesCount !== 4 && b.pagesCount !== 24 && b.pagesCount !== 35 && b.pagesCount !== 40 && b.pagesCount !== 96 && b.pagesCount !== 104) ? b.pagesCount : (b.number === 1 ? 30 : (b.number === 3 ? 27 : 29));
 
             return (
               <div

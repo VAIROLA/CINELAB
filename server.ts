@@ -570,8 +570,8 @@ app.get('/api/course/public-info', (req: Request, res: Response) => {
         status: isUnlocked ? ('available' as const) : ('locked' as const),
         unlockDate: timeline.startDate.toISOString(),
         startDate: timeline.startDate.toISOString(),
-        pagesCount: b.pagesCount || b.totalPages || (b.number === 1 ? 30 : 29),
-        totalPages: b.totalPages || b.pagesCount || (b.number === 1 ? 30 : 29),
+        pagesCount: b.pagesCount && b.pagesCount !== 4 && b.pagesCount !== 24 ? b.pagesCount : (b.number === 1 ? 30 : (b.number === 3 ? 27 : 29)),
+        totalPages: b.totalPages && b.totalPages !== 4 && b.totalPages !== 24 ? b.totalPages : (b.number === 1 ? 30 : (b.number === 3 ? 27 : 29)),
         extraVideos: b.extraVideos && b.extraVideos.length > 0 ? b.extraVideos : initExtraVideosForApostila(b, b.title),
       };
     }),
@@ -1314,8 +1314,8 @@ app.get('/api/student/bonus-apostilas', requireActiveStudent, (req: Request, res
       requiredModule,
       summary: b.summary || b.description,
       description: b.description || b.summary,
-      pagesCount: b.pagesCount || b.totalPages || (b.number === 1 ? 30 : 29),
-      totalPages: b.totalPages || b.pagesCount || (b.number === 1 ? 30 : 29),
+      pagesCount: b.pagesCount && b.pagesCount !== 4 && b.pagesCount !== 24 ? b.pagesCount : (b.number === 1 ? 30 : (b.number === 3 ? 27 : 29)),
+      totalPages: b.totalPages && b.totalPages !== 4 && b.totalPages !== 24 ? b.totalPages : (b.number === 1 ? 30 : (b.number === 3 ? 27 : 29)),
       code: `APOSTILA BÔNUS 0${b.number}`,
       pdfUrl: isUnlocked ? b.pdfUrl : '',
       extraVideos: (b.extraVideos && b.extraVideos.length > 0 ? b.extraVideos : initExtraVideosForApostila(b, b.title)).map((v: any) => ({

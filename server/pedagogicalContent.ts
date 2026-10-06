@@ -2013,9 +2013,9 @@ export const pedagogicalBonusApostilas: BonusApostila[] = [
       'A metodologia analítica do CINELAB em 6 camadas: Narrativa, Personagem, Espaço, Imagem (Fotografia), Som e Montagem para dissecar qualquer obra audiovisual como realizador.',
     summary:
       'A metodologia analítica do CINELAB em 6 camadas: Narrativa, Personagem, Espaço, Imagem (Fotografia), Som e Montagem para dissecar qualquer obra audiovisual como realizador.',
-    pagesCount: 24,
-    totalPages: 24,
-    pdfUrl: '/uploads/apostilas/apostila-bonus-03-analise-filmica.pdf',
+    pagesCount: 27,
+    totalPages: 27,
+    pdfUrl: '/materiais/cinelab-bonus-03-analise-filmica.pdf',
     coverUrl: 'https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&w=600&q=80',
     unlockedByDefault: false,
     requiredModule: 6,

@@ -2439,9 +2439,9 @@ var pedagogicalBonusApostilas = [
     subtitle: "Guia Completo de An\xE1lise Cr\xEDtica e Decupagem de Obras Audiovisuais",
     description: "A metodologia anal\xEDtica do CINELAB em 6 camadas: Narrativa, Personagem, Espa\xE7o, Imagem (Fotografia), Som e Montagem para dissecar qualquer obra audiovisual como realizador.",
     summary: "A metodologia anal\xEDtica do CINELAB em 6 camadas: Narrativa, Personagem, Espa\xE7o, Imagem (Fotografia), Som e Montagem para dissecar qualquer obra audiovisual como realizador.",
-    pagesCount: 24,
-    totalPages: 24,
-    pdfUrl: "/uploads/apostilas/apostila-bonus-03-analise-filmica.pdf",
+    pagesCount: 27,
+    totalPages: 27,
+    pdfUrl: "/materiais/cinelab-bonus-03-analise-filmica.pdf",
     coverUrl: "https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&w=600&q=80",
     unlockedByDefault: false,
     extraVideos: [
@@ -7334,8 +7334,8 @@ app.get("/api/course/public-info", (req, res) => {
         status: isUnlocked ? "available" : "locked",
         unlockDate: timeline.startDate.toISOString(),
         startDate: timeline.startDate.toISOString(),
-        pagesCount: b.pagesCount || b.totalPages || (b.number === 1 ? 30 : 29),
-        totalPages: b.totalPages || b.pagesCount || (b.number === 1 ? 30 : 29),
+        pagesCount: b.pagesCount && b.pagesCount !== 4 && b.pagesCount !== 24 ? b.pagesCount : (b.number === 1 ? 30 : (b.number === 3 ? 27 : 29)),
+        totalPages: b.totalPages && b.totalPages !== 4 && b.totalPages !== 24 ? b.totalPages : (b.number === 1 ? 30 : (b.number === 3 ? 27 : 29)),
         extraVideos: b.extraVideos && b.extraVideos.length > 0 ? b.extraVideos : initExtraVideosForApostila(b, b.title)
       };
     }),
@@ -7947,8 +7947,8 @@ app.get("/api/student/bonus-apostilas", requireActiveStudent, (req, res) => {
       requiredModule,
       summary: b.summary || b.description,
       description: b.description || b.summary,
-      pagesCount: b.pagesCount || b.totalPages || (b.number === 1 ? 30 : 29),
-      totalPages: b.totalPages || b.pagesCount || (b.number === 1 ? 30 : 29),
+      pagesCount: b.pagesCount && b.pagesCount !== 4 && b.pagesCount !== 24 ? b.pagesCount : (b.number === 1 ? 30 : (b.number === 3 ? 27 : 29)),
+      totalPages: b.totalPages && b.totalPages !== 4 && b.totalPages !== 24 ? b.totalPages : (b.number === 1 ? 30 : (b.number === 3 ? 27 : 29)),
       code: `APOSTILA B\xD4NUS 0${b.number}`,
       pdfUrl: isUnlocked ? b.pdfUrl : "",
       extraVideos: (b.extraVideos && b.extraVideos.length > 0 ? b.extraVideos : initExtraVideosForApostila(b, b.title)).map((v) => ({

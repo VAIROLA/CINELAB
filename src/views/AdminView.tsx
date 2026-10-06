@@ -199,7 +199,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
       setStudents(Array.isArray(stud) ? stud : ((stud as any)?.students && Array.isArray((stud as any).students) ? (stud as any).students : []));
       if (modsRes?.modules && Array.isArray(modsRes.modules)) setModules(modsRes.modules);
       const rawApos = Array.isArray(apos) ? apos : ((apos as any)?.apostilas && Array.isArray((apos as any).apostilas) ? (apos as any).apostilas : []);
-      const rawBonus = Array.isArray(bonusRes) ? bonusRes : [];
+      const rawBonus = Array.isArray(bonusRes) && bonusRes.length > 0 ? bonusRes : ((apos as any)?.bonusApostilas && Array.isArray((apos as any).bonusApostilas) ? (apos as any).bonusApostilas : []);
       setApostilas(getMergedApostilasWithVault(rawApos));
       setBonusApostilas(getMergedBonusWithVault(rawBonus));
       setVideos(Array.isArray(vids) ? vids : ((vids as any)?.videos && Array.isArray((vids as any).videos) ? (vids as any).videos : []));
@@ -2240,28 +2240,41 @@ export const AdminView: React.FC<AdminViewProps> = ({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {(bonusApostilas.length > 0 ? bonusApostilas : [
                     {
-                      id: 'bonus-1',
+                      id: 'bonus-01',
                       number: 1,
                       code: 'BÔNUS 01',
                       title: 'Glossário Completo de Planos',
                       totalPages: 30,
                       pagesCount: 30,
+                      pdfUrl: '/materiais/cinelab-bonus-01-glossario-planos.pdf',
                       summary: 'Guia permanente de consulta técnica para decupagem cinematográfica, escalas de planos e movimentos de câmera.',
                       isUnlocked: true,
                     },
                     {
-                      id: 'bonus-2',
+                      id: 'bonus-02',
                       number: 2,
                       code: 'BÔNUS 02',
                       title: 'Glossário Completo de Roteiro',
                       totalPages: 29,
                       pagesCount: 29,
+                      pdfUrl: '/materiais/cinelab-bonus-02-glossario-roteiro.pdf',
                       summary: 'Guia permanente de consulta dramatúrgica: da criação de premissa, storyline e sinopse à escaleta e roteiro final.',
+                      isUnlocked: true,
+                    },
+                    {
+                      id: 'bonus-03',
+                      number: 3,
+                      code: 'BÔNUS 03',
+                      title: 'Método de Análise Fílmica em 6 Camadas',
+                      totalPages: 27,
+                      pagesCount: 27,
+                      pdfUrl: '/materiais/cinelab-bonus-03-analise-filmica.pdf',
+                      summary: 'A metodologia analítica do CINELAB em 6 camadas: Narrativa, Personagem, Espaço, Imagem (Fotografia), Som e Montagem para dissecar qualquer obra audiovisual como realizador.',
                       isUnlocked: true,
                     }
                   ]).map((b: any) => {
                     const rawPages = b.pagesCount || b.totalPages;
-                    const displayPages = rawPages && rawPages !== 96 && rawPages !== 104 ? rawPages : (b.number === 1 ? 30 : 29);
+                    const displayPages = rawPages && rawPages !== 4 && rawPages !== 24 && rawPages !== 96 && rawPages !== 104 ? rawPages : (b.number === 1 ? 30 : (b.number === 3 ? 27 : 29));
                     return (
                       <div
                         key={b.id || b.number}

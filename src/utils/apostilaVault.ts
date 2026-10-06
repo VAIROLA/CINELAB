@@ -313,31 +313,99 @@ export function getMergedApostilasWithVault(serverApostilas: Apostila[]): Aposti
  * Mescla a lista de apostilas bônus do servidor com os dados persistentes locais
  */
 export function getMergedBonusWithVault(serverBonus: BonusApostila[]): BonusApostila[] {
-  if (!Array.isArray(serverBonus)) return serverBonus;
   const vault = getPersistentVaultIndex();
-
   let vaultNeedsSave = false;
 
-  const result = serverBonus.map((b) => {
+  const canonicalBonusList: BonusApostila[] = [
+    {
+      id: 'bonus-01',
+      number: 1,
+      code: 'BÔNUS 01',
+      title: 'Glossário Completo de Planos',
+      subtitle: 'Guia Permanente de Consulta Técnica e Decupagem Cinematográfica',
+      summary: 'Guia permanente de consulta técnica para decupagem cinematográfica, escalas de planos e movimentos de câmera.',
+      description: 'Guia permanente de consulta técnica para decupagem cinematográfica, escalas de planos e movimentos de câmera.',
+      pagesCount: 30,
+      totalPages: 30,
+      pdfUrl: '/materiais/cinelab-bonus-01-glossario-planos.pdf',
+      coverUrl: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=600&q=80',
+      unlockedByDefault: false,
+      requiredModule: 3,
+      isUnlocked: true,
+      fileSizeMb: 0.35,
+    } as any,
+    {
+      id: 'bonus-02',
+      number: 2,
+      code: 'BÔNUS 02',
+      title: 'Glossário Completo de Roteiro',
+      subtitle: 'Guia Permanente de Consulta Dramatúrgica e Estruturação de Histórias',
+      summary: 'Guia permanente de consulta dramatúrgica: da criação de premissa, storyline e sinopse à escaleta e roteiro final.',
+      description: 'Guia permanente de consulta dramatúrgica: da criação de premissa, storyline e sinopse à escaleta e roteiro final.',
+      pagesCount: 29,
+      totalPages: 29,
+      pdfUrl: '/materiais/cinelab-bonus-02-glossario-roteiro.pdf',
+      coverUrl: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=600&q=80',
+      unlockedByDefault: false,
+      requiredModule: 3,
+      isUnlocked: true,
+      fileSizeMb: 0.38,
+    } as any,
+    {
+      id: 'bonus-03',
+      number: 3,
+      code: 'BÔNUS 03',
+      title: 'Método de Análise Fílmica em 6 Camadas',
+      subtitle: 'Guia Completo de Análise Crítica e Decupagem de Obras Audiovisuais',
+      summary: 'A metodologia analítica do CINELAB em 6 camadas: Narrativa, Personagem, Espaço, Imagem (Fotografia), Som e Montagem para dissecar qualquer obra audiovisual como realizador.',
+      description: 'A metodologia analítica do CINELAB em 6 camadas: Narrativa, Personagem, Espaço, Imagem (Fotografia), Som e Montagem para dissecar qualquer obra audiovisual como realizador.',
+      pagesCount: 27,
+      totalPages: 27,
+      pdfUrl: '/materiais/cinelab-bonus-03-analise-filmica.pdf',
+      coverUrl: 'https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&w=600&q=80',
+      unlockedByDefault: false,
+      requiredModule: 6,
+      isUnlocked: true,
+      fileSizeMb: 0.42,
+    } as any,
+  ];
+
+  // Base list starts with canonical items
+  const baseList = (Array.isArray(serverBonus) && serverBonus.length > 0)
+    ? canonicalBonusList.map(canon => {
+        const found = serverBonus.find(s => s.number === canon.number);
+        return found ? { ...canon, ...found } : canon;
+      })
+    : canonicalBonusList;
+
+  const result = baseList.map((b) => {
     const key = `bonus-${b.number}`;
     const local = vault[key];
-    const defaultPages = b.number === 1 ? 30 : 29;
-    const canonicalTitle = b.number === 1 ? 'Glossário Completo de Planos' : 'Glossário Completo de Roteiro';
-    const canonicalSubtitle = b.number === 1 
+    const defaultPages = b.number === 1 ? 30 : (b.number === 3 ? 27 : 29);
+    const canonicalTitle = b.number === 1
+      ? 'Glossário Completo de Planos'
+      : (b.number === 3 ? 'Método de Análise Fílmica em 6 Camadas' : 'Glossário Completo de Roteiro');
+    const canonicalSubtitle = b.number === 1
       ? 'Guia Permanente de Consulta Técnica e Decupagem Cinematográfica'
-      : 'Guia Permanente de Consulta Dramatúrgica e Estruturação de Histórias';
+      : (b.number === 3 ? 'Guia Completo de Análise Crítica e Decupagem de Obras Audiovisuais' : 'Guia Permanente de Consulta Dramatúrgica e Estruturação de Histórias');
     const canonicalSummary = b.number === 1
       ? 'Guia permanente de consulta técnica para decupagem cinematográfica, escalas de planos e movimentos de câmera.'
-      : 'Guia permanente de consulta dramatúrgica: da criação de premissa, storyline e sinopse à escaleta e roteiro final.';
+      : (b.number === 3 ? 'A metodologia analítica do CINELAB em 6 camadas: Narrativa, Personagem, Espaço, Imagem (Fotografia), Som e Montagem para dissecar qualquer obra audiovisual como realizador.' : 'Guia permanente de consulta dramatúrgica: da criação de premissa, storyline e sinopse à escaleta e roteiro final.');
+    const canonicalPdf = b.number === 1
+      ? '/materiais/cinelab-bonus-01-glossario-planos.pdf'
+      : (b.number === 3 ? '/materiais/cinelab-bonus-03-analise-filmica.pdf' : '/materiais/cinelab-bonus-02-glossario-roteiro.pdf');
 
     const isOutdatedLocal =
       local &&
       (
         !local.title ||
+        (b.number === 3 && local.title.includes('Roteiro')) ||
         local.title.includes('Pitching') ||
         local.title.includes('Guerrilha') ||
         local.title.includes('Bíblia de Série') ||
         local.title.includes('Nova Apostila') ||
+        local.pagesCount === 4 ||
+        local.pagesCount === 24 ||
         local.pagesCount === 35 ||
         local.pagesCount === 40 ||
         local.pagesCount === 96 ||
@@ -349,31 +417,16 @@ export function getMergedBonusWithVault(serverBonus: BonusApostila[]): BonusApos
         ...vault[key],
         title: canonicalTitle,
         pagesCount: defaultPages,
+        pdfUrl: canonicalPdf,
       };
       vaultNeedsSave = true;
     }
 
-    const isOutdatedServer =
-      !b.title ||
-      b.title.includes('Pitching') ||
-      b.title.includes('Guerrilha') ||
-      b.title.includes('Bíblia de Série') ||
-      b.title.includes('Nova Apostila') ||
-      b.pagesCount === 35 ||
-      b.pagesCount === 40 ||
-      b.pagesCount === 96 ||
-      b.pagesCount === 104;
-
-    const title = (!isOutdatedLocal && local?.title) ? local.title : ((!isOutdatedServer && b.title) ? b.title : canonicalTitle);
-    const summary = (!isOutdatedLocal && (local as any)?.summary) ? (local as any).summary : ((!isOutdatedServer && (b.summary || b.description)) ? (b.summary || b.description) : canonicalSummary);
-
-    let pages = defaultPages;
-    if (!isOutdatedLocal && local?.pagesCount && local.pagesCount > 0 && local.pagesCount !== 96 && local.pagesCount !== 104) {
-      pages = local.pagesCount;
-    } else if (!isOutdatedServer && (b.pagesCount || b.totalPages)) {
-      const p = b.pagesCount || b.totalPages;
-      pages = (p !== 96 && p !== 104) ? p : defaultPages;
-    }
+    const title = (!isOutdatedLocal && local?.title) ? local.title : canonicalTitle;
+    const summary = (!isOutdatedLocal && (local as any)?.summary) ? (local as any).summary : canonicalSummary;
+    const pages = (!isOutdatedLocal && local?.pagesCount && local.pagesCount > 0 && local.pagesCount !== 4 && local.pagesCount !== 24 && local.pagesCount !== 96 && local.pagesCount !== 104)
+      ? local.pagesCount
+      : defaultPages;
 
     return {
       ...b,
@@ -383,8 +436,8 @@ export function getMergedBonusWithVault(serverBonus: BonusApostila[]): BonusApos
       description: summary,
       pagesCount: pages,
       totalPages: pages,
-      pdfUrl: (!isOutdatedLocal && local?.pdfUrl) ? local.pdfUrl : (b.pdfUrl || (b.number === 1 ? '/materiais/cinelab-bonus-01-glossario-planos.pdf' : '/materiais/cinelab-bonus-02-glossario-roteiro.pdf')),
-      fileSizeMb: local?.fileSizeMb || b.fileSizeMb,
+      pdfUrl: (!isOutdatedLocal && local?.pdfUrl) ? local.pdfUrl : (b.pdfUrl || canonicalPdf),
+      fileSizeMb: local?.fileSizeMb || b.fileSizeMb || (b.number === 1 ? 0.35 : b.number === 2 ? 0.38 : 0.42),
     };
   });
 

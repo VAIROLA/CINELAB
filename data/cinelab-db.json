@@ -2536,16 +2536,18 @@
     {
       "id": "bonus-01",
       "number": 1,
+      "code": "BÔNUS 01",
       "title": "Glossário Completo de Planos",
       "subtitle": "Guia Permanente de Consulta Técnica e Decupagem Cinematográfica",
       "description": "Guia permanente de consulta técnica para decupagem cinematográfica, escalas de planos e movimentos de câmera.",
       "summary": "Guia permanente de consulta técnica para decupagem cinematográfica, escalas de planos e movimentos de câmera.",
-      "pagesCount": 4,
-      "totalPages": 4,
-      "pdfUrl": "/uploads/apostilas/apostila-modulo-geral-BONUS_01_-GLOSS__RIO_COMPLETO_DE_PL-1789765461651.pdf",
+      "pagesCount": 30,
+      "totalPages": 30,
+      "pdfUrl": "/materiais/cinelab-bonus-01-glossario-planos.pdf",
       "coverUrl": "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=600&q=80",
       "unlockedByDefault": false,
       "requiredModule": 3,
+      "fileSizeMb": 0.35,
       "notes": "Liberado automaticamente a partir da Etapa 03 (junto com a Apostila 03). Acesso permanente mesmo após a conclusão do curso.",
       "termsGlossary": [
         {
@@ -2614,7 +2616,6 @@
           "application": "Garante a continuidade espacial da linha do olhar entre os personagens no campo e contracampo."
         }
       ],
-      "fileSizeMb": 0.34,
       "extraVideos": [
         {
           "id": "ev-bonus-01-1",
@@ -2651,16 +2652,18 @@
     {
       "id": "bonus-02",
       "number": 2,
+      "code": "BÔNUS 02",
       "title": "Glossário Completo de Roteiro",
       "subtitle": "Guia Permanente de Consulta Dramatúrgica e Estruturação de Histórias",
       "description": "Guia permanente de consulta dramatúrgica: da criação de premissa, storyline e sinopse à escaleta e roteiro final.",
       "summary": "Guia permanente de consulta dramatúrgica: da criação de premissa, storyline e sinopse à escaleta e roteiro final.",
-      "pagesCount": 4,
-      "totalPages": 4,
-      "pdfUrl": "/uploads/apostilas/apostila-modulo-geral-apostila-bonus-01-1790684321710.pdf",
+      "pagesCount": 29,
+      "totalPages": 29,
+      "pdfUrl": "/materiais/cinelab-bonus-02-glossario-roteiro.pdf",
       "coverUrl": "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=600&q=80",
       "unlockedByDefault": false,
       "requiredModule": 3,
+      "fileSizeMb": 0.38,
       "notes": "Liberado automaticamente a partir da Etapa 03 (junto com a Apostila 03). Acesso permanente mesmo após a conclusão do curso.",
       "termsGlossary": [
         {
@@ -2724,7 +2727,6 @@
           "application": "Confere humanidade, sofisticação e mistério psicológico aos personagens em cena."
         }
       ],
-      "fileSizeMb": 0.18,
       "extraVideos": [
         {
           "id": "ev-bonus-02-1",
@@ -2761,16 +2763,18 @@
     {
       "id": "bonus-03",
       "number": 3,
+      "code": "BÔNUS 03",
       "title": "Método de Análise Fílmica em 6 Camadas",
       "subtitle": "Guia Completo de Análise Crítica e Decupagem de Obras Audiovisuais",
       "description": "A metodologia analítica do CINELAB em 6 camadas: Narrativa, Personagem, Espaço, Imagem (Fotografia), Som e Montagem para dissecar qualquer obra audiovisual como realizador.",
       "summary": "A metodologia analítica do CINELAB em 6 camadas: Narrativa, Personagem, Espaço, Imagem (Fotografia), Som e Montagem para dissecar qualquer obra audiovisual como realizador.",
-      "pagesCount": 4,
-      "totalPages": 4,
-      "pdfUrl": "/uploads/apostilas/apostila-modulo-geral-apostila-bonus-03-analise-filmica-1790684683690.pdf",
+      "pagesCount": 27,
+      "totalPages": 27,
+      "pdfUrl": "/materiais/cinelab-bonus-03-analise-filmica.pdf",
       "coverUrl": "https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&w=600&q=80",
       "unlockedByDefault": false,
       "requiredModule": 6,
+      "fileSizeMb": 0.42,
       "notes": "Apostila bônus especial com o método completo das 6 camadas para análise técnica e crítica de cinema liberada a partir do Módulo 06.",
       "termsGlossary": [
         {
@@ -2804,7 +2808,6 @@
           "application": "Dita a pulsação do filme, o ritmo respiratório do espectador e a montagem das ideias."
         }
       ],
-      "fileSizeMb": 0.18,
       "extraVideos": [
         {
           "id": "ev-bonus-03-1",
