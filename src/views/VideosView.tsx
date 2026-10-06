@@ -44,8 +44,11 @@ export const VideosView: React.FC<VideosViewProps> = ({
       badge: 'Masterclasses Exclusivas',
       title: 'Vídeos & Aulas do Curso',
       subtitle: 'Apresentações técnicas de cada etapa ministradas pelo diretor e Professor Cineasta Tony de Luc, conectando a teoria da apostila à rotina de set.',
-      accessNotice: 'Acesso completo condicionado à matrícula. Liberado o trailer do Módulo 01 para demonstração.',
+      accessNotice: 'As masterclasses em vídeo das 10 etapas são de acesso exclusivo para alunos matriculados.',
       videoLocked: 'Vídeo Bloqueado pelo Cronograma',
+      visitorLockedTitle: 'Conteúdo Exclusivo para Alunos',
+      visitorLockedDesc: 'As masterclasses em vídeo das 10 etapas do curso estão disponíveis exclusivamente para alunos matriculados.',
+      enrollCta: 'Matricular-se para Acessar',
       willUnlock: (num: number, date: string) => `Este vídeo será liberado no desbloqueio da Etapa 0${num} em ${date}.`,
       stageLabel: (num: number) => `ETAPA 0${num}`,
       minutes: 'minutos',
@@ -67,8 +70,11 @@ export const VideosView: React.FC<VideosViewProps> = ({
       badge: 'Exclusive Masterclasses',
       title: 'Course Videos & Masterclasses',
       subtitle: 'Technical filmmaking lectures for each stage taught by director Tony de Luc, connecting handout theory to professional on-set reality.',
-      accessNotice: 'Full access requires active enrollment. Module 01 sample is available for demonstration.',
+      accessNotice: 'Masterclass videos across all 10 stages are exclusive to enrolled students.',
       videoLocked: 'Video Locked by Pedagogical Schedule',
+      visitorLockedTitle: 'Exclusive Content for Enrolled Students',
+      visitorLockedDesc: 'Masterclass videos for all 10 stages of the course are available exclusively to enrolled students.',
+      enrollCta: 'Enroll Now to Access',
       willUnlock: (num: number, date: string) => `This video will unlock with Stage 0${num} on ${date}.`,
       stageLabel: (num: number) => `STAGE 0${num}`,
       minutes: 'minutes',
@@ -90,8 +96,11 @@ export const VideosView: React.FC<VideosViewProps> = ({
       badge: 'Masterclasses Exclusivas',
       title: 'Videos y Clases del Curso',
       subtitle: 'Presentaciones técnicas de cada etapa impartidas por el director Tony de Luc, conectando la teoría del manual a la práctica de rodaje.',
-      accessNotice: 'Acceso completo condicionado a la matrícula. Disponible el adelanto del Módulo 01 para demostración.',
+      accessNotice: 'Las clases magistrales en video de las 10 etapas son de acceso exclusivo para alumnos matriculados.',
       videoLocked: 'Video Bloqueado por el Cronograma',
+      visitorLockedTitle: 'Contenido Exclusivo para Alumnos',
+      visitorLockedDesc: 'Las clases magistrales en video de las 10 etapas del curso están disponibles exclusivamente para alumnos matriculados.',
+      enrollCta: 'Matricularse para Acceder',
       willUnlock: (num: number, date: string) => `Este video estará disponible al desbloquear la Etapa 0${num} el ${date}.`,
       stageLabel: (num: number) => `ETAPA 0${num}`,
       minutes: 'minutos',
@@ -113,8 +122,11 @@ export const VideosView: React.FC<VideosViewProps> = ({
       badge: 'Masterclasses Exclusives',
       title: 'Vidéos & Cours de la Formation',
       subtitle: 'Présentations techniques de chaque étape dispensées par le réalisateur Tony de Luc, reliant la théorie du fascicule à la réalité du plateau.',
-      accessNotice: 'Accès complet réservé aux inscrits. Aperçu du Module 01 disponible pour démonstration.',
+      accessNotice: 'Les masterclasses vidéo des 10 étapes sont réservées exclusivement aux étudiants inscrits.',
       videoLocked: 'Vidéo Bloquée par le Calendrier Pédagogique',
+      visitorLockedTitle: 'Contenu Exclusif pour les Étudiants',
+      visitorLockedDesc: 'Les masterclasses vidéo des 10 étapes de la formation sont accessibles exclusivement aux étudiants inscrits.',
+      enrollCta: "S'inscrire pour Accéder",
       willUnlock: (num: number, date: string) => `Cette vidéo sera débloquée avec l'Étape 0${num} le ${date}.`,
       stageLabel: (num: number) => `ÉTAPE 0${num}`,
       minutes: 'minutes',
@@ -222,11 +234,11 @@ export const VideosView: React.FC<VideosViewProps> = ({
           moduleId: m.id,
           title: `Masterclass 0${m.number}: ${m.title}`,
           description: `Apresentação técnica detalhada pelo Professor Cineasta Tony de Luc sobre os princípios de ${m.title.toLowerCase()}.`,
-          videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+          videoUrl: '',
           durationMinutes: 45 + m.number * 5,
           thumbnailUrl: `https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80`,
-          professorNotes: 'Observe com atenção a decupagem de cena e a relação entre enquadramento e intenção dramática.',
-          isUnlocked: m.number === 1,
+          professorNotes: 'Acesso às orientações pedagógicas e masterclasses em vídeo exclusivo para alunos matriculados.',
+          isUnlocked: false,
           unlockDate: m.startDate || '',
         }));
         setVideos(mapped);
@@ -268,8 +280,14 @@ export const VideosView: React.FC<VideosViewProps> = ({
         </p>
 
         {!isLoggedIn && (
-          <div className="p-3.5 rounded-xl bg-amber-950/30 border border-amber-800/40 text-xs text-amber-200 max-w-md mx-auto mt-2">
-            {cur.accessNotice}
+          <div className="p-3.5 rounded-xl bg-amber-950/30 border border-amber-800/40 text-xs text-amber-200 max-w-lg mx-auto mt-2 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <span>{cur.accessNotice}</span>
+            <button
+              onClick={() => onNavigate('matricula')}
+              className="shrink-0 px-3.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer"
+            >
+              {cur.enrollCta}
+            </button>
           </div>
         )}
       </div>
@@ -332,16 +350,30 @@ export const VideosView: React.FC<VideosViewProps> = ({
                   </video>
                 );
               })() : (
-                <div className="text-center p-6 space-y-3">
-                  <div className="w-12 h-12 rounded-full bg-neutral-800 flex items-center justify-center text-neutral-500 mx-auto">
-                    <Lock className="w-6 h-6" />
+                <div className="text-center p-6 space-y-4">
+                  <div className="w-14 h-14 rounded-full bg-neutral-800 border border-neutral-700 flex items-center justify-center text-amber-400 mx-auto shadow-lg shadow-black/40">
+                    <Lock className="w-7 h-7" />
                   </div>
-                  <h3 className="text-base font-bold text-white">
-                    {cur.videoLocked}
-                  </h3>
-                  <p className="text-xs text-neutral-400 max-w-sm mx-auto font-mono">
-                    {cur.willUnlock(activeVideo.moduleId, formatDate(activeVideo.unlockDate))}
-                  </p>
+                  <div className="space-y-1.5">
+                    <h3 className="text-base font-bold text-white">
+                      {!isLoggedIn ? cur.visitorLockedTitle : cur.videoLocked}
+                    </h3>
+                    <p className="text-xs text-neutral-400 max-w-sm mx-auto font-mono">
+                      {!isLoggedIn
+                        ? cur.visitorLockedDesc
+                        : cur.willUnlock(activeVideo.moduleId, formatDate(activeVideo.unlockDate))}
+                    </p>
+                  </div>
+                  {!isLoggedIn && (
+                    <div className="pt-2">
+                      <button
+                        onClick={() => onNavigate('matricula')}
+                        className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-neutral-950 font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-amber-500/20 cursor-pointer"
+                      >
+                        {cur.enrollCta}
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -545,7 +577,7 @@ export const VideosView: React.FC<VideosViewProps> = ({
                         {displayTitle}
                       </h4>
                       <p className="text-[10px] font-mono text-neutral-500 mt-1">
-                        {v.isUnlocked ? cur.available : `🔒 ${formatDate(v.unlockDate)}`}
+                        {v.isUnlocked ? cur.available : `🔒 ${formatDate(v.unlockDate) || cur.locked}`}
                       </p>
                     </div>
                   </button>
