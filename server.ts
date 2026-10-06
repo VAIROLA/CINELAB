@@ -641,37 +641,9 @@ app.post('/api/auth/login', (req: Request, res: Response) => {
   });
 });
 
-// Quick Admin Access for instant management
+// Quick Admin Access disabled in production for security
 app.post('/api/auth/quick-admin', (req: Request, res: Response) => {
-  const db = getDb();
-  let adminUser = db.users.find((u) => u.role === 'admin' || u.email === 'studiodeluc@gmail.com');
-  if (!adminUser) {
-    adminUser = {
-      id: 'user-admin',
-      name: 'Professor Cineasta Tony de Luc',
-      email: 'studiodeluc@gmail.com',
-      phone: '+55 11 98888-0000',
-      document: '00.000.000/0001-99',
-      role: 'admin',
-      passwordHash: 'admin123',
-      createdAt: '2026-01-10T10:00:00Z',
-    };
-    db.users.unshift(adminUser);
-    saveDatabase();
-  }
-  res.json({
-    token: adminUser.id,
-    user: {
-      id: adminUser.id,
-      name: adminUser.name,
-      email: adminUser.email,
-      phone: adminUser.phone,
-      document: adminUser.document,
-      role: adminUser.role,
-      createdAt: adminUser.createdAt,
-    },
-    enrollment: null,
-  });
+  return res.status(403).json({ error: 'Acesso rápido desativado em produção por segurança. Utilize suas credenciais administrativas.' });
 });
 
 // Quick Student Access for instant student area testing

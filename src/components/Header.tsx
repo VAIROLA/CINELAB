@@ -66,7 +66,7 @@ export const Header: React.FC<HeaderProps> = ({
     { label: t('nav.validate', 'Validar'), route: 'validar-certificado' },
     { label: t('nav.faq', 'FAQ'), route: 'faq' },
     { label: t('nav.contact', 'Contato'), route: 'contato' },
-    { label: 'Painel Admin', route: 'admin', icon: Shield, highlight: 'red' },
+    ...(user?.role === 'admin' ? [{ label: 'Painel Admin', route: 'admin', icon: Shield, highlight: 'red' as const }] : []),
   ];
 
   const handleNav = (route: string, action?: 'panel' | 'logout') => {
@@ -109,22 +109,17 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Acima do lado direito: Professor junto com Admin / Perfil e o Tradutor */}
         <div className="ml-auto flex items-center gap-1 sm:gap-2 shrink-0 relative z-20">
-          {/* Botão Acesso Direto: ADMIN */}
-          <button
-            onClick={() => {
-              if (onSwitchDemoRole) onSwitchDemoRole('admin');
-              handleNav('admin');
-            }}
-            className={`text-[9px] sm:text-[10.5px] px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-lg flex items-center gap-1 font-mono font-bold cursor-pointer transition-all active:scale-95 shadow-[0_0_10px_rgba(239,68,68,0.3)] shrink-0 ${
-              user?.role === 'admin'
-                ? 'bg-red-500 text-white ring-2 ring-red-300 font-extrabold shadow-md'
-                : 'bg-red-950/90 hover:bg-red-900 text-red-200 hover:text-white border border-red-500/70'
-            }`}
-            title="Acesso Direto ao Painel Administrativo CINELAB"
-          >
-            <Shield className="w-3 h-3 text-red-300 shrink-0" />
-            <span className="uppercase tracking-wider">Admin</span>
-          </button>
+                    {/* Botão Acesso Direto: ADMIN (Visível exclusivamente para Administrador autenticado) */}
+          {user?.role === 'admin' && (
+            <button
+              onClick={() => handleNav('admin')}
+              className="text-[9px] sm:text-[10.5px] px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-lg flex items-center gap-1 font-mono font-bold cursor-pointer transition-all active:scale-95 shadow-[0_0_10px_rgba(239,68,68,0.3)] shrink-0 bg-red-500 text-white ring-2 ring-red-300 font-extrabold shadow-md"
+              title="Acesso ao Painel Administrativo CINELAB"
+            >
+              <Shield className="w-3 h-3 text-white shrink-0" />
+              <span className="uppercase tracking-wider">Admin</span>
+            </button>
+          )}
 
           {/* Botão e Acesso Direto: Professor Tony de Luc - Oculto em telas ultra-pequenas (< sm) para eliminar scroll lateral no mobile */}
           <button
@@ -628,20 +623,19 @@ export const Header: React.FC<HeaderProps> = ({
               <Clapperboard className="w-4 h-4 text-amber-400" />
               <span>Prof. Tony de Luc</span>
             </button>
-            <button
-              onClick={() => {
-                if (onSwitchDemoRole) onSwitchDemoRole('admin');
-                handleNav('admin');
-              }}
-              className="px-3 py-2 rounded-xl bg-red-950/90 border border-red-500/80 text-red-200 hover:text-white flex items-center justify-center gap-2 font-bold text-xs shadow-[0_0_12px_rgba(239,68,68,0.4)] ring-1 ring-red-400"
-            >
-              <Shield className="w-4 h-4 text-red-400" />
-              <span>Painel Admin</span>
-            </button>
+            {user?.role === 'admin' && (
+              <button
+                onClick={() => handleNav('admin')}
+                className="px-3 py-2 rounded-xl bg-red-950/90 border border-red-500/80 text-red-200 hover:text-white flex items-center justify-center gap-2 font-bold text-xs shadow-[0_0_12px_rgba(239,68,68,0.4)] ring-1 ring-red-400"
+              >
+                <Shield className="w-4 h-4 text-red-400" />
+                <span>Painel Admin</span>
+              </button>
+            )}
           </div>
 
           {/* Role Switcher in Mobile Drawer */}
-          {onSwitchDemoRole && (
+          {onSwitchDemoRole && user?.role === 'admin' && (
             <div className="p-3 bg-purple-950/70 rounded-2xl border border-purple-500/40 space-y-2">
               <span className="text-xs font-mono text-purple-200 block text-center font-bold">
                 Alternar Modo de Visualização:

@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { api, setAuthToken } from './services/api.js';
+import { api, getAuthToken, setAuthToken, removeAuthToken } from './services/api.js';
 import { User, Enrollment, CourseSettings, CourseModule } from './types/index.js';
 import { Header } from './components/Header.js';
 import { Footer } from './components/Footer.js';
@@ -98,63 +98,35 @@ export default function App() {
   const checkCurrentUser = async () => {
     try {
       setLoadingInitialAuth(true);
-      const savedRole = typeof window !== 'undefined' ? localStorage.getItem('cinelab_active_role') : null;
-      // Default persona is admin (Professor Cineasta Tony de Luc) unless explicitly set to 'guest' or 'student'
-      const effectiveRole = (savedRole === 'guest' || savedRole === 'student') ? savedRole : 'admin';
+      const token = getAuthToken();
 
-      if (effectiveRole === 'admin') {
-        const adminUser: User = {
-          id: 'user-admin',
-          name: 'Professor Cineasta Tony de Luc',
-          email: 'studiodeluc@gmail.com',
-          phone: '+55 11 98888-0000',
-          document: '00.000.000/0001-99',
-          role: 'admin',
-          createdAt: '2026-01-10T10:00:00Z',
-        };
-        setUser(adminUser);
-        setEnrollment(null);
-        setAuthToken('user-admin');
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('cinelab_active_role', 'admin');
-        }
-      } else if (effectiveRole === 'student') {
-        const studentUser: User = {
-          id: 'user-student-demo',
-          name: 'Aluno Demonstrativo',
-          email: 'aluno@cinelab.com.br',
-          role: 'student',
-          createdAt: new Date().toISOString(),
-        };
-        const studentEnrollment: Enrollment = {
-          id: "enr-demo",
-          enrollmentNumber: "CNL-2026-DEMO",
-          studentId: "user-student-demo",
-          studentName: "Aluno Demonstração",
-          studentEmail: "aluno@cinelab.com.br",
-          status: "active",
-          enrolledAt: new Date().toISOString(),
-          paymentId: "pay-demo",
-        };
-        setUser(studentUser);
-        setEnrollment(studentEnrollment);
-        setAuthToken('user-student-demo');
-      } else {
+      // Por padrão e por segurança absoluta:
+      // Qualquer visitante ou pessoa externa que receba o link entra estritamente como VISITANTE (guest)
+      if (!token) {
         setUser(null);
         setEnrollment(null);
+        return;
       }
 
+      // Se há token de autenticação prévia salva, valida com a API
       try {
         const res = await api.getCurrentUser();
         if (res?.user) {
           setUser(res.user);
           if (res.enrollment) setEnrollment(res.enrollment);
+        } else {
+          setUser(null);
+          setEnrollment(null);
+          removeAuthToken();
         }
       } catch {
-        // Fallback already assigned via effectiveRole
+        setUser(null);
+        setEnrollment(null);
+        removeAuthToken();
       }
     } catch {
-      // safe fallback
+      setUser(null);
+      setEnrollment(null);
     } finally {
       setLoadingInitialAuth(false);
     }
@@ -195,6 +167,10 @@ export default function App() {
     } catch (err) {
       console.error(err);
     }
+    removeAuthToken();
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('cinelab_active_role');
+    }
     setUser(null);
     setEnrollment(null);
     navigateTo('inicio');
@@ -215,26 +191,11 @@ export default function App() {
           await api.logout();
         } catch {}
       } else if (role === 'admin') {
-        const adminUser: User = {
-          id: 'user-admin',
-          name: 'Professor Cineasta Tony de Luc',
-          email: 'studiodeluc@gmail.com',
-          phone: '+55 11 98888-0000',
-          document: '00.000.000/0001-99',
-          role: 'admin',
-          createdAt: '2026-01-10T10:00:00Z',
-        };
-        setAuthToken('user-admin');
-        setUser(adminUser);
-        setEnrollment(null);
-        navigateTo('admin');
-        try {
-          const res = await api.quickAdminLogin();
-          if (res?.user) setUser(res.user);
-          if (res?.token) setAuthToken(res.token);
-        } catch (e) {
-          console.warn('Quick admin login remote sync notice:', e);
+        if (user?.role !== 'admin') {
+          handleOpenAuth('login');
+          return;
         }
+        navigateTo('admin');
       } else if (role === 'student') {
         const studentUser: User = {
           id: 'user-student-demo',
@@ -281,7 +242,7 @@ export default function App() {
         enrollment={enrollment}
         onOpenAuth={handleOpenAuth}
         onLogout={handleLogout}
-        onSwitchDemoRole={handleSwitchDemoRole}
+        onSwitchDemoRole={user?.role === 'admin' ? handleSwitchDemoRole : undefined}
         customLogoUrl={courseSettings?.logoUrl}
       />
 

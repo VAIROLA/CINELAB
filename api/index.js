@@ -7393,35 +7393,7 @@ app.post("/api/auth/login", (req, res) => {
   });
 });
 app.post("/api/auth/quick-admin", (req, res) => {
-  const db2 = getDb();
-  let adminUser = db2.users.find((u) => u.role === "admin" || u.email === "studiodeluc@gmail.com");
-  if (!adminUser) {
-    adminUser = {
-      id: "user-admin",
-      name: "Professor Cineasta Tony de Luc",
-      email: "studiodeluc@gmail.com",
-      phone: "+55 11 98888-0000",
-      document: "00.000.000/0001-99",
-      role: "admin",
-      passwordHash: "admin123",
-      createdAt: "2026-01-10T10:00:00Z"
-    };
-    db2.users.unshift(adminUser);
-    saveDatabase();
-  }
-  res.json({
-    token: adminUser.id,
-    user: {
-      id: adminUser.id,
-      name: adminUser.name,
-      email: adminUser.email,
-      phone: adminUser.phone,
-      document: adminUser.document,
-      role: adminUser.role,
-      createdAt: adminUser.createdAt
-    },
-    enrollment: null
-  });
+  return res.status(403).json({ error: "Acesso rápido desativado em produção por segurança. Utilize suas credenciais administrativas." });
 });
 app.post("/api/auth/quick-student", (req, res) => {
   const db2 = getDb();

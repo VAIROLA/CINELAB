@@ -958,35 +958,6 @@ export const AdminView: React.FC<AdminViewProps> = ({
             </div>
           )}
 
-          {/* Botão de Acesso Imediato 1 Clique */}
-          <div className="p-4 rounded-2xl bg-neutral-950/60 border border-neutral-800 text-left space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-white flex items-center gap-1.5">
-                <Shield className="w-4 h-4 text-red-400" />
-                Acesso com 1 Clique (Professor Tony de Luc)
-              </span>
-              <span className="text-[10px] text-amber-400 font-mono font-semibold">Direto</span>
-            </div>
-            <p className="text-[11px] text-neutral-400">
-              Conecte-se imediatamente como Administrador Geral sem precisar digitar senhas:
-            </p>
-            <button
-              type="button"
-              onClick={handleQuickAdminLogin}
-              disabled={loginLoading}
-              className="w-full py-3 px-4 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-red-900/30 transition-all cursor-pointer active:scale-98"
-            >
-              <Shield className="w-4 h-4" />
-              {loginLoading ? 'Conectando ao Painel...' : 'Entrar no Painel como Professor Tony de Luc'}
-            </button>
-          </div>
-
-          <div className="relative flex py-2 items-center">
-            <div className="flex-grow border-t border-neutral-800"></div>
-            <span className="flex-shrink mx-4 text-neutral-500 text-[11px] font-mono">ou entrar com credenciais</span>
-            <div className="flex-grow border-t border-neutral-800"></div>
-          </div>
-
           {/* Formulário com credenciais */}
           <form onSubmit={handleFormAdminLogin} className="space-y-3 text-left">
             <div>

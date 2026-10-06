@@ -177,45 +177,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           </p>
         </div>
 
-        {/* Quick Demo Pre-fills (Available in Login Mode) */}
-        {mode === 'login' && (
-          <div className="mb-5 p-3.5 rounded-xl bg-neutral-900/90 border border-neutral-800 text-xs space-y-2.5">
-            <div className="text-[11px] font-mono text-neutral-400 uppercase tracking-wider flex items-center justify-between">
-              <span className="font-semibold text-neutral-300">{t('auth.quickAccess')}</span>
-              <span className="text-[10px] text-amber-400 font-semibold">{t('auth.noPassword')}</span>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={handleQuickAdmin}
-                disabled={loading}
-                className="p-3 rounded-xl bg-red-950/40 hover:bg-red-900/60 border border-red-800/70 text-left transition-all cursor-pointer group shadow-sm active:scale-98"
-                title="Admin Tony de Luc"
-              >
-                <div className="flex items-center gap-1.5 font-bold text-red-300 text-xs mb-0.5">
-                  <Shield className="w-4 h-4 text-red-400 shrink-0" />
-                  <span>{t('auth.quickAdminTitle')}</span>
-                </div>
-                <div className="text-[10px] text-neutral-300 font-mono truncate">studiodeluc@gmail.com</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={handleQuickStudent}
-                disabled={loading}
-                className="p-3 rounded-xl bg-amber-950/40 hover:bg-amber-900/60 border border-amber-800/70 text-left transition-all cursor-pointer group shadow-sm active:scale-98"
-                title="Aluno Demo"
-              >
-                <div className="flex items-center gap-1.5 font-bold text-amber-300 text-xs mb-0.5">
-                  <GraduationCap className="w-4 h-4 text-amber-400 shrink-0" />
-                  <span>{t('auth.quickStudentTitle')}</span>
-                </div>
-                <div className="text-[10px] text-neutral-300 font-mono truncate">aluno@cinelab.edu.br</div>
-              </button>
-            </div>
-          </div>
-        )}
-
         {/* Alerts */}
         {errorMessage && (
           <div className="mb-4 p-3 rounded-lg bg-red-950/50 border border-red-800/60 text-red-300 text-xs flex items-center gap-2">
