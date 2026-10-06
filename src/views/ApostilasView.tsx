@@ -185,6 +185,15 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
     const fullItem = apostilas.find((a) => a.id === item.id || (item.moduleId && a.moduleId === item.moduleId)) ||
                      bonusApostilas.find((b) => b.id === item.id || (item.number && b.number === item.number)) ||
                      item;
+
+    const startMs = fullItem.startDate ? new Date(fullItem.startDate).getTime() : 0;
+    const isLocked = (!fullItem.isUnlocked || (startMs > 0 && effectiveNow < startMs)) && !isAdmin;
+
+    if (isLocked) {
+      alert(`Esta apostila e seus vídeos serão liberados de acordo com o cronograma pedagógico em ${formatDateTime(fullItem.startDate)}.`);
+      return;
+    }
+
     setSelectedApostila(fullItem as Apostila);
     setModalTab(defaultTab);
   };
@@ -194,6 +203,14 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
       setAccessModalOpen(true);
       return;
     }
+    const startMs = item.startDate ? new Date(item.startDate).getTime() : 0;
+    const isLocked = (!item.isUnlocked || (startMs > 0 && effectiveNow < startMs)) && !isAdmin;
+
+    if (isLocked) {
+      alert(`A avaliação de treinamento desta etapa será liberada junto com a apostila em ${formatDateTime(item.startDate)}.`);
+      return;
+    }
+
     setTrainingApostila(item);
     setTrainingEtapaNumber(modNum);
     setTrainingModalOpen(true);
@@ -978,17 +995,17 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
             const isStarted = effectiveNow >= startMs;
             const isEvaluationOpen = effectiveNow >= evalMs && effectiveNow < endMs;
             const isFinished = effectiveNow >= endMs;
-            const isLocked = !isStarted;
+            const isLocked = (!item.isUnlocked || !isStarted) && !isAdmin;
 
             const trans = getModuleTranslation(modNum);
             const displayTitle = language === 'pt' ? item.title : (trans.title || item.title);
             const displaySubtitle = language === 'pt' ? item.subtitle : (trans.subtitle || item.subtitle);
             const displaySummary = language === 'pt' ? item.summary : (trans.apostilaSummary || trans.summary || item.summary);
 
-            // Compute overall status badge (All 10 apostilas are available for reading)
+            // Compute overall status badge
             let statusBadge = (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-800">
-                <Unlock className="w-2.5 h-2.5" /> {cur.available}
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[10px] font-bold bg-neutral-900 text-neutral-400 border border-neutral-700">
+                <Lock className="w-2.5 h-2.5 text-neutral-500" /> {cur.locked}
               </span>
             );
 
@@ -998,10 +1015,16 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                   <CheckCircle2 className="w-2.5 h-2.5 text-emerald-400" /> {cur.completed}
                 </span>
               );
-            } else if (isEvaluationOpen) {
+            } else if (isEvaluationOpen && !isLocked) {
               statusBadge = (
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 animate-pulse">
                   <Sparkles className="w-2.5 h-2.5 text-amber-400" /> {cur.evalOpen}
+                </span>
+              );
+            } else if (!isLocked) {
+              statusBadge = (
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-800">
+                  <Unlock className="w-2.5 h-2.5" /> {cur.available}
                 </span>
               );
             }
@@ -1055,35 +1078,48 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
                       <button
+                        disabled={isLocked}
                         onClick={() => handleOpenApostila(item, 'pdf')}
-                        className="w-full py-2.5 px-2 bg-amber-500 hover:bg-amber-400 text-neutral-950 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition-all shadow-md shadow-amber-500/10 active:scale-98"
-                        title="Ler apostila em PDF na plataforma (download protegido)"
-                      >
-                        <BookOpen className="w-3.5 h-3.5 shrink-0" />
-                        <span className="truncate">{cur.readOnlineBtn}</span>
-                      </button>
-
-                      <button
-                        onClick={() => handleOpenApostila(item, 'extra-videos')}
-                        className="w-full py-2.5 px-2 bg-neutral-800 hover:bg-neutral-700 text-amber-300 border border-neutral-700 hover:border-amber-500/50 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition-all active:scale-98"
-                        title="Assistir aos 2 vídeos extras para estudo desta apostila"
-                      >
-                        <Film className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                        <span className="truncate">2 Vídeos Extras</span>
-                      </button>
-
-                      <button
-                        onClick={() => handleOpenTraining(item, modNum)}
-                        className={`w-full py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition-all border active:scale-98 ${
-                          completedTrainings[`etapa-${modNum}`]
-                            ? 'bg-emerald-950/50 hover:bg-emerald-900/50 text-emerald-300 border-emerald-600/60 shadow-sm'
-                            : 'bg-neutral-800 hover:bg-neutral-700 text-amber-300 border-amber-500/40 hover:border-amber-400'
+                        className={`w-full py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-md active:scale-98 ${
+                          isLocked
+                            ? 'bg-neutral-800 text-neutral-500 opacity-60 cursor-not-allowed border border-neutral-700/50'
+                            : 'bg-amber-500 hover:bg-amber-400 text-neutral-950 cursor-pointer shadow-amber-500/10'
                         }`}
-                        title="Fazer Avaliação de Treinamento prática da etapa"
+                        title={isLocked ? `Liberada em ${formatDateTime(item.startDate)}` : "Ler apostila em PDF na plataforma (download protegido)"}
                       >
-                        <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                        <span className="truncate">Avaliação</span>
-                        {completedTrainings[`etapa-${modNum}`] && (
+                        {isLocked ? <Lock className="w-3.5 h-3.5 shrink-0 text-neutral-500" /> : <BookOpen className="w-3.5 h-3.5 shrink-0" />}
+                        <span className="truncate">{isLocked ? 'Bloqueada' : cur.readOnlineBtn}</span>
+                      </button>
+
+                      <button
+                        disabled={isLocked}
+                        onClick={() => handleOpenApostila(item, 'extra-videos')}
+                        className={`w-full py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-98 ${
+                          isLocked
+                            ? 'bg-neutral-800 text-neutral-500 opacity-60 cursor-not-allowed border border-neutral-700/50'
+                            : 'bg-neutral-800 hover:bg-neutral-700 text-amber-300 border border-neutral-700 hover:border-amber-500/50 cursor-pointer'
+                        }`}
+                        title={isLocked ? `Liberados em ${formatDateTime(item.startDate)}` : "Assistir aos 2 vídeos extras para estudo desta apostila"}
+                      >
+                        {isLocked ? <Lock className="w-3.5 h-3.5 shrink-0 text-neutral-500" /> : <Film className="w-3.5 h-3.5 text-amber-400 shrink-0" />}
+                        <span className="truncate">{isLocked ? 'Bloqueado' : '2 Vídeos Extras'}</span>
+                      </button>
+
+                      <button
+                        disabled={isLocked}
+                        onClick={() => handleOpenTraining(item, modNum)}
+                        className={`w-full py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all border active:scale-98 ${
+                          isLocked
+                            ? 'bg-neutral-800 text-neutral-500 opacity-60 cursor-not-allowed border-neutral-700/50'
+                            : completedTrainings[`etapa-${modNum}`]
+                            ? 'bg-emerald-950/50 hover:bg-emerald-900/50 text-emerald-300 border-emerald-600/60 shadow-sm cursor-pointer'
+                            : 'bg-neutral-800 hover:bg-neutral-700 text-amber-300 border-amber-500/40 hover:border-amber-400 cursor-pointer'
+                        }`}
+                        title={isLocked ? `Liberada em ${formatDateTime(item.startDate)}` : "Fazer Avaliação de Treinamento prática da etapa"}
+                      >
+                        {isLocked ? <Lock className="w-3.5 h-3.5 shrink-0 text-neutral-500" /> : <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />}
+                        <span className="truncate">{isLocked ? 'Bloqueada' : 'Avaliação'}</span>
+                        {completedTrainings[`etapa-${modNum}`] && !isLocked && (
                           <span className="text-[10px] font-mono bg-emerald-500/20 text-emerald-300 px-1 py-0.2 rounded shrink-0">
                             {completedTrainings[`etapa-${modNum}`].score}/{completedTrainings[`etapa-${modNum}`].total}
                           </span>

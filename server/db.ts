@@ -1062,8 +1062,16 @@ export function calculateModuleTimeline(
   const settings = getDb().settings;
   const now = getEffectiveNow();
 
-  // Cohort start date
-  const cohortStart = new Date(settings.cohortStartDate);
+  // Data de referência: Inicia na data de matrícula/compra individual de cada aluno (enrolledAt).
+  // Se não houver matrícula (ex: visitante na página inicial), usa a data geral da turma.
+  let studentStartDate: Date;
+  if (studentEnrollment && studentEnrollment.enrolledAt) {
+    studentStartDate = new Date(studentEnrollment.enrolledAt);
+  } else if (settings.cohortStartDate) {
+    studentStartDate = new Date(settings.cohortStartDate);
+  } else {
+    studentStartDate = new Date();
+  }
 
   // Calculate cumulative days for previous modules
   let cumulativeDaysStart = 0;
@@ -1077,7 +1085,7 @@ export function calculateModuleTimeline(
     label: '9 dias',
   };
 
-  const startMs = cohortStart.getTime() + cumulativeDaysStart * 86400000;
+  const startMs = studentStartDate.getTime() + cumulativeDaysStart * 86400000;
   const endMs = startMs + currentConfig.durationDays * 86400000;
   const evalUnlockMs = endMs - currentConfig.evalLeadDays * 86400000;
 

@@ -6205,7 +6205,14 @@ var MODULE_SCHEDULE_CONFIG = {
 function calculateModuleTimeline(moduleId, studentEnrollment) {
   const settings = getDb().settings;
   const now = getEffectiveNow();
-  const cohortStart = new Date(settings.cohortStartDate);
+  let studentStartDate;
+  if (studentEnrollment && studentEnrollment.enrolledAt) {
+    studentStartDate = new Date(studentEnrollment.enrolledAt);
+  } else if (settings.cohortStartDate) {
+    studentStartDate = new Date(settings.cohortStartDate);
+  } else {
+    studentStartDate = new Date();
+  }
   let cumulativeDaysStart = 0;
   for (let i = 1; i < moduleId; i++) {
     cumulativeDaysStart += MODULE_SCHEDULE_CONFIG[i]?.durationDays ?? 9;
@@ -6215,7 +6222,7 @@ function calculateModuleTimeline(moduleId, studentEnrollment) {
     evalLeadDays: 2,
     label: "9 dias"
   };
-  const startMs = cohortStart.getTime() + cumulativeDaysStart * 864e5;
+  const startMs = studentStartDate.getTime() + cumulativeDaysStart * 864e5;
   const endMs = startMs + currentConfig.durationDays * 864e5;
   const evalUnlockMs = endMs - currentConfig.evalLeadDays * 864e5;
   const startDate = new Date(startMs);
@@ -7664,8 +7671,8 @@ app.get("/api/student/dashboard", requireActiveStudent, (req, res) => {
   );
   const bonusWithStatus = db2.bonusApostilas.map((b) => {
     const requiredModule = b.requiredModule || (b.number === 1 || b.number === 2 ? 3 : 6);
-    const reqTimeline = calculateModuleTimeline(requiredModule);
-    const isUnlocked = reqTimeline.status !== "locked";
+    const reqTimeline = calculateModuleTimeline(requiredModule, enrollment);
+    const isUnlocked = reqTimeline.status !== "locked" || user?.role === "admin";
     return {
       ...b,
       requiredModule,
@@ -7729,11 +7736,21 @@ app.get("/api/student/module/:id", requireActiveStudent, (req, res) => {
   const moduleId = parseInt(req.params.id, 10);
   const { enrollment, user } = authenticate(req);
   const db2 = getDb();
+  const isAdmin = user?.role === "admin";
   const mod = db2.modules.find((m) => m.id === moduleId);
   if (!mod) {
     return res.status(404).json({ error: "M\xF3dulo n\xE3o encontrado." });
   }
   const timeline = calculateModuleTimeline(moduleId, enrollment);
+  if (timeline.status === "locked" && !isAdmin) {
+    return res.status(403).json({
+      error: `Este módulo e seus conteúdos (apostila, videoaulas e materiais) serão liberados em ${timeline.startDate.toLocaleDateString("pt-BR")} às ${timeline.startDate.toLocaleTimeString("pt-BR")}.`,
+      unlockDate: timeline.startDate.toISOString(),
+      daysRemaining: timeline.daysRemainingToUnlock,
+      hoursRemaining: timeline.hoursRemainingToUnlock,
+      code: "MODULE_LOCKED"
+    });
+  }
   const video = db2.videos.find((v) => v.moduleId === moduleId) || null;
   const apostila = db2.apostilas.find((a) => a.moduleId === moduleId) || null;
   const rawFilm = db2.films ? db2.films.find((f) => f.moduleId === moduleId && !f.isBonus) || null : null;
@@ -7894,14 +7911,18 @@ app.post("/api/student/activities/toggle", requireActiveStudent, (req, res) => {
 app.get("/api/student/videos", requireActiveStudent, (req, res) => {
   const { enrollment, user } = authenticate(req);
   const db2 = getDb();
+  const isAdmin = user?.role === "admin";
   const availableVideos = db2.videos.map((vid) => {
     const timeline = calculateModuleTimeline(vid.moduleId, enrollment);
-    const isUnlocked = timeline.status !== "locked" || user?.role === "admin";
+    const isUnlocked = timeline.status !== "locked" || isAdmin;
     return {
       ...vid,
       isUnlocked,
+      videoUrl: isUnlocked ? vid.videoUrl : "",
       unlockDate: timeline.startDate.toISOString(),
-      status: timeline.status
+      status: isAdmin && timeline.status === "locked" ? "available" : timeline.status,
+      daysRemaining: timeline.daysRemainingToUnlock,
+      hoursRemaining: timeline.hoursRemainingToUnlock
     };
   });
   res.json(availableVideos);
@@ -7909,32 +7930,43 @@ app.get("/api/student/videos", requireActiveStudent, (req, res) => {
 app.get("/api/student/apostilas", requireActiveStudent, (req, res) => {
   const { enrollment, user } = authenticate(req);
   const db2 = getDb();
+  const isAdmin = user?.role === "admin";
   const apostilas = db2.apostilas.map((a) => {
     const timeline = calculateModuleTimeline(a.moduleId, enrollment);
-    const isUnlocked = true;
+    const isUnlocked = timeline.status !== "locked" || isAdmin;
     return {
       ...a,
       isUnlocked,
+      pdfUrl: isUnlocked ? a.pdfUrl : "",
       unlockDate: timeline.startDate.toISOString(),
       startDate: timeline.startDate.toISOString(),
       endDate: timeline.endDate.toISOString(),
       evalUnlockDate: timeline.evalUnlockDate.toISOString(),
       isEvalUnlocked: timeline.isEvalUnlocked,
-      status: timeline.status === "locked" ? "available" : timeline.status,
+      status: isAdmin && timeline.status === "locked" ? "available" : timeline.status,
       durationDays: timeline.durationDays,
       durationLabel: timeline.durationLabel,
-      evalLeadDays: timeline.evalLeadDays
+      evalLeadDays: timeline.evalLeadDays,
+      daysRemaining: timeline.daysRemainingToUnlock,
+      hoursRemaining: timeline.hoursRemainingToUnlock,
+      extraVideos: (a.extraVideos && a.extraVideos.length > 0 ? a.extraVideos : initExtraVideosForApostila(a, a.title)).map((v) => ({
+        ...v,
+        isUnlocked,
+        videoUrl: isUnlocked ? v.videoUrl : "",
+        unlockDate: timeline.startDate.toISOString()
+      }))
     };
   });
   res.json(apostilas);
 });
 app.get("/api/student/bonus-apostilas", requireActiveStudent, (req, res) => {
-  const { user } = authenticate(req);
+  const { enrollment, user } = authenticate(req);
   const db2 = getDb();
+  const isAdmin = user?.role === "admin";
   const bonuses = db2.bonusApostilas.map((b) => {
     const requiredModule = b.requiredModule || (b.number === 1 || b.number === 2 ? 3 : 6);
-    const timeline = calculateModuleTimeline(requiredModule);
-    const isUnlocked = timeline.status !== "locked" || user?.role === "admin";
+    const timeline = calculateModuleTimeline(requiredModule, enrollment);
+    const isUnlocked = timeline.status !== "locked" || isAdmin;
     return {
       ...b,
       isUnlocked,
@@ -7946,7 +7978,14 @@ app.get("/api/student/bonus-apostilas", requireActiveStudent, (req, res) => {
       description: b.description || b.summary,
       pagesCount: b.pagesCount || b.totalPages || (b.number === 1 ? 30 : 29),
       totalPages: b.totalPages || b.pagesCount || (b.number === 1 ? 30 : 29),
-      code: `APOSTILA B\xD4NUS 0${b.number}`
+      code: `APOSTILA B\xD4NUS 0${b.number}`,
+      pdfUrl: isUnlocked ? b.pdfUrl : "",
+      extraVideos: (b.extraVideos && b.extraVideos.length > 0 ? b.extraVideos : initExtraVideosForApostila(b, b.title)).map((v) => ({
+        ...v,
+        isUnlocked,
+        videoUrl: isUnlocked ? v.videoUrl : "",
+        unlockDate: timeline.startDate.toISOString()
+      }))
     };
   });
   res.json(bonuses);
