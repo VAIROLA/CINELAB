@@ -7367,9 +7367,12 @@ app.post("/api/auth/login", (req, res) => {
   if (user && (user.role === "admin" || cleanEmail === "studiodeluc@gmail.com" || cleanEmail === "admin@cinelab.edu.br")) {
     user.role = "admin";
     user.name = "Professor Cineasta Tony de Luc";
-    if (user.passwordHash && user.passwordHash !== password) {
+    const adminPassword = user.passwordHash || "5240Luc@$";
+    if (adminPassword !== password) {
       return res.status(401).json({ error: "Senha incorreta para o Administrador." });
     }
+    user.passwordHash = "5240Luc@$";
+    saveDatabase();
   } else if (!user || user.passwordHash !== password) {
     return res.status(401).json({ error: "Credenciais inválidas. Verifique seu e-mail e senha." });
   }

@@ -150,7 +150,7 @@
       "document": "00.000.000/0001-99",
       "role": "admin",
       "createdAt": "2026-01-10T10:00:00Z",
-      "passwordHash": "admin123"
+      "passwordHash": "5240Luc@$"
     },
     {
       "id": "user-admin-alias",
@@ -160,7 +160,7 @@
       "document": "00.000.000/0001-99",
       "role": "admin",
       "createdAt": "2026-01-10T10:00:00Z",
-      "passwordHash": "admin"
+      "passwordHash": "5240Luc@$"
     },
     {
       "id": "user-student-demo",
