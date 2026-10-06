@@ -7367,15 +7367,11 @@ app.post("/api/auth/login", (req, res) => {
   if (user && (user.role === "admin" || cleanEmail === "studiodeluc@gmail.com" || cleanEmail === "admin@cinelab.edu.br")) {
     user.role = "admin";
     user.name = "Professor Cineasta Tony de Luc";
-    if (password === "admin123" || user.passwordHash === password || !user.passwordHash) {
-      user.passwordHash = password;
-      saveDatabase();
-    } else {
-      user.passwordHash = password;
-      saveDatabase();
+    if (user.passwordHash && user.passwordHash !== password) {
+      return res.status(401).json({ error: "Senha incorreta para o Administrador." });
     }
   } else if (!user || user.passwordHash !== password) {
-    return res.status(401).json({ error: "Credenciais inv\xE1lidas. Verifique seu e-mail e senha." });
+    return res.status(401).json({ error: "Credenciais inválidas. Verifique seu e-mail e senha." });
   }
   const enrollment = db2.enrollments.find((e) => e.studentId === user.id) || null;
   res.json({
