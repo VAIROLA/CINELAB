@@ -106,7 +106,18 @@ export const FilmsAndReadingsView: React.FC<FilmsAndReadingsViewProps> = ({
     setInlineSelectedSubtitles((prev) => ({ ...prev, [filmId]: sub }));
   }, []);
 
+  const isFilmUnlocked = useCallback((film: ModuleFilm) => {
+    if (isAdmin) return true;
+    if (film.isBonus || film.moduleId === 0) return true;
+    if (!isLoggedIn) return false;
+    return film.isUnlocked ?? true;
+  }, [isAdmin, isLoggedIn]);
+
   const toggleInlinePlayer = (film: ModuleFilm) => {
+    if (!isFilmUnlocked(film)) {
+      if (!isLoggedIn) onNavigate('matricula');
+      return;
+    }
     if (inlinePlayerFilmId === film.id) {
       setInlinePlayerFilmId(null);
     } else {
@@ -128,6 +139,10 @@ export const FilmsAndReadingsView: React.FC<FilmsAndReadingsViewProps> = ({
 
   // Open film modal with preconfigured student language subtitle
   const handleOpenFilmModal = (film: ModuleFilm) => {
+    if (!isFilmUnlocked(film)) {
+      if (!isLoggedIn) onNavigate('matricula');
+      return;
+    }
     setPlayingFilm(film);
     setActiveVideoSource('watch');
     const initialOpt = film.videoOptions?.find((o) => !o.isStreaming && getEmbedInfo(o.url)?.isEmbeddable)
@@ -355,6 +370,14 @@ export const FilmsAndReadingsView: React.FC<FilmsAndReadingsViewProps> = ({
       availableDubbedLabel: 'Dublagem:',
       availableSubtitlesLabel: 'Legendas:',
       subtitlesCcActive: 'Legendas ativadas em:',
+      locked: 'Bloqueado',
+      filmNoticeVisitor: 'Acesso à Cinemateca: os 10 filmes dos módulos são exclusivos para alunos matriculados. Os 3 Vídeos Extras & Bônus estão liberados para acesso público.',
+      filmVisitorLockedTitle: 'Filme Exclusivo para Alunos Matriculados',
+      filmVisitorLockedDesc: 'O filme analítico deste módulo e suas orientações pedagógicas são de acesso exclusivo aos alunos matriculados no CINELAB.',
+      filmLockedScheduleTitle: 'Filme Bloqueado pelo Cronograma',
+      filmUnlockScheduleDesc: 'Disponível conforme o calendário pedagógico em:',
+      filmLockedGenericDesc: 'Conteúdo programado para liberação conforme o calendário pedagógico.',
+      enrollToWatchCta: 'Fazer Matrícula para Assistir',
     },
     en: {
       badge: 'Film Archive & Critical Library',
@@ -412,6 +435,14 @@ export const FilmsAndReadingsView: React.FC<FilmsAndReadingsViewProps> = ({
       availableDubbedLabel: 'Dubbing:',
       availableSubtitlesLabel: 'Subtitles:',
       subtitlesCcActive: 'Subtitles active in:',
+      locked: 'Locked',
+      filmNoticeVisitor: 'Film Archive Access: The 10 module films are exclusive to enrolled students. The 3 Extra & Bonus Videos are available for preview.',
+      filmVisitorLockedTitle: 'Exclusive Film for Enrolled Students',
+      filmVisitorLockedDesc: 'This module’s recommended film and set directions are exclusive to enrolled CINELAB students.',
+      filmLockedScheduleTitle: 'Film Locked by Pedagogical Schedule',
+      filmUnlockScheduleDesc: 'Available according to pedagogical schedule on:',
+      filmLockedGenericDesc: 'Content scheduled for release per the pedagogical timeline.',
+      enrollToWatchCta: 'Enroll Now to Watch',
     },
     es: {
       badge: 'Cinemateca y Biblioteca Crítica',
@@ -469,6 +500,14 @@ export const FilmsAndReadingsView: React.FC<FilmsAndReadingsViewProps> = ({
       availableDubbedLabel: 'Doblaje:',
       availableSubtitlesLabel: 'Subtítulos:',
       subtitlesCcActive: 'Subtítulos activos en:',
+      locked: 'Bloqueado',
+      filmNoticeVisitor: 'Acceso a la Cinemateca: Las 10 películas de los módulos son exclusivas para alumnos matriculados. Los 3 Videos Extras y Bonus están disponibles para acceso público.',
+      filmVisitorLockedTitle: 'Película Exclusiva para Alumnos Matriculados',
+      filmVisitorLockedDesc: 'La película recomendada de este módulo y sus orientaciones son de acceso exclusivo para alumnos matriculados en CINELAB.',
+      filmLockedScheduleTitle: 'Película Bloqueada por el Cronograma',
+      filmUnlockScheduleDesc: 'Disponible según el calendario pedagógico el:',
+      filmLockedGenericDesc: 'Contenido programado para liberación según el calendario pedagógico.',
+      enrollToWatchCta: 'Matricularse para Ver',
     },
     fr: {
       badge: 'Cinémathèque & Bibliothèque Critique',
@@ -526,6 +565,14 @@ export const FilmsAndReadingsView: React.FC<FilmsAndReadingsViewProps> = ({
       availableDubbedLabel: 'Doublage :',
       availableSubtitlesLabel: 'Sous-titres :',
       subtitlesCcActive: 'Sous-titres activés en :',
+      locked: 'Bloqué',
+      filmNoticeVisitor: 'Accès à la Cinémathèque : Les 10 films des modules sont réservés aux étudiants inscrits. Les 3 Vidéos Bonus sont en libre accès pour démonstration.',
+      filmVisitorLockedTitle: 'Film Réservé aux Étudiants Inscrits',
+      filmVisitorLockedDesc: 'Le film recommandé de ce module et ses indications de plateau sont réservés aux étudiants inscrits au CINELAB.',
+      filmLockedScheduleTitle: 'Film Bloqué par le Calendrier Pédagogique',
+      filmUnlockScheduleDesc: 'Disponible selon le calendrier pédagogique le :',
+      filmLockedGenericDesc: 'Contenu programmé selon le calendrier pédagogique.',
+      enrollToWatchCta: "S'inscrire pour Visionner",
     },
   }[language] || {
     badge: 'Cinemateca & Biblioteca Crítica',
@@ -583,6 +630,14 @@ export const FilmsAndReadingsView: React.FC<FilmsAndReadingsViewProps> = ({
     availableDubbedLabel: 'Dublagem:',
     availableSubtitlesLabel: 'Legendas:',
     subtitlesCcActive: 'Legendas ativadas em:',
+    locked: 'Bloqueado',
+    filmNoticeVisitor: 'Acesso à Cinemateca: os 10 filmes dos módulos são exclusivos para alunos matriculados. Os 3 Vídeos Extras & Bônus estão liberados para acesso público.',
+    filmVisitorLockedTitle: 'Filme Exclusivo para Alunos Matriculados',
+    filmVisitorLockedDesc: 'O filme analítico deste módulo e suas orientações pedagógicas são de acesso exclusivo aos alunos matriculados no CINELAB.',
+    filmLockedScheduleTitle: 'Filme Bloqueado pelo Cronograma',
+    filmUnlockScheduleDesc: 'Disponível conforme o calendário pedagógico em:',
+    filmLockedGenericDesc: 'Conteúdo programado para liberação conforme o calendário pedagógico.',
+    enrollToWatchCta: 'Fazer Matrícula para Assistir',
   };
 
   return (
@@ -614,6 +669,21 @@ export const FilmsAndReadingsView: React.FC<FilmsAndReadingsViewProps> = ({
             {tFR.viewDirectorFilmo}
           </button>
         </div>
+
+        {!isLoggedIn && (
+          <div className="p-3.5 rounded-xl bg-amber-950/30 border border-amber-800/40 text-xs text-amber-200 max-w-2xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 mt-3">
+            <div className="flex items-center gap-2 text-left">
+              <Lock className="w-4 h-4 text-amber-400 shrink-0" />
+              <span>{tFR.filmNoticeVisitor}</span>
+            </div>
+            <button
+              onClick={() => onNavigate('matricula')}
+              className="shrink-0 px-3.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer shadow-md shadow-amber-500/20"
+            >
+              {tFR.enrollToWatchCta}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Tabs */}
@@ -915,7 +985,7 @@ export const FilmsAndReadingsView: React.FC<FilmsAndReadingsViewProps> = ({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {displayedFilms.map((film) => {
                     const tFilm = getFilmTranslation(film);
-                    const isUnlocked = film.isUnlocked ?? true;
+                    const isUnlocked = isFilmUnlocked(film);
                     const videoUrl = film.watchUrl || film.streamingUrl || '';
                     const platformName = film.platform || film.streamingPlatform || 'Online / YouTube';
                     const embed = getEmbedInfo(videoUrl);
@@ -926,7 +996,7 @@ export const FilmsAndReadingsView: React.FC<FilmsAndReadingsViewProps> = ({
                         className={`p-6 rounded-3xl border transition-all flex flex-col justify-between ${
                           isUnlocked
                             ? 'bg-neutral-900/90 border-neutral-800 hover:border-neutral-700 shadow-xl shadow-black/40'
-                            : 'bg-neutral-950 border-neutral-900 opacity-60'
+                            : 'bg-neutral-950 border-neutral-900 opacity-80'
                         } ${film.isBonus || film.moduleId === 0 ? 'border-amber-500/30 ring-1 ring-amber-500/20' : ''}`}
                       >
                         <div className="space-y-4">
@@ -960,8 +1030,8 @@ export const FilmsAndReadingsView: React.FC<FilmsAndReadingsViewProps> = ({
                           <Unlock className="w-3.5 h-3.5" /> {tFR.unlocked}
                         </span>
                       ) : (
-                        <span className="text-neutral-500 flex items-center gap-1">
-                          <Lock className="w-3.5 h-3.5" /> {tFR.unlockedAt} {formatDate(film.unlockDate)}
+                        <span className="text-amber-500 font-bold flex items-center gap-1 font-mono">
+                          <Lock className="w-3.5 h-3.5" /> {!isLoggedIn ? (tFR.locked || 'Bloqueado') : (film.unlockDate ? `${tFR.unlockedAt} ${formatDate(film.unlockDate)}` : (tFR.locked || 'Bloqueado'))}
                         </span>
                       )}
                     </div>
@@ -1058,193 +1128,226 @@ export const FilmsAndReadingsView: React.FC<FilmsAndReadingsViewProps> = ({
                       </span>
                     </div>
 
-                    {/* PLAYER INTEGRADO DIRETAMENTE NA TELA */}
-                    {(() => {
-                      const isInlineOpen = inlinePlayerFilmId === film.id;
-                      if (!isInlineOpen) return null;
+                    {isUnlocked ? (
+                      <>
+                        {/* PLAYER INTEGRADO DIRETAMENTE NA TELA */}
+                        {(() => {
+                          const isInlineOpen = inlinePlayerFilmId === film.id;
+                          if (!isInlineOpen) return null;
 
-                      const chosenInlineOpt = film.videoOptions?.find(
-                        (opt) => opt.id === (inlineSelectedOptions[film.id] || film.videoOptions?.[0]?.id)
-                      );
-                      const currentInlineUrl = chosenInlineOpt
-                        ? chosenInlineOpt.url
-                        : (film.watchUrl || film.streamingUrl || '');
-                      const currentInlineSub = inlineSelectedSubtitles[film.id] || (language === 'en' ? 'en' : language === 'es' ? 'es' : language === 'fr' ? 'fr' : 'pt');
+                          const chosenInlineOpt = film.videoOptions?.find(
+                            (opt) => opt.id === (inlineSelectedOptions[film.id] || film.videoOptions?.[0]?.id)
+                          );
+                          const currentInlineUrl = chosenInlineOpt
+                            ? chosenInlineOpt.url
+                            : (film.watchUrl || film.streamingUrl || '');
+                          const currentInlineSub = inlineSelectedSubtitles[film.id] || (language === 'en' ? 'en' : language === 'es' ? 'es' : language === 'fr' ? 'fr' : 'pt');
 
-                      let effectiveInlineUrl = currentInlineUrl;
-                      let inlineEmbed = getEmbedInfo(effectiveInlineUrl, currentInlineSub);
+                          let effectiveInlineUrl = currentInlineUrl;
+                          let inlineEmbed = getEmbedInfo(effectiveInlineUrl, currentInlineSub);
 
-                      if (!inlineEmbed || !inlineEmbed.isEmbeddable) {
-                        const playableOpt = film.videoOptions?.find((o) => !o.isStreaming && getEmbedInfo(o.url)?.isEmbeddable);
-                        if (playableOpt) {
-                          effectiveInlineUrl = playableOpt.url;
-                          inlineEmbed = getEmbedInfo(effectiveInlineUrl, currentInlineSub);
-                        } else if (film.watchUrl && getEmbedInfo(film.watchUrl)?.isEmbeddable) {
-                          effectiveInlineUrl = film.watchUrl;
-                          inlineEmbed = getEmbedInfo(effectiveInlineUrl, currentInlineSub);
-                        }
-                      }
+                          if (!inlineEmbed || !inlineEmbed.isEmbeddable) {
+                            const playableOpt = film.videoOptions?.find((o) => !o.isStreaming && getEmbedInfo(o.url)?.isEmbeddable);
+                            if (playableOpt) {
+                              effectiveInlineUrl = playableOpt.url;
+                              inlineEmbed = getEmbedInfo(effectiveInlineUrl, currentInlineSub);
+                            } else if (film.watchUrl && getEmbedInfo(film.watchUrl)?.isEmbeddable) {
+                              effectiveInlineUrl = film.watchUrl;
+                              inlineEmbed = getEmbedInfo(effectiveInlineUrl, currentInlineSub);
+                            }
+                          }
 
-                      return (
-                        <div className="space-y-3 pt-2 animate-fadeIn border-t border-neutral-800">
-                          {/* Streaming banner if applicable */}
-                          {chosenInlineOpt?.isStreaming && (
-                            <div className="p-2.5 rounded-xl bg-cyan-950/70 border border-cyan-500/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs">
-                              <div className="flex items-center gap-1.5 text-cyan-300">
-                                <Tv className="w-3.5 h-3.5 shrink-0" />
-                                <span>Longa no {chosenInlineOpt.platformName || 'Streaming'}. Reproduzindo cena didática abaixo:</span>
+                          return (
+                            <div className="space-y-3 pt-2 animate-fadeIn border-t border-neutral-800">
+                              {/* Streaming banner if applicable */}
+                              {chosenInlineOpt?.isStreaming && (
+                                <div className="p-2.5 rounded-xl bg-cyan-950/70 border border-cyan-500/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs">
+                                  <div className="flex items-center gap-1.5 text-cyan-300">
+                                    <Tv className="w-3.5 h-3.5 shrink-0" />
+                                    <span>Longa no {chosenInlineOpt.platformName || 'Streaming'}. Reproduzindo cena didática abaixo:</span>
+                                  </div>
+                                  <a
+                                    href={chosenInlineOpt.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="px-2.5 py-1 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-neutral-950 font-bold text-[11px] shrink-0"
+                                  >
+                                    Abrir no {chosenInlineOpt.platformName}
+                                  </a>
+                                </div>
+                              )}
+
+                              {/* 16:9 Video Container */}
+                              <div className="rounded-t-2xl overflow-hidden border border-neutral-800 bg-black aspect-video w-full shadow-2xl relative">
+                                {inlineEmbed && (inlineEmbed.type === 'youtube' || inlineEmbed.type === 'vimeo' || inlineEmbed.type === 'archive') ? (
+                                  <iframe
+                                    key={`${inlineEmbed.embedUrl}-${currentInlineSub}`}
+                                    src={inlineEmbed.embedUrl}
+                                    title={film.title}
+                                    className="w-full h-full border-0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    allowFullScreen
+                                  />
+                                ) : (
+                                  <video
+                                    src={inlineEmbed?.embedUrl || effectiveInlineUrl}
+                                    controls
+                                    playsInline
+                                    className="w-full h-full object-contain"
+                                  >
+                                    Seu navegador não suporta a tag de vídeo HTML5.
+                                  </video>
+                                )}
                               </div>
+
+                              {/* Subtitles directly attached to the bottom edge of the player */}
+                              <FilmSubtitleTranscriptViewer
+                                filmId={film.id}
+                                selectedSubtitle={currentInlineSub}
+                                onSelectSubtitle={(sub) => setInlineSelectedSubtitle(film.id, sub)}
+                                studentLanguage={language}
+                                filmTitle={film.title}
+                                currentOption={chosenInlineOpt}
+                                activeLineIndex={inlineLineIndices[film.id] || 0}
+                                setActiveLineIndex={(val) => setInlineLineIndex(film.id, val)}
+                                isAutoPlay={inlineAutoPlays[film.id] ?? true}
+                                setIsAutoPlay={(val) => setInlineAutoPlay(film.id, val)}
+                                compact={true}
+                              />
+
+                              {/* Options selector if multiple */}
+                              {film.videoOptions && film.videoOptions.length > 1 && (
+                                <div className="space-y-1.5 pt-1">
+                                  <span className="text-[10px] font-mono text-neutral-400 uppercase font-bold">Opções de Estudo / Cenas:</span>
+                                  <div className="flex flex-wrap gap-1.5">
+                                    {film.videoOptions.map((opt) => {
+                                      const isSelected = (inlineSelectedOptions[film.id] || film.videoOptions?.[0]?.id) === opt.id;
+                                      return (
+                                        <button
+                                          key={opt.id}
+                                          type="button"
+                                          onClick={() => setInlineSelectedOptions((prev) => ({ ...prev, [film.id]: opt.id }))}
+                                          className={`px-2.5 py-1 rounded-lg text-[11px] font-mono transition-colors cursor-pointer flex items-center gap-1 ${
+                                            isSelected
+                                              ? 'bg-amber-500 text-neutral-950 font-bold shadow'
+                                              : 'bg-neutral-900 hover:bg-neutral-800 text-neutral-300 border border-neutral-800'
+                                          }`}
+                                        >
+                                          <span>{opt.label}</span>
+                                        </button>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* Cinema Mode Fullscreen Expansion Button */}
+                              <div className="flex items-center justify-end pt-1">
+                                <button
+                                  type="button"
+                                  onClick={() => handleOpenFilmModal(film)}
+                                  className="px-3 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-mono font-bold flex items-center gap-1.5 cursor-pointer transition-colors"
+                                  title="Abrir no Modo Cinema com decupagem e roteiro sincronizado"
+                                >
+                                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                                  <span>Modo Cinema / Roteiro Completo ↗</span>
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })()}
+
+                        {videoUrl ? (
+                          <div className="space-y-2">
+                            {/* URL display row */}
+                            <div className="flex items-center gap-2 p-2 rounded-xl bg-neutral-900/90 border border-neutral-800 font-mono text-[11px] text-neutral-300">
+                              <span className="text-amber-500 shrink-0 font-bold">URL:</span>
+                              <span className="truncate flex-1 select-all text-neutral-200">{videoUrl}</span>
+                              <button
+                                type="button"
+                                onClick={() => handleCopyUrl(videoUrl)}
+                                className="p-1 rounded hover:bg-neutral-800 text-neutral-400 hover:text-amber-400 transition-colors cursor-pointer shrink-0"
+                                title="Copiar URL do vídeo"
+                              >
+                                {copiedUrl === videoUrl ? (
+                                  <Check className="w-3.5 h-3.5 text-emerald-400" />
+                                ) : (
+                                  <Copy className="w-3.5 h-3.5" />
+                                )}
+                              </button>
+                            </div>
+
+                            {/* Action buttons */}
+                            <div className="flex flex-wrap items-center gap-2 pt-1">
+                              <button
+                                type="button"
+                                onClick={() => toggleInlinePlayer(film)}
+                                className={`flex-1 min-w-[140px] px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer text-center ${
+                                  inlinePlayerFilmId === film.id
+                                    ? 'bg-neutral-800 hover:bg-neutral-700 text-amber-300 border border-neutral-700 shadow-md'
+                                    : 'bg-amber-500 hover:bg-amber-400 text-neutral-950 shadow-md shadow-amber-500/20'
+                                }`}
+                              >
+                                <Play className={`w-3.5 h-3.5 ${inlinePlayerFilmId === film.id ? 'text-amber-400' : 'fill-current'}`} />
+                                <span>{inlinePlayerFilmId === film.id ? 'Ocultar Player' : tFR.integratedPlayer}</span>
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => handleOpenFilmModal(film)}
+                                className="px-3.5 py-2.5 bg-neutral-800 hover:bg-neutral-700 text-neutral-200 hover:text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer border border-neutral-700"
+                                title="Abrir no Modo Cinema com Decupagem e Roteiro"
+                              >
+                                <Tv className="w-3.5 h-3.5 text-amber-400" />
+                                <span className="hidden sm:inline">Modo Cinema</span>
+                              </button>
+
                               <a
-                                href={chosenInlineOpt.url}
+                                href={videoUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="px-2.5 py-1 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-neutral-950 font-bold text-[11px] shrink-0"
+                                className="px-3 py-2.5 bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer border border-neutral-800"
+                                title="Abrir em Nova Aba"
                               >
-                                Abrir no {chosenInlineOpt.platformName}
+                                <ExternalLink className="w-3.5 h-3.5 text-amber-400" />
+                                <span className="hidden sm:inline">Nova Aba</span>
                               </a>
                             </div>
-                          )}
-
-                          {/* 16:9 Video Container */}
-                          <div className="rounded-t-2xl overflow-hidden border border-neutral-800 bg-black aspect-video w-full shadow-2xl relative">
-                            {inlineEmbed && (inlineEmbed.type === 'youtube' || inlineEmbed.type === 'vimeo' || inlineEmbed.type === 'archive') ? (
-                              <iframe
-                                key={`${inlineEmbed.embedUrl}-${currentInlineSub}`}
-                                src={inlineEmbed.embedUrl}
-                                title={film.title}
-                                className="w-full h-full border-0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                allowFullScreen
-                              />
-                            ) : (
-                              <video
-                                src={inlineEmbed?.embedUrl || effectiveInlineUrl}
-                                controls
-                                playsInline
-                                className="w-full h-full object-contain"
-                              >
-                                Seu navegador não suporta a tag de vídeo HTML5.
-                              </video>
-                            )}
                           </div>
-
-                          {/* Subtitles directly attached to the bottom edge of the player */}
-                          <FilmSubtitleTranscriptViewer
-                            filmId={film.id}
-                            selectedSubtitle={currentInlineSub}
-                            onSelectSubtitle={(sub) => setInlineSelectedSubtitle(film.id, sub)}
-                            studentLanguage={language}
-                            filmTitle={film.title}
-                            currentOption={chosenInlineOpt}
-                            activeLineIndex={inlineLineIndices[film.id] || 0}
-                            setActiveLineIndex={(val) => setInlineLineIndex(film.id, val)}
-                            isAutoPlay={inlineAutoPlays[film.id] ?? true}
-                            setIsAutoPlay={(val) => setInlineAutoPlay(film.id, val)}
-                            compact={true}
-                          />
-
-                          {/* Options selector if multiple */}
-                          {film.videoOptions && film.videoOptions.length > 1 && (
-                            <div className="space-y-1.5 pt-1">
-                              <span className="text-[10px] font-mono text-neutral-400 uppercase font-bold">Opções de Estudo / Cenas:</span>
-                              <div className="flex flex-wrap gap-1.5">
-                                {film.videoOptions.map((opt) => {
-                                  const isSelected = (inlineSelectedOptions[film.id] || film.videoOptions?.[0]?.id) === opt.id;
-                                  return (
-                                    <button
-                                      key={opt.id}
-                                      type="button"
-                                      onClick={() => setInlineSelectedOptions((prev) => ({ ...prev, [film.id]: opt.id }))}
-                                      className={`px-2.5 py-1 rounded-lg text-[11px] font-mono transition-colors cursor-pointer flex items-center gap-1 ${
-                                        isSelected
-                                          ? 'bg-amber-500 text-neutral-950 font-bold shadow'
-                                          : 'bg-neutral-900 hover:bg-neutral-800 text-neutral-300 border border-neutral-800'
-                                      }`}
-                                    >
-                                      <span>{opt.label}</span>
-                                    </button>
-                                  );
-                                })}
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Cinema Mode Fullscreen Expansion Button */}
-                          <div className="flex items-center justify-end pt-1">
+                        ) : (
+                          <div className="p-2.5 rounded-xl bg-neutral-900 text-center text-xs text-neutral-500 font-mono">
+                            {tFR.urlInConfig}
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <div className="p-5 rounded-2xl bg-neutral-900/60 border border-neutral-800 text-center space-y-3">
+                        <div className="w-12 h-12 rounded-full bg-neutral-900 border border-neutral-700/80 flex items-center justify-center text-amber-400 mx-auto shadow-md">
+                          <Lock className="w-6 h-6" />
+                        </div>
+                        <div className="space-y-1">
+                          <h4 className="text-xs font-bold text-white font-mono uppercase tracking-wide">
+                            {!isLoggedIn ? tFR.filmVisitorLockedTitle : tFR.filmLockedScheduleTitle}
+                          </h4>
+                          <p className="text-[11px] text-neutral-400 max-w-sm mx-auto leading-relaxed">
+                            {!isLoggedIn
+                              ? tFR.filmVisitorLockedDesc
+                              : film.unlockDate
+                              ? `${tFR.filmUnlockScheduleDesc} ${formatDate(film.unlockDate)}.`
+                              : tFR.filmLockedGenericDesc}
+                          </p>
+                        </div>
+                        {!isLoggedIn && (
+                          <div className="pt-1">
                             <button
                               type="button"
-                              onClick={() => handleOpenFilmModal(film)}
-                              className="px-3 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-mono font-bold flex items-center gap-1.5 cursor-pointer transition-colors"
-                              title="Abrir no Modo Cinema com decupagem e roteiro sincronizado"
+                              onClick={() => onNavigate('matricula')}
+                              className="inline-flex items-center gap-2 px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold text-xs uppercase tracking-wider transition-all shadow-md shadow-amber-500/20 cursor-pointer"
                             >
-                              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                              <span>Modo Cinema / Roteiro Completo ↗</span>
+                              {tFR.enrollToWatchCta}
                             </button>
                           </div>
-                        </div>
-                      );
-                    })()}
-
-                    {videoUrl ? (
-                      <div className="space-y-2">
-                        {/* URL display row */}
-                        <div className="flex items-center gap-2 p-2 rounded-xl bg-neutral-900/90 border border-neutral-800 font-mono text-[11px] text-neutral-300">
-                          <span className="text-amber-500 shrink-0 font-bold">URL:</span>
-                          <span className="truncate flex-1 select-all text-neutral-200">{videoUrl}</span>
-                          <button
-                            type="button"
-                            onClick={() => handleCopyUrl(videoUrl)}
-                            className="p-1 rounded hover:bg-neutral-800 text-neutral-400 hover:text-amber-400 transition-colors cursor-pointer shrink-0"
-                            title="Copiar URL do vídeo"
-                          >
-                            {copiedUrl === videoUrl ? (
-                              <Check className="w-3.5 h-3.5 text-emerald-400" />
-                            ) : (
-                              <Copy className="w-3.5 h-3.5" />
-                            )}
-                          </button>
-                        </div>
-
-                        {/* Action buttons */}
-                        <div className="flex flex-wrap items-center gap-2 pt-1">
-                          <button
-                            type="button"
-                            onClick={() => toggleInlinePlayer(film)}
-                            className={`flex-1 min-w-[140px] px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer text-center ${
-                              inlinePlayerFilmId === film.id
-                                ? 'bg-neutral-800 hover:bg-neutral-700 text-amber-300 border border-neutral-700 shadow-md'
-                                : 'bg-amber-500 hover:bg-amber-400 text-neutral-950 shadow-md shadow-amber-500/20'
-                            }`}
-                          >
-                            <Play className={`w-3.5 h-3.5 ${inlinePlayerFilmId === film.id ? 'text-amber-400' : 'fill-current'}`} />
-                            <span>{inlinePlayerFilmId === film.id ? 'Ocultar Player' : tFR.integratedPlayer}</span>
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => handleOpenFilmModal(film)}
-                            className="px-3.5 py-2.5 bg-neutral-800 hover:bg-neutral-700 text-neutral-200 hover:text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer border border-neutral-700"
-                            title="Abrir no Modo Cinema com Decupagem e Roteiro"
-                          >
-                            <Tv className="w-3.5 h-3.5 text-amber-400" />
-                            <span className="hidden sm:inline">Modo Cinema</span>
-                          </button>
-
-                          <a
-                            href={videoUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="px-3 py-2.5 bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer border border-neutral-800"
-                            title="Abrir em Nova Aba"
-                          >
-                            <ExternalLink className="w-3.5 h-3.5 text-amber-400" />
-                            <span className="hidden sm:inline">Nova Aba</span>
-                          </a>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="p-2.5 rounded-xl bg-neutral-900 text-center text-xs text-neutral-500 font-mono">
-                        {tFR.urlInConfig}
+                        )}
                       </div>
                     )}
                   </div>

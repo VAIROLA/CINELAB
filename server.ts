@@ -1132,26 +1132,40 @@ app.get('/api/student/module/:id', requireActiveStudent, (req: Request, res: Res
 app.get('/api/student/films', (req: Request, res: Response) => {
   const { enrollment, user } = authenticate(req);
   const db = getDb();
+  const isAdmin = user?.role === 'admin';
+  const isEnrolled = !!enrollment;
 
   const films = (db.films || []).map((f) => {
-    let isUnlocked = true;
-    let status = 'unlocked';
+    const isBonusFilm = f.isBonus || f.moduleId === 0;
+    let isUnlocked = false;
+    let status = 'locked';
     let unlockDate: string | undefined = undefined;
 
-    if (enrollment && f.moduleId > 0 && !f.isBonus) {
-      const timeline = calculateModuleTimeline(f.moduleId, enrollment);
-      isUnlocked = timeline.status !== 'locked' || user?.role === 'admin';
-      status = timeline.status;
-      unlockDate = timeline.startDate.toISOString();
-    } else if (f.isBonus || f.moduleId === 0) {
+    if (isBonusFilm) {
+      // Somente os 3 Vídeos Extras & Bônus ficam liberados para todos (inclusive visitantes)
       isUnlocked = true;
       status = 'unlocked';
+    } else if (isAdmin) {
+      isUnlocked = true;
+      status = 'unlocked';
+    } else if (isEnrolled && f.moduleId > 0) {
+      const timeline = calculateModuleTimeline(f.moduleId, enrollment);
+      isUnlocked = timeline.status !== 'locked';
+      status = timeline.status;
+      unlockDate = timeline.startDate.toISOString();
+    } else {
+      // Visitante sem matrícula: filmes de 1 a 10 trancados
+      isUnlocked = false;
+      status = 'locked';
+      const mod = (db.modules || []).find((m) => m.id === f.moduleId || m.number === f.moduleId);
+      unlockDate = mod?.startDate ? new Date(mod.startDate).toISOString() : undefined;
     }
 
-    const watchUrl = f.watchUrl || f.streamingUrl || '';
-    const streamingUrl = f.streamingUrl || f.watchUrl || '';
+    const watchUrl = isUnlocked ? (f.watchUrl || f.streamingUrl || '') : '';
+    const streamingUrl = isUnlocked ? (f.streamingUrl || f.watchUrl || '') : '';
     const platform = f.platform || f.streamingPlatform || 'Online / YouTube';
     const streamingPlatform = f.streamingPlatform || f.platform || 'Online / YouTube';
+    const videoOptions = isUnlocked ? (f.videoOptions || []) : [];
 
     return {
       ...f,
@@ -1159,6 +1173,7 @@ app.get('/api/student/films', (req: Request, res: Response) => {
       streamingUrl,
       platform,
       streamingPlatform,
+      videoOptions,
       isUnlocked,
       status,
       unlockDate,
