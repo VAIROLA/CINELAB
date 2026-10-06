@@ -579,7 +579,14 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
       evalDoneNotice: 'Avaliação da etapa concluída',
       viewEvalBtn: 'Ver Avaliação',
       bonusSectionTitle: 'Apostilas Bônus Exclusivas',
-      bonusSectionDesc: '2 Módulos Especiais',
+      bonusSectionDesc: '3 Módulos Especiais',
+      extraVideosTab: 'Vídeos Extras de Estudo',
+      extraVideosBtn: '2 Vídeos Extras',
+      trainingEvalTab: 'Avaliação de Treinamento',
+      trainingEvalBtn: 'Avaliação',
+      extraVideosBannerTitle: '2 Vídeos Extras para Estudo',
+      extraVideosBannerDesc: 'integrados a esta apostila (análises práticas & estudo de caso)!',
+      viewExtraVideosBtn: 'Ver os 2 Vídeos',
       bonusPagesUnit: 'páginas',
       bonusUnlockCountLabel: (num: number) => `Liberação do Bônus 0${num} em:`,
       bonusUnlockReq: (num: number) => `Desbloqueia automaticamente com o início do Módulo 0${num}.`,
@@ -637,7 +644,14 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
       evalDoneNotice: 'Stage assessment completed',
       viewEvalBtn: 'View Assessment',
       bonusSectionTitle: 'Exclusive Bonus Handouts',
-      bonusSectionDesc: '2 Special Modules',
+      bonusSectionDesc: '3 Special Modules',
+      extraVideosTab: 'Extra Study Videos',
+      extraVideosBtn: '2 Extra Videos',
+      trainingEvalTab: 'Training Drill',
+      trainingEvalBtn: 'Evaluation',
+      extraVideosBannerTitle: '2 Extra Study Videos',
+      extraVideosBannerDesc: 'integrated with this handout (practical breakdowns & case study)!',
+      viewExtraVideosBtn: 'Watch Both Videos',
       bonusPagesUnit: 'pages',
       bonusUnlockCountLabel: (num: number) => `Bonus 0${num} Unlocks in:`,
       bonusUnlockReq: (num: number) => `Unlocks automatically at the start of Module 0${num}.`,
@@ -695,7 +709,14 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
       evalDoneNotice: 'Evaluación de la etapa completada',
       viewEvalBtn: 'Ver Evaluación',
       bonusSectionTitle: 'Manuales Bonus Exclusivos',
-      bonusSectionDesc: '2 Módulos Especiales',
+      bonusSectionDesc: '3 Módulos Especiales',
+      extraVideosTab: 'Videos Extras de Estudio',
+      extraVideosBtn: '2 Videos Extras',
+      trainingEvalTab: 'Evaluación de Entrenamiento',
+      trainingEvalBtn: 'Evaluación',
+      extraVideosBannerTitle: '2 Videos Extras de Estudio',
+      extraVideosBannerDesc: 'integrados con este manual (análisis prácticos y estudio de caso)!',
+      viewExtraVideosBtn: 'Ver los 2 Videos',
       bonusPagesUnit: 'páginas',
       bonusUnlockCountLabel: (num: number) => `Apertura del Bonus 0${num} en:`,
       bonusUnlockReq: (num: number) => `Se desbloquea automáticamente al inicio del Módulo 0${num}.`,
@@ -753,7 +774,14 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
       evalDoneNotice: 'Évaluation de l\'étape terminée',
       viewEvalBtn: 'Voir l\'Évaluation',
       bonusSectionTitle: 'Fascicules Bonus Exclusifs',
-      bonusSectionDesc: '2 Modules Spéciaux',
+      bonusSectionDesc: '3 Modules Spéciaux',
+      extraVideosTab: "Vidéos Extras d'Étude",
+      extraVideosBtn: '2 Vidéos Extras',
+      trainingEvalTab: "Évaluation d'Entraînement",
+      trainingEvalBtn: 'Évaluation',
+      extraVideosBannerTitle: "2 Vidéos Extras d'Étude",
+      extraVideosBannerDesc: 'intégrées à ce fascicule (analyses pratiques & étude de cas) !',
+      viewExtraVideosBtn: 'Voir les 2 Vidéos',
       bonusPagesUnit: 'pages',
       bonusUnlockCountLabel: (num: number) => `Ouverture du Bonus 0${num} dans :`,
       bonusUnlockReq: (num: number) => `Se débloque automatiquement au début du Module 0${num}.`,
@@ -1114,7 +1142,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                         title={isLocked ? `Liberados em ${formatDateTime(item.startDate)}` : "Assistir aos 2 vídeos extras para estudo desta apostila"}
                       >
                         {isLocked ? <Lock className="w-3.5 h-3.5 shrink-0 text-neutral-500" /> : <Film className="w-3.5 h-3.5 text-amber-400 shrink-0" />}
-                        <span className="truncate">{isLocked ? 'Bloqueado' : '2 Vídeos Extras'}</span>
+                        <span className="truncate">{isLocked ? cur.locked : cur.extraVideosBtn}</span>
                       </button>
 
                       <button
@@ -1130,7 +1158,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                         title={isLocked ? `Liberada em ${formatDateTime(item.startDate)}` : "Fazer Avaliação de Treinamento prática da etapa"}
                       >
                         {isLocked ? <Lock className="w-3.5 h-3.5 shrink-0 text-neutral-500" /> : <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />}
-                        <span className="truncate">{isLocked ? 'Bloqueada' : 'Avaliação'}</span>
+                        <span className="truncate">{isLocked ? cur.locked : cur.trainingEvalBtn}</span>
                         {completedTrainings[`etapa-${modNum}`] && !isLocked && (
                           <span className="text-[10px] font-mono bg-emerald-500/20 text-emerald-300 px-1 py-0.2 rounded shrink-0">
                             {completedTrainings[`etapa-${modNum}`].score}/{completedTrainings[`etapa-${modNum}`].total}
@@ -1723,7 +1751,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                     }`}
                   >
                     <Film className="w-3.5 h-3.5 text-amber-400" />
-                    <span>Vídeos Extras de Estudo</span>
+                    <span>{cur.extraVideosTab}</span>
                     <span className="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">
                       2
                     </span>
@@ -1737,7 +1765,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                     className="px-3 py-1 rounded-md text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 bg-neutral-800 hover:bg-neutral-700 text-amber-300 border border-amber-500/30"
                   >
                     <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                    <span>Avaliação de Treinamento</span>
+                    <span>{cur.trainingEvalTab}</span>
                     {completedTrainings[`etapa-${selectedApostila.number || selectedApostila.moduleId}`] && (
                       <span className="text-[10px] font-mono bg-emerald-500/20 text-emerald-300 px-1 py-0.2 rounded font-bold">
                         {completedTrainings[`etapa-${selectedApostila.number || selectedApostila.moduleId}`].score}/{completedTrainings[`etapa-${selectedApostila.number || selectedApostila.moduleId}`].total}
@@ -1757,7 +1785,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                         <Film className="w-4 h-4" />
                       </div>
                       <span>
-                        <strong className="text-amber-300">2 Vídeos Extras para Estudo</strong> integrados a esta apostila (análises práticas &amp; estudo de caso)!
+                        <strong className="text-amber-300">{cur.extraVideosBannerTitle}</strong> {cur.extraVideosBannerDesc}
                       </span>
                     </div>
                     <button
@@ -1766,7 +1794,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                       className="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold font-mono text-[11px] transition-all cursor-pointer shrink-0 shadow flex items-center gap-1"
                     >
                       <Film className="w-3.5 h-3.5" />
-                      <span>Ver os 2 Vídeos</span>
+                      <span>{cur.viewExtraVideosBtn}</span>
                     </button>
                   </div>
                   <div className="w-full h-[78vh] min-h-[580px] rounded-2xl border border-neutral-800 overflow-hidden relative shadow-2xl bg-neutral-950">

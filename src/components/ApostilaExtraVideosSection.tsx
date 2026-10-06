@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Apostila, BonusApostila, ApostilaExtraVideo } from '../types/index.js';
 import { api } from '../services/api.js';
 import { resolveApostilaExtraVideos } from '../data/canonicalExtraVideos.js';
+import { useLanguage } from '../i18n/LanguageContext.js';
+import { EXTRA_VIDEOS_UI_TRANSLATIONS, getTranslatedExtraVideo } from '../i18n/extraVideosTranslations.js';
 import {
   Film,
   Play,
@@ -119,6 +121,9 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
   onApostilaUpdated,
   titlePrefix,
 }) => {
+  const { language } = useLanguage();
+  const tUi = EXTRA_VIDEOS_UI_TRANSLATIONS[language] || EXTRA_VIDEOS_UI_TRANSLATIONS.pt;
+  const modNumber = (apostila as any)?.moduleId || (apostila as any)?.number || 1;
   const [uploadingSlot, setUploadingSlot] = useState<number | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [editingSlot, setEditingSlot] = useState<number | null>(null);
@@ -261,7 +266,9 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
         : resolvedSlot2.professorNotes,
   };
 
-  const extraVideos = [slot1, slot2];
+  const translatedSlot1 = getTranslatedExtraVideo(slot1, language, modNumber, 1);
+  const translatedSlot2 = getTranslatedExtraVideo(slot2, language, modNumber, 2);
+  const extraVideos = [translatedSlot1, translatedSlot2];
 
   // Blindagem de mesclagem para impedir que salvar Slot 1 apague Slot 2 e vice-versa
   const mergeSlotsSafely = (
@@ -663,10 +670,10 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
           <div>
             <div className="flex items-center flex-wrap gap-2">
               <h2 className="text-sm sm:text-base font-bold text-white font-display">
-                Vídeos Extras para Estudo
+                {tUi.sectionTitle}
               </h2>
               <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
-                2 LOCAIS OFICIAIS
+                {tUi.sectionBadge}
               </span>
               <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-red-950/80 text-red-300 border border-red-500/40 flex items-center gap-1">
                 <Youtube className="w-3 h-3 text-red-400" />
@@ -739,7 +746,7 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
                 <div className="flex items-center justify-between text-xs font-mono flex-wrap gap-2">
                   <span className="px-2.5 py-1 rounded-lg bg-gradient-to-r from-amber-500/20 to-yellow-500/10 text-amber-300 font-bold border border-amber-500/40 flex items-center gap-1.5 shadow-sm">
                     <Film className="w-3.5 h-3.5 text-amber-400" />
-                    <span>LOCAL 0{slot} • VÍDEO EXTRA DE ESTUDO</span>
+                    <span>{slot === 1 ? tUi.slot1Badge : tUi.slot2Badge}</span>
                   </span>
 
                   <div className="flex items-center gap-1.5 flex-wrap">
@@ -838,12 +845,10 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
                     </div>
                     <div>
                       <h4 className="text-xs sm:text-sm font-bold text-white">
-                        Local 0{slot} reservado para Vídeo Extra
+                        {tUi.emptySlotTitle(slot)}
                       </h4>
                       <p className="text-[11px] text-neutral-400 max-w-sm mx-auto mt-0.5">
-                        {isAdmin
-                          ? 'Escolha se deseja subir um arquivo de vídeo do seu computador (MP4) ou vincular diretamente pelo YouTube.'
-                          : 'Este vídeo de estudo extra está sendo preparado pela equipe pedagógica do CINELAB.'}
+                        {isAdmin ? tUi.emptySlotAdminDesc : tUi.emptySlotStudentDesc}
                       </p>
                     </div>
 
@@ -851,7 +856,7 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
                       <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
                         <label className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-neutral-950 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow">
                           <Upload className="w-3.5 h-3.5" />
-                          <span>Subir Arquivo (MP4)</span>
+                          <span>{tUi.uploadFileBtn}</span>
                           <input
                             type="file"
                             accept="video/mp4,video/webm,video/mov,video/*"
@@ -870,7 +875,7 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
                           className="px-3.5 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow"
                         >
                           <Youtube className="w-3.5 h-3.5" />
-                          <span>Subir pelo YouTube</span>
+                          <span>{tUi.uploadYoutubeBtn}</span>
                         </button>
                       </div>
                     )}
@@ -885,7 +890,7 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
                     <div className="flex items-center justify-between border-b border-neutral-800 pb-2">
                       <strong className="font-mono text-xs text-amber-300 uppercase tracking-wider flex items-center gap-2">
                         <FileEdit className="w-4 h-4 text-amber-400" />
-                        Escrever Orientação do Professor & Orientação ao Aluno:
+                        Escrever {tUi.professorNotesTitle}
                       </strong>
                       <button
                         type="button"
@@ -901,12 +906,12 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
                         value={notesText}
                         onChange={(e) => setNotesText(e.target.value)}
                         rows={3}
-                        placeholder="Escreva aqui a orientação personalizada do Professor Tony de Luc para este vídeo (ex: dicas de decupagem, o que prestar atenção, exercícios práticos)..."
+                        placeholder={tUi.notesPlaceholder}
                         className="w-full p-3 bg-neutral-950 border border-neutral-700 focus:border-amber-500 rounded-xl text-xs text-white placeholder-neutral-500 focus:outline-none font-sans leading-relaxed"
                         autoFocus
                       />
                       <span className="text-[10px] text-neutral-400 font-mono mt-1 block">
-                        Este texto aparecerá com destaque dourado para todos os alunos que assistirem a este vídeo.
+                        {tUi.notesHelpText}
                       </span>
                     </div>
 
@@ -917,7 +922,7 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
                         disabled={isSavingNotes}
                         className="px-3.5 py-1.5 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 rounded-xl text-xs font-bold transition-colors cursor-pointer"
                       >
-                        Cancelar
+                        {tUi.cancelBtn}
                       </button>
                       <button
                         type="button"
@@ -928,12 +933,12 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
                         {isSavingNotes ? (
                           <>
                             <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                            <span>Salvando...</span>
+                            <span>{tUi.savingBtn}</span>
                           </>
                         ) : (
                           <>
                             <Check className="w-3.5 h-3.5" />
-                            <span>Salvar Orientação</span>
+                            <span>{tUi.saveNotesBtn}</span>
                           </>
                         )}
                       </button>
@@ -944,7 +949,7 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
                     <div className="flex items-center justify-between gap-2 mb-1.5">
                       <strong className="font-mono text-[10.5px] sm:text-xs text-amber-400 uppercase tracking-wider flex items-center gap-1.5 font-bold">
                         <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                        Orientação do Professor &amp; Orientação ao Aluno:
+                        {tUi.professorNotesTitle}
                       </strong>
 
                       {/* Botão de Trocar e Escrever para o Administrador */}

@@ -277,36 +277,67 @@ export async function getVaultBlobUrl(targetIdOrModuleId: number | string, isBon
 export function getMergedApostilasWithVault(serverApostilas: Apostila[]): Apostila[] {
   if (!Array.isArray(serverApostilas)) return serverApostilas;
   const vault = getPersistentVaultIndex();
+  let vaultNeedsSave = false;
 
-  return serverApostilas.map((apos) => {
-    const key = `mod-${apos.moduleId}`;
+  const res = serverApostilas.map((apos) => {
+    const modNum = apos.moduleId || apos.number || 1;
+    const key = `mod-${modNum}`;
     const local = vault[key];
-    if (!local) return apos;
+    const pad = modNum < 10 ? '0' + modNum : '' + modNum;
+    const canonicalPdf = `/materiais/cinelab-apostila-${pad}.pdf`;
+    const canonicalPages = modNum === 1 ? 8 : (modNum === 2 ? 52 : (modNum === 5 ? 6 : 4));
 
-    // Fallback to real canonical pages if not explicitly customized
-    const canonicalPages = apos.moduleId === 1 ? 8 : (apos.moduleId === 5 ? 6 : 4);
-    const pages = (local.pagesCount && local.pagesCount > 0) ? local.pagesCount : (apos.pagesCount || apos.totalPages || canonicalPages);
+    if (!local) {
+      return {
+        ...apos,
+        pagesCount: apos.pagesCount && apos.pagesCount > 0 ? apos.pagesCount : canonicalPages,
+        totalPages: apos.totalPages && apos.totalPages > 0 ? apos.totalPages : canonicalPages,
+        pdfUrl: apos.pdfUrl && !apos.pdfUrl.includes('1790444') && !apos.pdfUrl.includes('1790684') && !apos.pdfUrl.includes('1790652') ? apos.pdfUrl : canonicalPdf,
+      };
+    }
 
     // Auto-heal duplicate module 1 title on module 2 or other modules in client vault
-    const isCorruptedTitle = apos.moduleId !== 1 && local.title === 'Introdução ao Cinema e à Linguagem Audiovisual';
+    const isCorruptedTitle = modNum !== 1 && local.title === 'Introdução ao Cinema e à Linguagem Audiovisual';
     const effectiveTitle = isCorruptedTitle
-      ? (apos.moduleId === 2 ? 'História do Cinema' : apos.title)
+      ? (modNum === 2 ? 'História do Cinema' : apos.title)
       : (local.title || apos.title);
 
-    if (isCorruptedTitle && vault[key]) {
-      vault[key].title = effectiveTitle;
-      savePersistentVaultIndex(vault);
+    const isCorruptedFile =
+      local.pdfUrl &&
+      (
+        local.pdfUrl.includes('1790444') ||
+        local.pdfUrl.includes('1790684') ||
+        local.pdfUrl.includes('1790652')
+      );
+
+    if ((isCorruptedTitle || isCorruptedFile) && vault[key]) {
+      vault[key] = {
+        ...vault[key],
+        title: effectiveTitle,
+        pdfUrl: canonicalPdf,
+        pagesCount: canonicalPages,
+      };
+      vaultNeedsSave = true;
     }
+
+    const pages = (local.pagesCount && local.pagesCount > 0 && !isCorruptedFile) ? local.pagesCount : canonicalPages;
+    const effectivePdf = isCorruptedFile ? canonicalPdf : (local.pdfUrl || apos.pdfUrl || canonicalPdf);
 
     return {
       ...apos,
       title: effectiveTitle,
       pagesCount: pages,
       totalPages: pages,
-      pdfUrl: local.pdfUrl || apos.pdfUrl,
+      pdfUrl: effectivePdf,
       fileSizeMb: local.fileSizeMb || apos.fileSizeMb,
     };
   });
+
+  if (vaultNeedsSave) {
+    savePersistentVaultIndex(vault);
+  }
+
+  return res;
 }
 
 /**
@@ -409,7 +440,8 @@ export function getMergedBonusWithVault(serverBonus: BonusApostila[]): BonusApos
         local.pagesCount === 35 ||
         local.pagesCount === 40 ||
         local.pagesCount === 96 ||
-        local.pagesCount === 104
+        local.pagesCount === 104 ||
+        (local.pdfUrl && (local.pdfUrl.includes('1791222') || local.pdfUrl.includes('uploads/apostilas') || local.pdfUrl.includes('1790684')))
       );
 
     if (isOutdatedLocal && vault[key]) {

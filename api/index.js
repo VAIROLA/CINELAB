@@ -6158,8 +6158,45 @@ async function initSupabaseData() {
             if (cloudState.submissions) db.submissions = cloudState.submissions;
             if (cloudState.certificates) db.certificates = cloudState.certificates;
             if (cloudState.settings) db.settings = { ...db.settings, ...cloudState.settings };
-            if (cloudState.apostilas && Array.isArray(cloudState.apostilas)) db.apostilas = cloudState.apostilas;
-            if (cloudState.bonusApostilas && Array.isArray(cloudState.bonusApostilas)) db.bonusApostilas = cloudState.bonusApostilas;
+            if (cloudState.apostilas && Array.isArray(cloudState.apostilas)) {
+              const realPages = { 1: 8, 2: 52, 3: 4, 4: 4, 5: 6, 6: 4, 7: 4, 8: 4, 9: 4, 10: 4 };
+              db.apostilas = cloudState.apostilas.map(a => {
+                const mod = a.moduleId || a.number || 1;
+                const pad = mod < 10 ? '0' + mod : '' + mod;
+                const canonicalPdf = `/materiais/cinelab-apostila-${pad}.pdf`;
+                const isCorrupted = !a.pdfUrl || a.pdfUrl.includes('1790444') || a.pdfUrl.includes('1790684') || a.pdfUrl.includes('1790652');
+                const pages = realPages[mod] || a.pagesCount || a.totalPages || 4;
+                return {
+                  ...a,
+                  pdfUrl: isCorrupted ? canonicalPdf : a.pdfUrl,
+                  pagesCount: pages,
+                  totalPages: pages,
+                };
+              });
+            }
+            if (cloudState.bonusApostilas && Array.isArray(cloudState.bonusApostilas)) {
+              db.bonusApostilas = cloudState.bonusApostilas.map(b => {
+                const defaultPages = b.number === 1 ? 30 : (b.number === 3 ? 27 : 29);
+                const canonicalPdf = b.number === 1
+                  ? '/materiais/cinelab-bonus-01-glossario-planos.pdf'
+                  : (b.number === 3 ? '/materiais/cinelab-bonus-03-analise-filmica.pdf' : '/materiais/cinelab-bonus-02-glossario-roteiro.pdf');
+                const canonicalTitle = b.number === 1
+                  ? 'Glossário Completo de Planos'
+                  : (b.number === 3 ? 'Método de Análise Fílmica em 6 Camadas' : 'Glossário Completo de Roteiro');
+                const safePdf = (!b.pdfUrl || b.pdfUrl.includes('1791222') || b.pdfUrl.includes('uploads/apostilas') || b.pdfUrl.includes('1790684'))
+                  ? canonicalPdf
+                  : b.pdfUrl;
+                const safePages = (b.pagesCount && b.pagesCount !== 4 && b.pagesCount !== 24 && b.pagesCount !== 96 && b.pagesCount !== 104) ? b.pagesCount : defaultPages;
+                return {
+                  ...b,
+                  title: b.title && !b.title.includes('Pitching') ? b.title : canonicalTitle,
+                  pdfUrl: safePdf,
+                  pagesCount: safePages,
+                  totalPages: safePages,
+                  isUnlocked: true,
+                };
+              });
+            }
             if (cloudState.films && Array.isArray(cloudState.films)) db.films = cloudState.films;
             if (cloudState.videos && Array.isArray(cloudState.videos)) db.videos = cloudState.videos;
             if (cloudState.evaluations && Array.isArray(cloudState.evaluations)) db.evaluations = cloudState.evaluations;
@@ -7307,35 +7344,56 @@ app.get("/api/course/public-info", (req, res) => {
     modules: modulesTimeline,
     totalModules: db2.modules.length,
     bonusModulesCount: db2.bonusApostilas.length,
-    apostilas: db2.apostilas.map((a) => ({
-      id: a.id,
-      moduleId: a.moduleId,
-      number: a.number,
-      title: a.title,
-      description: a.description,
-      summary: a.summary || a.description,
-      pagesCount: a.pagesCount || a.totalPages || 30,
-      totalPages: a.totalPages || a.pagesCount || 30,
-      pdfUrl: a.pdfUrl,
-      coverUrl: a.coverUrl,
-      fileSizeMb: a.fileSizeMb,
-      isUnlocked: true,
-      status: "available",
-      extraVideos: a.extraVideos && a.extraVideos.length > 0 ? a.extraVideos : initExtraVideosForApostila(a, a.title)
-    })),
+    apostilas: db2.apostilas.map((a) => {
+      const mod = a.moduleId || a.number || 1;
+      const pad = mod < 10 ? '0' + mod : '' + mod;
+      const canonicalPdf = `/materiais/cinelab-apostila-${pad}.pdf`;
+      const isCorrupted = !a.pdfUrl || a.pdfUrl.includes('1790444') || a.pdfUrl.includes('1790684') || a.pdfUrl.includes('1790652');
+      const safePdf = isCorrupted ? canonicalPdf : a.pdfUrl;
+      const realPages = { 1: 8, 2: 52, 3: 4, 4: 4, 5: 6, 6: 4, 7: 4, 8: 4, 9: 4, 10: 4 };
+      const pages = realPages[mod] || a.pagesCount || a.totalPages || 4;
+      return {
+        id: a.id,
+        moduleId: a.moduleId,
+        number: a.number,
+        title: a.title,
+        description: a.description,
+        summary: a.summary || a.description,
+        pagesCount: pages,
+        totalPages: pages,
+        pdfUrl: safePdf,
+        coverUrl: a.coverUrl,
+        fileSizeMb: a.fileSizeMb,
+        isUnlocked: true,
+        status: "available",
+        extraVideos: a.extraVideos && a.extraVideos.length > 0 ? a.extraVideos : initExtraVideosForApostila(a, a.title)
+      };
+    }),
     bonusApostilas: db2.bonusApostilas.map((b) => {
       const requiredModule = b.requiredModule || (b.number === 1 || b.number === 2 ? 3 : 6);
       const timeline = calculateModuleTimeline(requiredModule);
-      const isUnlocked = timeline.status !== "locked";
+      const defaultPages = b.number === 1 ? 30 : (b.number === 3 ? 27 : 29);
+      const canonicalPdf = b.number === 1
+        ? '/materiais/cinelab-bonus-01-glossario-planos.pdf'
+        : (b.number === 3 ? '/materiais/cinelab-bonus-03-analise-filmica.pdf' : '/materiais/cinelab-bonus-02-glossario-roteiro.pdf');
+      const canonicalTitle = b.number === 1
+        ? 'Glossário Completo de Planos'
+        : (b.number === 3 ? 'Método de Análise Fílmica em 6 Camadas' : 'Glossário Completo de Roteiro');
+      const safePdf = (!b.pdfUrl || b.pdfUrl.includes('1791222') || b.pdfUrl.includes('uploads/apostilas') || b.pdfUrl.includes('1790684'))
+        ? canonicalPdf
+        : b.pdfUrl;
+      const safePages = (b.pagesCount && b.pagesCount !== 4 && b.pagesCount !== 24 && b.pagesCount !== 96 && b.pagesCount !== 104) ? b.pagesCount : defaultPages;
       return {
         ...b,
+        title: b.title && !b.title.includes('Pitching') ? b.title : canonicalTitle,
         requiredModule,
-        isUnlocked,
-        status: isUnlocked ? "available" : "locked",
+        isUnlocked: true,
+        status: "available",
         unlockDate: timeline.startDate.toISOString(),
         startDate: timeline.startDate.toISOString(),
-        pagesCount: b.pagesCount && b.pagesCount !== 4 && b.pagesCount !== 24 ? b.pagesCount : (b.number === 1 ? 30 : (b.number === 3 ? 27 : 29)),
-        totalPages: b.totalPages && b.totalPages !== 4 && b.totalPages !== 24 ? b.totalPages : (b.number === 1 ? 30 : (b.number === 3 ? 27 : 29)),
+        pagesCount: safePages,
+        totalPages: safePages,
+        pdfUrl: safePdf,
         extraVideos: b.extraVideos && b.extraVideos.length > 0 ? b.extraVideos : initExtraVideosForApostila(b, b.title)
       };
     }),
@@ -7902,13 +7960,22 @@ app.get("/api/student/apostilas", requireActiveStudent, (req, res) => {
   const { enrollment, user } = authenticate(req);
   const db2 = getDb();
   const isAdmin = user?.role === "admin";
+  const realPages = { 1: 8, 2: 52, 3: 4, 4: 4, 5: 6, 6: 4, 7: 4, 8: 4, 9: 4, 10: 4 };
   const apostilas = db2.apostilas.map((a) => {
+    const mod = a.moduleId || a.number || 1;
+    const pad = mod < 10 ? '0' + mod : '' + mod;
+    const canonicalPdf = `/materiais/cinelab-apostila-${pad}.pdf`;
+    const isCorrupted = !a.pdfUrl || a.pdfUrl.includes('1790444') || a.pdfUrl.includes('1790684') || a.pdfUrl.includes('1790652');
+    const safePdf = isCorrupted ? canonicalPdf : a.pdfUrl;
     const timeline = calculateModuleTimeline(a.moduleId, enrollment);
     const isUnlocked = timeline.status !== "locked" || isAdmin;
+    const pages = realPages[mod] || a.pagesCount || a.totalPages || 4;
     return {
       ...a,
+      pagesCount: pages,
+      totalPages: pages,
       isUnlocked,
-      pdfUrl: isUnlocked ? a.pdfUrl : "",
+      pdfUrl: isUnlocked ? safePdf : "",
       unlockDate: timeline.startDate.toISOString(),
       startDate: timeline.startDate.toISOString(),
       endDate: timeline.endDate.toISOString(),
@@ -7937,24 +8004,35 @@ app.get("/api/student/bonus-apostilas", requireActiveStudent, (req, res) => {
   const bonuses = db2.bonusApostilas.map((b) => {
     const requiredModule = b.requiredModule || (b.number === 1 || b.number === 2 ? 3 : 6);
     const timeline = calculateModuleTimeline(requiredModule, enrollment);
-    const isUnlocked = timeline.status !== "locked" || isAdmin;
+    const defaultPages = b.number === 1 ? 30 : (b.number === 3 ? 27 : 29);
+    const canonicalPdf = b.number === 1
+      ? '/materiais/cinelab-bonus-01-glossario-planos.pdf'
+      : (b.number === 3 ? '/materiais/cinelab-bonus-03-analise-filmica.pdf' : '/materiais/cinelab-bonus-02-glossario-roteiro.pdf');
+    const canonicalTitle = b.number === 1
+      ? 'Glossário Completo de Planos'
+      : (b.number === 3 ? 'Método de Análise Fílmica em 6 Camadas' : 'Glossário Completo de Roteiro');
+    const safePdf = (!b.pdfUrl || b.pdfUrl.includes('1791222') || b.pdfUrl.includes('uploads/apostilas') || b.pdfUrl.includes('1790684'))
+      ? canonicalPdf
+      : b.pdfUrl;
+    const safePages = (b.pagesCount && b.pagesCount !== 4 && b.pagesCount !== 24 && b.pagesCount !== 96 && b.pagesCount !== 104) ? b.pagesCount : defaultPages;
     return {
       ...b,
-      isUnlocked,
-      status: isUnlocked ? "available" : "locked",
+      title: b.title && !b.title.includes('Pitching') ? b.title : canonicalTitle,
+      isUnlocked: true,
+      status: "available",
       unlockDate: timeline.startDate.toISOString(),
       startDate: timeline.startDate.toISOString(),
       requiredModule,
       summary: b.summary || b.description,
       description: b.description || b.summary,
-      pagesCount: b.pagesCount && b.pagesCount !== 4 && b.pagesCount !== 24 ? b.pagesCount : (b.number === 1 ? 30 : (b.number === 3 ? 27 : 29)),
-      totalPages: b.totalPages && b.totalPages !== 4 && b.totalPages !== 24 ? b.totalPages : (b.number === 1 ? 30 : (b.number === 3 ? 27 : 29)),
-      code: `APOSTILA B\xD4NUS 0${b.number}`,
-      pdfUrl: isUnlocked ? b.pdfUrl : "",
+      pagesCount: safePages,
+      totalPages: safePages,
+      code: `APOSTILA BÔNUS 0${b.number}`,
+      pdfUrl: safePdf,
       extraVideos: (b.extraVideos && b.extraVideos.length > 0 ? b.extraVideos : initExtraVideosForApostila(b, b.title)).map((v) => ({
         ...v,
-        isUnlocked,
-        videoUrl: isUnlocked ? v.videoUrl : "",
+        isUnlocked: true,
+        videoUrl: v.videoUrl,
         unlockDate: timeline.startDate.toISOString()
       }))
     };

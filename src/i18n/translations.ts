@@ -742,10 +742,10 @@ export const UI_TRANSLATIONS: Translations = {
     fr: '3 Fascicules Bonus Exclusifs',
   },
   'home.bonusSubtitle': {
-    pt: 'Bônus 01: Glossário Completo de Planos (30 págs) • Bônus 02: Glossário Completo de Roteiro (29 págs) • Bônus 03: Análise Fílmica em 6 Camadas (24 págs).',
-    en: 'Bonus 01: Complete Shot Glossary (30 pages) • Bonus 02: Complete Screenwriting Glossary (29 pages) • Bonus 03: 6-Layer Film Analysis (24 pages).',
-    es: 'Bono 01: Glosario Completo de Planos (30 págs) • Bono 02: Glosario Completo de Guion (29 págs) • Bono 03: Análisis Fílmico en 6 Capas (24 págs).',
-    fr: 'Bonus 01 : Glossaire Complet des Plans (30 pages) • Bonus 02 : Glossaire Complet du Scénario (29 pages) • Bonus 03 : Analyse Filmique en 6 Couches (24 pages).',
+    pt: 'Bônus 01: Glossário Completo de Planos (30 págs) • Bônus 02: Glossário Completo de Roteiro (29 págs) • Bônus 03: Análise Fílmica em 6 Camadas (27 págs).',
+    en: 'Bonus 01: Complete Shot Glossary (30 pages) • Bonus 02: Complete Screenwriting Glossary (29 pages) • Bonus 03: 6-Layer Film Analysis (27 pages).',
+    es: 'Bono 01: Glosario Completo de Planos (30 págs) • Bono 02: Glosario Completo de Guion (29 págs) • Bono 03: Análisis Fílmico en 6 Capas (27 págs).',
+    fr: 'Bonus 01 : Glossaire Complet des Plans (30 pages) • Bonus 02 : Glossaire Complet du Scénario (29 pages) • Bonus 03 : Analyse Filmique en 6 Couches (27 pages).',
   },
   'home.bonusBtn': {
     pt: 'Garantir Minha Vaga com Bônus',

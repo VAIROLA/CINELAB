@@ -156,7 +156,7 @@ export const FolderExplorer: React.FC<FolderExplorerProps> = ({
       if (onOpenBonusReader) {
         onOpenBonusReader(file.actionParam.openBonusId);
       } else if (onOpenBonusApostila) {
-        const bNum = file.actionParam.openBonusId.includes('2') ? 2 : 1;
+        const bNum = file.actionParam.openBonusId.includes('3') ? 3 : (file.actionParam.openBonusId.includes('2') ? 2 : 1);
         onOpenBonusApostila(bNum);
       }
       return;

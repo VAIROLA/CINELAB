@@ -569,7 +569,7 @@
       "title": "Introdução ao Cinema e à Linguagem Audiovisual",
       "description": "O que é cinema e audiovisual. Relação dialética entre imagem e som. Planos, escalas e enquadramentos. Os profissionais do cinema, pré-produção, produção, pós-produção e a primazia do som.",
       "pagesCount": 8,
-      "pdfUrl": "/uploads/apostilas/apostila-modulo-01-1_-_APOSTILA_CINELAB_-_CURSO_DE_CIN-1789699828404.pdf",
+      "pdfUrl": "/materiais/cinelab-apostila-01.pdf",
       "coverUrl": "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=600&q=80",
       "fileSizeMb": 0.23,
       "sections": [
@@ -761,7 +761,9 @@
           "durationLabel": "01h 26m 52s",
           "uploadedAt": "2026-10-02T03:08:34.760Z"
         }
-      ]
+      ],
+      "isUnlocked": true,
+      "status": "available"
     },
     {
       "id": "apostila-2",
@@ -770,7 +772,7 @@
       "title": "História do Cinema",
       "description": "A trajetória histórica do cinema mundial e brasileiro: do cinema silencioso às vanguardas europeias, cinema clássico, movimentos modernos e contemporâneos.",
       "pagesCount": 52,
-      "pdfUrl": "/uploads/apostilas/apostila-modulo-02-2-APOSTILA_HISTORIA_DO_CINEMA_-_COM-1790684967239.pdf",
+      "pdfUrl": "/materiais/cinelab-apostila-02.pdf",
       "coverUrl": "https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&w=600&q=80",
       "fileSizeMb": 2.17,
       "sections": [
@@ -955,7 +957,9 @@
           "durationLabel": "00h 24m 00s",
           "uploadedAt": "2026-10-02T03:08:34.760Z"
         }
-      ]
+      ],
+      "isUnlocked": true,
+      "status": "available"
     },
     {
       "id": "apostila-3",
@@ -963,8 +967,8 @@
       "number": 3,
       "title": "Roteiro e Criação de Personagens",
       "description": "Da ideia embrionária à cena formatada: storyline, logline, sinopse, escaleta, criação de personagens tridimensionais, diálogos e subtexto dramático.",
-      "pagesCount": 7,
-      "pdfUrl": "/uploads/apostilas/apostila-modulo-03-3_-_APOSTILA_CINELAB_-_CURSO_DE_CIN-1790444895201.pdf",
+      "pagesCount": 4,
+      "pdfUrl": "/materiais/cinelab-apostila-03.pdf",
       "coverUrl": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=600&q=80",
       "fileSizeMb": 0.28,
       "sections": [
@@ -1050,7 +1054,7 @@
           "explanation": "Exato! A falha trágica interna humaniza o protagonista, gerando identificação e empatia com a plateia ao longo de seu arco de evolução."
         }
       ],
-      "totalPages": 7,
+      "totalPages": 4,
       "quiz": [
         {
           "id": "quiz-3-1",
@@ -1149,7 +1153,9 @@
           "durationLabel": "00h 24m 00s",
           "uploadedAt": "2026-10-02T03:08:34.760Z"
         }
-      ]
+      ],
+      "isUnlocked": true,
+      "status": "available"
     },
     {
       "id": "apostila-4",
@@ -1157,8 +1163,8 @@
       "number": 4,
       "title": "Direção e Direção de Atores",
       "description": "O papel de liderança do diretor, decupagem com intenção estética, ensaios práticos, marcação cênica (blocking) e a condução ética e respeitosa do elenco.",
-      "pagesCount": 6,
-      "pdfUrl": "/uploads/apostilas/apostila-modulo-04-4_-_APOSTILA_CINELAB_-_CURSO_DE_CIN-1790444905717.pdf",
+      "pagesCount": 4,
+      "pdfUrl": "/materiais/cinelab-apostila-04.pdf",
       "coverUrl": "https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?auto=format&fit=crop&w=600&q=80",
       "fileSizeMb": 0.24,
       "sections": [
@@ -1244,7 +1250,7 @@
           "explanation": "Exato! O subtexto vive no corpo, no olhar e no silêncio entre as falas, onde a tensão emocional genuína é transmitida ao espectador."
         }
       ],
-      "totalPages": 6,
+      "totalPages": 4,
       "quiz": [
         {
           "id": "quiz-4-1",
@@ -1343,7 +1349,9 @@
           "durationLabel": "00h 24m 00s",
           "uploadedAt": "2026-10-02T03:08:34.760Z"
         }
-      ]
+      ],
+      "isUnlocked": true,
+      "status": "available"
     },
     {
       "id": "apostila-5",
@@ -1352,7 +1360,7 @@
       "title": "Fotografia, Câmera e Iluminação",
       "description": "A estética da luz no cinema, os 4 tipos de iluminação dramática, composição visual, profundidade de campo, lentes e operação consciente de câmeras e celulares.",
       "pagesCount": 6,
-      "pdfUrl": "/uploads/apostilas/apostila-modulo-05-5_-_APOSTILA_CINELAB_-_CURSO_DE_CIN-1790444923789.pdf",
+      "pdfUrl": "/materiais/cinelab-apostila-05.pdf",
       "coverUrl": "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=600&q=80",
       "fileSizeMb": 0.24,
       "sections": [
@@ -1559,7 +1567,9 @@
           "durationLabel": "00h 24m 00s",
           "uploadedAt": "2026-10-02T03:08:34.760Z"
         }
-      ]
+      ],
+      "isUnlocked": true,
+      "status": "available"
     },
     {
       "id": "apostila-6",
@@ -1567,8 +1577,8 @@
       "number": 6,
       "title": "Som e Trilha Sonora",
       "description": "Captação de som direto no set, microfones direcionais e lapela, ruídos de sala (room tone), camadas de desenho sonoro (foley, efeitos e trilha) e legislação de áudio.",
-      "pagesCount": 6,
-      "pdfUrl": "/uploads/apostilas/apostila-modulo-06-6_-_APOSTILA_CINELAB_-_CURSO_DE_CIN-1790444940830.pdf",
+      "pagesCount": 4,
+      "pdfUrl": "/materiais/cinelab-apostila-06.pdf",
       "coverUrl": "https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=600&q=80",
       "fileSizeMb": 0.24,
       "sections": [
@@ -1654,7 +1664,7 @@
           "explanation": "Exato! A acústica da locação e os objetos de cena (calçados, portas, móveis) impactam diretamente a clareza e a pureza do diálogo gravado no set."
         }
       ],
-      "totalPages": 6,
+      "totalPages": 4,
       "quiz": [
         {
           "id": "quiz-6-1",
@@ -1753,7 +1763,9 @@
           "durationLabel": "00h 24m 00s",
           "uploadedAt": "2026-10-02T03:08:34.760Z"
         }
-      ]
+      ],
+      "isUnlocked": true,
+      "status": "available"
     },
     {
       "id": "apostila-7",
@@ -1761,8 +1773,8 @@
       "number": 7,
       "title": "Montagem e Pós-Produção",
       "description": "A teoria e prática da montagem, organização e nomenclatura de mídias, sincronização, continuidades, cortes rítmicos, elipses e finalização.",
-      "pagesCount": 6,
-      "pdfUrl": "/uploads/apostilas/apostila-modulo-07-7_-_APOSTILA_CINELAB_-_CURSO_DE_CIN-1790444954059.pdf",
+      "pagesCount": 4,
+      "pdfUrl": "/materiais/cinelab-apostila-07.pdf",
       "coverUrl": "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=600&q=80",
       "fileSizeMb": 0.24,
       "sections": [
@@ -1848,7 +1860,7 @@
           "explanation": "Exato! O Picture Lock congela os cortes da narrativa, permitindo que a pós-produção de áudio, cor e efeitos visuais trabalhe com timecodes definitivos."
         }
       ],
-      "totalPages": 6,
+      "totalPages": 4,
       "quiz": [
         {
           "id": "quiz-7-1",
@@ -1947,7 +1959,9 @@
           "durationLabel": "00h 24m 00s",
           "uploadedAt": "2026-10-02T03:08:34.760Z"
         }
-      ]
+      ],
+      "isUnlocked": true,
+      "status": "available"
     },
     {
       "id": "apostila-8",
@@ -1955,8 +1969,8 @@
       "number": 8,
       "title": "Produção Executiva e Planejamento",
       "description": "A engenharia da realização cinematográfica: formação de equipes de set, ordem do dia profissional, orçamentação ética, autorizações e planos de contingência.",
-      "pagesCount": 6,
-      "pdfUrl": "/uploads/apostilas/apostila-modulo-08-8_-_APOSTILA_CINELAB_-_CURSO_DE_CIN-1790444965967.pdf",
+      "pagesCount": 4,
+      "pdfUrl": "/materiais/cinelab-apostila-08.pdf",
       "coverUrl": "https://images.unsplash.com/photo-1535016120720-40c646be5580?auto=format&fit=crop&w=600&q=80",
       "fileSizeMb": 0.23,
       "sections": [
@@ -2042,7 +2056,7 @@
           "explanation": "Exato! A autorização de imagem é documento jurídico indispensável na cadeia de direitos (chain of title) de qualquer obra audiovisual."
         }
       ],
-      "totalPages": 6,
+      "totalPages": 4,
       "quiz": [
         {
           "id": "quiz-8-1",
@@ -2141,7 +2155,9 @@
           "durationLabel": "00h 24m 00s",
           "uploadedAt": "2026-10-02T03:08:34.760Z"
         }
-      ]
+      ],
+      "isUnlocked": true,
+      "status": "available"
     },
     {
       "id": "apostila-9",
@@ -2149,8 +2165,8 @@
       "number": 9,
       "title": "Distribuição, Festivais e Mercado Audiovisual",
       "description": "O ciclo de vida do curta-metragem após a finalização: montagem do press-kit, loglines atraentes, stills de alta resolução, trailer/teaser e inscrições no circuito de festivais.",
-      "pagesCount": 6,
-      "pdfUrl": "/uploads/apostilas/apostila-modulo-09-9_-_APOSTILA_CINELAB_-_CURSO_DE_CIN-1790444983525.pdf",
+      "pagesCount": 4,
+      "pdfUrl": "/materiais/cinelab-apostila-09.pdf",
       "coverUrl": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=600&q=80",
       "fileSizeMb": 0.25,
       "sections": [
@@ -2236,7 +2252,7 @@
           "explanation": "Exato! O agente de vendas representa a obra comercialmente em mercados internacionais (como Cannes Marché du Film e EFM Berlim), buscando compradores territoriais."
         }
       ],
-      "totalPages": 6,
+      "totalPages": 4,
       "quiz": [
         {
           "id": "quiz-9-1",
@@ -2335,7 +2351,9 @@
           "durationLabel": "00h 24m 00s",
           "uploadedAt": "2026-10-02T03:08:34.760Z"
         }
-      ]
+      ],
+      "isUnlocked": true,
+      "status": "available"
     },
     {
       "id": "apostila-10",
@@ -2343,8 +2361,8 @@
       "number": 10,
       "title": "Projeto Final: Realização de Curta-Metragem & Mostra Independente",
       "description": "A consolidação de todas as etapas: o guia passo a passo para a realização do seu curta de 1 a 5 minutos, do roteiro à entrega final, autoavaliação e certificação profissional.",
-      "pagesCount": 6,
-      "pdfUrl": "/uploads/apostilas/apostila-modulo-010-10_-_APOSTILA_CINELAB_-_CURSO_DE_CI-1790444998123.pdf",
+      "pagesCount": 4,
+      "pdfUrl": "/materiais/cinelab-apostila-10.pdf",
       "coverUrl": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=600&q=80",
       "fileSizeMb": 0.24,
       "sections": [
@@ -2430,7 +2448,7 @@
           "explanation": "Exato! A regra 3-2-1 é o protocolo universal de segurança de dados (DIT) que protege o filme contra perdas catastróficas de diárias."
         }
       ],
-      "totalPages": 6,
+      "totalPages": 4,
       "quiz": [
         {
           "id": "quiz-10-1",
@@ -2529,7 +2547,9 @@
           "durationLabel": "00h 24m 00s",
           "uploadedAt": "2026-10-02T03:08:34.760Z"
         }
-      ]
+      ],
+      "isUnlocked": true,
+      "status": "available"
     }
   ],
   "bonusApostilas": [
@@ -2539,83 +2559,17 @@
       "code": "BÔNUS 01",
       "title": "Glossário Completo de Planos",
       "subtitle": "Guia Permanente de Consulta Técnica e Decupagem Cinematográfica",
-      "description": "Guia permanente de consulta técnica para decupagem cinematográfica, escalas de planos e movimentos de câmera.",
       "summary": "Guia permanente de consulta técnica para decupagem cinematográfica, escalas de planos e movimentos de câmera.",
+      "description": "Guia permanente de consulta técnica para decupagem cinematográfica, escalas de planos e movimentos de câmera.",
       "pagesCount": 30,
       "totalPages": 30,
       "pdfUrl": "/materiais/cinelab-bonus-01-glossario-planos.pdf",
       "coverUrl": "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=600&q=80",
-      "unlockedByDefault": false,
+      "unlockedByDefault": true,
       "requiredModule": 3,
+      "isUnlocked": true,
+      "status": "available",
       "fileSizeMb": 0.35,
-      "notes": "Liberado automaticamente a partir da Etapa 03 (junto com a Apostila 03). Acesso permanente mesmo após a conclusão do curso.",
-      "termsGlossary": [
-        {
-          "term": "Grande Plano Geral (GPG)",
-          "definition": "Enquadramento de escala máxima onde o cenário domina amplamente a presença humana.",
-          "application": "Estabelece a pequenez do homem diante da natureza ou o desamparo em cidades monumentais."
-        },
-        {
-          "term": "Plano Geral (PG)",
-          "definition": "Enquadra o sujeito de corpo inteiro dos pés à cabeça, com espaço ao redor.",
-          "application": "Apresenta a postura física do personagem e situa as ações no ambiente imediato."
-        },
-        {
-          "term": "Plano Americano (PA)",
-          "definition": "Corte efetuado na linha dos joelhos até o topo da cabeça.",
-          "application": "Equilíbrio ideal entre movimento de corpo, gesticulação e diálogos em grupo."
-        },
-        {
-          "term": "Plano Médio (PM)",
-          "definition": "Enquadra da cintura para cima.",
-          "application": "O plano padrão para conversas cotidianas, entrevistas e relações interpessoais."
-        },
-        {
-          "term": "Primeiro Plano (PP / Close-Up)",
-          "definition": "Corte dos ombros ou peito para cima, preenchendo a tela com o rosto.",
-          "application": "Intensidade dramática máxima, revelação de emoções íntimas e foco absoluto na reação."
-        },
-        {
-          "term": "Plano Detalhe (PD)",
-          "definition": "Isolamento de um objeto ou parte anatômica específica (um anel, uma arma, uma lágrima).",
-          "application": "Direciona a atenção do público para uma pista essencial que define os rumos da trama."
-        },
-        {
-          "term": "Plongée (Ângulo Superior / Picado)",
-          "definition": "Câmera posicionada acima do sujeito apontando para baixo.",
-          "application": "Confere sensação de fragilidade, submissão, inferioridade ou observação distante."
-        },
-        {
-          "term": "Contra-Plongée (Ângulo Inferior / Contrapicado)",
-          "definition": "Câmera posicionada abaixo do sujeito apontando para cima.",
-          "application": "Enobrece o personagem, confere autoridade, ameaça, grandiosidade ou poder heroico."
-        },
-        {
-          "term": "Ângulo Holandês (Dutch Angle / Tilted)",
-          "definition": "Câmera inclinada lateralmente no eixo horizontal.",
-          "application": "Gera desorientação psicológica, delírio, embriaguez, perigo iminente ou loucura."
-        },
-        {
-          "term": "Travelling",
-          "definition": "Câmera em deslocamento físico sobre trilhos, rodas ou estabilizador.",
-          "application": "Acompanha o personagem em caminhada ou explora a profundidade do espaço em movimento suave."
-        },
-        {
-          "term": "Panorâmica (Pan)",
-          "definition": "Movimento horizontal de rotação da câmera sobre o próprio eixo do tripé.",
-          "application": "Varre o horizonte ou conecta dois personagens sem necessidade de corte."
-        },
-        {
-          "term": "Plano-Sequência",
-          "definition": "Uma cena inteira ou sequência complexa filmada em tomada única contínua sem nenhum corte.",
-          "application": "Preserva a veracidade do tempo real e cria imersão visceral para o espectador."
-        },
-        {
-          "term": "Eixo de 180 Graus",
-          "definition": "Linha imaginária entre dois interlocutores que a câmera não deve cruzar.",
-          "application": "Garante a continuidade espacial da linha do olhar entre os personagens no campo e contracampo."
-        }
-      ],
       "extraVideos": [
         {
           "id": "ev-bonus-01-1",
@@ -2655,78 +2609,17 @@
       "code": "BÔNUS 02",
       "title": "Glossário Completo de Roteiro",
       "subtitle": "Guia Permanente de Consulta Dramatúrgica e Estruturação de Histórias",
-      "description": "Guia permanente de consulta dramatúrgica: da criação de premissa, storyline e sinopse à escaleta e roteiro final.",
       "summary": "Guia permanente de consulta dramatúrgica: da criação de premissa, storyline e sinopse à escaleta e roteiro final.",
+      "description": "Guia permanente de consulta dramatúrgica: da criação de premissa, storyline e sinopse à escaleta e roteiro final.",
       "pagesCount": 29,
       "totalPages": 29,
       "pdfUrl": "/materiais/cinelab-bonus-02-glossario-roteiro.pdf",
       "coverUrl": "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=600&q=80",
-      "unlockedByDefault": false,
+      "unlockedByDefault": true,
       "requiredModule": 3,
+      "isUnlocked": true,
+      "status": "available",
       "fileSizeMb": 0.38,
-      "notes": "Liberado automaticamente a partir da Etapa 03 (junto com a Apostila 03). Acesso permanente mesmo após a conclusão do curso.",
-      "termsGlossary": [
-        {
-          "term": "Premissa / Ideia Central",
-          "definition": "A proposição fundamental que impulsiona a narrativa: e se acontecesse X?",
-          "application": "O ponto de partida para qualquer desenvolvimento criativo autoral."
-        },
-        {
-          "term": "Storyline",
-          "definition": "A síntese de até 5 linhas contendo: apresentação, conflito detonador e desfecho básico.",
-          "application": "Utilizado para avaliar rapidamente se a ideia possui sustentação dramática."
-        },
-        {
-          "term": "Logline",
-          "definition": "Frase de impacto de 1 a 2 linhas com protagonista, gancho, antagonismo e urgência.",
-          "application": "Cartão de visitas para venda de projetos a produtoras, canais e inscrições."
-        },
-        {
-          "term": "Sinopse",
-          "definition": "A história do filme resumida de 1 a 2 páginas, escrita no presente do indicativo.",
-          "application": "Exigência fundamental de editais públicos (Ancine, Paulo Gustavo, Aldir Blanc) e festivais."
-        },
-        {
-          "term": "Argumento / Tratamento",
-          "definition": "A narrativa cinematográfica em prosa fluida, descrevendo visualmente o filme do início ao fim.",
-          "application": "Etapa anterior aos diálogos, onde se testa o ritmo e a consistência visual das ações."
-        },
-        {
-          "term": "Outline / Beat Sheet",
-          "definition": "Lista dos principais acontecimentos emocionais e batidas dramáticas em sequência.",
-          "application": "Garante que os arcos de tensão não enfraqueçam entre o início e o clímax."
-        },
-        {
-          "term": "Escaleta",
-          "definition": "A lista numerada de todas as cenas do filme com cabeçalho e resumo estrito da ação.",
-          "application": "O mapa operacional que antecede a redação final do roteiro."
-        },
-        {
-          "term": "Incidente Incitante (Catalisador)",
-          "definition": "O acontecimento que quebra a normalidade inicial da vida do protagonista.",
-          "application": "Força o personagem a sair de sua zona de conforto e iniciar sua jornada dramática."
-        },
-        {
-          "term": "Ponto de Virada (Plot Point 1 & 2)",
-          "definition": "Reviravolta estrutural irreversível que empurra a história para um novo ato.",
-          "application": "Muda o rumo das ações e eleva o nível das apostas emocionais do protagonista."
-        },
-        {
-          "term": "Ponto Central (Midpoint)",
-          "definition": "Momento na metade exata da história onde o conflito passa de passivo a ativo.",
-          "application": "O protagonista deixa de apenas reagir e passa a tomar decisões conscientes que precipitam o clímax."
-        },
-        {
-          "term": "Clímax",
-          "definition": "O ponto de tensão máxima onde o conflito central é resolvido de forma definitiva.",
-          "application": "A cena decisiva que responde se o protagonista alcança ou não seu objetivo primordial."
-        },
-        {
-          "term": "Subtexto",
-          "definition": "A intenção real, não dita expressamente, que transparece por trás dos diálogos e ações.",
-          "application": "Confere humanidade, sofisticação e mistério psicológico aos personagens em cena."
-        }
-      ],
       "extraVideos": [
         {
           "id": "ev-bonus-02-1",
@@ -2766,48 +2659,17 @@
       "code": "BÔNUS 03",
       "title": "Método de Análise Fílmica em 6 Camadas",
       "subtitle": "Guia Completo de Análise Crítica e Decupagem de Obras Audiovisuais",
-      "description": "A metodologia analítica do CINELAB em 6 camadas: Narrativa, Personagem, Espaço, Imagem (Fotografia), Som e Montagem para dissecar qualquer obra audiovisual como realizador.",
       "summary": "A metodologia analítica do CINELAB em 6 camadas: Narrativa, Personagem, Espaço, Imagem (Fotografia), Som e Montagem para dissecar qualquer obra audiovisual como realizador.",
+      "description": "A metodologia analítica do CINELAB em 6 camadas: Narrativa, Personagem, Espaço, Imagem (Fotografia), Som e Montagem para dissecar qualquer obra audiovisual como realizador.",
       "pagesCount": 27,
       "totalPages": 27,
       "pdfUrl": "/materiais/cinelab-bonus-03-analise-filmica.pdf",
       "coverUrl": "https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&w=600&q=80",
-      "unlockedByDefault": false,
+      "unlockedByDefault": true,
       "requiredModule": 6,
+      "isUnlocked": true,
+      "status": "available",
       "fileSizeMb": 0.42,
-      "notes": "Apostila bônus especial com o método completo das 6 camadas para análise técnica e crítica de cinema liberada a partir do Módulo 06.",
-      "termsGlossary": [
-        {
-          "term": "Camada Narrativa",
-          "definition": "Investiga o esqueleto dramatúrgico: premissa, arcos de transformação, catalisador, clímax e resolução.",
-          "application": "Identifica como o roteiro sustenta a tensão dramática e o envolvimento do espectador."
-        },
-        {
-          "term": "Camada de Personagem",
-          "definition": "Examina a motivação consciente versus necessidade inconsciente, contradições e arcos evolutivos.",
-          "application": "Permite criar figuras humanas verossímeis que geram empatia ou repulsa calculada."
-        },
-        {
-          "term": "Camada Espacial",
-          "definition": "Analisa cenografia, arquitetura, enclausuramento ou amplitude dos espaços físicos.",
-          "application": "O espaço deixa de ser fundo passivo e atua como extensão psicológica dos personagens."
-        },
-        {
-          "term": "Camada de Imagem",
-          "definition": "Paleta cromática, razão de contraste, atmosfera de luz, distância focal e enquadramentos.",
-          "application": "Define a assinatura visual da obra e orienta as emoções subconscientes do público."
-        },
-        {
-          "term": "Camada Sonora",
-          "definition": "Equilíbrio entre sons diegéticos (ruídos de set), música e o uso expressivo do silêncio.",
-          "application": "Cria imersão tridimensional e ancora a percepção emocional da cena."
-        },
-        {
-          "term": "Camada de Montagem",
-          "definition": "Cadência métrica dos cortes, transições, associações intelectuais e elipses de tempo.",
-          "application": "Dita a pulsação do filme, o ritmo respiratório do espectador e a montagem das ideias."
-        }
-      ],
       "extraVideos": [
         {
           "id": "ev-bonus-03-1",

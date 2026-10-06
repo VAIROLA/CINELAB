@@ -451,7 +451,7 @@ Audiovisual é o amálgama indissociável entre luz projetada e ondas sonoras. A
     description:
       'A trajetória histórica do cinema mundial e brasileiro: do cinema silencioso às vanguardas europeias, cinema clássico e contemporâneo.',
     pagesCount: 52,
-    pdfUrl: '/uploads/apostilas/apostila-modulo-02-2-APOSTILA_HISTORIA_DO_CINEMA_-_COM-1790652429759.pdf',
+    pdfUrl: '/materiais/cinelab-apostila-02.pdf',
     coverUrl: 'https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&w=600&q=80',
     fileSizeMb: 2.17,
     extraVideos: [

@@ -585,7 +585,7 @@ export function getFolderHierarchy(lang: Language): CourseFolderCategory[] {
                 : `Fascicule Technique 0${modNum} — CINELAB Officiel.pdf`,
               type: 'pdf',
               sizeOrPages: (() => {
-                const realPages = modNum === 1 ? 8 : (modNum === 5 ? 6 : 4);
+                const realPages = modNum === 1 ? 8 : (modNum === 2 ? 52 : (modNum === 5 ? 6 : 4));
                 return isPt ? `${realPages} páginas • Leitor Canvas` : (isEs ? `${realPages} páginas • Lector Canvas` : (isFr ? `${realPages} pages • Lecteur Canvas` : `${realPages} pages • Canvas Reader`));
               })(),
               description: isPt
@@ -619,27 +619,27 @@ export function getFolderHierarchy(lang: Language): CourseFolderCategory[] {
             : isEs
             ? 'Guías de consulta permanente para el rodaje y el cuarto de guionistas'
             : 'Guides de consultation permanente sur le plateau de tournage et d\'écriture',
-          itemCount: 2,
+          itemCount: 3,
           iconType: 'book',
           files: [
             {
               id: 'file-bonus-1',
               name: isPt
-                ? 'Bônus 01: Glossário Ilustrado de Escala de Planos & Lentes.pdf'
+                ? 'Bônus 01: Glossário Completo de Planos.pdf'
                 : isEn
-                ? 'Bonus 01: Illustrated Glossary of Shot Scales & Cinema Lenses.pdf'
+                ? 'Bonus 01: Complete Shot Glossary.pdf'
                 : isEs
-                ? 'Bônus 01: Glosario Ilustrado de Escala de Planos y Lentes.pdf'
-                : 'Bonus 01: Glossaire Illustré des Échelles de Plans & Objectifs.pdf',
+                ? 'Bônus 01: Glosario Completo de Planos.pdf'
+                : 'Bonus 01: Glossaire Complet des Plans.pdf',
               type: 'pdf',
               sizeOrPages: isPt ? '30 páginas • Leitor Canvas' : '30 pages • Canvas Reader',
               description: isPt
-                ? 'Catálogo visual de planos, ângulos e distâncias focais para consulta do diretor e diretor de fotografia.'
+                ? 'Guia permanente de consulta técnica para decupagem cinematográfica, escalas de planos e movimentos de câmera.'
                 : isEn
-                ? 'Visual catalog of shot sizes, angles, and focal lengths for director and DP reference.'
+                ? 'Permanent technical reference guide for cinematic coverage, shot scales, and camera movements.'
                 : isEs
-                ? 'Catálogo visual de planos, ángulos y distancias focales para directores y DF.'
-                : 'Catalogue visuel des plans, angles et focales pour réalisateurs et chefs opérateurs.',
+                ? 'Guía permanente de consulta técnica para decupaje cinematográfico, escalas de planos y movimientos de cámara.'
+                : 'Guide permanent de consultation technique pour le découpage, les échelles de plans et mouvements de caméra.',
               status: 'available',
               moduleId: 1,
               actionRoute: 'apostilas',
@@ -648,25 +648,48 @@ export function getFolderHierarchy(lang: Language): CourseFolderCategory[] {
             {
               id: 'file-bonus-2',
               name: isPt
-                ? 'Bônus 02: Guia Prático de Roteiro e Estrutura Dramática.pdf'
+                ? 'Bônus 02: Glossário Completo de Roteiro.pdf'
                 : isEn
-                ? 'Bonus 02: Screenwriting Practical Guide & Dramatic Architecture.pdf'
+                ? 'Bonus 02: Complete Screenwriting Glossary.pdf'
                 : isEs
-                ? 'Bônus 02: Guía Práctica de Guion y Arquitectura Dramática.pdf'
-                : 'Bonus 02: Guide Pratique d\'Écriture et Architecture Dramatique.pdf',
+                ? 'Bônus 02: Glosario Completo de Guion.pdf'
+                : 'Bonus 02: Glossaire Complet du Scénario.pdf',
               type: 'pdf',
               sizeOrPages: isPt ? '29 páginas • Leitor Canvas' : '29 pages • Canvas Reader',
               description: isPt
-                ? 'Modelos profissionais de escaleta, arcos de transformação, diálogos cinematográficos e formatação padrão.'
+                ? 'Guia permanente de consulta dramatúrgica: da criação de premissa, storyline e sinopse à escaleta e roteiro final.'
                 : isEn
-                ? 'Industry standard beat sheets, character arcs, cinematic dialogue tips, and script formatting.'
+                ? 'Permanent dramaturgical reference: from premise, storyline, and synopsis to beat sheet and final script.'
                 : isEs
-                ? 'Plantillas profesionales de escaleta, arcos de personajes y formateo internacional de guion.'
-                : 'Modèles professionnels de séquencier, arcs dramatiques et mise en page standard de scénario.',
+                ? 'Guía permanente de consulta dramatúrgica: desde la premisa, storyline y sinopsis hasta la escaleta y guion final.'
+                : 'Guide permanent de dramaturgie : de l\'idée, storyline et synopsis au séquencier et scénario final.',
               status: 'available',
               moduleId: 3,
               actionRoute: 'apostilas',
               actionParam: { openBonusId: 'bonus-2' },
+            },
+            {
+              id: 'file-bonus-3',
+              name: isPt
+                ? 'Bônus 03: Método de Análise Fílmica em 6 Camadas.pdf'
+                : isEn
+                ? 'Bonus 03: 6-Layer Film Analysis Method.pdf'
+                : isEs
+                ? 'Bônus 03: Método de Análisis Fílmico en 6 Capas.pdf'
+                : 'Bonus 03: Méthode d\'Analyse Filmique en 6 Couches.pdf',
+              type: 'pdf',
+              sizeOrPages: isPt ? '27 páginas • Leitor Canvas' : '27 pages • Canvas Reader',
+              description: isPt
+                ? 'A metodologia analítica do CINELAB em 6 camadas: Narrativa, Personagem, Espaço, Imagem (Fotografia), Som e Montagem para dissecar qualquer obra audiovisual como realizador.'
+                : isEn
+                ? 'The CINELAB 6-layer analytical framework: Narrative, Character, Space, Visuals (Cinematography), Sound, and Editing to dissect any film like a director.'
+                : isEs
+                ? 'La metodología analítica del CINELAB en 6 capas: Narrativa, Personaje, Espacio, Imagen (Fotografía), Sonido y Montaje para desglosar cualquier obra cinematográfica.'
+                : 'La méthodologie analytique du CINELAB en 6 couches : Récit, Personnage, Espace, Image, Son et Montage pour disséquer toute œuvre audiovisuelle como um réalisateur.',
+              status: 'available',
+              moduleId: 6,
+              actionRoute: 'apostilas',
+              actionParam: { openBonusId: 'bonus-3' },
             },
           ],
         },
