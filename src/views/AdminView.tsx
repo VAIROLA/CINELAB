@@ -831,7 +831,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
 
       {/* Navigation Tabs */}
       {/* NOTICE: The user explicitly requested: "ANTES DE ALUNOS MATRICULADOS NO PAINEL ADMIN EU ACRESCETARIA VISITANTES (PÚBLICOS), PARA CONTROLE DE VISITAS." */}
-      <div className="flex items-center gap-2 overflow-x-auto border-b border-neutral-800 pb-2 text-xs font-medium">
+      <div className="flex flex-wrap items-center gap-2.5 border-b border-neutral-800 pb-4 text-xs font-medium">
         <button
           onClick={() => setActiveTab('stats')}
           className={`px-4 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap ${
@@ -907,10 +907,10 @@ export const AdminView: React.FC<AdminViewProps> = ({
 
         <button
           onClick={() => setActiveTab('settings')}
-          className={`px-4 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap ${
+          className={`px-4 py-2.5 rounded-xl transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap font-bold ${
             activeTab === 'settings'
-              ? 'bg-amber-500 text-neutral-950 font-bold shadow-md shadow-amber-500/20'
-              : 'text-neutral-400 hover:text-white hover:bg-neutral-800'
+              ? 'bg-amber-500 text-neutral-950 shadow-lg shadow-amber-500/30'
+              : 'bg-amber-500/10 text-amber-300 border border-amber-500/40 hover:bg-amber-500/20 hover:text-white'
           }`}
         >
           <Settings className="w-4 h-4 text-amber-400" />
