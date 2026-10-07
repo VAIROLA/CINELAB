@@ -431,8 +431,8 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
             durationDays: m?.durationDays,
             durationLabel: m?.durationLabel,
             evalLeadDays: m?.evalLeadDays,
-            totalPages: a.totalPages || a.pagesCount || ((a.moduleId || a.number) === 1 ? 8 : ((a.moduleId || a.number) === 5 ? 6 : 4)),
-            pagesCount: a.pagesCount || a.totalPages || ((a.moduleId || a.number) === 1 ? 8 : ((a.moduleId || a.number) === 5 ? 6 : 4)),
+            totalPages: a.totalPages || a.pagesCount || ((a.moduleId || a.number) === 1 ? 8 : ((a.moduleId || a.number) === 2 ? 52 : ((a.moduleId || a.number) === 3 ? 7 : 6))),
+            pagesCount: a.pagesCount || a.totalPages || ((a.moduleId || a.number) === 1 ? 8 : ((a.moduleId || a.number) === 2 ? 52 : ((a.moduleId || a.number) === 3 ? 7 : 6))),
             pdfUrl: a.pdfUrl || canonicalPdf,
           };
         });
@@ -448,7 +448,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
             title: `Apostila 0${num} – ${m.title}`,
             subtitle: m.subtitle,
             summary: m.summary,
-            totalPages: num === 1 ? 8 : (num === 5 ? 6 : 4),
+            totalPages: num === 1 ? 8 : (num === 2 ? 52 : (num === 3 ? 7 : 6)),
             pdfUrl: `/materiais/cinelab-apostila-${num < 10 ? '0' + num : num}.pdf`,
             isUnlocked: true,
             unlockDate: m.startDate || '',

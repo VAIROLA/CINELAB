@@ -967,7 +967,7 @@
       "number": 3,
       "title": "Roteiro e Criação de Personagens",
       "description": "Da ideia embrionária à cena formatada: storyline, logline, sinopse, escaleta, criação de personagens tridimensionais, diálogos e subtexto dramático.",
-      "pagesCount": 4,
+      "pagesCount": 7,
       "pdfUrl": "/materiais/cinelab-apostila-03.pdf",
       "coverUrl": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=600&q=80",
       "fileSizeMb": 0.28,
@@ -1054,7 +1054,7 @@
           "explanation": "Exato! A falha trágica interna humaniza o protagonista, gerando identificação e empatia com a plateia ao longo de seu arco de evolução."
         }
       ],
-      "totalPages": 4,
+      "totalPages": 7,
       "quiz": [
         {
           "id": "quiz-3-1",
@@ -1163,7 +1163,7 @@
       "number": 4,
       "title": "Direção e Direção de Atores",
       "description": "O papel de liderança do diretor, decupagem com intenção estética, ensaios práticos, marcação cênica (blocking) e a condução ética e respeitosa do elenco.",
-      "pagesCount": 4,
+      "pagesCount": 6,
       "pdfUrl": "/materiais/cinelab-apostila-04.pdf",
       "coverUrl": "https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?auto=format&fit=crop&w=600&q=80",
       "fileSizeMb": 0.24,
@@ -1250,7 +1250,7 @@
           "explanation": "Exato! O subtexto vive no corpo, no olhar e no silêncio entre as falas, onde a tensão emocional genuína é transmitida ao espectador."
         }
       ],
-      "totalPages": 4,
+      "totalPages": 6,
       "quiz": [
         {
           "id": "quiz-4-1",
@@ -1577,7 +1577,7 @@
       "number": 6,
       "title": "Som e Trilha Sonora",
       "description": "Captação de som direto no set, microfones direcionais e lapela, ruídos de sala (room tone), camadas de desenho sonoro (foley, efeitos e trilha) e legislação de áudio.",
-      "pagesCount": 4,
+      "pagesCount": 6,
       "pdfUrl": "/materiais/cinelab-apostila-06.pdf",
       "coverUrl": "https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=600&q=80",
       "fileSizeMb": 0.24,
@@ -1664,7 +1664,7 @@
           "explanation": "Exato! A acústica da locação e os objetos de cena (calçados, portas, móveis) impactam diretamente a clareza e a pureza do diálogo gravado no set."
         }
       ],
-      "totalPages": 4,
+      "totalPages": 6,
       "quiz": [
         {
           "id": "quiz-6-1",
@@ -1773,7 +1773,7 @@
       "number": 7,
       "title": "Montagem e Pós-Produção",
       "description": "A teoria e prática da montagem, organização e nomenclatura de mídias, sincronização, continuidades, cortes rítmicos, elipses e finalização.",
-      "pagesCount": 4,
+      "pagesCount": 6,
       "pdfUrl": "/materiais/cinelab-apostila-07.pdf",
       "coverUrl": "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=600&q=80",
       "fileSizeMb": 0.24,
@@ -1860,7 +1860,7 @@
           "explanation": "Exato! O Picture Lock congela os cortes da narrativa, permitindo que a pós-produção de áudio, cor e efeitos visuais trabalhe com timecodes definitivos."
         }
       ],
-      "totalPages": 4,
+      "totalPages": 6,
       "quiz": [
         {
           "id": "quiz-7-1",
@@ -1969,7 +1969,7 @@
       "number": 8,
       "title": "Produção Executiva e Planejamento",
       "description": "A engenharia da realização cinematográfica: formação de equipes de set, ordem do dia profissional, orçamentação ética, autorizações e planos de contingência.",
-      "pagesCount": 4,
+      "pagesCount": 6,
       "pdfUrl": "/materiais/cinelab-apostila-08.pdf",
       "coverUrl": "https://images.unsplash.com/photo-1535016120720-40c646be5580?auto=format&fit=crop&w=600&q=80",
       "fileSizeMb": 0.23,
@@ -2056,7 +2056,7 @@
           "explanation": "Exato! A autorização de imagem é documento jurídico indispensável na cadeia de direitos (chain of title) de qualquer obra audiovisual."
         }
       ],
-      "totalPages": 4,
+      "totalPages": 6,
       "quiz": [
         {
           "id": "quiz-8-1",
@@ -2165,7 +2165,7 @@
       "number": 9,
       "title": "Distribuição, Festivais e Mercado Audiovisual",
       "description": "O ciclo de vida do curta-metragem após a finalização: montagem do press-kit, loglines atraentes, stills de alta resolução, trailer/teaser e inscrições no circuito de festivais.",
-      "pagesCount": 4,
+      "pagesCount": 6,
       "pdfUrl": "/materiais/cinelab-apostila-09.pdf",
       "coverUrl": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=600&q=80",
       "fileSizeMb": 0.25,
@@ -2252,7 +2252,7 @@
           "explanation": "Exato! O agente de vendas representa a obra comercialmente em mercados internacionais (como Cannes Marché du Film e EFM Berlim), buscando compradores territoriais."
         }
       ],
-      "totalPages": 4,
+      "totalPages": 6,
       "quiz": [
         {
           "id": "quiz-9-1",
@@ -2361,7 +2361,7 @@
       "number": 10,
       "title": "Projeto Final: Realização de Curta-Metragem & Mostra Independente",
       "description": "A consolidação de todas as etapas: o guia passo a passo para a realização do seu curta de 1 a 5 minutos, do roteiro à entrega final, autoavaliação e certificação profissional.",
-      "pagesCount": 4,
+      "pagesCount": 6,
       "pdfUrl": "/materiais/cinelab-apostila-10.pdf",
       "coverUrl": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=600&q=80",
       "fileSizeMb": 0.24,
@@ -2448,7 +2448,7 @@
           "explanation": "Exato! A regra 3-2-1 é o protocolo universal de segurança de dados (DIT) que protege o filme contra perdas catastróficas de diárias."
         }
       ],
-      "totalPages": 4,
+      "totalPages": 6,
       "quiz": [
         {
           "id": "quiz-10-1",
@@ -2569,7 +2569,7 @@
       "requiredModule": 3,
       "isUnlocked": true,
       "status": "available",
-      "fileSizeMb": 0.35,
+      "fileSizeMb": 0.34,
       "extraVideos": [
         {
           "id": "ev-bonus-01-1",
@@ -2601,7 +2601,9 @@
           "durationSeconds": 0,
           "totalDurationSeconds": 1440
         }
-      ]
+      ],
+      "startDate": "1970-01-01T00:00:00.000Z",
+      "unlockDate": "1970-01-01T00:00:00.000Z"
     },
     {
       "id": "bonus-02",
@@ -2619,7 +2621,7 @@
       "requiredModule": 3,
       "isUnlocked": true,
       "status": "available",
-      "fileSizeMb": 0.38,
+      "fileSizeMb": 0.37,
       "extraVideos": [
         {
           "id": "ev-bonus-02-1",
@@ -2651,7 +2653,9 @@
           "durationSeconds": 0,
           "totalDurationSeconds": 1440
         }
-      ]
+      ],
+      "startDate": "1970-01-01T00:00:00.000Z",
+      "unlockDate": "1970-01-01T00:00:00.000Z"
     },
     {
       "id": "bonus-03",
@@ -2669,7 +2673,7 @@
       "requiredModule": 6,
       "isUnlocked": true,
       "status": "available",
-      "fileSizeMb": 0.42,
+      "fileSizeMb": 0.41,
       "extraVideos": [
         {
           "id": "ev-bonus-03-1",
@@ -2701,7 +2705,9 @@
           "durationSeconds": 0,
           "totalDurationSeconds": 1440
         }
-      ]
+      ],
+      "startDate": "1970-01-01T00:00:00.000Z",
+      "unlockDate": "1970-01-01T00:00:00.000Z"
     }
   ],
   "activities": [

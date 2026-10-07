@@ -285,7 +285,7 @@ export function getMergedApostilasWithVault(serverApostilas: Apostila[]): Aposti
     const local = vault[key];
     const pad = modNum < 10 ? '0' + modNum : '' + modNum;
     const canonicalPdf = `/materiais/cinelab-apostila-${pad}.pdf`;
-    const canonicalPages = modNum === 1 ? 8 : (modNum === 2 ? 52 : (modNum === 5 ? 6 : 4));
+    const canonicalPages = modNum === 1 ? 8 : (modNum === 2 ? 52 : (modNum === 3 ? 7 : 6));
 
     if (!local) {
       return {

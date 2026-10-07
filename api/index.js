@@ -6159,7 +6159,7 @@ async function initSupabaseData() {
             if (cloudState.certificates) db.certificates = cloudState.certificates;
             if (cloudState.settings) db.settings = { ...db.settings, ...cloudState.settings };
             if (cloudState.apostilas && Array.isArray(cloudState.apostilas)) {
-              const realPages = { 1: 8, 2: 52, 3: 4, 4: 4, 5: 6, 6: 4, 7: 4, 8: 4, 9: 4, 10: 4 };
+              const realPages = { 1: 8, 2: 52, 3: 7, 4: 6, 5: 6, 6: 6, 7: 6, 8: 6, 9: 6, 10: 6 };
               db.apostilas = cloudState.apostilas.map(a => {
                 const mod = a.moduleId || a.number || 1;
                 const pad = mod < 10 ? '0' + mod : '' + mod;
@@ -7350,7 +7350,7 @@ app.get("/api/course/public-info", (req, res) => {
       const canonicalPdf = `/materiais/cinelab-apostila-${pad}.pdf`;
       const isCorrupted = !a.pdfUrl || a.pdfUrl.includes('1790444') || a.pdfUrl.includes('1790684') || a.pdfUrl.includes('1790652');
       const safePdf = isCorrupted ? canonicalPdf : a.pdfUrl;
-      const realPages = { 1: 8, 2: 52, 3: 4, 4: 4, 5: 6, 6: 4, 7: 4, 8: 4, 9: 4, 10: 4 };
+      const realPages = { 1: 8, 2: 52, 3: 7, 4: 6, 5: 6, 6: 6, 7: 6, 8: 6, 9: 6, 10: 6 };
       const pages = realPages[mod] || a.pagesCount || a.totalPages || 4;
       return {
         id: a.id,
@@ -7960,7 +7960,7 @@ app.get("/api/student/apostilas", requireActiveStudent, (req, res) => {
   const { enrollment, user } = authenticate(req);
   const db2 = getDb();
   const isAdmin = user?.role === "admin";
-  const realPages = { 1: 8, 2: 52, 3: 4, 4: 4, 5: 6, 6: 4, 7: 4, 8: 4, 9: 4, 10: 4 };
+  const realPages = { 1: 8, 2: 52, 3: 7, 4: 6, 5: 6, 6: 6, 7: 6, 8: 6, 9: 6, 10: 6 };
   const apostilas = db2.apostilas.map((a) => {
     const mod = a.moduleId || a.number || 1;
     const pad = mod < 10 ? '0' + mod : '' + mod;
