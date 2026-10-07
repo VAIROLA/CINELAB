@@ -123,7 +123,10 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
 }) => {
   const { language } = useLanguage();
   const tUi = EXTRA_VIDEOS_UI_TRANSLATIONS[language] || EXTRA_VIDEOS_UI_TRANSLATIONS.pt;
-  const modNumber = (apostila as any)?.moduleId || (apostila as any)?.number || 1;
+  const isBonusApos = (apostila as any)?.id?.startsWith('bonus') || (apostila as any)?.code?.includes('BÔNUS') || (apostila as any)?.isBonus;
+  const rawNum = (apostila as any)?.number || (apostila as any)?.moduleId || (apostila as any)?.id || 1;
+  const parsedNum = parseInt(String(rawNum).replace(/\D/g, ''), 10) || 1;
+  const modKey = isBonusApos ? `bonus-${parsedNum > 990 ? parsedNum - 990 : parsedNum}` : `mod-${parsedNum}`;
   const [uploadingSlot, setUploadingSlot] = useState<number | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [editingSlot, setEditingSlot] = useState<number | null>(null);
@@ -266,8 +269,8 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
         : resolvedSlot2.professorNotes,
   };
 
-  const translatedSlot1 = getTranslatedExtraVideo(slot1, language, modNumber, 1);
-  const translatedSlot2 = getTranslatedExtraVideo(slot2, language, modNumber, 2);
+  const translatedSlot1 = getTranslatedExtraVideo(slot1, language, modKey, 1);
+  const translatedSlot2 = getTranslatedExtraVideo(slot2, language, modKey, 2);
   const extraVideos = [translatedSlot1, translatedSlot2];
 
   // Blindagem de mesclagem para impedir que salvar Slot 1 apague Slot 2 e vice-versa
@@ -677,16 +680,15 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
               </span>
               <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-red-950/80 text-red-300 border border-red-500/40 flex items-center gap-1">
                 <Youtube className="w-3 h-3 text-red-400" />
-                YOUTUBE &amp; ARQUIVO MP4
+                {language === 'en' ? 'YOUTUBE & MP4' : language === 'es' ? 'YOUTUBE Y MP4' : language === 'fr' ? 'YOUTUBE ET MP4' : 'YOUTUBE & ARQUIVO MP4'}
               </span>
               <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30 flex items-center gap-1">
                 <Timer className="w-3 h-3 text-amber-400" />
-                HORA, MINUTOS E SEGUNDOS
+                {language === 'en' ? 'HOURS, MIN & SEC' : language === 'es' ? 'HORAS, MIN Y SEG' : language === 'fr' ? 'HEURES, MIN ET SEC' : 'HORAS, MINUTOS E SEGUNDOS'}
               </span>
             </div>
             <p className="text-xs text-neutral-300 mt-0.5 leading-relaxed">
-              Material didático complementar em vídeo com análises práticas, decupagens e{' '}
-              <strong className="text-amber-300">Orientações do Professor Tony de Luc editáveis</strong>.
+              {tUi.sectionSubtitle}
             </p>
           </div>
         </div>
@@ -695,7 +697,7 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
           <div className="flex items-center gap-2 flex-wrap">
             <div className="flex items-center gap-2 font-mono text-[11px] text-amber-400 bg-neutral-950/80 px-3 py-1.5 rounded-xl border border-neutral-800 shrink-0">
               <Shield className="w-3.5 h-3.5" />
-              <span>Modo Administrador: Edição Livre</span>
+              <span>{language === 'en' ? 'Admin Mode: Full Edit' : language === 'es' ? 'Modo Administrador: Edición Libre' : language === 'fr' ? 'Mode Administrateur: Édition Libre' : 'Modo Administrador: Edição Livre'}</span>
             </div>
           </div>
         )}
@@ -765,13 +767,13 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
                         )}
                         <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950/60 text-emerald-300 border border-emerald-800 flex items-center gap-1">
                           <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                          PRONTO
+                          {tUi.readyBadge}
                         </span>
                       </>
                     ) : (
                       <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-neutral-900 text-neutral-400 border border-neutral-800 flex items-center gap-1">
                         <Clock className="w-3 h-3 text-neutral-400" />
-                        EM ABERTO
+                        {tUi.pendingBadge}
                       </span>
                     )}
 
@@ -964,7 +966,7 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
                           title="Clique para trocar ou escrever a Orientação do Professor Tony de Luc"
                         >
                           <Edit3 className="w-3 h-3 text-amber-400" />
-                          <span>Trocar / Escrever Texto</span>
+                          <span>{tUi.quickEditBtn}</span>
                         </button>
                       )}
                     </div>
@@ -972,9 +974,7 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
                     <p className="whitespace-pre-line text-neutral-200 text-xs leading-relaxed">
                       {video.professorNotes || (
                         <span className="italic text-neutral-400">
-                          {isAdmin
-                            ? 'Nenhuma orientação cadastrada ainda. Clique no botão "Trocar / Escrever Texto" acima para escrever as orientações para os alunos.'
-                            : 'Assista a esta aula complementar e aplique os conceitos em seu projeto cinematográfico.'}
+                          {isAdmin ? tUi.emptyNotesAdmin : tUi.emptyNotesStudent}
                         </span>
                       )}
                     </p>

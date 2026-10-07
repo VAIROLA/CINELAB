@@ -283,8 +283,47 @@ export const ProtectedPdfViewer: React.FC<ProtectedPdfViewerProps> = ({
             'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
         }
 
+        const isBonusDoc = Boolean(
+          (url && url.toLowerCase().includes('bonus')) ||
+          (title && (
+            title.toLowerCase().includes('bônus') ||
+            title.toLowerCase().includes('bonus') ||
+            title.toLowerCase().includes('glossário') ||
+            title.toLowerCase().includes('glossario') ||
+            title.toLowerCase().includes('análise fílmica') ||
+            title.toLowerCase().includes('analise filmica')
+          )) ||
+          (moduleId && moduleId > 990)
+        );
+
+        const getBonusNumber = () => {
+          if (url && (url.includes('bonus-03') || url.includes('bonus-3') || url.includes('analise-filmica'))) return 3;
+          if (url && (url.includes('bonus-02') || url.includes('bonus-2') || url.includes('glossario-roteiro'))) return 2;
+          if (url && (url.includes('bonus-01') || url.includes('bonus-1') || url.includes('glossario-planos'))) return 1;
+          if (title && (title.includes('03') || title.includes('3') || title.toLowerCase().includes('camadas') || title.toLowerCase().includes('análise'))) return 3;
+          if (title && (title.includes('02') || title.includes('2') || title.toLowerCase().includes('roteiro'))) return 2;
+          if (title && (title.includes('01') || title.includes('1') || title.toLowerCase().includes('planos'))) return 1;
+          if (moduleId === 993 || moduleId === 3) return 3;
+          if (moduleId === 992 || moduleId === 2) return 2;
+          return 1;
+        };
+
         const origin = typeof window !== 'undefined' ? window.location.origin : '';
-        const effectiveUrl = url || (moduleId ? `/materiais/cinelab-apostila-${moduleId < 10 ? '0' + moduleId : moduleId}.pdf` : '');
+        let effectiveUrl = url;
+        if (!effectiveUrl) {
+          if (isBonusDoc) {
+            const bNum = getBonusNumber();
+            effectiveUrl = bNum === 1
+              ? '/materiais/cinelab-bonus-01-glossario-planos.pdf'
+              : bNum === 2
+              ? '/materiais/cinelab-bonus-02-glossario-roteiro.pdf'
+              : '/materiais/cinelab-bonus-03-analise-filmica.pdf';
+          } else if (moduleId) {
+            effectiveUrl = `/materiais/cinelab-apostila-${moduleId < 10 ? '0' + moduleId : moduleId}.pdf`;
+          } else {
+            effectiveUrl = '';
+          }
+        }
 
         currentLoadingTask = pdfjs.getDocument({
           url: effectiveUrl,
@@ -314,38 +353,11 @@ export const ProtectedPdfViewer: React.FC<ProtectedPdfViewerProps> = ({
 
         console.warn('Alerta ao carregar PDF no canvas:', err?.message || err);
 
-        // Resilient fallback 1: If regular module PDF failed, try canonical materiais PDF
-        if (isMounted && moduleId) {
+        // Resilient fallback 1: If bonus document failed, try canonical materiais bonus PDF
+        if (isMounted && isBonusDoc) {
           try {
             const origin = typeof window !== 'undefined' ? window.location.origin : '';
-            const canonicalUrl = `/materiais/cinelab-apostila-${moduleId < 10 ? '0' + moduleId : moduleId}.pdf`;
-            if (url !== canonicalUrl) {
-              const pdfjs = await ensurePdfJsLoaded();
-              currentLoadingTask = pdfjs.getDocument({
-                url: canonicalUrl,
-                cMapUrl: `${origin}/cmaps/`,
-                cMapPacked: true,
-                standardFontDataUrl: `${origin}/standard_fonts/`,
-                withCredentials: false,
-              });
-              const fallbackDoc = await currentLoadingTask.promise;
-              if (isMounted) {
-                setPdfDoc(fallbackDoc);
-                setNumPages(fallbackDoc.numPages);
-                setLoading(false);
-                return;
-              }
-            }
-          } catch (fallbackErr) {
-            console.warn('Fallback do módulo falhou:', fallbackErr);
-          }
-        }
-
-        // Resilient fallback 2: If bonus PDF failed, try canonical materiais bonus PDF
-        if (isMounted && url && (url.includes('bonus-01') || url.includes('bonus-02') || url.includes('bonus-03') || url.includes('bonus'))) {
-          try {
-            const origin = typeof window !== 'undefined' ? window.location.origin : '';
-            const bonusNum = url.includes('bonus-03') || url.includes('bonus-3') ? 3 : url.includes('bonus-02') || url.includes('bonus-2') ? 2 : 1;
+            const bonusNum = getBonusNumber();
             const canonicalBonusUrl =
               bonusNum === 1
                 ? '/materiais/cinelab-bonus-01-glossario-planos.pdf'
@@ -372,6 +384,33 @@ export const ProtectedPdfViewer: React.FC<ProtectedPdfViewerProps> = ({
             }
           } catch (fallbackBonusErr) {
             console.warn('Fallback da apostila bônus falhou:', fallbackBonusErr);
+          }
+        }
+
+        // Resilient fallback 2: If regular module PDF failed, try canonical materiais PDF (ONLY for non-bonus)
+        if (isMounted && !isBonusDoc && moduleId) {
+          try {
+            const origin = typeof window !== 'undefined' ? window.location.origin : '';
+            const canonicalUrl = `/materiais/cinelab-apostila-${moduleId < 10 ? '0' + moduleId : moduleId}.pdf`;
+            if (url !== canonicalUrl) {
+              const pdfjs = await ensurePdfJsLoaded();
+              currentLoadingTask = pdfjs.getDocument({
+                url: canonicalUrl,
+                cMapUrl: `${origin}/cmaps/`,
+                cMapPacked: true,
+                standardFontDataUrl: `${origin}/standard_fonts/`,
+                withCredentials: false,
+              });
+              const fallbackDoc = await currentLoadingTask.promise;
+              if (isMounted) {
+                setPdfDoc(fallbackDoc);
+                setNumPages(fallbackDoc.numPages);
+                setLoading(false);
+                return;
+              }
+            }
+          } catch (fallbackErr) {
+            console.warn('Fallback do módulo falhou:', fallbackErr);
           }
         }
 

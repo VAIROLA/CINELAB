@@ -7389,8 +7389,8 @@ app.get("/api/course/public-info", (req, res) => {
         requiredModule,
         isUnlocked: true,
         status: "available",
-        unlockDate: timeline.startDate.toISOString(),
-        startDate: timeline.startDate.toISOString(),
+        unlockDate: new Date(0).toISOString(),
+        startDate: new Date(0).toISOString(),
         pagesCount: safePages,
         totalPages: safePages,
         pdfUrl: safePdf,
@@ -8020,8 +8020,8 @@ app.get("/api/student/bonus-apostilas", requireActiveStudent, (req, res) => {
       title: b.title && !b.title.includes('Pitching') ? b.title : canonicalTitle,
       isUnlocked: true,
       status: "available",
-      unlockDate: timeline.startDate.toISOString(),
-      startDate: timeline.startDate.toISOString(),
+      unlockDate: new Date(0).toISOString(),
+      startDate: new Date(0).toISOString(),
       requiredModule,
       summary: b.summary || b.description,
       description: b.description || b.summary,
@@ -8033,7 +8033,7 @@ app.get("/api/student/bonus-apostilas", requireActiveStudent, (req, res) => {
         ...v,
         isUnlocked: true,
         videoUrl: v.videoUrl,
-        unlockDate: timeline.startDate.toISOString()
+        unlockDate: new Date(0).toISOString()
       }))
     };
   });

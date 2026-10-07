@@ -1,4 +1,7 @@
-import { Language } from './translations.js';
+import fs from 'fs';
+import path from 'path';
+
+const content = `import { Language } from './translations.js';
 import { ApostilaExtraVideo } from '../types/index.js';
 
 export interface ExtraVideosUiTranslations {
@@ -46,7 +49,7 @@ export const EXTRA_VIDEOS_UI_TRANSLATIONS: Record<Language, ExtraVideosUiTransla
     integratedPlayer: 'Reprodutor Integrado',
     cinemaQuality: '1080p Cinema HD',
     professorNotesTitle: 'ORIENTAÇÃO DO PROFESSOR & ORIENTAÇÃO AO ALUNO:',
-    emptySlotTitle: (slot: number) => `Local 0${slot} reservado para Vídeo Extra`,
+    emptySlotTitle: (slot: number) => \`Local 0\${slot} reservado para Vídeo Extra\`,
     emptySlotAdminDesc: 'Escolha se deseja subir um arquivo de vídeo do seu computador (MP4) ou vincular diretamente pelo YouTube.',
     emptySlotStudentDesc: 'Este vídeo de estudo extra está sendo preparado pela equipe pedagógica do CINELAB.',
     uploadFileBtn: 'Subir Arquivo (MP4)',
@@ -78,7 +81,7 @@ export const EXTRA_VIDEOS_UI_TRANSLATIONS: Record<Language, ExtraVideosUiTransla
     integratedPlayer: 'Integrated Player',
     cinemaQuality: '1080p Cinema HD',
     professorNotesTitle: "PROFESSOR'S GUIDANCE & STUDENT STUDY GUIDELINES:",
-    emptySlotTitle: (slot: number) => `Slot 0${slot} reserved for Extra Study Video`,
+    emptySlotTitle: (slot: number) => \`Slot 0\${slot} reserved for Extra Study Video\`,
     emptySlotAdminDesc: 'Choose whether to upload a video file from your computer (MP4) or link directly via YouTube.',
     emptySlotStudentDesc: 'This extra study video is being prepared by the CINELAB pedagogical team.',
     uploadFileBtn: 'Upload Video File (MP4)',
@@ -110,7 +113,7 @@ export const EXTRA_VIDEOS_UI_TRANSLATIONS: Record<Language, ExtraVideosUiTransla
     integratedPlayer: 'Reproductor Integrado',
     cinemaQuality: '1080p Cinema HD',
     professorNotesTitle: 'ORIENTACIÓN DEL PROFESOR Y GUÍA PARA EL ESTUDIANTE:',
-    emptySlotTitle: (slot: number) => `Espacio 0${slot} reservado para Video Extra`,
+    emptySlotTitle: (slot: number) => \`Espacio 0\${slot} reservado para Video Extra\`,
     emptySlotAdminDesc: 'Elige si deseas subir un archivo de video desde tu computadora (MP4) o enlazarlo desde YouTube.',
     emptySlotStudentDesc: 'Este video de estudio complementario está siendo preparado por el equipo pedagógico de CINELAB.',
     uploadFileBtn: 'Subir Archivo (MP4)',
@@ -142,7 +145,7 @@ export const EXTRA_VIDEOS_UI_TRANSLATIONS: Record<Language, ExtraVideosUiTransla
     integratedPlayer: 'Lecteur Intégré',
     cinemaQuality: '1080p Cinéma HD',
     professorNotesTitle: "CONSEILS DU PROFESSEUR & GUIDE D'ÉTUDE POUR L'ÉLÈVE :",
-    emptySlotTitle: (slot: number) => `Emplacement 0${slot} réservé pour Vidéo Extra`,
+    emptySlotTitle: (slot: number) => \`Emplacement 0\${slot} réservé pour Vidéo Extra\`,
     emptySlotAdminDesc: 'Choisissez de téléverser un fichier vidéo (MP4) ou de lier directement via YouTube.',
     emptySlotStudentDesc: "Cette vidéo d'étude est en cours de préparation par l'équipe pédagogique de CINELAB.",
     uploadFileBtn: 'Téléverser un Fichier (MP4)',
@@ -176,48 +179,48 @@ export const CANONICAL_VIDEOS_TRANSLATIONS: Record<string, Record<Language, [Can
     pt: [
       {
         title: "Vídeo Extra 01: Introdução ao Cinema e à Linguagem Audiovisual - O GAROTO - M- 1.1",
-        description: "Observe principalmente:\nexpressão • gestos • atuação • enquadramento • montagem • ritmo • emoção • narrativa visual.",
+        description: "Observe principalmente:\\nexpressão • gestos • atuação • enquadramento • montagem • ritmo • emoção • narrativa visual.",
         professorNotes: "“Ao assistir a este filme, tente compreender a história antes mesmo de pensar nas palavras. Observe o rosto, o corpo e os gestos dos personagens. Perceba como Chaplin utiliza enquadramentos, montagem, ritmo e atuação para fazer você rir, se emocionar e compreender o que está acontecendo. Preste atenção também à relação entre os personagens e à maneira como cada imagem ajuda a contar a história. Pergunte a si mesmo: eu conseguiria entender essa cena apenas olhando para as imagens?”",
       },
       {
         title: "Vídeo Extra 02: Introdução ao Cinema e à Linguagem Audiovisual - TEMPOS MODERNOS - M- 1.2",
-        description: "observe:\nmovimento • montagem • ritmo • som • máquinas • enquadramento • atuação • significado.\n\n“Durante esta atividade, você não deve assistir aos filmes apenas como espectador. Assista como um futuro cineasta. Observe onde a câmera está, o que aparece dentro do quadro, como os personagens se movimentam, como as imagens são organizadas e como cada escolha interfere naquilo que você sente e compreende. Não existe apenas uma maneira de assistir a um filme. Existe a maneira de quem assiste e existe a maneira de quem aprende a fazer cinema.”",
+        description: "observe:\\nmovimento • montagem • ritmo • som • máquinas • enquadramento • atuação • significado.\\n\\n“Durante esta atividade, você não deve assistir aos filmes apenas como espectador. Assista como um futuro cineasta. Observe onde a câmera está, o que aparece dentro do quadro, como os personagens se movimentam, como as imagens são organizadas e como cada escolha interfere naquilo que você sente e compreende. Não existe apenas uma maneira de assistir a um filme. Existe a maneira de quem assiste e existe a maneira de quem aprende a fazer cinema.”",
         professorNotes: "“Neste filme, observe como o cinema utiliza imagens, movimentos, montagem e sons para transmitir ideias. Preste atenção às máquinas, aos trabalhadores, aos movimentos repetitivos e ao ritmo da fábrica. Observe como Chaplin coloca o personagem dentro desse ambiente e como a montagem cria relações entre pessoas e máquinas. Perceba também quando o som aparece e qual função ele exerce. Pergunte a si mesmo: como uma imagem pode transmitir uma ideia sem precisar explicá-la através de palavras?”",
       },
     ],
     en: [
       {
         title: "Extra Video 01: Introduction to Cinema & Visual Language - THE KID - M- 1.1",
-        description: "Focus on:\nfacial expression • gesture • physical performance • shot framing • editing • rhythm • emotional beats • visual narrative.",
+        description: "Focus on:\\nfacial expression • gesture • physical performance • shot framing • editing • rhythm • emotional beats • visual narrative.",
         professorNotes: "“When watching this film, try to understand the narrative before even considering dialogue. Observe the face, body language, and gestures of the characters. Notice how Chaplin harnesses framing, cutting rhythm, and acting to make you laugh, feel moved, and comprehend every story beat. Ask yourself: could I follow this scene purely through images?”",
       },
       {
         title: "Extra Video 02: Introduction to Cinema & Visual Language - MODERN TIMES - M- 1.2",
-        description: "Observe:\nmovement • editing montage • tempo • sound design • machines • framing • performance • subtext.\n\n“Watch not merely as an audience member, but as a future director. Note camera placement, what enters the frame, and how visual choices sculpt what you feel.”",
+        description: "Observe:\\nmovement • editing montage • tempo • sound design • machines • framing • performance • subtext.\\n\\n“Watch not merely as an audience member, but as a future director. Note camera placement, what enters the frame, and how visual choices sculpt what you feel.”",
         professorNotes: "“In this film, examine how cinema synthesizes imagery, physical motion, editing, and sound to transmit sociopolitical themes. Notice the machines, factory cadence, and how montage correlates people to gears. How does an image articulate an idea without requiring verbal exposition?”",
       },
     ],
     es: [
       {
         title: "Video Extra 01: Introducción al Cine y Lenguaje Audiovisual - EL CHICO (THE KID) - M- 1.1",
-        description: "Observa principalmente:\nexpresión facial • gestos • actuación física • encuadre • montaje • ritmo • emoción • narrativa visual.",
+        description: "Observa principalmente:\\nexpresión facial • gestos • actuación física • encuadre • montaje • ritmo • emoción • narrativa visual.",
         professorNotes: "“Al ver esta película, intenta comprender la historia antes de pensar en las palabras. Observa el rostro, cuerpo y gestos de los personajes. Nota cómo Chaplin utiliza el encuadre, el ritmo de corte y la actuación para conmover y hacer reír. Pregúntate: ¿podría entender esta escena únicamente a través de las imágenes?”",
       },
       {
         title: "Video Extra 02: Introducción al Cine y Lenguaje Audiovisual - TIEMPOS MODERNOS - M- 1.2",
-        description: "Observa:\nmovimiento • montaje • ritmo • sonido • máquinas • encuadre • actuación • significado.\n\n“Mira esta obra como un futuro realizador cinematográfico. Presta atención a dónde se sitúa la cámara y cómo cada encuadre construye la narrativa visual.”",
+        description: "Observa:\\nmovimiento • montaje • ritmo • sonido • máquinas • encuadre • actuación • significado.\\n\\n“Mira esta obra como un futuro realizador cinematográfico. Presta atención a dónde se sitúa la cámara y cómo cada encuadre construye la narrativa visual.”",
         professorNotes: "“En esta película, observa cómo el cine utiliza imágenes, movimiento, montaje y sonido para transmitir ideas complejas. Presta atención al ritmo fabril y a la relación dialéctica entre el individuo y las máquinas.”",
       },
     ],
     fr: [
       {
         title: "Vidéo Extra 01 : Introduction au Cinéma & Langage Audiovisuel - LE GAMIN (THE KID) - M- 1.1",
-        description: "Observez principalement :\nexpression du visage • gestuelle • jeu d'acteur • cadrage • découpage • rythme • émotion • narration visuelle.",
+        description: "Observez principalement :\\nexpression du visage • gestuelle • jeu d'acteur • cadrage • découpage • rythme • émotion • narration visuelle.",
         professorNotes: "« En regardant ce film, essayez de comprendre le récit par la pure puissance de l'image. Observez comment Chaplin orchestre le cadre, le découpage et le rythme pour faire rire et émouvoir sans un mot parlé. »",
       },
       {
         title: "Vidéo Extra 02 : Introduction au Cinéma & Langage Audiovisuel - LES TEMPS MODERNES - M- 1.2",
-        description: "Observez :\nmouvement • montage • cadence • conception sonore • machines • cadrage • mise en scène • sens dramatique.",
+        description: "Observez :\\nmouvement • montage • cadence • conception sonore • machines • cadrage • mise en scène • sens dramatique.",
         professorNotes: "« Regardez ce chef-d'œuvre avec l'œil d'un réalisateur. Observez comment la caméra et le montage créent des analogies percutantes entre les ouvriers et les engrenages. »",
       },
     ],
@@ -226,48 +229,48 @@ export const CANONICAL_VIDEOS_TRANSLATIONS: Record<string, Record<Language, [Can
     pt: [
       {
         title: "Vídeo Extra 01: História do Cinema - CHEGADA DO TREM - M- 2.1",
-        description: "Observe principalmente:\ncâmera • espaço • profundidade • movimento • realidade • enquadramento • pessoas • acontecimento.",
+        description: "Observe principalmente:\\ncâmera • espaço • profundidade • movimento • realidade • enquadramento • pessoas • acontecimento.",
         professorNotes: "“Ao assistir a este filme, não procure uma história complexa. Observe o acontecimento. Perceba como a câmera registra um momento real, como as pessoas entram e saem do enquadramento e como o movimento da locomotiva cria uma sensação de profundidade e dinamismo. Lembre-se de que, para os primeiros espectadores, aquilo não era apenas uma imagem: era a própria ilusão da vida em movimento projetada em uma tela.”",
       },
       {
         title: "Vídeo Extra 02: História do Cinema - LE VOYAGE DANS LA LUNE - M- 2.2",
-        description: "Observe:\nA cenografia • atuação • figurino • ilusionismo • efeitos especiais • cortes • fantasia • composição visual.",
+        description: "Observe:\\nA cenografia • atuação • figurino • ilusionismo • efeitos especiais • cortes • fantasia • composição visual.",
         professorNotes: "“Neste filme, observe como Georges Méliès transforma elementos do teatro, do ilusionismo e da fantasia em linguagem cinematográfica. Preste atenção ao uso dos truques de câmera, como a parada de cena para criar desaparecimentos e transformações. Perceba como cada plano funciona como um pequeno palco onde tudo é desenhado, pintado e coreografado para estimular a imaginação do espectador.”",
       },
     ],
     en: [
       {
         title: "Extra Video 01: Film History - ARRIVAL OF A TRAIN (LUMIÈRE) - M- 2.1",
-        description: "Focus on:\ncamera placement • dynamic depth • diagonal motion • historical reality • spatial framing • public reaction.",
+        description: "Focus on:\\ncamera placement • dynamic depth • diagonal motion • historical reality • spatial framing • public reaction.",
         professorNotes: "“Do not seek an intricate story; witness the visual miracle. Observe the diagonal composition creating dramatic perspective, and realize that for 1895 spectators, this was the breathtaking birth of moving life upon a screen.”",
       },
       {
         title: "Extra Video 02: Film History - A TRIP TO THE MOON (MÉLIÈS) - M- 2.2",
-        description: "Focus on:\nscenography • theatrical acting • stage illusionism • in-camera stop substitution • sci-fi fantasy • visual composition.",
+        description: "Focus on:\\nscenography • theatrical acting • stage illusionism • in-camera stop substitution • sci-fi fantasy • visual composition.",
         professorNotes: "“Witness how Georges Méliès forged cinematic artifice. Observe jump cuts used as magical transformations and hand-painted sets structured as theatrical prosceniums to ignite audience wonder.”",
       },
     ],
     es: [
       {
         title: "Video Extra 01: Historia del Cine - LA LLEGADA DEL TREN - M- 2.1",
-        description: "Observa:\ncámara • profundidad espacial • perspectiva diagonal • realidad documental • composición del plano.",
+        description: "Observa:\\ncámara • profundidad espacial • perspectiva diagonal • realidad documental • composición del plano.",
         professorNotes: "“Observa el acontecimiento histórico: la locomotora avanzando en diagonal hacia el objetivo creando una sobrecogedora ilusión de profundidad y realismo para los primeros espectadores.”",
       },
       {
         title: "Video Extra 02: Historia del Cine - VIAJE A LA LUNA - M- 2.2",
-        description: "Observa:\nescenografía fantástica • trucos de cámara • cortes por sustitución • puesta en escena mágica • ilusión teatral.",
+        description: "Observa:\\nescenografía fantástica • trucos de cámara • cortes por sustitución • puesta en escena mágica • ilusión teatral.",
         professorNotes: "“Observa cómo Méliès inventa los efectos especiales cinematográficos mediante trucos de parada y decorados pintados a mano, transformando la realidad en fábula poética.”",
       },
     ],
     fr: [
       {
         title: "Vidéo Extra 01 : Histoire du Cinéma - L'ARRIVÉE D'UN TRAIN EN GARE (LUMIÈRE) - M- 2.1",
-        description: "Observez :\ncadrage diagonal • profondeur de champ • restitution du réel • mouvement cinétique • saisissement du public.",
+        description: "Observez :\\ncadrage diagonal • profondeur de champ • restitution du réel • mouvement cinétique • saisissement du public.",
         professorNotes: "« Observez la diagonale saisissante de la locomotive entrant en gare : c'est l'acte de naissance du cinéma où l'illusion du mouvement bouleverse à jamais la perception humaine. »",
       },
       {
         title: "Vidéo Extra 02 : Histoire du Cinéma - LE VOYAGE DANS LA LUNE (MÉLIÈS) - M- 2.2",
-        description: "Observez :\ndécors peints • trucages par substitution • féerie • illusionnisme théâtral • poésie visuelle.",
+        description: "Observez :\\ndécors peints • trucages par substitution • féerie • illusionnisme théâtral • poésie visuelle.",
         professorNotes: "« Admirez comment Georges Méliès invente la fiction et le trucage par arrêt de caméra. Chaque tableau est un chef-d'œuvre de prestidigitation au service du rêve cosmique. »",
       },
     ],
@@ -276,48 +279,48 @@ export const CANONICAL_VIDEOS_TRANSLATIONS: Record<string, Record<Language, [Can
     pt: [
       {
         title: "Vídeo Extra 01: Roteiro e Criação de Personagens - À PROCURA DA FELICIDADE - M- 3.1",
-        description: "Observe:\nProtagonista • Objetivo urgente • Conflito crescente • Ponto de virada • Subtexto • Motivação inabalável.",
+        description: "Observe:\\nProtagonista • Objetivo urgente • Conflito crescente • Ponto de virada • Subtexto • Motivação inabalável.",
         professorNotes: "“Ao assistir a este filme, observe como o roteirista constrói um objetivo claro e urgente, e como os obstáculos se tornam cada vez mais difíceis. O bom roteiro nasce dessa tensão constante entre o desejo do personagem e as dificuldades da realidade.”",
       },
       {
         title: "Vídeo Extra 02: Roteiro e Criação de Personagens - O AUTO DA COMPADECIDA - M- 3.2",
-        description: "Observe:\nDualidade dos personagens • Esperteza e humor • Ritmo dos diálogos • Cultura regional • Conflitos dramáticos.",
+        description: "Observe:\\nDualidade dos personagens • Esperteza e humor • Ritmo dos diálogos • Cultura regional • Conflitos dramáticos.",
         professorNotes: "“Ao assistir a este filme, observe como os personagens são construídos através de suas dualidades. João Grilo e Chicó possuem personalidades muito diferentes, mas complementares através da inteligência e do diálogo.”",
       },
     ],
     en: [
       {
         title: "Extra Video 01: Screenwriting & Character Arc - THE PURSUIT OF HAPPYNESS - M- 3.1",
-        description: "Focus on:\nProtagonist motivation • Urgent dramatic goal • Escalating obstacles • Major plot turns • Subtext & emotional vulnerability.",
+        description: "Focus on:\\nProtagonist motivation • Urgent dramatic goal • Escalating obstacles • Major plot turns • Subtext & emotional vulnerability.",
         professorNotes: "“Examine how the script constructs high emotional stakes and an uncompromising ticking clock. Dramatic tension emerges directly from the friction between character ambition and harsh circumstance.”",
       },
       {
         title: "Extra Video 02: Screenwriting & Character Arc - A DOG'S WILL - M- 3.2",
-        description: "Focus on:\nProtagonist duality • Witty survival instincts • Dialogue rhythm • Regional storytelling • Dramatic reversals.",
+        description: "Focus on:\\nProtagonist duality • Witty survival instincts • Dialogue rhythm • Regional storytelling • Dramatic reversals.",
         professorNotes: "“Observe how complementary dual protagonists bring rhythm to comedic and dramatic beats. Notice how dialogue serves as both a weapon and a survival mechanism.”",
       },
     ],
     es: [
       {
         title: "Video Extra 01: Guion y Construcción de Personajes - EN BUSCA DE LA FELICIDAD - M- 3.1",
-        description: "Observa:\nObjetivo urgente del protagonista • Obstáculos crecientes • Puntos de giro • Subtexto • Motivación inquebrantable.",
+        description: "Observa:\\nObjetivo urgente del protagonista • Obstáculos crecientes • Puntos de giro • Subtexto • Motivación inquebrantable.",
         professorNotes: "“Analiza cómo el guionista mantiene la tensión dramática a través de metas claras y apuestas emocionales al límite.”",
       },
       {
         title: "Video Extra 02: Guion y Construcción de Personajes - EL AUTO DE LA COMPADECIDA - M- 3.2",
-        description: "Observa:\nDualidad de personajes complementarios • Picardía y humor • Ritmo del diálogo • Arquetipos y cultura popular.",
+        description: "Observa:\\nDualidad de personajes complementarios • Picardía y humor • Ritmo del diálogo • Arquetipos y cultura popular.",
         professorNotes: "“Presta atención a la fuerza del diálogo y cómo cada personaje revela su visión del mundo a través de su propia cadencia verbal.”",
       },
     ],
     fr: [
       {
         title: "Vidéo Extra 01 : Scénario & Écriture de Personnages - À LA RECHERCHE DU BONHEUR - M- 3.1",
-        description: "Observez :\nObjectif vital du protagoniste • Escalade des obstacles • Points de bascule • Sous-texte • Résilience dramatique.",
+        description: "Observez :\\nObjectif vital du protagoniste • Escalade des obstacles • Points de bascule • Sous-texte • Résilience dramatique.",
         professorNotes: "« Observez la construction d'une trajectoire dramatique tendue où chaque victoire est immédiatement menacée par un nouvel enjeu réaliste. »",
       },
       {
         title: "Vidéo Extra 02 : Scénario & Écriture de Personnages - LE TESTAMENT DU CHIEN - M- 3.2",
-        description: "Observez :\nDualité clownesque et dramaturgie populaire • Rythme des répliques • Débrouillardise • Ironie et satire sociale.",
+        description: "Observez :\\nDualité clownesque et dramaturgie populaire • Rythme des répliques • Débrouillardise • Ironie et satire sociale.",
         professorNotes: "« Étudiez comment le dialogue devient l'arme principale des personnages pour déjouer les pièges du destin avec verve et truculence. »",
       },
     ],
@@ -835,13 +838,13 @@ export function getTranslatedExtraVideo(
 ): ApostilaExtraVideo {
   if (lang === 'pt') return video;
 
-  let key = typeof modKey === 'string' ? modKey : `mod-${modKey}`;
+  let key = typeof modKey === 'string' ? modKey : \`mod-\${modKey}\`;
   if (!key.startsWith('mod-') && !key.startsWith('bonus-')) {
-    key = `mod-${key}`;
+    key = \`mod-\${key}\`;
   }
 
   const pair = CANONICAL_VIDEOS_TRANSLATIONS[key]?.[lang] ||
-               (key.startsWith('bonus-') ? CANONICAL_VIDEOS_TRANSLATIONS[`mod-${key.replace('bonus-', '')}`]?.[lang] : null);
+               (key.startsWith('bonus-') ? CANONICAL_VIDEOS_TRANSLATIONS[\`mod-\${key.replace('bonus-', '')}\`]?.[lang] : null);
   if (!pair) return video;
 
   const canonTrans = slot === 1 ? pair[0] : pair[1];
@@ -854,3 +857,7 @@ export function getTranslatedExtraVideo(
     professorNotes: canonTrans.professorNotes || video.professorNotes,
   };
 }
+`;
+
+fs.writeFileSync(path.resolve('src/i18n/extraVideosTranslations.ts'), content, 'utf8');
+console.log('✓ Successfully wrote complete src/i18n/extraVideosTranslations.ts');

@@ -182,12 +182,29 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
       setAccessModalOpen(true);
       return;
     }
-    const fullItem = apostilas.find((a) => a.id === item.id || (item.moduleId && a.moduleId === item.moduleId)) ||
-                     bonusApostilas.find((b) => b.id === item.id || (item.number && b.number === item.number)) ||
-                     item;
+    const isBonusItem = (item as any).id?.startsWith('bonus') ||
+                        (item as any).code?.includes('BÔNUS') ||
+                        (item.moduleId && item.moduleId > 990);
 
-    const startMs = fullItem.startDate ? new Date(fullItem.startDate).getTime() : 0;
-    const isLocked = (!fullItem.isUnlocked || (startMs > 0 && effectiveNow < startMs)) && !isAdmin;
+    const fullItem = isBonusItem
+      ? (bonusApostilas.find((b) => b.id === item.id || (item.number && b.number === item.number)) || item)
+      : (apostilas.find((a) => a.id === item.id || (item.moduleId && a.moduleId === item.moduleId)) || item);
+
+    if (isBonusItem) {
+      const bNum = fullItem.number || item.number || 1;
+      const canonicalBonusPdf = bNum === 1
+        ? '/materiais/cinelab-bonus-01-glossario-planos.pdf'
+        : (bNum === 3 ? '/materiais/cinelab-bonus-03-analise-filmica.pdf' : '/materiais/cinelab-bonus-02-glossario-roteiro.pdf');
+      const realBonusPages = bNum === 1 ? 30 : (bNum === 3 ? 27 : 29);
+      fullItem.moduleId = 990 + bNum;
+      fullItem.pdfUrl = canonicalBonusPdf;
+      fullItem.totalPages = realBonusPages;
+      fullItem.pagesCount = realBonusPages;
+      fullItem.isUnlocked = true;
+    }
+
+    const startMs = (!isBonusItem && fullItem.startDate) ? new Date(fullItem.startDate).getTime() : 0;
+    const isLocked = !isBonusItem && (!fullItem.isUnlocked || (startMs > 0 && effectiveNow < startMs)) && !isAdmin;
 
     if (isLocked) {
       alert(`Esta apostila e seus vídeos serão liberados de acordo com o cronograma pedagógico em ${formatDateTime(fullItem.startDate)}.`);
@@ -335,8 +352,12 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
     let active = true;
     setVaultBlobUrl(null);
     if (selectedApostila) {
-      const targetId = selectedApostila.moduleId || selectedApostila.number;
-      getVaultBlobUrl(targetId).then((bUrl) => {
+      const isBonus = (selectedApostila as any).id?.startsWith('bonus') ||
+                      (selectedApostila as any).code?.includes('BÔNUS') ||
+                      (selectedApostila.moduleId && selectedApostila.moduleId > 990);
+      const bNum = selectedApostila.number || (selectedApostila.moduleId ? selectedApostila.moduleId - 990 : 1);
+      const targetId = isBonus ? `bonus-${bNum}` : (selectedApostila.moduleId || selectedApostila.number);
+      getVaultBlobUrl(targetId, isBonus).then((bUrl) => {
         if (active) {
           setVaultBlobUrl(bUrl || null);
         }
@@ -955,35 +976,48 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
           onOpenBonusReader={(bonusId) => {
             const bNum = bonusId.includes('3') ? 3 : bonusId.includes('2') ? 2 : 1;
             const bFound = bonusApostilas.find(b => b.number === bNum);
-            if (bFound) {
-              handleOpenApostila({
-                id: bFound.id,
-                moduleId: 990 + bFound.number,
-                number: bFound.number,
-                title: bFound.title,
-                subtitle: bFound.code || `BÔNUS 0${bFound.number}`,
-                summary: bFound.summary,
-                totalPages: bFound.pagesCount || (bFound.number === 1 ? 30 : bFound.number === 2 ? 29 : 24),
-                pdfUrl: bFound.pdfUrl,
-                contentMarkdown: `# ${bFound.code || `APOSTILA BÔNUS 0${bFound.number}`} – ${bFound.title}\n\n${bFound.summary}`,
-              });
-            }
+            const canonicalPdf = bNum === 1
+              ? '/materiais/cinelab-bonus-01-glossario-planos.pdf'
+              : (bNum === 3 ? '/materiais/cinelab-bonus-03-analise-filmica.pdf' : '/materiais/cinelab-bonus-02-glossario-roteiro.pdf');
+            const canonicalTitle = bNum === 1
+              ? 'Glossário Completo de Planos'
+              : (bNum === 3 ? 'Método de Análise Fílmica em 6 Camadas' : 'Glossário Completo de Roteiro');
+            const pages = bNum === 1 ? 30 : (bNum === 3 ? 27 : 29);
+            handleOpenApostila({
+              id: bFound?.id || `bonus-0${bNum}`,
+              moduleId: 990 + bNum,
+              number: bNum,
+              title: bFound?.title || canonicalTitle,
+              subtitle: bFound?.code || `BÔNUS 0${bNum}`,
+              summary: bFound?.summary || bFound?.description || '',
+              totalPages: pages,
+              pagesCount: pages,
+              pdfUrl: bFound?.pdfUrl || canonicalPdf,
+              contentMarkdown: `# BÔNUS 0${bNum} – ${canonicalTitle}`,
+            }, 'pdf');
           }}
           onOpenBonusApostila={(bonusNum) => {
-            const bFound = bonusApostilas.find(b => b.number === bonusNum);
-            if (bFound) {
-              handleOpenApostila({
-                id: bFound.id,
-                moduleId: 990 + bFound.number,
-                number: bFound.number,
-                title: bFound.title,
-                subtitle: bFound.code || `BÔNUS 0${bFound.number}`,
-                summary: bFound.summary,
-                totalPages: bFound.pagesCount || (bFound.number === 1 ? 30 : bFound.number === 2 ? 29 : 24),
-                pdfUrl: bFound.pdfUrl,
-                contentMarkdown: `# ${bFound.code || `APOSTILA BÔNUS 0${bFound.number}`} – ${bFound.title}\n\n${bFound.summary}`,
-              });
-            }
+            const bNum = bonusNum;
+            const bFound = bonusApostilas.find(b => b.number === bNum);
+            const canonicalPdf = bNum === 1
+              ? '/materiais/cinelab-bonus-01-glossario-planos.pdf'
+              : (bNum === 3 ? '/materiais/cinelab-bonus-03-analise-filmica.pdf' : '/materiais/cinelab-bonus-02-glossario-roteiro.pdf');
+            const canonicalTitle = bNum === 1
+              ? 'Glossário Completo de Planos'
+              : (bNum === 3 ? 'Método de Análise Fílmica em 6 Camadas' : 'Glossário Completo de Roteiro');
+            const pages = bNum === 1 ? 30 : (bNum === 3 ? 27 : 29);
+            handleOpenApostila({
+              id: bFound?.id || `bonus-0${bNum}`,
+              moduleId: 990 + bNum,
+              number: bNum,
+              title: bFound?.title || canonicalTitle,
+              subtitle: bFound?.code || `BÔNUS 0${bNum}`,
+              summary: bFound?.summary || bFound?.description || '',
+              totalPages: pages,
+              pagesCount: pages,
+              pdfUrl: bFound?.pdfUrl || canonicalPdf,
+              contentMarkdown: `# BÔNUS 0${bNum} – ${canonicalTitle}`,
+            }, 'pdf');
           }}
           onOpenTrainingQuiz={(modNum) => {
             const found = apostilas.find(a => (a.moduleId || a.number) === modNum);
@@ -1530,9 +1564,8 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {bonusApostilas.map((b) => {
             const reqMod = b.requiredModule || (b.number === 1 || b.number === 2 ? 3 : 6);
-            const isUnlocked = b.isUnlocked;
-            const unlockMs = b.startDate ? new Date(b.startDate).getTime() : 0;
-            const isWaiting = effectiveNow < unlockMs;
+            const isUnlocked = true;
+            const isWaiting = false;
 
             const bTrans = bonusTranslations[b.number]?.[language] || bonusTranslations[b.number]?.pt;
             const bDisplayTitle = language === 'pt'
@@ -1544,6 +1577,10 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                   : (bTrans?.summary || (b.number === 1 ? 'Guia permanente de consulta técnica para decupagem cinematográfica, escalas de planos e movimentos de câmera.' : b.number === 2 ? 'Guia permanente de consulta dramatúrgica: da criação de premissa, storyline e sinopse à escaleta e roteiro final.' : 'A metodologia analítica do CINELAB em 6 camadas para dissecar qualquer obra audiovisual como realizador.')))
               : (bTrans?.summary || b.summary || b.description);
             const displayPages = (b.pagesCount && b.pagesCount !== 4 && b.pagesCount !== 24 && b.pagesCount !== 35 && b.pagesCount !== 40 && b.pagesCount !== 96 && b.pagesCount !== 104) ? b.pagesCount : (b.number === 1 ? 30 : (b.number === 3 ? 27 : 29));
+            const canonicalBonusPdf = b.number === 1
+              ? '/materiais/cinelab-bonus-01-glossario-planos.pdf'
+              : (b.number === 3 ? '/materiais/cinelab-bonus-03-analise-filmica.pdf' : '/materiais/cinelab-bonus-02-glossario-roteiro.pdf');
+            const safeBonusPdf = (!b.pdfUrl || b.pdfUrl.includes('1790444') || b.pdfUrl.includes('1791222')) ? canonicalBonusPdf : b.pdfUrl;
 
             return (
               <div
@@ -1571,40 +1608,22 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                     {bDisplaySummary}
                   </p>
 
-                  {b.pdfUrl && (
-                    <div className="text-[11px] font-mono text-neutral-400 flex items-center gap-1.5 pt-1">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                      <span className="text-emerald-400 font-semibold">PDF Cadastrado e Disponível</span>
-                    </div>
-                  )}
+                  <div className="text-[11px] font-mono text-neutral-400 flex items-center gap-1.5 pt-1">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                    <span className="text-emerald-400 font-semibold">PDF Cadastrado e Disponível</span>
+                  </div>
                 </div>
 
                 <div className="space-y-3 pt-3 border-t border-neutral-800/80">
-                  {/* Cronômetro para o Bônus */}
-                  {isWaiting && b.startDate ? (
-                    <div className="p-3 rounded-xl bg-neutral-950/80 border border-neutral-800 space-y-2">
-                      <DigitalCountdownDisplay
-                        targetDateIso={b.startDate}
-                        effectiveNow={effectiveNow}
-                        label={cur.bonusUnlockCountLabel(b.number)}
-                        accent="amber"
-                      />
-                      <p className="text-[10px] text-neutral-400 font-mono">
-                        {cur.bonusUnlockReq(reqMod)}
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-between p-2 rounded-lg bg-emerald-950/30 border border-emerald-800/40 text-emerald-300 text-xs font-mono">
-                      <span className="flex items-center gap-1.5 text-[11px]">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> {cur.bonusReleased}
-                      </span>
-                    </div>
-                  )}
+                  <div className="flex items-center justify-between p-2 rounded-lg bg-emerald-950/30 border border-emerald-800/40 text-emerald-300 text-xs font-mono">
+                    <span className="flex items-center gap-1.5 text-[11px]">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> {cur.bonusReleased}
+                    </span>
+                  </div>
 
                   {/* Botões de Ação: Ler Apostila, Vídeos Extras & Subir/Substituir PDF do Bônus */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <button
-                      disabled={(!isUnlocked && isWaiting)}
                       onClick={() => {
                         handleOpenApostila({
                           id: b.id,
@@ -1614,23 +1633,19 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                           subtitle: b.code || `BÔNUS 0${b.number}`,
                           summary: bDisplaySummary,
                           totalPages: displayPages,
-                          pdfUrl: b.pdfUrl,
+                          pagesCount: displayPages,
+                          pdfUrl: safeBonusPdf,
                           extraVideos: b.extraVideos,
                           contentMarkdown: `# ${b.code || `APOSTILA BÔNUS 0${b.number}`} – ${bDisplayTitle}\n\n${bDisplaySummary}`,
                         }, 'pdf');
                       }}
-                      className={`w-full py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                        (!isWaiting || isUnlocked)
-                          ? 'bg-amber-500 hover:bg-amber-400 text-neutral-950 shadow'
-                          : 'bg-neutral-800 text-neutral-500 opacity-60 cursor-not-allowed'
-                      }`}
+                      className="w-full py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer bg-amber-500 hover:bg-amber-400 text-neutral-950 shadow"
                     >
                       <BookOpen className="w-4 h-4" />
                       <span>{cur.readBonusBtn}</span>
                     </button>
 
                     <button
-                      disabled={(!isUnlocked && isWaiting)}
                       onClick={() => {
                         handleOpenApostila({
                           id: b.id,
@@ -1640,7 +1655,8 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                           subtitle: b.code || `BÔNUS 0${b.number}`,
                           summary: bDisplaySummary,
                           totalPages: displayPages,
-                          pdfUrl: b.pdfUrl,
+                          pagesCount: displayPages,
+                          pdfUrl: safeBonusPdf,
                           extraVideos: b.extraVideos,
                           contentMarkdown: `# ${b.code || `APOSTILA BÔNUS 0${b.number}`} – ${bDisplayTitle}\n\n${bDisplaySummary}`,
                         }, 'extra-videos');
@@ -1648,7 +1664,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                       className="w-full py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 bg-neutral-800 hover:bg-neutral-700 text-amber-300 border border-neutral-700 hover:border-amber-500/50 transition-all cursor-pointer"
                     >
                       <Film className="w-4 h-4 text-amber-400" />
-                      <span>2 Vídeos Extras</span>
+                      <span>{cur.extraVideosTab}</span>
                     </button>
 
                     {isAdmin && (
@@ -1803,7 +1819,11 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                       title={selectedApostila.title}
                       studentName={user?.name || enrollment?.studentName}
                       studentEmail={user?.email || enrollment?.studentEmail}
-                      moduleId={selectedApostila.number || selectedApostila.moduleId || 1}
+                      moduleId={
+                        (selectedApostila.id?.startsWith('bonus') || selectedApostila.code?.includes('BÔNUS') || (selectedApostila.moduleId && selectedApostila.moduleId > 990))
+                          ? (selectedApostila.moduleId && selectedApostila.moduleId > 990 ? selectedApostila.moduleId : 990 + (selectedApostila.number || 1))
+                          : (selectedApostila.moduleId || selectedApostila.number || 1)
+                      }
                       onFallbackToText={() => setModalTab('text')}
                       allApostilas={apostilas}
                       onSelectApostila={(modNum) => {
