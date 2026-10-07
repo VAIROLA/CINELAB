@@ -913,8 +913,8 @@ export const AdminView: React.FC<AdminViewProps> = ({
               : 'text-neutral-400 hover:text-white hover:bg-neutral-800'
           }`}
         >
-          <Sliders className="w-4 h-4" />
-          <span>Configurações & Máquina do Tempo</span>
+          <Settings className="w-4 h-4 text-amber-400" />
+          <span>⚙️ Configurações & Pagamentos (PagBank / PIX)</span>
         </button>
 
         <button
