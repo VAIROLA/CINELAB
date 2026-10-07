@@ -264,10 +264,36 @@ export async function getAllVaultApostilas(): Promise<VaultApostilaItem[]> {
  */
 export async function getVaultBlobUrl(targetIdOrModuleId: number | string, isBonus?: boolean): Promise<string | null> {
   const item = await getApostilaFromVault(targetIdOrModuleId, isBonus);
-  if (item && item.pdfBlob) {
-    return URL.createObjectURL(item.pdfBlob);
+  if (!item || !item.pdfBlob) return null;
+
+  const id = getVaultItemId(targetIdOrModuleId, isBonus);
+  const isB = isBonus || id.startsWith('bonus-');
+  let canonicalPages = 6;
+  if (isB) {
+    const bNum = item.bonusNumber || (id === 'bonus-1' ? 1 : id === 'bonus-3' ? 3 : 2);
+    canonicalPages = bNum === 1 ? 30 : bNum === 3 ? 27 : 29;
+  } else {
+    const mod = item.moduleId || Number(id.replace('mod-', '')) || 1;
+    const realModPages: Record<number, number> = { 1: 8, 2: 52, 3: 7, 4: 6, 5: 6, 6: 6, 7: 6, 8: 6, 9: 6, 10: 6 };
+    canonicalPages = realModPages[mod] || 6;
   }
-  return null;
+
+  // Se o item no IndexedDB for de cache anterior ou tiver páginas erradas (ex: 4 páginas de rascunho), expurga
+  if (item.pagesCount !== canonicalPages || item.pagesCount === 4 || item.pagesCount === 24 || item.pagesCount === 96 || item.pagesCount === 104) {
+    try {
+      const db = await openVaultDb();
+      const tx = db.transaction(STORE_NAME, 'readwrite');
+      tx.objectStore(STORE_NAME).delete(id);
+    } catch {}
+    return null;
+  }
+
+  // Se a URL for a canônica /materiais/, prefere carregar o PDF canônico via HTTP direto
+  if (item.pdfUrl && item.pdfUrl.startsWith('/materiais/')) {
+    return null;
+  }
+
+  return URL.createObjectURL(item.pdfBlob);
 }
 
 /**
@@ -279,19 +305,21 @@ export function getMergedApostilasWithVault(serverApostilas: Apostila[]): Aposti
   const vault = getPersistentVaultIndex();
   let vaultNeedsSave = false;
 
+  const realPagesMap: Record<number, number> = { 1: 8, 2: 52, 3: 7, 4: 6, 5: 6, 6: 6, 7: 6, 8: 6, 9: 6, 10: 6 };
+
   const res = serverApostilas.map((apos) => {
     const modNum = apos.moduleId || apos.number || 1;
     const key = `mod-${modNum}`;
     const local = vault[key];
     const pad = modNum < 10 ? '0' + modNum : '' + modNum;
     const canonicalPdf = `/materiais/cinelab-apostila-${pad}.pdf`;
-    const canonicalPages = modNum === 1 ? 8 : (modNum === 2 ? 52 : (modNum === 3 ? 7 : 6));
+    const canonicalPages = realPagesMap[modNum] || 6;
 
     if (!local) {
       return {
         ...apos,
-        pagesCount: apos.pagesCount && apos.pagesCount > 0 ? apos.pagesCount : canonicalPages,
-        totalPages: apos.totalPages && apos.totalPages > 0 ? apos.totalPages : canonicalPages,
+        pagesCount: apos.pagesCount && apos.pagesCount === canonicalPages ? apos.pagesCount : canonicalPages,
+        totalPages: apos.totalPages && apos.totalPages === canonicalPages ? apos.totalPages : canonicalPages,
         pdfUrl: apos.pdfUrl && !apos.pdfUrl.includes('1790444') && !apos.pdfUrl.includes('1790684') && !apos.pdfUrl.includes('1790652') ? apos.pdfUrl : canonicalPdf,
       };
     }
@@ -303,14 +331,14 @@ export function getMergedApostilasWithVault(serverApostilas: Apostila[]): Aposti
       : (local.title || apos.title);
 
     const isCorruptedFile =
-      local.pdfUrl &&
-      (
-        local.pdfUrl.includes('1790444') ||
-        local.pdfUrl.includes('1790684') ||
-        local.pdfUrl.includes('1790652')
-      );
+      !local.pdfUrl ||
+      local.pdfUrl.includes('1790444') ||
+      local.pdfUrl.includes('1790684') ||
+      local.pdfUrl.includes('1790652');
 
-    if ((isCorruptedTitle || isCorruptedFile) && vault[key]) {
+    const isWrongPages = !local.pagesCount || local.pagesCount === 4 || local.pagesCount !== canonicalPages;
+
+    if ((isCorruptedTitle || isCorruptedFile || isWrongPages) && vault[key]) {
       vault[key] = {
         ...vault[key],
         title: effectiveTitle,
@@ -320,7 +348,7 @@ export function getMergedApostilasWithVault(serverApostilas: Apostila[]): Aposti
       vaultNeedsSave = true;
     }
 
-    const pages = (local.pagesCount && local.pagesCount > 0 && !isCorruptedFile) ? local.pagesCount : canonicalPages;
+    const pages = (!isWrongPages && local.pagesCount && local.pagesCount > 0 && !isCorruptedFile) ? local.pagesCount : canonicalPages;
     const effectivePdf = isCorruptedFile ? canonicalPdf : (local.pdfUrl || apos.pdfUrl || canonicalPdf);
 
     return {
@@ -430,6 +458,9 @@ export function getMergedBonusWithVault(serverBonus: BonusApostila[]): BonusApos
       local &&
       (
         !local.title ||
+        local.pagesCount !== defaultPages ||
+        (b.number === 1 && !local.title.includes('Planos')) ||
+        (b.number === 3 && !local.title.includes('6 Camadas')) ||
         (b.number === 3 && local.title.includes('Roteiro')) ||
         local.title.includes('Pitching') ||
         local.title.includes('Guerrilha') ||

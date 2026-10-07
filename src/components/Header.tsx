@@ -109,17 +109,27 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Acima do lado direito: Professor junto com Admin / Perfil e o Tradutor */}
         <div className="ml-auto flex items-center gap-1 sm:gap-2 shrink-0 relative z-20">
-                    {/* Botão Acesso Direto: ADMIN (Visível exclusivamente para Administrador autenticado) */}
-          {user?.role === 'admin' && (
-            <button
-              onClick={() => handleNav('admin')}
-              className="text-[9px] sm:text-[10.5px] px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-lg flex items-center gap-1 font-mono font-bold cursor-pointer transition-all active:scale-95 shadow-[0_0_10px_rgba(239,68,68,0.3)] shrink-0 bg-red-500 text-white ring-2 ring-red-300 font-extrabold shadow-md"
-              title="Acesso ao Painel Administrativo CINELAB"
-            >
-              <Shield className="w-3 h-3 text-white shrink-0" />
-              <span className="uppercase tracking-wider">Admin</span>
-            </button>
-          )}
+                    {/* Botão Acesso Direto: ADMIN (Sempre visível para acesso imediato ou alternar perfil) */}
+          <button
+            onClick={() => {
+              if (user?.role === 'admin') {
+                handleNav('admin');
+              } else if (onSwitchDemoRole) {
+                onSwitchDemoRole('admin');
+              } else {
+                handleNav('admin');
+              }
+            }}
+            className={`text-[9px] sm:text-[10.5px] px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-lg flex items-center gap-1 font-mono font-bold cursor-pointer transition-all active:scale-95 shrink-0 ${
+              user?.role === 'admin'
+                ? 'bg-red-500 text-white ring-2 ring-red-300 font-extrabold shadow-[0_0_12px_rgba(239,68,68,0.5)]'
+                : 'bg-red-950/90 hover:bg-red-900 text-red-200 border border-red-500/70 hover:text-white shadow-sm'
+            }`}
+            title="Acesso ao Painel Administrativo CINELAB"
+          >
+            <Shield className={`w-3 h-3 ${user?.role === 'admin' ? 'text-white' : 'text-red-400'} shrink-0`} />
+            <span className="uppercase tracking-wider">Admin</span>
+          </button>
 
           {/* Botão e Acesso Direto: Professor Tony de Luc - Oculto em telas ultra-pequenas (< sm) para eliminar scroll lateral no mobile */}
           <button
@@ -623,19 +633,30 @@ export const Header: React.FC<HeaderProps> = ({
               <Clapperboard className="w-4 h-4 text-amber-400" />
               <span>Prof. Tony de Luc</span>
             </button>
-            {user?.role === 'admin' && (
-              <button
-                onClick={() => handleNav('admin')}
-                className="px-3 py-2 rounded-xl bg-red-950/90 border border-red-500/80 text-red-200 hover:text-white flex items-center justify-center gap-2 font-bold text-xs shadow-[0_0_12px_rgba(239,68,68,0.4)] ring-1 ring-red-400"
-              >
-                <Shield className="w-4 h-4 text-red-400" />
-                <span>Painel Admin</span>
-              </button>
-            )}
+            <button
+              onClick={() => {
+                if (user?.role === 'admin') {
+                  handleNav('admin');
+                } else if (onSwitchDemoRole) {
+                  onSwitchDemoRole('admin');
+                  setMobileMenuOpen(false);
+                } else {
+                  handleNav('admin');
+                }
+              }}
+              className={`px-3 py-2 rounded-xl flex items-center justify-center gap-2 font-bold text-xs cursor-pointer transition-all ${
+                user?.role === 'admin'
+                  ? 'bg-red-950/90 border border-red-500/80 text-red-200 hover:text-white shadow-[0_0_12px_rgba(239,68,68,0.4)] ring-1 ring-red-400'
+                  : 'bg-red-950/70 border border-red-500/60 text-red-300 hover:text-white'
+              }`}
+            >
+              <Shield className="w-4 h-4 text-red-400" />
+              <span>{user?.role === 'admin' ? 'Painel Admin' : 'Modo Admin'}</span>
+            </button>
           </div>
 
           {/* Role Switcher in Mobile Drawer */}
-          {onSwitchDemoRole && user?.role === 'admin' && (
+          {onSwitchDemoRole && (
             <div className="p-3 bg-purple-950/70 rounded-2xl border border-purple-500/40 space-y-2">
               <span className="text-xs font-mono text-purple-200 block text-center font-bold">
                 Alternar Modo de Visualização:

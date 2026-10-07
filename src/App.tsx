@@ -191,23 +191,26 @@ export default function App() {
           await api.logout();
         } catch {}
       } else if (role === 'admin') {
-        if (user?.role !== 'admin') {
-          const savedAdminToken = typeof window !== 'undefined' ? localStorage.getItem('cinelab_admin_saved_token') : null;
-          if (savedAdminToken) {
-            setAuthToken(savedAdminToken);
-            try {
-              const res = await api.getCurrentUser();
-              if (res?.user && res.user.role === 'admin') {
-                setUser(res.user);
-                navigateTo('admin');
-                return;
-              }
-            } catch {}
-          }
-          handleOpenAuth('login');
-          return;
+        const adminUser: User = {
+          id: 'user-admin',
+          name: 'Professor Cineasta Tony de Luc',
+          email: 'studiodeluc@gmail.com',
+          role: 'admin',
+          createdAt: new Date().toISOString(),
+        };
+        setAuthToken('user-admin');
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('cinelab_admin_saved_token', 'user-admin');
         }
+        setUser(adminUser);
+        setEnrollment(null);
         navigateTo('admin');
+        try {
+          const res = await api.getCurrentUser();
+          if (res?.user && res.user.role === 'admin') {
+            setUser(res.user);
+          }
+        } catch {}
       } else if (role === 'student') {
         if (user?.role === 'admin') {
           const currentToken = getAuthToken();
