@@ -192,11 +192,29 @@ export default function App() {
         } catch {}
       } else if (role === 'admin') {
         if (user?.role !== 'admin') {
+          const savedAdminToken = typeof window !== 'undefined' ? localStorage.getItem('cinelab_admin_saved_token') : null;
+          if (savedAdminToken) {
+            setAuthToken(savedAdminToken);
+            try {
+              const res = await api.getCurrentUser();
+              if (res?.user && res.user.role === 'admin') {
+                setUser(res.user);
+                navigateTo('admin');
+                return;
+              }
+            } catch {}
+          }
           handleOpenAuth('login');
           return;
         }
         navigateTo('admin');
       } else if (role === 'student') {
+        if (user?.role === 'admin') {
+          const currentToken = getAuthToken();
+          if (currentToken && typeof window !== 'undefined') {
+            localStorage.setItem('cinelab_admin_saved_token', currentToken);
+          }
+        }
         const studentUser: User = {
           id: 'user-student-demo',
           name: 'Aluno Demonstrativo',
@@ -242,7 +260,7 @@ export default function App() {
         enrollment={enrollment}
         onOpenAuth={handleOpenAuth}
         onLogout={handleLogout}
-        onSwitchDemoRole={user?.role === 'admin' ? handleSwitchDemoRole : undefined}
+        onSwitchDemoRole={handleSwitchDemoRole}
         customLogoUrl={courseSettings?.logoUrl}
       />
 
