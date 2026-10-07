@@ -1716,12 +1716,21 @@ app.post('/api/translate-page', async (req: Request, res: Response) => {
     let rawText = typeof text === 'string' ? text.trim() : '';
     const modNum = Number(moduleId) || 1;
     const pNum = Number(pageNumber) || 1;
+    const isBonus = modNum > 990;
+    const bonusNum = isBonus ? modNum - 990 : 0;
 
     // If text extracted from canvas is empty or too short (scanned PDF or vector pages),
     // first try to extract directly from the official PDF file on disk using PDFParse
     if (rawText.length < 25) {
+      const bonusFileMap: Record<number, string> = {
+        1: 'cinelab-bonus-01-glossario-planos.pdf',
+        2: 'cinelab-bonus-02-glossario-roteiro.pdf',
+        3: 'cinelab-bonus-03-analise-filmica.pdf',
+      };
       const pad = String(modNum).padStart(2, '0');
-      const diskPdf = path.join(process.cwd(), 'public', 'materiais', `cinelab-apostila-${pad}.pdf`);
+      const diskPdf = isBonus
+        ? path.join(process.cwd(), 'public', 'materiais', bonusFileMap[bonusNum] || 'cinelab-bonus-01-glossario-planos.pdf')
+        : path.join(process.cwd(), 'public', 'materiais', `cinelab-apostila-${pad}.pdf`);
       if (fs.existsSync(diskPdf)) {
         try {
           const { PDFParse } = await import('pdf-parse');
@@ -1743,9 +1752,10 @@ app.post('/api/translate-page', async (req: Request, res: Response) => {
     // Secondary fallback to DB curriculum sections if still empty
     if (rawText.length < 25) {
       const db = getDb();
-      const matchingApos =
-        db.apostilas?.find((a: any) => a.number === modNum || a.moduleId === modNum) ||
-        db.bonusApostilas?.find((b: any) => b.number === modNum || b.id === `bonus-${modNum}`);
+      const matchingApos = isBonus
+        ? db.bonusApostilas?.find((b: any) => b.number === bonusNum || b.id === `bonus-${bonusNum}` || b.id === `bonus-0${bonusNum}`)
+        : (db.apostilas?.find((a: any) => a.number === modNum || a.moduleId === modNum) ||
+           db.bonusApostilas?.find((b: any) => b.number === modNum || b.id === `bonus-${modNum}`));
 
       if (matchingApos) {
         const sections = matchingApos.sections || [];
@@ -1892,7 +1902,10 @@ CRITICAL REQUIREMENTS:
 
     // If Gemini translation could not be completed, fall back to pre-translated pedagogical curriculum
     // Notice: We DO NOT poison primaryKey with this fallback so that future requests can still get the full translation!
-    const modTranslations = (APOSTILA_SECTION_TRANSLATIONS as any)[modNum]?.[targetLanguage];
+    const modTranslations = isBonus
+      ? ((APOSTILA_SECTION_TRANSLATIONS as any)[990 + bonusNum]?.[targetLanguage] ||
+         (APOSTILA_SECTION_TRANSLATIONS as any)[bonusNum]?.[targetLanguage])
+      : (APOSTILA_SECTION_TRANSLATIONS as any)[modNum]?.[targetLanguage];
     if (modTranslations && modTranslations.length > 0) {
       const secIndex = Math.min(modTranslations.length - 1, Math.max(0, Math.floor((pNum - 1) / 2)));
       const sec = modTranslations[secIndex] || modTranslations[0];

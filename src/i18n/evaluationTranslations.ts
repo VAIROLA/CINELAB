@@ -479,8 +479,10 @@ export function getTrainingQuestionsForModule(
   lang: Language,
   fallbackQuestions?: ApostilaQuizQuestion[]
 ): ApostilaQuizQuestion[] {
-  if (ALL_QUIZ_TRANSLATIONS[moduleId]) {
-    const list = ALL_QUIZ_TRANSLATIONS[moduleId][lang] || ALL_QUIZ_TRANSLATIONS[moduleId].pt;
+  const normId = moduleId > 990 ? (moduleId === 992 ? 3 : (moduleId === 993 ? 1 : 1)) : moduleId;
+  const targetData = ALL_QUIZ_TRANSLATIONS[moduleId] || ALL_QUIZ_TRANSLATIONS[normId];
+  if (targetData) {
+    const list = targetData[lang] || targetData.pt;
     if (list && list.length >= 5) {
       return list;
     }

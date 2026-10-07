@@ -472,6 +472,252 @@ export const APOSTILA_SECTION_TRANSLATIONS: Record<
       },
     ],
   },
+  991: {
+    pt: [
+      {
+        title: '1. Escalas de Planos Fundamentais',
+        subtitle: 'A relação de distância e psicologia entre a câmera e o sujeito',
+        content: `O glossário de planos é o vocabulário primário do diretor:\n• Grande Plano Geral (GPG): O ambiente domina a figura humana, transmitindo solidão ou grandiosidade.\n• Plano Geral (PG): O personagem é visto de corpo inteiro dentro do espaço dramático.\n• Plano Americano (PA): Enquadramento dos joelhos para cima, ideal para confrontos e ação.\n• Plano Médio (PM): Da cintura para cima, o plano padrão para diálogos e relações interpessoais.\n• Primeiro Plano (PP / Close-Up): Do busto ou ombros para cima, revelando emoções íntimas.\n• Plano Detalhe (PD / Macro): Isola um elemento específico (um olho, um anel, uma arma).`,
+        tonyNotes: 'Escolha a escala do plano pela emoção que você quer provocar no espectador, nunca por comodidade.',
+      },
+      {
+        title: '2. Ângulos de Câmera e Perspectivas Ópticas',
+        subtitle: 'Plongée, Contra-Plongée, Nível dos Olhos e Ponto de Vista (POV)',
+        content: `O ângulo altera a relação de poder e hierarquia dramática:\n• Nível dos Olhos: Neutralidade, empatia e verossimilhança direta com o espectador.\n• Plongée (Câmera Alta): Câmera olha de cima para baixo, diminuindo o personagem ou transmitindo vulnerabilidade.\n• Contra-Plongée (Câmera Baixa): Câmera olha de baixo para cima, agigantando a figura e transmitindo autoridade ou ameaça.\n• Plano Zenital: 90 graus perpendiculares ao solo, transformando a cena em mapa visual ou labirinto.\n• Plano Holandês (Dutch Angle): Horizonte inclinado para gerar instabilidade, loucura ou desequilíbrio psicológico.`,
+        tonyNotes: 'Um ângulo inclinado só tem força se o restante da cena for equilibrado. O contraste gera o significado.',
+      },
+      {
+        title: '3. Movimentos de Câmera e Dinâmica Espacial',
+        subtitle: 'Panorâmica, Travelling, Steadicam, Grua e Câmera na Mão',
+        content: `A câmera em movimento transforma o tempo em espaço dramático:\n• Panorâmica (Pan): Rotação horizontal sobre o próprio eixo para revelar novos elementos ou seguir personagens.\n• Tilt: Movimento vertical (para cima ou para baixo) revelando altura, status ou suspense.\n• Travelling / Dolly: Deslocamento físico da câmera pelo set (aproximação, afastamento ou acompanhamento lateral).\n• Steadicam / Gimbal: Fluidez flutuante que coloca o público no ritmo da caminhada do personagem.\n• Câmera na Mão: Respiração orgânica que transmite urgência, realismo documental ou desespero interior.`,
+        tonyNotes: 'Nunca mova a câmera sem uma motivação narrativa: o movimento deve seguir a ação ou revelar uma informação crucial.',
+      },
+    ],
+    en: [
+      {
+        title: '1. Core Shot Scales and Framing',
+        subtitle: 'Psychological and spatial distance between camera and dramatic subject',
+        content: `The shot glossary is the director\'s primary vocabulary:\n• Extreme Long Shot (ELS): Landscape dwarfs the human subject, evoking isolation, vastness, or environment.\n• Long Shot (LS): Character seen full-length within dramatic space, grounding physical action.\n• Medium Long Shot (MLS / American): Knees up framing, historically born for western standoffs and direct conflict.\n• Medium Shot (MS): Waist-up framing, the gold standard for conversational chemistry and social dynamics.\n• Close-Up (CU): Chest/shoulders up, unveiling psychological interiority, truth, and suppressed emotion.\n• Extreme Close-Up / Detail (ECU): Isolates a specific element (an eye, a letter, a trembling hand).`,
+        tonyNotes: 'Choose shot scale strictly based on emotional intent, never for logistical convenience.',
+      },
+      {
+        title: '2. Camera Angles and Optical Perspectives',
+        subtitle: 'High Angle, Low Angle, Eye Level, Bird\'s Eye, and Dutch Tilt',
+        content: `Camera angle dictates emotional power hierarchy in cinema:\n• Eye Level: Neutrality, human empathy, and honest connection with the audience.\n• High Angle (Plongée): Looking down upon the subject, imparting vulnerability, weakness, or insignificance.\n• Low Angle (Contra-Plongée): Looking up from below, empowering the subject with authority, dominance, or dread.\n• Bird\'s Eye (Top-Down / Zenithal): 90 degrees directly above, reducing characters to pieces on a cosmic chessboard.\n• Dutch Angle (Canted Frame): Tilted horizon creating psychological disorientation, dread, or madness.`,
+        tonyNotes: 'A tilted frame carries dramatic weight only when the world surrounding it was previously stable.',
+      },
+      {
+        title: '3. Camera Movement and Dynamic Space',
+        subtitle: 'Pans, Tilts, Dolly Tracks, Steadicam, Cranes, and Handheld Work',
+        content: `Moving the camera weaves time into spatial tension:\n• Pan: Horizontal pivoting around the nodal point to track subjects or reveal environmental clues.\n• Tilt: Vertical tilting up or down to reveal scale, status, or emerging narrative threats.\n• Dolly / Tracking Shot: Physical camera displacement through set (push-in for realization, pull-out for loneliness).\n• Steadicam / Gimbal: Weightless fluidity guiding viewers through labyrinthine corridors.\n• Handheld Camera: Visceral human breathing imparting urgency, war-zone realism, or mental collapse.`,
+        tonyNotes: 'Never move the camera gratuitously: movements must be driven by character impulse or narrative revelation.',
+      },
+    ],
+    es: [
+      {
+        title: '1. Escalas de Planos Fundamentales',
+        subtitle: 'La relación de distancia y psicología entre la cámara y el sujeto',
+        content: `El glosario de planos es el vocabulario primordial del realizador:\n• Gran Plano General (GPG): El entorno domina por completo, transmitiendo soledad o inmensidad.\n• Plano General (PG): El personaje aparece de cuerpo entero dentro del espacio dramático.\n• Plano Americano (PA): Encuadre de las rodillas hacia arriba, ideal para confrontaciones y acción.\n• Plano Medio (PM): De la cintura para arriba, el estándar de diálogo e interacción.\n• Primer Plano (PP / Close-Up): Del busto hacia arriba, desvelando emociones íntimas.\n• Plano Detalle (PD): Aísla un elemento específico (un ojo, una nota, un gatillo).`,
+        tonyNotes: 'Elige la escala del plano por la emoción que buscas despertar, jamás por comodidad de rodaje.',
+      },
+      {
+        title: '2. Ángulos de Cámara y Perspectivas Ópticas',
+        subtitle: 'Picado, Contrapicado, Nivel de Ojos, Cenital y Plano Holandés',
+        content: `El ángulo transforma la jerarquía de poder dramático:\n• Nivel de Ojos: Empatía y complicidad directa con el espectador.\n• Picado: Cámara de arriba hacia abajo, empequeñeciendo al personaje o transmitiendo vulnerabilidad.\n• Contrapicado: Cámara de abajo hacia arriba, agigantando la figura con autoridad o amenaza.\n• Plano Cenital: 90 grados perpendicular al suelo, convirtiendo la escena en un mapa visual.\n• Plano Holandés: Horizonte inclinado para generar desequilibrio psicológico o tensión.`,
+        tonyNotes: 'Un encuadre inclinado tiene valor solo cuando el resto del universo fílmico conserva el orden.',
+      },
+      {
+        title: '3. Movimientos de Cámara y Dinámica Espacial',
+        subtitle: 'Panorámica, Travelling, Steadicam, Grúa y Cámara en Mano',
+        content: `La cámara en movimiento convierte el tiempo en espacio dramático:\n• Panorámica (Pan): Rotación horizontal sobre su eje para revelar información o seguir personajes.\n• Tilt: Movimiento vertical que revela altura, jerarquía o misterio.\n• Travelling / Dolly: Desplazamiento físico por el set (acercamiento dramático o seguimiento lateral).\n• Steadicam: Fluidez aérea que sumerge al público en el paso del personaje.\n• Cámara en Mano: Respiración visceral que transmite urgencia, realismo documental o desespero.`,
+        tonyNotes: 'Nunca desplaces la cámara sin justificación narrativa: el movimiento debe nacer de la acción dramática.',
+      },
+    ],
+    fr: [
+      {
+        title: '1. Échelles de Plans Fondamentales',
+        subtitle: 'La distance psychologique et spatiale entre la caméra et le personnage',
+        content: `Le glossaire des plans constitue la grammaire première du réalisateur :\n• Très Grand Plan Général (TGPG / Plan d\'Ensemble) : Le décor domine la silhouette humaine, traduisant solitude ou immensité.\n• Plan Général (PG) : Le personnage apparaît en entier, situant précisément son action dans l\'espace.\n• Plan Italien / Américain (PA) : Cadrage à mi-cuisse, historiquement créé pour valoriser les duels et l\'action.\n• Plan Moyen / Rapproché Taille (PRT) : De la taille vers le haut, référence classique du dialogue.\n• Gros Plan (GP) : Des épaules au sommet de la tête, plongeant au cœur de la vérité émotionnelle.\n• Très Gros Plan / Plan de Détail (PDet) : Isole un objet déterminant (un regard, une lettre, une détente).`,
+        tonyNotes: 'Choisissez l\'échelle de votre plan d\'après l\'émotion à transmettre, jamais par commodité technique.',
+      },
+      {
+        title: '2. Angles de Prise de Vue et Perspectives Optiques',
+        subtitle: 'Plongée, Contre-Plongée, Hauteur d\'Yeux, Zénithal et Cadrage Débullé',
+        content: `L\'angle modifie directement les rapports de force dramatiques :\n• Hauteur d\'Yeux : Équilibre moral, neutralité et empathie naturelle avec le spectateur.\n• Plongée : Regard de haut en bas, fragilisant le personnage ou accentuant sa détresse.\n• Contre-Plongée : Regard de bas en haut, magnifiant la stature pour insuffler puissance ou menace.\n• Vue Zénithale : Regard perpendiculaire au sol à 90 degrés, métamorphosant la scène en échiquier abstrait.\n• Cadrage Débullé (Dutch Angle) : Horizon incliné traduisant instabilité mentale, vertige ou folie.`,
+        tonyNotes: 'Un cadre penché ne prend son sens que si le reste de votre mise en scène est rigoureusement ancré.',
+      },
+      {
+        title: '3. Mouvements d\'Appareil et Spatialisation',
+        subtitle: 'Panoramique, Travelling, Steadicam, Grue et Caméra Portée',
+        content: `Le mouvement de caméra métamorphose le temps en émotion pure :\n• Panoramique : Rotation sur l\'axe optique pour dévoiler une surprise ou accompagner une trajectoire.\n• Travelling (Dolly) : Déplacement physique fluide dans le décor (avancée dramatique, recul d\'isolement).\n• Steadicam / Gimbal : Apesanteur totale suivant l\'acteur au cœur de labyrinthes urbains.\n• Caméra Portée : Respiration vivante traduisant l\'urgence, le réalisme brut ou la crise intérieure.\n• Grue / Bras : Amplitude aérienne embrassant le destin du personnage au sein du monde.`,
+        tonyNotes: 'Ne déplacez jamais l\'appareil gratuitement : le mouvement doit toujours être motivé par la narration.',
+      },
+    ],
+  },
+  992: {
+    pt: [
+      {
+        title: '1. Da Ideia ao Roteiro Cinematográfico',
+        subtitle: 'Premissa, Storyline, Sinopse, Argumento e Tratamento',
+        content: `A dramaturgia cinematográfica é uma ciência de precisão estrutural:\n• Premissa / Logline: Uma frase condensando protagonista, incidente incitante, objetivo e antagonismo.\n• Storyline: Parágrafo de 3 a 5 linhas delineando início, meio e clímax da trama.\n• Sinopse: Resumo de 1 a 2 páginas expondo a espinha dorsal dramática sem diálogos.\n• Argumento: A história contada em prosa detalhada no presente do indicativo antes da divisão em cenas.\n• Escaleta (Beat Sheet): Lista sequencial de todas as cenas e batidas dramáticas do filme.`,
+        tonyNotes: 'Se você não consegue explicar seu filme em uma frase forte, você ainda não sabe qual filme está fazendo.',
+      },
+      {
+        title: '2. Estrutura em 3 Atos e Curva Dramática',
+        subtitle: 'Mundo Ordinário, Ponto de Virada, Midpoint e Clímax',
+        content: `O paradigma clássico distribui a tensão narrativa estrategicamente:\n• Ato I (Apresentação - 25%): Estabelecimento do mundo e falha trágica do protagonista; Incidente Incitante que quebra a rotina; Plot Point 1 empurrando o herói para o desconhecido.\n• Ato II (Confrontação - 50%): Obstáculos crescentes, aliados e inimigos; Midpoint elevando as apostas; "Noite Escura da Alma" onde tudo parece perdido.\n• Ato III (Resolução - 25%): O Clímax definitivo onde o conflito central é confrontado, seguido pela resolução e novo equilíbrio.`,
+        tonyNotes: 'A estrutura clássica não é uma prisão; é o mapa que permite você improvisar sem se perder na floresta.',
+      },
+      {
+        title: '3. Formatação Master Scenes, Diálogo e Subtexto',
+        subtitle: 'Cabeçalho de cena, ação descritiva e a arte do não dito',
+        content: `O roteiro profissional obedece a regras universais de formatação:\n• Cabeçalho (Slugline): INT. ou EXT. / LOCAÇÃO / DIA ou NOITE (ex: INT. CAFÉ - DIA).\n• Ação: Parágrafos curtos no presente descrevendo apenas o que pode ser visto e ouvido na tela.\n• Subtexto: O que o personagem realmente quer dizer por trás das palavras pronunciadas. Grandes diálogos revelam intenções secretas, contradições e desejos reprimidos.`,
+        tonyNotes: 'Cinema é imagem em primeiro lugar. Deixe o diálogo apenas para o que a câmera não puder mostrar.',
+      },
+    ],
+    en: [
+      {
+        title: '1. From Premise to Screenplay',
+        subtitle: 'Loglines, Storylines, Synopsis, Treatment, and Beat Sheets',
+        content: `Screenwriting is a craft of structural discipline:\n• Logline: One sharp sentence delivering protagonist, inciting incident, core goal, and central antagonist.\n• Storyline: Concise 3 to 5-line summary highlighting beginning, middle, and climax.\n• Synopsis: 1-to-2 page overview mapping the dramatic spine in present tense without dialogue.\n• Treatment: Prose narrative walking through scenes and character beats prior to dialogue script.\n• Beat Sheet: Sequential breakdown of every scene\'s dramatic turn.`,
+        tonyNotes: 'If you cannot pitch your film in a single irresistible sentence, you don\'t yet know what story you are telling.',
+      },
+      {
+        title: '2. Three-Act Paradigm and the Dramatic Arc',
+        subtitle: 'Ordinary World, Inciting Incident, Midpoint, and Climax',
+        content: `Classic dramatic structure organizes tension for maximum emotional catharsis:\n• Act I (Setup - 25%): Ordinary world, hero\'s fatal flaw, inciting incident breaking routine, and Plot Point 1 launching the quest.\n• Act II (Confrontation - 50%): Rising stakes, trials, midpoint shift of agency, and All Is Lost breakdown.\n• Act III (Resolution - 25%): Final showdown (Climax) where primary conflicts collide, ending in transformed equilibrium.`,
+        tonyNotes: 'Structure is not a formula; it is the scaffolding that allows inspiration to reach towering heights.',
+      },
+      {
+        title: '3. Master Scene Formatting, Dialogue, and Subtext',
+        subtitle: 'Sluglines, action blocks, and the art of unsaid truths',
+        content: `Professional screenplay mechanics rely on standardized clarity:\n• Slugline: INT. or EXT. / LOCATION / DAY or NIGHT (e.g., INT. DINER - NIGHT).\n• Action Lines: Lean active descriptions written strictly in present tense describing only what can be seen and heard.\n• Subtext: The emotional undercurrent beneath spoken lines. Great cinema relies on characters using words to mask their vulnerability.`,
+        tonyNotes: 'Film is primarily visual storytelling. Reserve dialogue for moments where pictures alone cannot convey the soul.',
+      },
+    ],
+    es: [
+      {
+        title: '1. De la Idea al Guion Cinematográfico',
+        subtitle: 'Premisa, Storyline, Sinopsis, Argumento y Escaleta',
+        content: `La dramaturgia cinematográfica exige precisión narrativa:\n• Logline: Una frase contundente resumiendo protagonista, incidente incitante, objetivo y antagonista.\n• Storyline: Síntesis de 3 a 5 líneas con inicio, nudo y desenlace.\n• Sinopsis: Resumen de 1 a 2 páginas con la columna vertebral de la historia.\n• Argumento: Desarrollo detallado de la narración en prosa antes de escribir diálogos.\n• Escaleta (Beat Sheet): Lista secuencial de todas las escenas del largometraje o corto.`,
+        tonyNotes: 'Si no puedes resumir tu historia en una frase inolvidable, aún no has encontrado su corazón.',
+      },
+      {
+        title: '2. Estructura en 3 Actos y Tensión Dramática',
+        subtitle: 'Mundo Ordinario, Punto de Giro, Midpoint y Clímax',
+        content: `El paradigma clásico organiza la emoción del espectador:\n• Acto I (Planteamiento - 25%): Mundo ordinario, carencia del héroe, incidente incitante y primer giro dramático.\n• Acto II (Confrontación - 50%): Pruebas en aumento, punto medio que eleva la apuesta y noche oscura del alma.\n• Acto III (Resolución - 25%): Clímax decisivo donde el dilema central estalla y nuevo equilibrio final.`,
+        tonyNotes: 'La estructura clásica es una brújula; te permite explorar territorios salvajes sin extraviarte.',
+      },
+      {
+        title: '3. Formato Master Scenes, Diálogo y Subtexto',
+        subtitle: 'Encabezados de escena, acción y el poder del silencio',
+        content: `El estándar profesional de guion exige rigor:\n• Encabezado (Slugline): INT. o EXT. / LOCALIZACIÓN / DÍA o NOCHE.\n• Acción: Párrafos breves en presente describiendo solo lo visible y audible.\n• Subtexto: Lo que el personaje siente pero no pronuncia. El gran cine vive de miradas y contradicciones.`,
+        tonyNotes: 'El cine es visual. Deja los diálogos para cuando la imagen por sí sola no alcance a expresar el misterio.',
+      },
+    ],
+    fr: [
+      {
+        title: '1. De l\'Idée au Scénario de Film',
+        subtitle: 'Pitch, Logline, Synopsis, Traitement et Séquencier',
+        content: `La dramaturgie filmique repose sur une rigueur architecturale :\n• Logline : Une phrase ciselée résumant protagoniste, événement déclencheur, enjeu et antagonisme.\n• Storyline : Résumé percutant en 3 à 5 lignes retraçant exposition, nœud et résolution.\n• Synopsis : Récit au présent de 1 à 2 pages articulant l\'armature dramatique sans dialogues.\n• Traitement : Récit romanesque détaillé scène par scène avant l\'écriture de la continuité dialoguée.\n• Séquencier (Beat Sheet) : Liste numérotée de toutes les scènes et battements dramatiques.`,
+        tonyNotes: 'Si vous ne parvenez pas à résumer votre film en une phrase percutante, vous ne cernez pas encore son essence.',
+      },
+      {
+        title: '2. Structure en 3 Actes et Trajectoire Dramatique',
+        subtitle: 'Monde Ordinaire, Incident Déclencheur, Midpoint et Climax',
+        content: `La structure classique orchestre l\'intensité émotionnelle du public :\n• Acte I (Exposition - 25%) : Monde ordinaire, faille intime du protagoniste, incident perturbateur et franchissement du seuil.\n• Acte II (Confrontation - 50%) : Obstacles croissants, pivot du midpoint et descente aux enfers.\n• Acte III (Résolution - 25%) : Climax libérateur scellant le sort des personnages et nouvel équilibre.`,
+        tonyNotes: 'La structure n\'est pas un carcan ; elle offre au contraire la liberté d\'explorer en toute confiance.',
+      },
+      {
+        title: '3. Format Master Scenes, Dialogues et Sous-Texte',
+        subtitle: 'Intitulés de séquences, didascalies et l\'art de l\'implicite',
+        content: `La présentation d\'un scénario professionnel obéit à des normes immuables :\n• En-tête de scène : INT. ou EXT. / LIEU / JOUR ou NUIT (ex: INT. CAFÉ - JOUR).\n• Didascalies : Paragraphes courts décrivant uniquement ce que l\'œil voit et ce que l\'oreille perçoit.\n• Sous-Texte : La vérité cachée derrière les mots prononcés. Les plus grands dialogues dévoilent les secrets enfouis.`,
+        tonyNotes: 'Le cinéma est avant tout un art visuel. Réservez les mots à ce que la lumière seule ne peut révéler.',
+      },
+    ],
+  },
+  993: {
+    pt: [
+      {
+        title: '1. Camadas 1, 2 e 3: Narrativa, Personagens e Espaço',
+        subtitle: 'A dissecação do enredo, arco de transformação e geografia dramática',
+        content: `O método CINELAB disseca a obra em 6 camadas analíticas:\n• Camada 1 (Narrativa): Estrutura causal, elipses, pontos de virada e o tema central subjacente.\n• Camada 2 (Personagens): Desejo consciente versus necessidade inconsciente, contradições e motivações morais.\n• Camada 3 (Espaço e Cenografia): Como os ambientes, objetos e arquitetura expressam a psicologia dos personagens e a atmosfera social.`,
+        tonyNotes: 'O espaço nunca é neutro em cinema: ele é a extensão emocional da alma dos personagens.',
+      },
+      {
+        title: '2. Camadas 4, 5 e 6: Luz, Som e Montagem',
+        subtitle: 'Fotografia, desenho sonoro e a métrica rítmica do tempo fílmico',
+        content: `As camadas perceptivas constroem a experiência imersiva sensorial:\n• Camada 4 (Imagem e Fotografia): Paleta de cores, contraste chiaroscuro, textura de lentes e escolhas de enquadramento.\n• Camada 5 (Desenho de Som): Paisagens acústicas, ruído de sala, foley, desenho de diálogos e partitura musical.\n• Camada 6 (Montagem e Ritmo): Cortes invisíveis, justaposição dialética, tempo de permanência no plano e ritmo interno da cena.`,
+        tonyNotes: 'A montagem e o som são onde a obra ganha respiração e batimento cardíaco.',
+      },
+      {
+        title: '3. Síntese e Aplicação na Direção Autoral',
+        subtitle: 'Como utilizar a análise crítica para decupar e dirigir seus próprios filmes',
+        content: `Analisar um filme como realizador difere radicalmente do olhar do espectador passivo:\n• Dissecação de Decupagem: Como o diretor distribuiu as coberturas de câmera para orientar a atenção da plateia.\n• Direção de Atores: O uso de ações físicas e pausas para gerar tensão em vez de explicações verbais.\n• Da Referência à Criação Original: Como assimilar soluções estéticas de mestres do cinema e transformá-las em linguagem pessoal.`,
+        tonyNotes: 'Aprender a assistir filmes em 6 camadas é o passo definitivo para se tornar um realizador consciente.',
+      },
+    ],
+    en: [
+      {
+        title: '1. Layers 1, 2 & 3: Narrative, Character, and Space',
+        subtitle: 'Dissecting story spine, character transformational arcs, and scenic geography',
+        content: `The CINELAB framework dissects films through 6 integrated analytical dimensions:\n• Layer 1 (Narrative): Causal plotting, narrative ellipses, major turning points, and governing thematic premise.\n• Layer 2 (Characters): Conscious want versus unconscious psychological need, moral flaws, and subtext.\n• Layer 3 (Space & Production Design): How architecture, decor, and spatial containment embody character psychology.`,
+        tonyNotes: 'Scenic space is never decorative in true cinema: it serves as the physical exteriorization of character dilemmas.',
+      },
+      {
+        title: '2. Layers 4, 5 & 6: Visuals, Sound, and Editing',
+        subtitle: 'Cinematography, soundscapes, and the temporal heartbeat of the cut',
+        content: `Sensory layers forge the visceral emotional engagement of the viewer:\n• Layer 4 (Cinematography & Light): Color palettes, tonal contrast, lens focal lengths, and camera proximity.\n• Layer 5 (Sound Design): Room tone, environmental foley, sonic point of view, and atmospheric musical score.\n• Layer 6 (Editing & Pacing): Invisible cutting, dialectic juxtapositions, shot duration, and scene rhythm.`,
+        tonyNotes: 'Picture edit and sound design are where the movie finds its pulse and organic respiration.',
+      },
+      {
+        title: '3. Directorial Synthesis and Practical Execution',
+        subtitle: 'Translating critical deconstruction into confident personal film directing',
+        content: `Analyzing films through a director\'s lens unlocks mastery of the craft:\n• Breakdown Decoupage: Unraveling how masters orchestrate camera angles to control audience gaze.\n• Actor Direction: Guiding physical blocking and subtextual pauses rather than relying on expositional lines.\n• From Homage to Voice: Synthesizing classical master techniques into an authentic, original auteur vision.`,
+        tonyNotes: 'Mastering 6-layer film analysis transforms you from a consumer of movies into a conscious creator of cinema.',
+      },
+    ],
+    es: [
+      {
+        title: '1. Capas 1, 2 y 3: Narrativa, Personajes y Espacio',
+        subtitle: 'El análisis de la trama, arco de transformación y geografía dramática',
+        content: `El método CINELAB desglosa la obra cinematográfica en 6 capas analíticas:\n• Capa 1 (Narrativa): Causalidad, elipsis temporales, puntos de giro y premisa temática.\n• Capa 2 (Personajes): Deseo consciente frente a necesidad interna, contradicciones y subtexto.\n• Capa 3 (Espacio y Escenografía): Cómo el decorado, los objetos y la arquitectura expresan los conflictos del personaje.`,
+        tonyNotes: 'El espacio nunca es accesorio en el cine: es el reflejo exterior de las batallas interiores.',
+      },
+      {
+        title: '2. Capas 4, 5 y 6: Luz, Sonido y Montaje',
+        subtitle: 'Fotografía, diseño sonoro y el compás rítmico del tiempo fílmico',
+        content: `Las capas sensoriales sumergen al espectador en la experiencia fílmica:\n• Capa 4 (Imagen y Fotografía): Paletas de color, claroscuro, lentes y encuadres.\n• Capa 5 (Diseño de Sonido): Ambientes acústicos, foley, texturas sonoras y banda sonora.\n• Capa 6 (Montaje y Ritmo): Cortes continuos, yuxtaposición dialéctica y tempo dramático.`,
+        tonyNotes: 'El montaje y el sonido son el corazón y los pulmones de cualquier obra audiovisual.',
+      },
+      {
+        title: '3. Síntesis y Aplicación en la Dirección de Cine',
+        subtitle: 'Cómo utilizar el análisis crítico para decupar y rodar tus propias obras',
+        content: `Aprender a mirar como director cambia la forma de concebir historias:\n• Desglose Técnico: Cómo el cineasta organiza las tomas para cautivar la atención del espectador.\n• Dirección de Actores: El valor de las acciones físicas y los silencios frente a los diálogos explicativos.\n• De la Referencia a la Voz Propia: Asimilar las técnicas de los grandes maestros para crear tu propio estilo.`,
+        tonyNotes: 'Dominar el análisis en 6 capas es la llave para pasar de admirador a realizador.',
+      },
+    ],
+    fr: [
+      {
+        title: '1. Couches 1, 2 & 3 : Récit, Personnages et Espace',
+        subtitle: 'L\'architecture du scénario, l\'arc transformationnel et la géographie scénique',
+        content: `La méthode analytique du CINELAB dissèque le film selon 6 dimensions interdépendantes :\n• Couche 1 (Récit) : Chaîne de causalité, ellipses narratives, nœuds dramatiques et vision thématique.\n• Couche 2 (Personnages) : Objectif conscient contre faille psychologique inconsciente, dilemmes et contradictions.\n• Couche 3 (Espace & Décors) : Comment l\'architecture, les volumes et les accessoires matérialisent l\'état d\'esprit des protagonistes.`,
+        tonyNotes: 'L\'espace filmique n\'est jamais un simple fond : il est le prolongement plastique de l\'âme du personnage.',
+      },
+      {
+        title: '2. Couches 4, 5 & 6 : Image, Son et Rythme de Montage',
+        subtitle: 'Photographie, atmosphères sonores et métrique temporelle du montage',
+        content: `Les couches sensorielles créent l\'immersion poétique et la tension vibrante :\n• Couche 4 (Image & Lumière) : Palette de teintes, contrastes clair-obscur, focales optiques et composition.\n• Couche 5 (Sound Design) : Sons d\'ambiance, foley, textures sonores spatialisées et partition musicale.\n• Couche 6 (Montage & Tempo) : Raccords fluides, dialectique du cut, durées des plans et souffle des scènes.`,
+        tonyNotes: 'C\'est dans le dialogue entre le son et le montage que le film trouve son battement de cœur.',
+      },
+      {
+        title: '3. Synthèse et Pratique de la Réalisation',
+        subtitle: 'De la déconstruction critique à l\'affirmation de son geste de cinéaste',
+        content: `Analyser une œuvre avec un regard de metteur en scène ouvre les portes de la création concrète :\n• Découpage Technique : Comprendre comment le réalisateur guide le regard et l\'émotion du spectateur.\n• Direction d\'Acteurs : Travailler les gestes physiques et les silences plutôt que de tout surcharger de dialogues.\n• De l\'Hommage à la Voix Personnelle : S\'approprier les leçons des maîtres pour faire émerger son regard singulier.`,
+        tonyNotes: 'Maîtriser l\'analyse en 6 couches transforme le spectateur passif en un créateur de cinéma accompli.',
+      },
+    ],
+  },
 };
 
 export function getTranslatedApostilaSections(
@@ -479,13 +725,34 @@ export function getTranslatedApostilaSections(
   moduleId: number,
   lang: Language
 ): ApostilaSection[] {
-  if (lang === 'pt' || !fallbackSections) return fallbackSections;
+  const normId = moduleId > 990 ? moduleId : (moduleId <= 3 ? 990 + moduleId : moduleId);
+  const translatedList = APOSTILA_SECTION_TRANSLATIONS[moduleId]?.[lang] ||
+    APOSTILA_SECTION_TRANSLATIONS[normId]?.[lang] ||
+    APOSTILA_SECTION_TRANSLATIONS[moduleId]?.pt ||
+    APOSTILA_SECTION_TRANSLATIONS[normId]?.pt;
 
-  const translatedList = APOSTILA_SECTION_TRANSLATIONS[moduleId]?.[lang];
-  if (!translatedList || translatedList.length === 0) return fallbackSections;
+  if (!fallbackSections || fallbackSections.length === 0) {
+    if (!translatedList || translatedList.length === 0) return fallbackSections || [];
+    return translatedList.map((tSec, idx) => ({
+      id: `sec-${moduleId}-${idx + 1}`,
+      title: tSec.title,
+      subtitle: tSec.subtitle || '',
+      content: tSec.content,
+      contentMarkdown: tSec.content,
+      tonyNotes: tSec.tonyNotes || '',
+      keyTakeaway: tSec.tonyNotes || '',
+      orderIndex: idx + 1,
+    }));
+  }
+
+  if (lang === 'pt') return fallbackSections;
+
+  const targetList = APOSTILA_SECTION_TRANSLATIONS[moduleId]?.[lang] ||
+    APOSTILA_SECTION_TRANSLATIONS[normId]?.[lang];
+  if (!targetList || targetList.length === 0) return fallbackSections;
 
   return fallbackSections.map((sec, idx) => {
-    const tSec = translatedList[idx] || translatedList[0];
+    const tSec = targetList[idx] || targetList[0];
     return {
       ...sec,
       title: tSec.title || sec.title,

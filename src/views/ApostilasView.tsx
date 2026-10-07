@@ -196,7 +196,11 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
         ? '/materiais/cinelab-bonus-01-glossario-planos.pdf'
         : (bNum === 3 ? '/materiais/cinelab-bonus-03-analise-filmica.pdf' : '/materiais/cinelab-bonus-02-glossario-roteiro.pdf');
       const realBonusPages = bNum === 1 ? 30 : (bNum === 3 ? 27 : 29);
+      const modTrans = getModuleTranslation(990 + bNum);
       fullItem.moduleId = 990 + bNum;
+      fullItem.title = modTrans.title || fullItem.title;
+      fullItem.subtitle = modTrans.subtitle || fullItem.subtitle;
+      fullItem.summary = modTrans.summary || fullItem.summary;
       fullItem.pdfUrl = canonicalBonusPdf;
       fullItem.totalPages = realBonusPages;
       fullItem.pagesCount = realBonusPages;
@@ -609,6 +613,9 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
       extraVideosBannerDesc: 'integrados a esta apostila (análises práticas & estudo de caso)!',
       viewExtraVideosBtn: 'Ver os 2 Vídeos',
       bonusPagesUnit: 'páginas',
+      bonusCardBadge: (num: number) => `APOSTILA BÔNUS 0${num}`,
+      pdfAvailable: 'PDF Cadastrado e Disponível',
+      adminUploadBonusBtn: 'Subir / Atualizar PDF (Admin)',
       bonusUnlockCountLabel: (num: number) => `Liberação do Bônus 0${num} em:`,
       bonusUnlockReq: (num: number) => `Desbloqueia automaticamente com o início do Módulo 0${num}.`,
       bonusReleased: 'Bônus liberado para estudo',
@@ -674,6 +681,9 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
       extraVideosBannerDesc: 'integrated with this handout (practical breakdowns & case study)!',
       viewExtraVideosBtn: 'Watch Both Videos',
       bonusPagesUnit: 'pages',
+      bonusCardBadge: (num: number) => `BONUS HANDOUT 0${num}`,
+      pdfAvailable: 'PDF Registered & Available',
+      adminUploadBonusBtn: 'Upload / Update PDF (Admin)',
       bonusUnlockCountLabel: (num: number) => `Bonus 0${num} Unlocks in:`,
       bonusUnlockReq: (num: number) => `Unlocks automatically at the start of Module 0${num}.`,
       bonusReleased: 'Bonus unlocked for study',
@@ -739,6 +749,9 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
       extraVideosBannerDesc: 'integrados con este manual (análisis prácticos y estudio de caso)!',
       viewExtraVideosBtn: 'Ver los 2 Videos',
       bonusPagesUnit: 'páginas',
+      bonusCardBadge: (num: number) => `MANUAL BÓNUS 0${num}`,
+      pdfAvailable: 'PDF Registrado y Disponible',
+      adminUploadBonusBtn: 'Subir / Actualizar PDF (Admin)',
       bonusUnlockCountLabel: (num: number) => `Apertura del Bonus 0${num} en:`,
       bonusUnlockReq: (num: number) => `Se desbloquea automáticamente al inicio del Módulo 0${num}.`,
       bonusReleased: 'Bonus habilitado para estudio',
@@ -804,6 +817,9 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
       extraVideosBannerDesc: 'intégrées à ce fascicule (analyses pratiques & étude de cas) !',
       viewExtraVideosBtn: 'Voir les 2 Vidéos',
       bonusPagesUnit: 'pages',
+      bonusCardBadge: (num: number) => `FASCICULE BONUS 0${num}`,
+      pdfAvailable: 'PDF Enregistré et Disponible',
+      adminUploadBonusBtn: 'Téléverser / Mettre à jour le PDF (Admin)',
       bonusUnlockCountLabel: (num: number) => `Ouverture du Bonus 0${num} dans :`,
       bonusUnlockReq: (num: number) => `Se débloque automatiquement au début du Module 0${num}.`,
       bonusReleased: 'Bonus débloqué pour l\'étude',
@@ -1590,7 +1606,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                 <div className="space-y-3">
                   <div className="flex items-center justify-between text-xs font-mono">
                     <span className="px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 font-bold border border-amber-500/40">
-                      {b.code || `${cur.handoutPrefix}${b.number} BÔNUS`}
+                      {cur.bonusCardBadge ? cur.bonusCardBadge(b.number) : (b.code || `BÔNUS 0${b.number}`)}
                     </span>
                     {/* NÚMERO DE PÁGINAS DESTACADO */}
                     <span className="px-3 py-1 rounded-lg bg-neutral-800 text-amber-300 font-mono text-xs font-bold border border-neutral-700/80 shadow-inner flex items-center gap-1.5">
@@ -1610,7 +1626,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
 
                   <div className="text-[11px] font-mono text-neutral-400 flex items-center gap-1.5 pt-1">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                    <span className="text-emerald-400 font-semibold">PDF Cadastrado e Disponível</span>
+                    <span className="text-emerald-400 font-semibold">{cur.pdfAvailable}</span>
                   </div>
                 </div>
 
@@ -1675,7 +1691,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                         title="Subir ou substituir arquivo PDF desta apostila bônus"
                       >
                         <Upload className="w-3.5 h-3.5 text-amber-400" />
-                        <span>Subir / Atualizar PDF (Admin)</span>
+                        <span>{cur.adminUploadBonusBtn}</span>
                       </button>
                     )}
                   </div>
@@ -1700,7 +1716,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-white leading-tight">
-                    {language === 'pt' ? selectedApostila.title : (getModuleTranslation(selectedApostila.moduleId || selectedApostila.number).title || selectedApostila.title)}
+                    {getModuleTranslation(selectedApostila.moduleId || selectedApostila.number).title || selectedApostila.title}
                   </h3>
                   <span className="text-[11px] font-mono text-neutral-400">
                     {cur.readerIntegratedTitle}
@@ -1850,16 +1866,18 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                 <div className="space-y-6">
                 <div>
                   <h1 className="text-xl sm:text-2xl font-display font-extrabold text-white">
-                    {language === 'pt' ? selectedApostila.title : (getModuleTranslation(selectedApostila.moduleId || selectedApostila.number).title || selectedApostila.title)}
+                    {getModuleTranslation(selectedApostila.moduleId || selectedApostila.number).title || selectedApostila.title}
                   </h1>
                   <p className="text-sm font-medium text-amber-300 mt-1">
-                    {language === 'pt' ? selectedApostila.subtitle : (getModuleTranslation(selectedApostila.moduleId || selectedApostila.number).subtitle || selectedApostila.subtitle)}
+                    {getModuleTranslation(selectedApostila.moduleId || selectedApostila.number).subtitle || selectedApostila.subtitle}
                   </p>
                 </div>
 
                 <div className="p-4 rounded-xl bg-amber-950/20 border-l-4 border-amber-500 text-xs text-amber-100">
                   <strong className="block text-amber-400 font-bold mb-1">{cur.summaryTitle}</strong>
-                  {language === 'pt' ? selectedApostila.summary : (getModuleTranslation(selectedApostila.moduleId || selectedApostila.number).apostilaSummary || selectedApostila.summary)}
+                  {getModuleTranslation(selectedApostila.moduleId || selectedApostila.number).apostilaSummary ||
+                   getModuleTranslation(selectedApostila.moduleId || selectedApostila.number).summary ||
+                   selectedApostila.summary}
                 </div>
 
                 {/* Pedagogical Sections with dynamic translations */}

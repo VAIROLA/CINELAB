@@ -35,15 +35,18 @@ export const TrainingEvaluationModal: React.FC<TrainingEvaluationModalProps> = (
   onOpenPdfReader,
   onNavigateToOfficial,
 }) => {
-  const { language } = useLanguage();
+  const { language, getModuleTranslation } = useLanguage();
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, number>>({});
   const [confirmedQuestions, setConfirmedQuestions] = useState<Record<string, boolean>>({});
   const [showResults, setShowResults] = useState<boolean>(false);
 
+  const isBonus = etapaNumber > 990;
+  const bonusNum = isBonus ? etapaNumber - 990 : 1;
+
   // Localization dictionary
   const tModal = {
     pt: {
-      badge: `AVALIAÇÃO DE TREINAMENTO • ETAPA 0${etapaNumber}`,
+      badge: isBonus ? `AVALIAÇÃO DE TREINAMENTO • BÔNUS 0${bonusNum}` : `AVALIAÇÃO DE TREINAMENTO • ETAPA 0${etapaNumber}`,
       questionsCount: 'Questões de Fixação Prática',
       desc: 'Este simulado serve para testar sua compreensão dos conceitos centrais da apostila. Gabarito com justificativas didáticas imediatas. Não afeta a nota oficial, você pode refazer quantas vezes desejar.',
       progress: 'Progresso:',
@@ -65,7 +68,7 @@ export const TrainingEvaluationModal: React.FC<TrainingEvaluationModalProps> = (
       closeBtn: 'Fechar',
     },
     en: {
-      badge: `TRAINING ASSESSMENT • STAGE 0${etapaNumber}`,
+      badge: isBonus ? `TRAINING ASSESSMENT • BONUS 0${bonusNum}` : `TRAINING ASSESSMENT • STAGE 0${etapaNumber}`,
       questionsCount: 'Practical Drill Questions',
       desc: 'This practice drill tests your understanding of core handout concepts. Includes immediate pedagogical feedback. Does not impact your official transcript, practice as many times as you like.',
       progress: 'Progress:',
@@ -87,7 +90,7 @@ export const TrainingEvaluationModal: React.FC<TrainingEvaluationModalProps> = (
       closeBtn: 'Close',
     },
     es: {
-      badge: `EVALUACIÓN DE ENTRENAMIENTO • ETAPA 0${etapaNumber}`,
+      badge: isBonus ? `EVALUACIÓN DE ENTRENAMIENTO • BÓNUS 0${bonusNum}` : `EVALUACIÓN DE ENTRENAMIENTO • ETAPA 0${etapaNumber}`,
       questionsCount: 'Preguntas de Fijación Práctica',
       desc: 'Este simulacro evalúa tu comprensión de los conceptos clave del manual. Solucionario con explicaciones didácticas inmediatas. No afecta la nota oficial, repítelo cuantas veces quieras.',
       progress: 'Progreso:',
@@ -109,7 +112,7 @@ export const TrainingEvaluationModal: React.FC<TrainingEvaluationModalProps> = (
       closeBtn: 'Cerrar',
     },
     fr: {
-      badge: `ÉVALUATION D'ENTRAÎNEMENT • ÉTAPE 0${etapaNumber}`,
+      badge: isBonus ? `ÉVALUATION D'ENTRAÎNEMENT • BONUS 0${bonusNum}` : `ÉVALUATION D'ENTRAÎNEMENT • ÉTAPE 0${etapaNumber}`,
       questionsCount: 'Questions d\'Entraînement Pratique',
       desc: 'Ce quiz permet de vérifier l\'assimilation des concepts clés du fascicule. Corrigé détaillé avec explications didactiques immédiates. Sans incidence sur votre moyenne officielle.',
       progress: 'Progression :',
@@ -224,7 +227,7 @@ export const TrainingEvaluationModal: React.FC<TrainingEvaluationModalProps> = (
               </span>
             </div>
             <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">
-              {apostila.title}
+              {getModuleTranslation(etapaNumber).title || apostila.title}
             </h2>
             <p className="text-xs text-neutral-300 leading-relaxed max-w-xl">
               {tModal.desc}

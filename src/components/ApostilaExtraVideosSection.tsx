@@ -123,7 +123,7 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
 }) => {
   const { language } = useLanguage();
   const tUi = EXTRA_VIDEOS_UI_TRANSLATIONS[language] || EXTRA_VIDEOS_UI_TRANSLATIONS.pt;
-  const isBonusApos = (apostila as any)?.id?.startsWith('bonus') || (apostila as any)?.code?.includes('BÔNUS') || (apostila as any)?.isBonus;
+  const isBonusApos = (apostila as any)?.id?.startsWith('bonus') || (apostila as any)?.code?.includes('BÔNUS') || (apostila as any)?.isBonus || (apostila as any)?.moduleId > 990;
   const rawNum = (apostila as any)?.number || (apostila as any)?.moduleId || (apostila as any)?.id || 1;
   const parsedNum = parseInt(String(rawNum).replace(/\D/g, ''), 10) || 1;
   const modKey = isBonusApos ? `bonus-${parsedNum > 990 ? parsedNum - 990 : parsedNum}` : `mod-${parsedNum}`;

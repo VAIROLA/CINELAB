@@ -2648,6 +2648,102 @@ export const MODULE_TRANSLATIONS: Record<
       fr: ['Planification et Tournage du Court', 'Exécution du Découpage sur le Plateau', 'Master Final et Diffusion', 'Projection et Certification'],
     },
   },
+  991: {
+    title: {
+      pt: 'Apostila Bônus 01: Glossário Completo de Planos',
+      en: 'Bonus Handout 01: Complete Shot Glossary',
+      es: 'Manual Bónus 01: Glosario Completo de Planos',
+      fr: 'Fascicule Bonus 01 : Glossaire Complet des Plans',
+    },
+    subtitle: {
+      pt: 'Guia Permanente de Consulta Técnica e Decupagem Cinematográfica (30 Páginas)',
+      en: 'Permanent Technical Reference Guide for Cinematic Framing and Blocking (30 Pages)',
+      es: 'Guía Permanente de Consulta Técnica y Decupaje Cinematográfico (30 Páginas)',
+      fr: 'Guide Permanent de Consultation Technique et Découpage Cinématographique (30 Pages)',
+    },
+    summary: {
+      pt: 'Guia permanente de consulta técnica para decupagem cinematográfica, escalas de planos, movimentos de câmera e composição visual.',
+      en: 'Permanent technical reference guide for cinematic coverage, shot scales, camera movements, and visual composition.',
+      es: 'Guía permanente de consulta técnica para decupaje cinematográfico, escalas de planos, movimientos de cámara y composición visual.',
+      fr: 'Guide permanent de consultation technique pour le découpage, les échelles de plans, les mouvements de caméra et la composition visuelle.',
+    },
+    apostilaSummary: {
+      pt: 'Apostila com 30 páginas contendo o glossário exaustivo de todos os enquadramentos, ângulos de câmera, movimentos ópticos e físicos utilizados na indústria cinematográfica internacional.',
+      en: '30-page reference manual containing an exhaustive glossary of camera setups, angles, optical and mechanical movements used in international cinema.',
+      es: 'Manual de 30 páginas con el glosario exhaustivo de encuadres, ángulos de cámara, movimientos ópticos y mecánicos de la industria cinematográfica internacional.',
+      fr: 'Fascicule de 30 pages comprenant un glossaire exhaustif de tous les cadrages, angles de caméra, mouvements optiques et physiques de l\'industrie cinématographique internationale.',
+    },
+    keyThemes: {
+      pt: ['Escalas de Planos (GPG a PD)', 'Ângulos de Câmera (Plongée, Contra-Plongée, Zenital)', 'Movimentos de Câmera (Travelling, Pan, Tilt, Grua)', 'Gramática de Decupagem Técnica'],
+      en: ['Shot Scales (ELS to ECU)', 'Camera Angles (High Angle, Low Angle, Bird\'s Eye)', 'Camera Movement (Dolly, Pan, Tilt, Crane)', 'Technical Decoupage Grammar'],
+      es: ['Escalas de Planos (Gran PG a Detalle)', 'Ángulos de Cámara (Picado, Contrapicado, Cenital)', 'Movimientos de Cámara (Travelling, Pan, Tilt, Grúa)', 'Gramática de Decupaje Técnico'],
+      fr: ['Échelles de Plans (Très Gros Plan à Plan Général)', 'Angles de Caméra (Plongée, Contre-Plongée, Zénithal)', 'Mouvements de Caméra (Travelling, Panoramique, Grue)', 'Grammaire du Découpage Technique'],
+    },
+  },
+  992: {
+    title: {
+      pt: 'Apostila Bônus 02: Glossário Completo de Roteiro',
+      en: 'Bonus Handout 02: Complete Screenwriting Glossary',
+      es: 'Manual Bónus 02: Glosario Completo de Guion',
+      fr: 'Fascicule Bonus 02 : Glossaire Complet du Scénario',
+    },
+    subtitle: {
+      pt: 'Guia Permanente de Consulta Dramatúrgica e Estruturação de Histórias (29 Páginas)',
+      en: 'Permanent Dramaturgical Reference and Story Structuring Guide (29 Pages)',
+      es: 'Guía Permanente de Consulta Dramatúrgica y Estructuración de Historias (29 Páginas)',
+      fr: 'Guide Permanent de Dramaturgie et Structuration d\'Histoires (29 Pages)',
+    },
+    summary: {
+      pt: 'Guia permanente de consulta dramatúrgica: da criação de premissa, storyline e sinopse à escaleta, arcos de personagem e roteiro final.',
+      en: 'Permanent dramaturgical reference: from premise, storyline, and synopsis to beat sheet, character arcs, and final script.',
+      es: 'Guía permanente de consulta dramatúrgica: desde la premisa, storyline y sinopsis hasta la escaleta, arcos de personajes y guion final.',
+      fr: 'Guide permanent de dramaturgie : de l\'idée, storyline et synopsis au séquencier, arcs de personnages et scénario final.',
+    },
+    apostilaSummary: {
+      pt: 'Apostila com 29 páginas dissecando a terminologia padrão da indústria audiovisual para escrita e formatação profissional de roteiros (Master Scenes, Beats, Subtexto, Clímax).',
+      en: '29-page manual dissecting standard film industry terminology for professional scriptwriting and formatting (Master Scenes, Beats, Subtext, Climax).',
+      es: 'Manual de 29 páginas desglosando la terminología estándar de la industria audiovisual para escritura y formato profesional de guiones.',
+      fr: 'Fascicule de 29 pages décortiquant la terminologie professionnelle du scénario (Master Scenes, Découpage dramatique, Sous-texte, Climax).',
+    },
+    keyThemes: {
+      pt: ['Estrutura em 3 Atos e Paradigma de Syd Field', 'Storyline, Sinopse e Argumento', 'Construção de Arcos Dramáticos e Conflito', 'Formatação Master Scenes Standard'],
+      en: ['Three-Act Structure & Syd Field Paradigm', 'Storyline, Synopsis & Treatment', 'Character Arcs & Dramatic Conflict', 'Industry Standard Master Scenes Formatting'],
+      es: ['Estructura en 3 Actos y Paradigma de Syd Field', 'Storyline, Sinopsis y Argumento', 'Construcción de Arcos Dramáticos y Conflicto', 'Formato Master Scenes Estándar'],
+      fr: ['Structure en 3 Actes et Paradigme de Syd Field', 'Storyline, Synopsis et Continuité Dialoguée', 'Arcs Dramatiques et Conflit', 'Format Standardisé Master Scenes'],
+    },
+  },
+  993: {
+    title: {
+      pt: 'Apostila Bônus 03: Método de Análise Fílmica em 6 Camadas',
+      en: 'Bonus Handout 03: 6-Layer Film Analysis Method',
+      es: 'Manual Bónus 03: Método de Análisis Fílmico en 6 Capas',
+      fr: 'Fascicule Bonus 03 : Méthode d\'Analyse Filmique en 6 Couches',
+    },
+    subtitle: {
+      pt: 'Guia Completo de Análise Crítica e Decupagem de Obras Audiovisuais (27 Páginas)',
+      en: 'Complete Guide to Critical Film Analysis and Cinematic Decoupage (27 Pages)',
+      es: 'Guía Completa de Análisis Crítico y Decupaje de Obras Audiovisuales (27 Páginas)',
+      fr: 'Guide Complet d\'Analyse Critique et Découpage d\'Œuvres Audiovisuelles (27 Pages)',
+    },
+    summary: {
+      pt: 'A metodologia analítica do CINELAB em 6 camadas: Narrativa, Personagem, Espaço, Imagem (Fotografia), Som e Montagem para dissecar qualquer obra audiovisual como realizador.',
+      en: 'The CINELAB 6-layer analytical framework: Narrative, Character, Space, Visuals (Cinematography), Sound, and Editing to dissect any film like a director.',
+      es: 'La metodología analítica del CINELAB en 6 capas: Narrativa, Personaje, Espacio, Imagen (Fotografía), Sonido y Montaje para desglosar cualquier obra cinematográfica.',
+      fr: 'La méthodologie analytique du CINELAB en 6 couches : Récit, Personnage, Espace, Image, Son et Montage pour disséquer toute œuvre audiovisuelle comme un réalisateur.',
+    },
+    apostilaSummary: {
+      pt: 'Apostila com 27 páginas apresentando o método proprietário CINELAB de dissecação fílmica camada por camada, com estudos de caso detalhados de mestres do cinema mundial.',
+      en: '27-page manual detailing the proprietary CINELAB film breakdown method layer-by-layer, featuring in-depth case studies of world cinema masters.',
+      es: 'Manual de 27 páginas que presenta el método exclusivo de análisis capa por capa con estudios de caso detallados de maestros del cine mundial.',
+      fr: 'Fascicule de 27 pages présentant la méthode exclusive CINELAB de décryptage filmique couche par couche, avec des analyses d\'œuvres de grands maîtres du cinéma.',
+    },
+    keyThemes: {
+      pt: ['Camada 1 & 2: Narrativa & Construção de Personagens', 'Camada 3 & 4: Espaço Cenográfico & Luz/Fotografia', 'Camada 5 & 6: Desenho Sonoro & Ritmo de Montagem', 'Análise de Casos Clássicos do Cinema'],
+      en: ['Layers 1 & 2: Narrative Structure & Character Construction', 'Layers 3 & 4: Scenic Space & Lighting/Cinematography', 'Layers 5 & 6: Sound Design & Editing Pacing', 'Master Case Studies in World Cinema'],
+      es: ['Capas 1 y 2: Narrativa y Construcción de Personajes', 'Capas 3 y 4: Espacio Escénico y Luz/Fotografía', 'Capas 5 y 6: Diseño de Sonido y Ritmo de Montaje', 'Estudios de Caso de Grandes Maestros del Cine'],
+      fr: ['Couches 1 & 2 : Récit & Trajectoire des Personnages', 'Couches 3 & 4 : Espace Scénique & Image/Lumière', 'Couches 5 & 6 : Sound Design & Rythme du Montage', 'Études de Cas de Chefs-d\'œuvre du Cinéma'],
+    },
+  },
 };
 
 export * from './filmTranslations.js';

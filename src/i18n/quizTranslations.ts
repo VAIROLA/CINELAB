@@ -2628,6 +2628,7 @@ export const ALL_QUIZ_TRANSLATIONS: Record<
 
 // Helper function to get quiz questions with 5 questions guaranteed for all modules
 export function getFullQuizQuestions(moduleId: number, lang: Language): ApostilaQuizQuestion[] {
-  const modData = ALL_QUIZ_TRANSLATIONS[moduleId] || ALL_QUIZ_TRANSLATIONS[1];
+  const normId = moduleId > 990 ? (moduleId === 992 ? 3 : (moduleId === 993 ? 1 : 1)) : moduleId;
+  const modData = ALL_QUIZ_TRANSLATIONS[moduleId] || ALL_QUIZ_TRANSLATIONS[normId] || ALL_QUIZ_TRANSLATIONS[1];
   return modData[lang] || modData.pt;
 }
