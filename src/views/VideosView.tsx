@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { api } from '../services/api.js';
+import {
+  Subtitles,
+  Headphones,
+  api } from '../services/api.js';
 import { VideoLesson } from '../types/index.js';
 import {
   Film,
@@ -30,6 +33,8 @@ export const VideosView: React.FC<VideosViewProps> = ({
   onNavigate,
 }) => {
   const { language, getModuleTranslation } = useLanguage();
+  const [videoSubLang, setVideoSubLang] = useState<'pt' | 'en' | 'es' | 'fr'>(language);
+  useEffect(() => { setVideoSubLang(language); }, [language]);
   const [videos, setVideos] = useState<(VideoLesson & { isUnlocked: boolean; unlockDate: string })[]>([]);
   const [activeVideo, setActiveVideo] = useState<(VideoLesson & { isUnlocked: boolean; unlockDate: string }) | null>(null);
   const [loading, setLoading] = useState(true);
@@ -327,7 +332,11 @@ export const VideosView: React.FC<VideosViewProps> = ({
                 if (embed && (embed.type === 'youtube' || embed.type === 'vimeo' || embed.type === 'archive')) {
                   return (
                     <iframe
-                      src={embed.embedUrl}
+                      src={
+                        embed.type === 'youtube'
+                          ? `${embed.embedUrl}${embed.embedUrl.includes('?') ? '&' : '?'}rel=0&enablejsapi=1&cc_load_policy=1&hl=${videoSubLang}&cc_lang_pref=${videoSubLang}`
+                          : embed.embedUrl
+                      }
                       title={activeVideo.title}
                       className="w-full h-full border-0"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

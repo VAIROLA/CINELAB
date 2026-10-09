@@ -657,7 +657,7 @@ export const EnrollmentView: React.FC<EnrollmentViewProps> = ({
               {/* Credit Card form view */}
               {paymentMethod === 'credit_card' && (
                 <div className="p-4 rounded-2xl bg-neutral-900 border border-neutral-700/80 space-y-3.5 text-xs animate-fadeIn">
-                  {settings?.cardPaymentLink && (
+                  {(settings?.cardPaymentLink || 'https://pag.ae/82e6wXk2G') && (
                     <div className="p-3.5 rounded-xl bg-gradient-to-r from-emerald-950/70 to-neutral-900 border border-emerald-500/40 space-y-2 mb-2">
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-bold text-white flex items-center gap-1.5">
@@ -672,7 +672,7 @@ export const EnrollmentView: React.FC<EnrollmentViewProps> = ({
                         Prefere pagar com cartão de crédito diretamente pelo ambiente seguro do PagBank? Clique no botão abaixo:
                       </p>
                       <a
-                        href={settings.cardPaymentLink}
+                        href={(settings?.cardPaymentLink || 'https://pag.ae/82e6wXk2G') || 'https://pag.ae/82e6wXk2G'}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-full py-2.5 px-4 bg-emerald-500 hover:bg-emerald-400 text-neutral-950 font-bold uppercase rounded-xl text-xs transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"

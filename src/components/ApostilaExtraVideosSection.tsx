@@ -651,7 +651,8 @@ export const ApostilaExtraVideosSection: React.FC<ApostilaExtraVideosSectionProp
   const getEmbedUrl = (url: string) => {
     const ytId = extractYoutubeId(url);
     if (ytId) {
-      return `https://www.youtube.com/embed/${ytId}?rel=0&playsinline=1&enablejsapi=1`;
+      const ccParam = language !== 'pt' ? `&cc_load_policy=1&hl=${language}&cc_lang_pref=${language}` : '&cc_load_policy=1&hl=pt';
+      return `https://www.youtube.com/embed/${ytId}?rel=0&playsinline=1&enablejsapi=1${ccParam}`;
     }
     if (url.includes('vimeo.com/')) {
       const vimeoId = url.split('vimeo.com/')[1]?.split('?')[0];

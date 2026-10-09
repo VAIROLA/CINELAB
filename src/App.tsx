@@ -191,26 +191,14 @@ export default function App() {
           await api.logout();
         } catch {}
       } else if (role === 'admin') {
-        const adminUser: User = {
-          id: 'user-admin',
-          name: 'Professor Cineasta Tony de Luc',
-          email: 'studiodeluc@gmail.com',
-          role: 'admin',
-          createdAt: new Date().toISOString(),
-        };
-        setAuthToken('user-admin');
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('cinelab_admin_saved_token', 'user-admin');
+        // SEGURANÇA MÁXIMA DE PRODUÇÃO:
+        // Nunca conceder acesso de Administrador automaticamente sem login e senha!
+        if (user && user.role === 'admin') {
+          navigateTo('admin');
+        } else {
+          // Redireciona para a tela de autenticação restrita do Admin (onde exige E-mail e Senha)
+          navigateTo('admin');
         }
-        setUser(adminUser);
-        setEnrollment(null);
-        navigateTo('admin');
-        try {
-          const res = await api.getCurrentUser();
-          if (res?.user && res.user.role === 'admin') {
-            setUser(res.user);
-          }
-        } catch {}
       } else if (role === 'student') {
         if (user?.role === 'admin') {
           const currentToken = getAuthToken();

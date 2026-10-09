@@ -136,7 +136,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
   const [pixBank, setPixBank] = useState('');
   const [pixQrCodeUrl, setPixQrCodeUrl] = useState('');
   const [pixPayload, setPixPayload] = useState('');
-  const [cardPaymentLink, setCardPaymentLink] = useState('');
+  const [cardPaymentLink, setCardPaymentLink] = useState('https://pag.ae/82e6wXk2G');
   const [pagbankToken, setPagbankToken] = useState('');
   const [logoUrl, setLogoUrl] = useState('');
   const [directorName, setDirectorName] = useState('Professor Cineasta Tony de Luc');
@@ -934,7 +934,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
         <div className="py-20 text-center text-neutral-500 font-mono text-xs">
           Carregando dados da administração...
         </div>
-      ) : authError || !stats ? (
+      ) : authError || !stats || !user || user.role !== 'admin' ? (
         <div className="max-w-xl mx-auto py-12 px-6 rounded-3xl bg-neutral-900 border border-neutral-800 shadow-2xl space-y-6 text-center animate-fadeIn">
           <div className="w-16 h-16 rounded-2xl bg-red-950/80 border border-red-800/80 flex items-center justify-center mx-auto text-red-400">
             <Lock className="w-8 h-8" />

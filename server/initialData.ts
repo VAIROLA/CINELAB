@@ -31,7 +31,7 @@ export const initialCourseSettings: CourseSettings = {
   pixBank: 'Banco Nubank (0260) - Ag: 0001 - Conta: 24334459-6',
   pixQrCodeUrl: '',
   pixPayload: '00020126480014BR.GOV.BCB.PIX0126contato@tv-diversidade.com5204000053039865406499.905802BR5923Ailton Paulo dos Santos6009SAO PAULO62140510WiwHdJ7uff63',
-  cardPaymentLink: '',
+  cardPaymentLink: 'https://pag.ae/82e6wXk2G',
   pagbankToken: '',
   logoUrl: '',
   contactEmail: 'tonydeluc@tv-diversidade.com',

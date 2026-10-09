@@ -112,13 +112,7 @@ export const Header: React.FC<HeaderProps> = ({
                     {/* Botão Acesso Direto: ADMIN (Sempre visível para acesso imediato ou alternar perfil) */}
           <button
             onClick={() => {
-              if (user?.role === 'admin') {
-                handleNav('admin');
-              } else if (onSwitchDemoRole) {
-                onSwitchDemoRole('admin');
-              } else {
-                handleNav('admin');
-              }
+              handleNav('admin');
             }}
             className={`text-[9px] sm:text-[10.5px] px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-lg flex items-center gap-1 font-mono font-bold cursor-pointer transition-all active:scale-95 shrink-0 ${
               user?.role === 'admin'
