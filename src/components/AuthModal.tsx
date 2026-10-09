@@ -23,6 +23,7 @@ interface AuthModalProps {
   onLoginSuccess?: (user: User, enrollment: Enrollment | null) => void;
   onSuccess?: (user: User, enrollment: Enrollment | null) => void;
   initialMode?: 'login' | 'register';
+  onNavigate?: (route: string) => void;
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({
@@ -31,6 +32,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   onLoginSuccess,
   onSuccess,
   initialMode = 'login',
+  onNavigate,
 }) => {
   const { t } = useLanguage();
   const [mode, setMode] = useState<'login' | 'register' | 'forgot'>(initialMode);
@@ -243,115 +245,62 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               <ArrowRight className="w-4 h-4" />
             </button>
 
-            <div className="pt-3 text-center text-neutral-400">
-              {t('auth.noAccountYet')}{' '}
+            <div className="pt-3 text-center text-xs text-neutral-400">
+              Ainda não é aluno?{' '}
               <button
                 type="button"
-                onClick={() => setMode('register')}
-                className="text-amber-400 font-semibold hover:underline cursor-pointer"
+                onClick={() => {
+                  onClose();
+                  if (onNavigate) {
+                    onNavigate('matricula');
+                  }
+                }}
+                className="text-amber-400 font-bold hover:underline cursor-pointer ml-1 inline-flex items-center gap-0.5"
               >
-                {t('auth.registerHere')}
+                <span>Matricular-se no Curso</span>
+                <ArrowRight className="w-3 h-3" />
               </button>
             </div>
           </form>
         )}
 
         {mode === 'register' && (
-          <form onSubmit={handleRegister} className="space-y-3 text-xs">
-            <div>
-              <label className="block text-neutral-400 mb-1 font-medium">{t('auth.fullNameLabel')}</label>
-              <div className="relative">
-                <UserIcon className="w-4 h-4 text-neutral-500 absolute left-3 top-3" />
-                <input
-                  type="text"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Tony de Luc"
-                  className="w-full pl-9 pr-3 py-2 bg-neutral-900 border border-neutral-700 rounded-lg text-white focus:outline-none focus:border-amber-500"
-                />
+          <div className="space-y-4 py-2">
+            <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 space-y-2 text-left">
+              <div className="flex items-center gap-2 text-amber-400 font-bold text-sm">
+                <GraduationCap className="w-5 h-5 shrink-0" />
+                <span>Cadastro Vinculado à Matrícula</span>
               </div>
-            </div>
-
-            <div>
-              <label className="block text-neutral-400 mb-1 font-medium">{t('auth.emailLabel')}</label>
-              <div className="relative">
-                <Mail className="w-4 h-4 text-neutral-500 absolute left-3 top-3" />
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="seuemail@exemplo.com"
-                  className="w-full pl-9 pr-3 py-2 bg-neutral-900 border border-neutral-700 rounded-lg text-white focus:outline-none focus:border-amber-500"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label className="block text-neutral-400 mb-1 font-medium">{t('auth.phoneLabel')}</label>
-                <div className="relative">
-                  <Phone className="w-3.5 h-3.5 text-neutral-500 absolute left-3 top-3" />
-                  <input
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="(11) 98765-4321"
-                    className="w-full pl-8 pr-2 py-2 bg-neutral-900 border border-neutral-700 rounded-lg text-white focus:outline-none focus:border-amber-500"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-neutral-400 mb-1 font-medium">{t('auth.documentLabel')}</label>
-                <div className="relative">
-                  <FileText className="w-3.5 h-3.5 text-neutral-500 absolute left-3 top-3" />
-                  <input
-                    type="text"
-                    value={document}
-                    onChange={(e) => setDocument(e.target.value)}
-                    placeholder="000.000.000-00"
-                    className="w-full pl-8 pr-2 py-2 bg-neutral-900 border border-neutral-700 rounded-lg text-white focus:outline-none focus:border-amber-500"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-neutral-400 mb-1 font-medium">{t('auth.createPasswordLabel')}</label>
-              <div className="relative">
-                <Lock className="w-4 h-4 text-neutral-500 absolute left-3 top-3" />
-                <input
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full pl-9 pr-3 py-2 bg-neutral-900 border border-neutral-700 rounded-lg text-white focus:outline-none focus:border-amber-500"
-                />
-              </div>
+              <p className="text-xs text-neutral-300 leading-relaxed">
+                O acesso à Área do Aluno do CINELAB é exclusivo para estudantes matriculados. Sua conta e credenciais de acesso são criadas oficialmente no momento da sua matrícula.
+              </p>
             </div>
 
             <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3 bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-neutral-950 font-bold uppercase tracking-wider rounded-lg transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 cursor-pointer mt-2 active:scale-98"
+              type="button"
+              onClick={() => {
+                onClose();
+                if (onNavigate) {
+                  onNavigate('matricula');
+                }
+              }}
+              className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold uppercase tracking-wider rounded-lg transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 cursor-pointer active:scale-98 text-xs"
             >
-              {loading ? t('auth.creatingAccount') : t('auth.registerBtn')}
+              <span>Fazer Matrícula Oficial</span>
               <ArrowRight className="w-4 h-4" />
             </button>
 
-            <div className="pt-2 text-center text-neutral-400">
-              {t('auth.alreadyHaveAccount')}{' '}
+            <div className="pt-2 text-center text-xs text-neutral-400">
+              Já possui matrícula?{' '}
               <button
                 type="button"
                 onClick={() => setMode('login')}
                 className="text-amber-400 font-semibold hover:underline cursor-pointer"
               >
-                {t('auth.loginHere')}
+                Fazer Login
               </button>
             </div>
-          </form>
+          </div>
         )}
 
         {mode === 'forgot' && (

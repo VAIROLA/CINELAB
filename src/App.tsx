@@ -496,6 +496,7 @@ export default function App() {
         onClose={() => setAuthModalOpen(false)}
         onLoginSuccess={handleAuthSuccess}
         onSuccess={handleAuthSuccess}
+        onNavigate={navigateTo}
       />
     </div>
   );

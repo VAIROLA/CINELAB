@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { Logo } from './Logo.js';
 import { User, Enrollment } from '../types/index.js';
 import { LanguageSelector, HeaderCountryTranslator } from './LanguageSelector.js';
@@ -251,39 +251,27 @@ export const Header: React.FC<HeaderProps> = ({
                   {user.name.split(' ')[0]}
                 </span>
               </button>
-            ) : (
-              /* VISITANTE PÚBLICO: Sem atalhos fictícios. Exibe botões de Entrar */
-              <div className="flex items-center gap-1">
-                <button
-                  onClick={onOpenAuth}
-                  className="text-[9.5px] sm:text-[11.5px] px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg bg-purple-950/80 hover:bg-purple-900 text-purple-200 hover:text-white border border-purple-400/50 font-mono font-bold flex items-center gap-1 cursor-pointer transition-all"
-                  title="Acessar Área do Aluno com e-mail e senha"
-                >
-                  <UserIcon className="w-3 h-3 text-purple-300" />
-                  <span>Entrar</span>
-                </button>
-              </div>
-            )}
+            ) : null}
           </div>
 
-          {/* Tradutor no topo do lado direito: no desktop exibe todas as bandeiras; no mobile exibe botÃ£o compacto para abrir menu */}
+          {/* Tradutor no topo do lado direito: no desktop exibe todas as bandeiras; no mobile exibe botão compacto para abrir menu */}
           <div className="hidden md:flex items-center">
             <HeaderCountryTranslator variant="neon" />
           </div>
           <div className="md:hidden flex items-center shrink-0">
             <button
               onClick={() => setMobileMenuOpen(true)}
-              className="px-1.5 py-0.5 rounded-lg bg-[#270d4a]/95 hover:bg-[#3d1374] text-white border border-purple-400/50 flex items-center gap-1 text-[10px] font-mono font-bold shadow-sm cursor-pointer"
+              className="px-2 py-1 rounded-lg bg-[#270d4a]/95 hover:bg-[#3d1374] text-white border border-purple-400/50 flex items-center gap-1.5 text-xs font-sans font-bold shadow-sm cursor-pointer"
               title="Mudar idioma do sistema"
             >
-              <span className="text-xs">{language === 'pt' ? 'ðŸ‡§ðŸ‡·' : language === 'en' ? 'ðŸ‡ºðŸ‡¸' : language === 'es' ? 'ðŸ‡ªðŸ‡¸' : 'ðŸ‡«ðŸ‡·'}</span>
+              <span className="text-sm">{language === 'pt' ? '🇧🇷' : language === 'en' ? '🇺🇸' : language === 'es' ? '🇪🇸' : '🇫🇷'}</span>
               <span>{language.toUpperCase()}</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* Row Principal: Logo CINELAB + Status / Destaques + BotÃµes de AÃ§Ã£o */}
+      {/* Row Principal: Logo CINELAB + Status / Destaques + Botões de Ação */}
       <div className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 py-2 sm:py-3.5 md:py-4 flex items-center justify-between gap-2 sm:gap-6 overflow-hidden">
         {/* Brand Logo - CINELAB Oficial */}
         <div className="py-1 shrink-0 flex items-center max-w-[42%] xs:max-w-[46%] sm:max-w-none min-w-0">
@@ -295,12 +283,12 @@ export const Header: React.FC<HeaderProps> = ({
           />
         </div>
 
-        {/* Center Tagline / Status Indicator (visÃ­vel em telas mÃ©dias para cima) */}
-        <div className="hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-purple-950/50 border border-purple-500/30 text-xs text-purple-200 font-mono shadow-[inset_0_0_10px_rgba(168,85,247,0.15)]">
+        {/* Center Tagline / Status Indicator (visível em telas médias para cima) */}
+        <div className="hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-purple-950/60 border border-purple-500/30 text-xs text-purple-200 font-sans shadow-inner">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="font-semibold text-purple-100">MatrÃ­culas Abertas</span>
-          <span className="text-purple-400">â€¢</span>
-          <span className="text-amber-300 font-bold">10 MÃ³dulos + 3 BÃ´nus</span>
+          <span className="font-semibold text-white">Matrículas Abertas</span>
+          <span className="text-purple-400">•</span>
+          <span className="text-amber-400 font-bold">10 Módulos + 3 Bônus</span>
         </div>
 
         {/* Action Controls */}
@@ -407,7 +395,7 @@ export const Header: React.FC<HeaderProps> = ({
                         className="w-full text-left px-3 py-2 text-xs font-semibold text-purple-300 hover:bg-neutral-800 rounded-xl flex items-center gap-2.5 cursor-pointer"
                       >
                         <Clapperboard className="w-4 h-4 text-purple-400 shrink-0" />
-                        PÃ¡gina do Professor Tony de Luc
+                        Página do Professor Tony de Luc
                       </button>
                     </>
                   )}
@@ -449,10 +437,10 @@ export const Header: React.FC<HeaderProps> = ({
               )}
             </div>
           ) : (
-            <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
               <button
                 onClick={onOpenAuth}
-                className="hidden sm:inline-flex px-2.5 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-semibold text-purple-100 hover:text-white hover:bg-purple-900/60 border border-purple-400/40 rounded-xl transition-all shadow-[0_0_10px_rgba(168,85,247,0.2)] cursor-pointer whitespace-nowrap"
+                className="px-2.5 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-semibold text-purple-100 hover:text-white hover:bg-purple-900/60 border border-purple-400/40 rounded-xl transition-all shadow-[0_0_10px_rgba(168,85,247,0.2)] cursor-pointer whitespace-nowrap"
                 id="header-login-btn"
               >
                 {t('header.login')}
@@ -462,7 +450,7 @@ export const Header: React.FC<HeaderProps> = ({
                 className="px-2.5 sm:px-4 py-1.5 text-xs sm:text-sm font-bold uppercase tracking-wider bg-amber-500 hover:bg-amber-400 text-neutral-950 rounded-xl transition-all shadow-md shadow-amber-500/30 active:scale-95 cursor-pointer whitespace-nowrap"
                 id="header-matricula-cta"
               >
-                <span className="sm:hidden">MatrÃ­cula</span>
+                <span className="sm:hidden">Matrícula</span>
                 <span className="hidden sm:inline">{t('header.enrollNow')}</span>
               </button>
             </div>
@@ -479,9 +467,9 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
-      {/* Ribbon de NavegaÃ§Ã£o Desktop - Todas as PÃ¡ginas Perfeitamente VisÃ­veis Sem Rolagem Lateral */}
+      {/* Ribbon de Navegação Desktop - Todas as Páginas Perfeitamente Visíveis Sem Rolagem Lateral */}
       <nav
-        aria-label="NavegaÃ§Ã£o Principal do Portal"
+        aria-label="Navegação Principal do Portal"
         className="hidden lg:block w-full bg-[#120224]/95 border-t border-purple-500/25 px-2 sm:px-4 py-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
       >
         <div className="max-w-[1600px] mx-auto flex items-center justify-center flex-wrap gap-1 xl:gap-1.5 2xl:gap-2">
@@ -521,8 +509,8 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="lg:hidden bg-[#180430]/98 border-b-2 border-fuchsia-500/80 px-4 py-4 space-y-4 animate-fadeIn shadow-2xl">
           {/* Mobile Country Translator */}
           <div className="p-3 bg-purple-950/60 rounded-2xl border border-purple-400/40 space-y-2 shadow-inner">
-            <span className="text-xs font-mono text-purple-200 block text-center font-bold">
-              Tradutor do Sistema â€¢ Clique no PaÃ­s:
+            <span className="text-xs font-sans text-purple-200 block text-center font-bold">
+              Tradutor do Sistema • Selecione o Idioma:
             </span>
             <HeaderCountryTranslator stacked variant="neon" className="w-full justify-center" />
           </div>
@@ -538,14 +526,8 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
             <button
               onClick={() => {
-                if (user?.role === 'admin') {
-                  handleNav('admin');
-                } else if (onSwitchDemoRole) {
-                  onSwitchDemoRole('admin');
-                  setMobileMenuOpen(false);
-                } else {
-                  handleNav('admin');
-                }
+                handleNav('admin');
+                setMobileMenuOpen(false);
               }}
               className={`px-3 py-2 rounded-xl flex items-center justify-center gap-2 font-bold text-xs cursor-pointer transition-all ${
                 user?.role === 'admin'
@@ -554,55 +536,36 @@ export const Header: React.FC<HeaderProps> = ({
               }`}
             >
               <Shield className="w-4 h-4 text-red-400" />
-              <span>{user?.role === 'admin' ? 'Painel Admin' : 'Modo Admin'}</span>
+              <span>{user?.role === 'admin' ? 'Painel Admin' : 'Admin (Senha)'}</span>
             </button>
           </div>
 
-          {/* Role Switcher in Mobile Drawer */}
-          {onSwitchDemoRole && (
+          {/* Somente Admin pode alternar modo de teste no mobile */}
+          {user?.role === 'admin' && onSwitchDemoRole && (
             <div className="p-3 bg-purple-950/70 rounded-2xl border border-purple-500/40 space-y-2">
-              <span className="text-xs font-mono text-purple-200 block text-center font-bold">
-                Alternar Modo de VisualizaÃ§Ã£o:
+              <span className="text-xs font-sans text-purple-200 block text-center font-bold">
+                Modo de Teste da Coordenação:
               </span>
-              <div className="grid grid-cols-3 gap-1.5 text-center">
+              <div className="grid grid-cols-2 gap-2 text-center">
                 <button
                   onClick={() => {
                     onSwitchDemoRole('admin');
                     setMobileMenuOpen(false);
                   }}
-                  className={`px-2 py-2 rounded-xl text-xs font-bold border transition-colors ${
-                    user?.role === 'admin'
-                      ? 'bg-red-500/30 text-red-200 border-red-400 shadow-sm'
-                      : 'bg-[#220743] text-red-300 border-purple-500/40 hover:bg-purple-900/50'
-                  }`}
+                  className="px-2 py-2 rounded-xl text-xs font-bold border transition-colors bg-red-500/30 text-red-200 border-red-400 shadow-sm flex items-center justify-center gap-1.5"
                 >
-                  ðŸ›¡ï¸ Admin
-                </button>
-                <button
-                  onClick={() => {
-                    onSwitchDemoRole('guest');
-                    setMobileMenuOpen(false);
-                  }}
-                  className={`px-2 py-2 rounded-xl text-xs font-bold border transition-colors ${
-                    !user
-                      ? 'bg-purple-500/30 text-purple-200 border-purple-400 shadow-sm'
-                      : 'bg-[#220743] text-purple-300 border-purple-500/40 hover:bg-purple-900/50'
-                  }`}
-                >
-                  ðŸ‘¤ Visitante
+                  <Shield className="w-3.5 h-3.5 text-red-400" />
+                  <span>Admin</span>
                 </button>
                 <button
                   onClick={() => {
                     onSwitchDemoRole('student');
                     setMobileMenuOpen(false);
                   }}
-                  className={`px-2 py-2 rounded-xl text-xs font-bold border transition-colors ${
-                    user && user.role !== 'admin'
-                      ? 'bg-emerald-500/30 text-emerald-200 border-emerald-400 shadow-sm'
-                      : 'bg-[#220743] text-emerald-300 border-purple-500/40 hover:bg-purple-900/50'
-                  }`}
+                  className="px-2 py-2 rounded-xl text-xs font-bold border transition-colors bg-emerald-500/30 text-emerald-200 border-emerald-400 shadow-sm flex items-center justify-center gap-1.5"
                 >
-                  ðŸŽ“ Aluno
+                  <GraduationCap className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Ver como Aluno</span>
                 </button>
               </div>
             </div>
