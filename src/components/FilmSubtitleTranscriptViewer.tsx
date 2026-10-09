@@ -288,10 +288,10 @@ export const FilmSubtitleTranscriptViewer: React.FC<FilmSubtitleTranscriptViewer
             {/* Language Switcher Pills */}
             <div className="flex items-center gap-0.5 bg-neutral-950/80 p-0.5 rounded-lg border border-neutral-800">
               {[
-                { code: 'pt' as const, label: 'PT' },
-                { code: 'en' as const, label: 'EN' },
-                { code: 'es' as const, label: 'ES' },
-                { code: 'fr' as const, label: 'FR' },
+                { code: 'pt' as const, label: '🇧🇷 PT' },
+                { code: 'en' as const, label: '🇺🇸 EN' },
+                { code: 'es' as const, label: '🇪🇸 ES' },
+                { code: 'fr' as const, label: '🇫🇷 FR' },
               ].map((lang) => (
                 <button
                   key={lang.code}

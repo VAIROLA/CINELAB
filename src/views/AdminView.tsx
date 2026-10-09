@@ -70,6 +70,7 @@ interface AdminViewProps {
   currentUser?: any;
   onAdminLogin?: (user: any) => void;
   onSettingsUpdated?: () => void;
+  onSwitchToStudentPreview?: () => void;
 }
 
 export const AdminView: React.FC<AdminViewProps> = ({
@@ -77,6 +78,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
   currentUser,
   onAdminLogin,
   onSettingsUpdated,
+  onSwitchToStudentPreview,
 }) => {
   // Ordered Tabs: Notice 'visitors' is strictly positioned BEFORE 'students' as requested!
   const [activeTab, setActiveTab] = useState<
@@ -815,6 +817,19 @@ export const AdminView: React.FC<AdminViewProps> = ({
           </p>
         </div>
 
+        <div className="flex flex-wrap items-center gap-3">
+          {onSwitchToStudentPreview && (
+            <button
+              type="button"
+              onClick={onSwitchToStudentPreview}
+              className="px-4 py-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-mono font-bold flex items-center gap-2 transition cursor-pointer shadow-md"
+              title="Testar a plataforma exatamente com a visão de um aluno matriculado"
+            >
+              <Eye className="w-4 h-4 text-amber-400" />
+              <span>👁️ Visualizar como Aluno (Modo Teste)</span>
+            </button>
+          )}
+
         {/* Quick Time Travel Status Widget */}
         {settingsData && (
           <div className="p-3 rounded-2xl bg-neutral-900 border border-neutral-700/80 text-xs font-mono flex items-center gap-3">
@@ -831,6 +846,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
             </div>
           </div>
         )}
+        </div>
       </div>
 
       {/* Navigation Tabs */}

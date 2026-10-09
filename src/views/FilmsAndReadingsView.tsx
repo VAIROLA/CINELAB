@@ -88,6 +88,19 @@ export const FilmsAndReadingsView: React.FC<FilmsAndReadingsViewProps> = ({
   const [inlineLineIndices, setInlineLineIndices] = useState<Record<string, number>>({});
   const [inlineAutoPlays, setInlineAutoPlays] = useState<Record<string, boolean>>({});
 
+  // Auto-sync subtitle language when user switches global language flag
+  useEffect(() => {
+    const targetSub = language === 'en' ? 'en' : language === 'es' ? 'es' : language === 'fr' ? 'fr' : 'pt';
+    setSelectedSubtitle(targetSub);
+    setInlineSelectedSubtitles((prev) => {
+      const next = { ...prev };
+      Object.keys(next).forEach((k) => {
+        next[k] = targetSub;
+      });
+      return next;
+    });
+  }, [language]);
+
   const setInlineLineIndex = useCallback((filmId: string, val: number | ((prev: number) => number)) => {
     setInlineLineIndices((prev) => ({
       ...prev,
@@ -845,6 +858,34 @@ export const FilmsAndReadingsView: React.FC<FilmsAndReadingsViewProps> = ({
                               </span>
                             </div>
 
+                            {/* Selector de Legendas & Idioma para o Filme Bônus */}
+                            <div className="flex items-center justify-between gap-2 p-2 rounded-xl bg-neutral-900 border border-neutral-800">
+                              <div className="flex items-center gap-1.5 text-[11px] font-mono text-neutral-300">
+                                <Subtitles className="w-3.5 h-3.5 text-amber-400" />
+                                <span>Legenda:</span>
+                              </div>
+                              <div className="inline-flex rounded-lg bg-neutral-950 p-0.5 border border-neutral-800">
+                                {(['pt', 'en', 'es', 'fr'] as const).map((lang) => {
+                                  const currentSub = inlineSelectedSubtitles[bFilm.id] || (language === 'en' ? 'en' : language === 'es' ? 'es' : language === 'fr' ? 'fr' : 'pt');
+                                  const isSelected = currentSub === lang;
+                                  const flags = { pt: '🇧🇷 PT', en: '🇺🇸 EN', es: '🇪🇸 ES', fr: '🇫🇷 FR' };
+                                  return (
+                                    <button
+                                      key={lang}
+                                      type="button"
+                                      onClick={() => setInlineSelectedSubtitle(bFilm.id, lang)}
+                                      className={`px-2 py-0.5 rounded text-[11px] font-bold transition-all cursor-pointer ${
+                                        isSelected ? 'bg-amber-500 text-neutral-950 font-mono shadow' : 'text-neutral-400 hover:text-white'
+                                      }`}
+                                      title={`Legendas em ${lang.toUpperCase()}`}
+                                    >
+                                      {flags[lang]}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </div>
+
                             {/* Inline player for Bonus Film */}
                             {(() => {
                               const isBonusInline = inlinePlayerFilmId === bFilm.id;
@@ -1126,6 +1167,34 @@ export const FilmsAndReadingsView: React.FC<FilmsAndReadingsViewProps> = ({
                       <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-neutral-900 border border-neutral-800 text-neutral-300">
                         {platformName}
                       </span>
+                    </div>
+
+                    {/* Selector de Legendas & Idioma do Filme */}
+                    <div className="flex items-center justify-between flex-wrap gap-2 p-2.5 rounded-xl bg-neutral-900 border border-neutral-800">
+                      <div className="flex items-center gap-1.5 text-[11px] font-mono text-neutral-300">
+                        <Subtitles className="w-3.5 h-3.5 text-amber-400" />
+                        <span>Legenda / Idioma:</span>
+                      </div>
+                      <div className="inline-flex rounded-lg bg-neutral-950 p-0.5 border border-neutral-800">
+                        {(['pt', 'en', 'es', 'fr'] as const).map((lang) => {
+                          const currentSub = inlineSelectedSubtitles[film.id] || (language === 'en' ? 'en' : language === 'es' ? 'es' : language === 'fr' ? 'fr' : 'pt');
+                          const isSelected = currentSub === lang;
+                          const flags = { pt: '🇧🇷 PT', en: '🇺🇸 EN', es: '🇪🇸 ES', fr: '🇫🇷 FR' };
+                          return (
+                            <button
+                              key={lang}
+                              type="button"
+                              onClick={() => setInlineSelectedSubtitle(film.id, lang)}
+                              className={`px-2 py-0.5 rounded text-[11px] font-bold transition-all cursor-pointer ${
+                                isSelected ? 'bg-amber-500 text-neutral-950 font-mono shadow' : 'text-neutral-400 hover:text-white'
+                              }`}
+                              title={`Legendas em ${lang.toUpperCase()}`}
+                            >
+                              {flags[lang]}
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
 
                     {isUnlocked ? (

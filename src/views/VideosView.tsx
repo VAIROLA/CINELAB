@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Subtitles,
-  Headphones,
-  api } from '../services/api.js';
+import { api } from '../services/api.js';
 import { VideoLesson } from '../types/index.js';
 import {
   Film,
@@ -17,9 +14,14 @@ import {
   Loader2,
   ExternalLink,
   Image as ImageIcon,
+  Subtitles,
+  Headphones,
+  Volume2,
+  BookOpen,
 } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext.js';
 import { parseVideoEmbed } from '../utils/videoUtils.js';
+import { MASTERCLASS_STAGE_TRANSLATIONS } from '../i18n/masterclassTranslations.js';
 
 interface VideosViewProps {
   isLoggedIn: boolean;
@@ -305,23 +307,65 @@ export const VideosView: React.FC<VideosViewProps> = ({
             {activeVideo.isUnlocked && (() => {
               const embed = parseVideoEmbed(activeVideo.videoUrl);
               return (
-                <div className="px-5 py-2.5 bg-neutral-950 border-b border-neutral-800 flex items-center justify-between flex-wrap gap-2 text-xs">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-neutral-400 font-mono">Player Integrado:</span>
-                    <span className="font-semibold text-white">{embed?.platformLabel || 'Vídeo Online'}</span>
+                <div className="px-5 py-3 bg-neutral-950 border-b border-neutral-800 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                      <span className="text-neutral-400 font-mono text-[11px]">Player:</span>
+                      <span className="font-semibold text-white text-[11px]">{embed?.platformLabel || 'Vídeo Online'}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-500/10 border border-amber-500/20 text-amber-300 font-mono text-[11px]">
+                      <Headphones className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Áudio Estúdio HD 1080p</span>
+                    </div>
                   </div>
-                  {embed?.externalWatchUrl && (
-                    <a
-                      href={embed.externalWatchUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-amber-300 hover:text-amber-200 transition font-mono text-[11px] font-medium"
-                    >
-                      <ExternalLink className="w-3.5 h-3.5" />
-                      Abrir em Nova Aba
-                    </a>
-                  )}
+
+                  {/* Multilingual Subtitle & Translation Selector */}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-neutral-400 font-mono text-[11px] flex items-center gap-1">
+                      <Subtitles className="w-3.5 h-3.5 text-amber-400" />
+                      Legenda / Idioma:
+                    </span>
+                    <div className="inline-flex rounded-lg bg-neutral-900 border border-neutral-800 p-0.5">
+                      {(['pt', 'en', 'es', 'fr'] as const).map((lang) => {
+                        const labels = {
+                          pt: { flag: '🇧🇷', label: 'PT' },
+                          en: { flag: '🇺🇸', label: 'EN' },
+                          es: { flag: '🇪🇸', label: 'ES' },
+                          fr: { flag: '🇫🇷', label: 'FR' },
+                        };
+                        const isSelected = videoSubLang === lang;
+                        return (
+                          <button
+                            key={lang}
+                            type="button"
+                            onClick={() => setVideoSubLang(lang)}
+                            className={`px-2.5 py-1 rounded-md text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                              isSelected
+                                ? 'bg-amber-500 text-neutral-950 shadow-md font-mono'
+                                : 'text-neutral-400 hover:text-white hover:bg-neutral-800'
+                            }`}
+                            title={`Ativar legendas e tradução em ${lang.toUpperCase()}`}
+                          >
+                            <span>{labels[lang].flag}</span>
+                            <span>{labels[lang].label}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {embed?.externalWatchUrl && (
+                      <a
+                        href={embed.externalWatchUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-amber-300 hover:text-amber-200 transition font-mono text-[11px] font-medium ml-1"
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                        Aba Externa
+                      </a>
+                    )}
+                  </div>
                 </div>
               );
             })()}
@@ -332,14 +376,15 @@ export const VideosView: React.FC<VideosViewProps> = ({
                 if (embed && (embed.type === 'youtube' || embed.type === 'vimeo' || embed.type === 'archive')) {
                   return (
                     <iframe
+                      key={`${activeVideo.id}-${videoSubLang}`}
                       src={
                         embed.type === 'youtube'
-                          ? `${embed.embedUrl}${embed.embedUrl.includes('?') ? '&' : '?'}rel=0&enablejsapi=1&cc_load_policy=1&hl=${videoSubLang}&cc_lang_pref=${videoSubLang}`
+                          ? `${embed.embedUrl}${embed.embedUrl.includes('?') ? '&' : '?'}rel=0&enablejsapi=1&cc_load_policy=1&hl=${videoSubLang}&cc_lang_pref=${videoSubLang}&vq=hd1080&high_res=1`
                           : embed.embedUrl
                       }
                       title={activeVideo.title}
                       className="w-full h-full border-0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; speaker-selection"
                       referrerPolicy="strict-origin-when-cross-origin"
                       allowFullScreen
                     />
@@ -437,6 +482,73 @@ export const VideosView: React.FC<VideosViewProps> = ({
                   </p>
                 </div>
               )}
+
+              {/* Pedagogical Translation & Masterclass Directing Directives */}
+              {(() => {
+                const trans = MASTERCLASS_STAGE_TRANSLATIONS[activeVideo.moduleId]?.[videoSubLang];
+                if (!trans) return null;
+                return (
+                  <div className="p-5 rounded-2xl bg-neutral-950/80 border border-neutral-800 space-y-4">
+                    <div className="flex items-center justify-between flex-wrap gap-2 pb-3 border-b border-neutral-800">
+                      <div className="flex items-center gap-2">
+                        <BookOpen className="w-4 h-4 text-amber-400" />
+                        <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-amber-300">
+                          {videoSubLang === 'pt' && 'Tradução Pedagógica & Decupagem da Aula'}
+                          {videoSubLang === 'en' && 'Pedagogical Translation & Lecture Breakdown'}
+                          {videoSubLang === 'es' && 'Traducción Pedagógica y Desglose de la Clase'}
+                          {videoSubLang === 'fr' && 'Traduction Pédagogique & Découpage de la Masterclasse'}
+                        </h4>
+                      </div>
+                      <span className="text-[11px] font-mono text-neutral-400">
+                        {videoSubLang === 'pt' && '🇧🇷 Português'}
+                        {videoSubLang === 'en' && '🇺🇸 English'}
+                        {videoSubLang === 'es' && '🇪🇸 Español'}
+                        {videoSubLang === 'fr' && '🇫🇷 Français'}
+                      </span>
+                    </div>
+
+                    <div className="space-y-2">
+                      <h5 className="text-sm font-bold text-white">{trans.stageTitle}</h5>
+                      <p className="text-xs text-neutral-300 leading-relaxed">{trans.lectureSummary}</p>
+                    </div>
+
+                    <div className="p-3.5 rounded-xl bg-neutral-900 border border-neutral-800 space-y-1.5">
+                      <div className="text-[11px] font-mono font-bold text-amber-400 uppercase tracking-wider">
+                        {videoSubLang === 'pt' && 'Citação do Diretor Tony de Luc:'}
+                        {videoSubLang === 'en' && 'Director Tony de Luc Quote:'}
+                        {videoSubLang === 'es' && 'Cita del Director Tony de Luc:'}
+                        {videoSubLang === 'fr' && 'Citation du Réalisateur Tony de Luc :'}
+                      </div>
+                      <p className="text-xs italic text-neutral-300">"{trans.tonyQuote}"</p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <div className="text-[11px] font-mono font-bold text-neutral-400 uppercase tracking-wider">
+                        {videoSubLang === 'pt' && 'Regras Práticas de Direção & Decupagem:'}
+                        {videoSubLang === 'en' && 'Practical Directing & Framing Directives:'}
+                        {videoSubLang === 'es' && 'Reglas Prácticas de Dirección y Planificación:'}
+                        {videoSubLang === 'fr' && 'Règles Pratiques de Réalisation & Découpage :'}
+                      </div>
+                      <ul className="space-y-1.5 text-xs text-neutral-300">
+                        {trans.keyDirectingRules.map((rule, idx) => (
+                          <li key={idx} className="flex items-start gap-2">
+                            <span className="text-amber-400 font-bold font-mono">0{idx + 1}.</span>
+                            <span>{rule}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="pt-2 border-t border-neutral-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] text-neutral-400 font-mono">
+                      <span className="text-amber-400/90">{trans.handoutConnection}</span>
+                      <span className="flex items-center gap-1 text-emerald-400">
+                        <Volume2 className="w-3 h-3" />
+                        {trans.audioNotice}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })()}
 
               {/* Opção de subir vídeo para esta aula (Admin / Diretor) */}
               {isAdmin && (

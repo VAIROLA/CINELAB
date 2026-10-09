@@ -9,6 +9,7 @@ import { User, Enrollment, CourseSettings, CourseModule } from './types/index.js
 import { Header } from './components/Header.js';
 import { Footer } from './components/Footer.js';
 import { AuthModal } from './components/AuthModal.js';
+import { Shield, Lock } from 'lucide-react';
 
 // Views
 import { HomeView } from './views/HomeView.js';
@@ -176,6 +177,20 @@ export default function App() {
     navigateTo('inicio');
   };
 
+  const handleRestoreAdminSession = () => {
+    if (typeof window !== 'undefined') {
+      const savedAdminToken = localStorage.getItem('cinelab_admin_saved_token');
+      if (savedAdminToken) {
+        setAuthToken(savedAdminToken);
+        localStorage.removeItem('cinelab_admin_saved_token');
+        checkCurrentUser();
+        navigateTo('admin');
+        return;
+      }
+    }
+    navigateTo('admin');
+  };
+
   const handleSwitchDemoRole = async (role: 'guest' | 'student' | 'admin') => {
     try {
       if (typeof window !== 'undefined') {
@@ -191,49 +206,43 @@ export default function App() {
           await api.logout();
         } catch {}
       } else if (role === 'admin') {
-        // SEGURANÇA MÁXIMA DE PRODUÇÃO:
-        // Nunca conceder acesso de Administrador automaticamente sem login e senha!
-        if (user && user.role === 'admin') {
-          navigateTo('admin');
-        } else {
-          // Redireciona para a tela de autenticação restrita do Admin (onde exige E-mail e Senha)
-          navigateTo('admin');
-        }
+        // Redireciona para o Painel Administrativo com tela de autenticação segura
+        navigateTo('admin');
       } else if (role === 'student') {
-        if (user?.role === 'admin') {
+        // OPÇÃO 1: SEGURANÇA COMERCIAL TOTAL
+        // Apenas o Professor Tony (administrador autenticado) pode testar a área do aluno sem senha.
+        // Visitantes públicos NÃO entram como aluno fake e devem autenticar-se normalmente.
+        const isAdminSession = user?.role === 'admin' || (typeof window !== 'undefined' && !!localStorage.getItem('cinelab_admin_saved_token'));
+
+        if (isAdminSession) {
           const currentToken = getAuthToken();
-          if (currentToken && typeof window !== 'undefined') {
+          if (currentToken && typeof window !== 'undefined' && user?.role === 'admin') {
             localStorage.setItem('cinelab_admin_saved_token', currentToken);
           }
-        }
-        const studentUser: User = {
-          id: 'user-student-demo',
-          name: 'Aluno Demonstrativo',
-          email: 'aluno@cinelab.com.br',
-          role: 'student',
-          createdAt: new Date().toISOString(),
-        };
-        const studentEnrollment: Enrollment = {
-          id: "enr-demo",
-          enrollmentNumber: "CNL-2026-DEMO",
-          studentId: "user-student-demo",
-          studentName: "Aluno Demonstração",
-          studentEmail: "aluno@cinelab.com.br",
-          status: "active",
-          enrolledAt: new Date().toISOString(),
-          paymentId: "pay-demo",
-        };
-        setAuthToken('user-student-demo');
-        setUser(studentUser);
-        setEnrollment(studentEnrollment);
-        navigateTo('minha-area');
-        try {
-          const res = await api.quickStudentLogin();
-          if (res?.user) setUser(res.user);
-          if (res?.enrollment) setEnrollment(res.enrollment);
-          if (res?.token) setAuthToken(res.token);
-        } catch (e) {
-          console.warn('Quick student login remote sync notice:', e);
+          const previewStudentUser: User = {
+            id: 'user-preview-professor',
+            name: 'Aluno de Teste (Visão do Professor Tony)',
+            email: 'professor-tony-preview@cinelab.edu.br',
+            role: 'student',
+            createdAt: new Date().toISOString(),
+          };
+          const previewEnrollment: Enrollment = {
+            id: 'enr-preview-tony',
+            enrollmentNumber: 'CNL-2026-TESTE-PROF',
+            studentId: 'user-preview-professor',
+            studentName: 'Professor Tony de Luc (Modo de Teste)',
+            studentEmail: 'professor-tony-preview@cinelab.edu.br',
+            status: 'active',
+            enrolledAt: new Date().toISOString(),
+            paymentId: 'pay-test-prof',
+          };
+          setAuthToken('preview-mode-token');
+          setUser(previewStudentUser);
+          setEnrollment(previewEnrollment);
+          navigateTo('minha-area');
+        } else {
+          // Visitante não autenticado: abre modal de login de aluno
+          handleOpenAuth('login');
         }
       }
     } catch (err) {
@@ -241,8 +250,28 @@ export default function App() {
     }
   };
 
+  const hasAdminSavedToken = typeof window !== 'undefined' && !!localStorage.getItem('cinelab_admin_saved_token');
+
   return (
     <div className="min-h-screen flex flex-col bg-[#0c0d10] text-[#e4e6eb] w-full max-w-full min-w-0 overflow-x-clip">
+      {/* Top Banner de Retorno ao Admin quando Professor Tony estiver testando como Aluno */}
+      {hasAdminSavedToken && (
+        <div className="bg-gradient-to-r from-red-950 via-purple-950 to-red-950 border-b border-red-500/50 px-3 sm:px-6 py-2 text-xs font-mono text-white flex items-center justify-between gap-3 shadow-2xl sticky top-0 z-[60]">
+          <div className="flex items-center gap-2 truncate">
+            <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse shrink-0" />
+            <span className="font-bold text-amber-300">Modo de Teste da Área do Aluno</span>
+            <span className="text-neutral-400 hidden md:inline">• Sessão Administrativa do Professor Tony salva</span>
+          </div>
+          <button
+            onClick={handleRestoreAdminSession}
+            className="px-3 py-1 rounded-lg bg-red-600 hover:bg-red-500 text-white font-bold text-[11px] uppercase tracking-wider flex items-center gap-1.5 shadow-lg cursor-pointer transition-transform active:scale-95 shrink-0"
+          >
+            <Shield className="w-3.5 h-3.5" />
+            <span>Voltar ao Painel Admin</span>
+          </button>
+        </div>
+      )}
+
       {/* Platform Header */}
       <Header
         currentRoute={currentRoute}
@@ -297,11 +326,41 @@ export default function App() {
         )}
 
         {currentRoute === 'minha-area' && (
-          <StudentAreaView
-            onNavigate={navigateTo}
-            user={user}
-            onOpenAuth={handleOpenAuth}
-          />
+          user ? (
+            <StudentAreaView
+              onNavigate={navigateTo}
+              user={user}
+              enrollment={enrollment}
+            />
+          ) : (
+            <div className="max-w-xl mx-auto px-4 py-20 text-center text-neutral-200">
+              <div className="p-8 rounded-3xl bg-[#12141c] border border-amber-500/30 space-y-5 shadow-2xl">
+                <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-400">
+                  <Lock className="w-8 h-8" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-white font-display">Acesso Exclusivo para Alunos Matriculados</h2>
+                  <p className="text-xs text-neutral-400 mt-2 leading-relaxed">
+                    A Área do Aluno com as aulas dos 10 módulos, apostilas completas e acompanhamento é restrita para estudantes matriculados na formação CINELAB.
+                  </p>
+                </div>
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+                  <button
+                    onClick={() => handleOpenAuth('login')}
+                    className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-purple-900/60 hover:bg-purple-800 text-purple-200 hover:text-white border border-purple-500/50 text-xs font-bold font-mono transition-all cursor-pointer"
+                  >
+                    Já sou Aluno • Fazer Login
+                  </button>
+                  <button
+                    onClick={() => navigateTo('matricula')}
+                    className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold text-xs uppercase tracking-wider transition-all cursor-pointer shadow-lg shadow-amber-500/20"
+                  >
+                    Matricular-se Agora
+                  </button>
+                </div>
+              </div>
+            </div>
+          )
         )}
 
         {currentRoute === 'apostilas' && (
@@ -414,6 +473,7 @@ export default function App() {
               setEnrollment(null);
             }}
             onSettingsUpdated={loadCourseInfo}
+            onSwitchToStudentPreview={() => handleSwitchDemoRole('student')}
           />
         )}
 

@@ -664,39 +664,13 @@ app.post('/api/auth/quick-admin', (req: Request, res: Response) => {
   return res.status(403).json({ error: 'Acesso rápido desativado em produção por segurança. Utilize suas credenciais administrativas.' });
 });
 
-// Quick Student Access for instant student area testing
+// Quick Student Access disabled in production for commercial security (Opção 1)
 app.post('/api/auth/quick-student', (req: Request, res: Response) => {
-  const db = getDb();
-  let studentUser = db.users.find((u) => u.role === 'student');
-  if (!studentUser) {
-    studentUser = {
-      id: 'user-student-demo',
-      name: 'Lucas Mendonça de Oliveira',
-      email: 'aluno@cinelab.edu.br',
-      phone: '+55 11 97654-3210',
-      document: '389.482.198-40',
-      role: 'student',
-      passwordHash: 'aluno123',
-      createdAt: '2026-08-20T14:30:00Z',
-    };
-    db.users.push(studentUser);
-    saveDatabase();
-  }
-  const enrollment = db.enrollments.find((e) => e.studentId === studentUser.id) || null;
-  res.json({
-    token: studentUser.id,
-    user: {
-      id: studentUser.id,
-      name: studentUser.name,
-      email: studentUser.email,
-      phone: studentUser.phone,
-      document: studentUser.document,
-      role: studentUser.role,
-      createdAt: studentUser.createdAt,
-    },
-    enrollment,
+  return res.status(403).json({
+    error: 'Acesso rápido para aluno demonstrativo desativado por segurança comercial. Utilize seu e-mail e senha de matrícula.'
   });
 });
+
 
 // Register
 app.post('/api/auth/register', (req: Request, res: Response) => {
