@@ -826,7 +826,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
               title="Testar a plataforma exatamente com a visão de um aluno matriculado"
             >
               <Eye className="w-4 h-4 text-amber-400" />
-              <span>👁️ Visualizar como Aluno (Modo Teste)</span>
+              <span>👁️ Entrar como Aluno Teste (Lucas)</span>
             </button>
           )}
 
@@ -1415,6 +1415,19 @@ export const AdminView: React.FC<AdminViewProps> = ({
                               {/* Ações */}
                               <td className="p-4 text-right whitespace-nowrap">
                                 <div className="inline-flex items-center gap-1.5 font-sans">
+                                  {/* Botão de Entrar/Testar como este Aluno */}
+                                  {onSwitchToStudentPreview && (
+                                    <button
+                                      type="button"
+                                      onClick={onSwitchToStudentPreview}
+                                      className="px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-lg text-xs cursor-pointer flex items-center gap-1 font-mono font-bold transition"
+                                      title="Entrar na Área do Aluno simulando o Lucas Teste"
+                                    >
+                                      <Eye className="w-3.5 h-3.5 text-amber-400" />
+                                      <span>Testar Aluno</span>
+                                    </button>
+                                  )}
+
                                   {/* Botão de Editar Aluno */}
                                   <button
                                     type="button"

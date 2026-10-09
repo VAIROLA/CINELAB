@@ -220,21 +220,21 @@ export default function App() {
             localStorage.setItem('cinelab_admin_saved_token', currentToken);
           }
           const previewStudentUser: User = {
-            id: 'user-preview-professor',
-            name: 'Aluno de Teste (Visão do Professor Tony)',
-            email: 'professor-tony-preview@cinelab.edu.br',
+            id: 'user-student-demo',
+            name: 'Lucas Mendonça de Oliveira (Aluno Teste)',
+            email: 'aluno@cinelab.edu.br',
             role: 'student',
             createdAt: new Date().toISOString(),
           };
           const previewEnrollment: Enrollment = {
-            id: 'enr-preview-tony',
-            enrollmentNumber: 'CNL-2026-TESTE-PROF',
-            studentId: 'user-preview-professor',
-            studentName: 'Professor Tony de Luc (Modo de Teste)',
-            studentEmail: 'professor-tony-preview@cinelab.edu.br',
+            id: 'enr-student-demo',
+            enrollmentNumber: 'CNL-2026-4819',
+            studentId: 'user-student-demo',
+            studentName: 'Lucas Mendonça de Oliveira (Aluno Teste)',
+            studentEmail: 'aluno@cinelab.edu.br',
             status: 'active',
             enrolledAt: new Date().toISOString(),
-            paymentId: 'pay-test-prof',
+            paymentId: 'pay-test-lucas',
           };
           setAuthToken('preview-mode-token');
           setUser(previewStudentUser);
