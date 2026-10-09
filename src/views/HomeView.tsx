@@ -346,29 +346,51 @@ export const HomeView: React.FC<HomeViewProps> = ({
               </div>
             </div>
 
-            {/* Visual Cinema Collage / Set Feature Card */}
-            <div className="lg:col-span-6 relative">
-              <div className="relative rounded-2xl overflow-hidden border border-neutral-800 bg-neutral-900/60 shadow-2xl">
-                <img
-                  src="https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=1200&q=80"
-                  alt="Cinema set CINELAB"
-                  className="w-full h-80 object-cover opacity-80"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0c0d10] via-[#0c0d10]/50 to-transparent" />
-                
-                <div className="absolute bottom-0 inset-x-0 p-6 space-y-2">
-                  <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-amber-500 text-neutral-950 font-bold">
-                      {t('home.labSetTag')}
+            {/* Coleção Completa de Apostilas Didáticas */}
+            <div className="lg:col-span-6 relative flex flex-col justify-center">
+              <div
+                onClick={() => onNavigate('apostilas')}
+                className="group relative rounded-2xl overflow-hidden border border-amber-500/30 bg-neutral-900/90 shadow-2xl transition-all duration-300 hover:border-amber-500/60 hover:shadow-amber-500/10 hover:shadow-2xl cursor-pointer"
+                title="Clique para conhecer as apostilas completas do curso CINELAB"
+              >
+                <div className="relative overflow-hidden bg-neutral-950">
+                  <img
+                    src="/images/apostilas-colecao-completa.jpg"
+                    alt="Coleção Completa de Apostilas Didáticas CINELAB - 10 Módulos Oficiais do Professor Tony de Luc"
+                    className="w-full h-auto object-contain transition-transform duration-500 group-hover:scale-[1.02]"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-4">
+                    <span className="px-3.5 py-1.5 rounded-lg bg-amber-500 text-neutral-950 font-mono text-xs font-bold shadow-lg flex items-center gap-1.5">
+                      <BookOpen className="w-3.5 h-3.5" />
+                      <span>{t('nav.apostilas') || 'Explorar Apostilas'}</span>
                     </span>
-                    <span className="text-xs font-mono text-neutral-400">{t('home.labSetLens')}</span>
                   </div>
-                  <h3 className="text-lg font-bold font-display text-white">
-                    {t('home.labSetTitle')}
-                  </h3>
-                  <p className="text-xs text-neutral-300">
-                    {t('home.labSetDesc')}
-                  </p>
+                </div>
+
+                <div className="p-4 sm:p-5 bg-gradient-to-b from-neutral-900/95 to-neutral-950 border-t border-neutral-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-amber-500 text-neutral-950 font-bold uppercase tracking-wider">
+                        {t('home.labSetTag')}
+                      </span>
+                      <span className="text-xs font-mono text-amber-400 font-semibold">
+                        {t('home.labSetLens')}
+                      </span>
+                    </div>
+                    <h3 className="text-sm font-bold font-display text-white">
+                      {t('home.labSetTitle')}
+                    </h3>
+                    <p className="text-xs text-neutral-300 mt-1 leading-relaxed">
+                      {t('home.labSetDesc')}
+                    </p>
+                  </div>
+                  <div className="shrink-0 self-start sm:self-center">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-neutral-800 group-hover:bg-amber-500 group-hover:text-neutral-950 text-neutral-200 text-xs font-mono font-bold transition">
+                      <span>{t('nav.apostilas') || 'Apostilas'}</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
