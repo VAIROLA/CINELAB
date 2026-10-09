@@ -86,7 +86,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
   const [loading, setLoading] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
   const [loginEmail, setLoginEmail] = useState('studiodeluc@gmail.com');
-  const [loginPassword, setLoginPassword] = useState('admin123');
+  const [loginPassword, setLoginPassword] = useState('');
   const [loginLoading, setLoginLoading] = useState(false);
   const [loginMessage, setLoginMessage] = useState('');
 
@@ -169,8 +169,12 @@ export const AdminView: React.FC<AdminViewProps> = ({
   const [extraVideosModalApostila, setExtraVideosModalApostila] = useState<Apostila | BonusApostila | null>(null);
 
   useEffect(() => {
-    loadAllAdminData();
-  }, []);
+    if (currentUser?.role === 'admin') {
+      loadAllAdminData();
+    } else {
+      setLoading(false);
+    }
+  }, [currentUser]);
 
   const notify = (message: string, type: 'success' | 'error' = 'success') => {
     setActionNotification({ type, message });
@@ -934,7 +938,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
         <div className="py-20 text-center text-neutral-500 font-mono text-xs">
           Carregando dados da administração...
         </div>
-      ) : authError || !stats || !user || user.role !== 'admin' ? (
+      ) : authError || !stats || !currentUser || currentUser.role !== 'admin' ? (
         <div className="max-w-xl mx-auto py-12 px-6 rounded-3xl bg-neutral-900 border border-neutral-800 shadow-2xl space-y-6 text-center animate-fadeIn">
           <div className="w-16 h-16 rounded-2xl bg-red-950/80 border border-red-800/80 flex items-center justify-center mx-auto text-red-400">
             <Lock className="w-8 h-8" />
