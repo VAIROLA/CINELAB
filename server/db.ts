@@ -1,4 +1,4 @@
-import zlib from 'zlib';
+﻿import zlib from 'zlib';
 import fs from 'fs';
 import path from 'path';
 import {
@@ -123,59 +123,10 @@ function getInitialDb(): DatabaseSchema {
     activities: [...pedagogicalActivities],
     films: [...pedagogicalFilms],
     readings: [...pedagogicalReadings],
-    studentActivities: {
-      'user-student-demo': ['act-1', 'act-2'],
-    },
+    studentActivities: {},
     evaluations: [...pedagogicalEvaluations],
-    submissions: [
-      {
-        id: 'sub-1',
-        evaluationId: 'eval-1',
-        moduleId: 1,
-        studentId: 'user-student-demo',
-        studentName: 'Lucas Mendonça de Oliveira',
-        enrollmentNumber: 'CNL-2026-4819',
-        submittedAt: '2026-08-30T16:20:00Z',
-        answers: {
-          'q1-1': { questionId: 'q1-1', selectedOptionIndex: 1, isCorrect: true, scoreAwarded: 2.5 },
-          'q1-2': { questionId: 'q1-2', selectedOptionIndex: 1, isCorrect: true, scoreAwarded: 2.5 },
-          'q1-3': { questionId: 'q1-3', selectedOptionIndex: 1, isCorrect: true, scoreAwarded: 2.5 },
-          'q1-4': {
-            questionId: 'q1-4',
-            discursiveText:
-              'A lente grande-angular expande a perspectiva e gera maior profundidade de campo, integrando o sujeito ao espaço dramático. A teleobjetiva achata as camadas de plano e comprime a profundidade, isolando a figura humana em primeiro plano com foco seletivo.',
-            scoreAwarded: 2.0,
-            feedback: 'Excelente análise técnica de lentes e efeito estético.',
-          },
-        },
-        objectiveScore: 7.5,
-        discursiveScore: 2.0,
-        totalScore: 9.5,
-        maxScore: 10,
-        percentage: 95,
-        status: 'graded',
-        gradedAt: '2026-08-31T09:00:00Z',
-        gradedBy: 'Professor Cineasta Tony de Luc',
-        teacherGeneralFeedback: 'Excelente desempenho na primeira avaliação. Domínio da linguagem dos planos e ótica cinematográfica.',
-      },
-    ],
-    certificates: [
-      {
-        id: 'cert-seed-1',
-        validationCode: 'CNL-CERT-8910-4821',
-        studentId: 'user-student-demo',
-        studentName: 'Lucas Mendonça de Oliveira',
-        studentDocument: '123.456.789-00',
-        enrollmentNumber: 'CNL-2026-4819',
-        courseName: 'CINELAB – CINEMA & AUDIOVISUAL',
-        workloadHours: 180,
-        issueDate: '2026-09-08T18:00:00.000Z',
-        directorName: 'Professor Cineasta Tony de Luc',
-        directorRole: 'Diretor Acadêmico & Cineasta',
-        averageGrade: 9.5,
-        isEligible: true,
-      },
-    ],
+    submissions: [],
+    certificates: [],
     emailLogs: [
       {
         id: 'email-1',
@@ -390,6 +341,34 @@ export function initExtraVideosForApostila(apos: any, defaultSuffix: string): Ap
   return [slot1, slot2];
 }
 
+
+/**
+ * Higieniza o banco de dados garantindo que alunos de teste fictÃ­cios (Mariana, Rodrigo),
+ * avaliaÃ§Ãµes de exemplo, notas fake e receitas simuladas sejam zeradas,
+ * mantendo estritamente o Aluno Lucas para testes administrativos atÃ© que
+ * novos alunos reais se matriculem.
+ */
+function sanitizeDatabaseState(targetDb: any): void {
+  if (!targetDb) return;
+  targetDb.users = (targetDb.users || []).filter(
+    (u: any) => u.id !== 'user-student-mariana' && u.id !== 'user-student-rodrigo' && !u.id.includes('mariana') && !u.id.includes('rodrigo')
+  );
+  targetDb.enrollments = (targetDb.enrollments || []).filter(
+    (e: any) => e.studentId !== 'user-student-mariana' && e.studentId !== 'user-student-rodrigo' && !e.id.includes('mariana') && !e.id.includes('rodrigo') && e.id !== 'enr-2' && e.id !== 'enr-3'
+  );
+  targetDb.payments = (targetDb.payments || [])
+    .filter((p: any) => p.studentId !== 'user-student-mariana' && p.studentId !== 'user-student-rodrigo' && p.id !== 'pay-2' && p.id !== 'pay-3' && p.id !== 'pay-mariana' && p.id !== 'pay-rodrigo')
+    .map((p: any) => (p.studentId === 'user-student-demo' || p.id === 'pay-1' ? { ...p, amount: 0 } : p));
+  targetDb.submissions = (targetDb.submissions || []).filter((s: any) => s.id !== 'sub-1' && s.studentId !== 'user-student-demo');
+  targetDb.certificates = (targetDb.certificates || []).filter((c: any) => c.id !== 'cert-seed-1' && c.studentId !== 'user-student-demo');
+  
+  const lucas = (targetDb.users || []).find((u: any) => u.id === 'user-student-demo');
+  if (lucas) {
+    if ((targetDb.submissions || []).filter((s: any) => s.studentId === lucas.id).length === 0) {
+      lucas.averageGrade = undefined;
+    }
+  }
+}
 export function loadDatabase(): void {
   try {
     try {
@@ -884,13 +863,14 @@ export function loadDatabase(): void {
           db.payments.push(initPay);
         }
       }
-      db.submissions = db.submissions || initial.submissions;
-      if (!db.certificates || db.certificates.length === 0) {
-        db.certificates = [...initial.certificates];
-      }
+      db.submissions = db.submissions || [];
+      db.certificates = db.certificates || [];
+
+
       db.emailLogs = db.emailLogs || initial.emailLogs;
       db.visitors = db.visitors && db.visitors.length > 0 ? db.visitors : initial.visitors;
-      db.studentActivities = db.studentActivities || initial.studentActivities;
+      db.studentActivities = db.studentActivities || {};
+      sanitizeDatabaseState(db);
     } else {
       db = getInitialDb();
       saveDatabase();
@@ -1019,6 +999,8 @@ export async function initSupabaseData(): Promise<void> {
             if (cloudState.studentActivities) db.studentActivities = cloudState.studentActivities;
             if (cloudState.visitors && Array.isArray(cloudState.visitors)) db.visitors = cloudState.visitors;
           }
+          sanitizeDatabaseState(db);
+          saveDatabase();
           console.log(`[Supabase] Dados sincronizados da nuvem Postgres (${db.users.length} usuários, ${db.enrollments.length} matrículas).`);
         }
       } catch (err: any) {
@@ -1215,4 +1197,4 @@ export function logVisitor(visitorData: Partial<VisitorLog>): VisitorLog {
   saveDatabase();
   return log;
 }
-
+

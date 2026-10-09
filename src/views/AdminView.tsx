@@ -1037,7 +1037,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
                 <div className="p-6 rounded-2xl bg-neutral-900 border border-neutral-800">
                   <span className="text-neutral-400 text-xs block">RECEITA CONFIRMADA</span>
                   <div className="text-3xl font-display font-bold text-amber-400 mt-1">
-                    R$ {stats.totalRevenue.toFixed(2)}
+                    R$ {(stats.totalRevenue || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </div>
                   <span className="text-[11px] text-neutral-500 mt-1 block">
                     PIX e Cartão de Crédito
@@ -1057,7 +1057,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
                 <div className="p-6 rounded-2xl bg-neutral-900 border border-neutral-800">
                   <span className="text-neutral-400 text-xs block">MÉDIA GERAL DA ESCOLA</span>
                   <div className="text-3xl font-display font-bold text-emerald-400 mt-1">
-                    {stats.averageGrade.toFixed(1)}{' '}
+                    {stats.totalSubmissions > 0 && stats.averageGrade > 0 ? stats.averageGrade.toFixed(1) : '0.0'}{' '}
                     <span className="text-xs text-neutral-400 font-normal">/ 10</span>
                   </div>
                   <span className="text-[11px] text-neutral-500 mt-1 block">

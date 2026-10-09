@@ -1,4 +1,4 @@
-// server.ts
+﻿// server.ts
 import express from "express";
 import path2 from "path";
 import fs2 from "fs";
@@ -442,7 +442,7 @@ var initialUsers = [
   },
   {
     id: "user-admin-alias",
-    name: "Professor Cineasta Tony de Luc (Coordena\xE7\xE3o)",
+    name: "Professor Cineasta Tony de Luc (CoordenaÃ§Ã£o)",
     email: "admin@cinelab.edu.br",
     phone: "+55 11 98888-0000",
     document: "00.000.000/0001-99",
@@ -451,45 +451,16 @@ var initialUsers = [
   },
   {
     id: "user-student-demo",
-    name: "Lucas Mendon\xE7a de Oliveira",
+    name: "Lucas MendonÃ§a de Oliveira (Aluno Teste)",
     email: "aluno@cinelab.edu.br",
     phone: "+55 11 97654-3210",
     document: "389.482.198-40",
     role: "student",
     createdAt: "2026-08-20T14:30:00Z",
     matricula: "CNL-2026-4819",
-    paymentMethod: "Cart\xE3o de Cr\xE9dito (12x)",
-    difficulties: "Decupagem t\xE9cnica de lentes e regra dos 180\xB0",
-    averageGrade: 9.5,
-    pedagogicalNotes: "Excelente dom\xEDnio de linguagem cinematogr\xE1fica e olhar de composi\xE7\xE3o."
-  },
-  {
-    id: "user-student-mariana",
-    name: "Mariana Duarte Costa",
-    email: "mariana.costa@gmail.com",
-    phone: "+55 21 98765-4321",
-    document: "421.890.112-55",
-    role: "student",
-    createdAt: "2026-08-22T09:15:00Z",
-    matricula: "CNL-2026-5102",
-    paymentMethod: "PIX \xC0 Vista",
-    difficulties: "Dificuldade em ilumina\xE7\xE3o de tr\xEAs pontos e c\xE1lculo de Kelvin",
-    averageGrade: 5.4,
-    pedagogicalNotes: "Precisa de refor\xE7o nas aulas pr\xE1ticas de ilumina\xE7\xE3o e refazer a avalia\xE7\xE3o 03."
-  },
-  {
-    id: "user-student-rodrigo",
-    name: "Rodrigo Alves Silveira",
-    email: "rodrigo.cine@yahoo.com.br",
-    phone: "+55 31 99123-8877",
-    document: "298.761.503-22",
-    role: "student",
-    createdAt: "2026-08-23T11:40:00Z",
-    matricula: "CNL-2026-5388",
-    paymentMethod: "Boleto Banc\xE1rio",
-    difficulties: "Dificuldade em formata\xE7\xE3o master scenes no roteiro",
-    averageGrade: 7.8,
-    pedagogicalNotes: "Boa participa\xE7\xE3o nas masterclasses, roteiro necessita de ajustes de formata\xE7\xE3o."
+    paymentMethod: "CartÃ£o de CrÃ©dito (Teste)",
+    difficulties: "",
+    pedagogicalNotes: "Aluno fictÃ­cio para testes da plataforma."
   }
 ];
 var initialEnrollments = [
@@ -497,34 +468,12 @@ var initialEnrollments = [
     id: "enr-1",
     enrollmentNumber: "CNL-2026-4819",
     studentId: "user-student-demo",
-    studentName: "Lucas Mendon\xE7a de Oliveira",
+    studentName: "Lucas MendonÃ§a de Oliveira (Aluno Teste)",
     studentEmail: "aluno@cinelab.edu.br",
     status: "active",
     enrolledAt: "2026-08-20T14:30:00Z",
     activatedAt: "2026-08-20T14:35:00Z",
     paymentId: "pay-1"
-  },
-  {
-    id: "enr-2",
-    enrollmentNumber: "CNL-2026-5102",
-    studentId: "user-student-mariana",
-    studentName: "Mariana Duarte Costa",
-    studentEmail: "mariana.costa@gmail.com",
-    status: "active",
-    enrolledAt: "2026-08-22T09:15:00Z",
-    activatedAt: "2026-08-22T09:20:00Z",
-    paymentId: "pay-2"
-  },
-  {
-    id: "enr-3",
-    enrollmentNumber: "CNL-2026-5388",
-    studentId: "user-student-rodrigo",
-    studentName: "Rodrigo Alves Silveira",
-    studentEmail: "rodrigo.cine@yahoo.com.br",
-    status: "active",
-    enrolledAt: "2026-08-23T11:40:00Z",
-    activatedAt: "2026-08-23T11:45:00Z",
-    paymentId: "pay-3"
   }
 ];
 var initialPayments = [
@@ -533,39 +482,17 @@ var initialPayments = [
     studentId: "user-student-demo",
     enrollmentId: "enr-1",
     method: "credit_card",
-    amount: 499.9,
-    installments: 6,
-    installmentValue: 83.31,
+    amount: 0.0,
+    installments: 1,
+    installmentValue: 0.0,
     status: "approved",
-    cardBrand: "Mastercard",
-    lastFour: "8912",
+    cardBrand: "Mastercard (Teste)",
+    lastFour: "0000",
     createdAt: "2026-08-20T14:30:00Z",
     approvedAt: "2026-08-20T14:35:00Z"
-  },
-  {
-    id: "pay-2",
-    studentId: "user-student-mariana",
-    enrollmentId: "enr-2",
-    method: "pix",
-    amount: 499.9,
-    status: "approved",
-    pixKey: "contato@tv-diversidade.com",
-    createdAt: "2026-08-22T09:15:00Z",
-    approvedAt: "2026-08-22T09:20:00Z"
-  },
-  {
-    id: "pay-3",
-    studentId: "user-student-rodrigo",
-    enrollmentId: "enr-3",
-    method: "boleto",
-    amount: 499.9,
-    status: "approved",
-    createdAt: "2026-08-23T11:40:00Z",
-    approvedAt: "2026-08-23T11:45:00Z"
   }
 ];
 
-// server/pedagogicalContent.ts
 var pedagogicalModules = [
   {
     id: 1,
@@ -5227,58 +5154,10 @@ function getInitialDb() {
     activities: [...pedagogicalActivities],
     films: [...pedagogicalFilms],
     readings: [...pedagogicalReadings],
-    studentActivities: {
-      "user-student-demo": ["act-1", "act-2"]
-    },
+    studentActivities: {},
     evaluations: [...pedagogicalEvaluations],
-    submissions: [
-      {
-        id: "sub-1",
-        evaluationId: "eval-1",
-        moduleId: 1,
-        studentId: "user-student-demo",
-        studentName: "Lucas Mendon\xE7a de Oliveira",
-        enrollmentNumber: "CNL-2026-4819",
-        submittedAt: "2026-08-30T16:20:00Z",
-        answers: {
-          "q1-1": { questionId: "q1-1", selectedOptionIndex: 1, isCorrect: true, scoreAwarded: 2.5 },
-          "q1-2": { questionId: "q1-2", selectedOptionIndex: 1, isCorrect: true, scoreAwarded: 2.5 },
-          "q1-3": { questionId: "q1-3", selectedOptionIndex: 1, isCorrect: true, scoreAwarded: 2.5 },
-          "q1-4": {
-            questionId: "q1-4",
-            discursiveText: "A lente grande-angular expande a perspectiva e gera maior profundidade de campo, integrando o sujeito ao espa\xE7o dram\xE1tico. A teleobjetiva achata as camadas de plano e comprime a profundidade, isolando a figura humana em primeiro plano com foco seletivo.",
-            scoreAwarded: 2,
-            feedback: "Excelente an\xE1lise t\xE9cnica de lentes e efeito est\xE9tico."
-          }
-        },
-        objectiveScore: 7.5,
-        discursiveScore: 2,
-        totalScore: 9.5,
-        maxScore: 10,
-        percentage: 95,
-        status: "graded",
-        gradedAt: "2026-08-31T09:00:00Z",
-        gradedBy: "Professor Cineasta Tony de Luc",
-        teacherGeneralFeedback: "Excelente desempenho na primeira avalia\xE7\xE3o. Dom\xEDnio da linguagem dos planos e \xF3tica cinematogr\xE1fica."
-      }
-    ],
-    certificates: [
-      {
-        id: "cert-seed-1",
-        validationCode: "CNL-CERT-8910-4821",
-        studentId: "user-student-demo",
-        studentName: "Lucas Mendon\xE7a de Oliveira",
-        studentDocument: "123.456.789-00",
-        enrollmentNumber: "CNL-2026-4819",
-        courseName: "CINELAB \u2013 CINEMA & AUDIOVISUAL",
-        workloadHours: 180,
-        issueDate: "2026-09-08T18:00:00.000Z",
-        directorName: "Professor Cineasta Tony de Luc",
-        directorRole: "Diretor Acad\xEAmico & Cineasta",
-        averageGrade: 9.5,
-        isEligible: true
-      }
-    ],
+    submissions: [],
+    certificates: [],
     emailLogs: [
       {
         id: "email-1",
@@ -5453,6 +5332,26 @@ function initExtraVideosForApostila(apos, defaultSuffix) {
   }
 
   return [slot1, slot2];
+}
+function sanitizeDatabaseState(targetDb) {
+  if (!targetDb) return;
+  targetDb.users = (targetDb.users || []).filter(
+    (u) => u.id !== "user-student-mariana" && u.id !== "user-student-rodrigo" && !u.id.includes("mariana") && !u.id.includes("rodrigo")
+  );
+  targetDb.enrollments = (targetDb.enrollments || []).filter(
+    (e) => e.studentId !== "user-student-mariana" && e.studentId !== "user-student-rodrigo" && !e.id.includes("mariana") && !e.id.includes("rodrigo") && e.id !== "enr-2" && e.id !== "enr-3"
+  );
+  targetDb.payments = (targetDb.payments || [])
+    .filter((p) => p.studentId !== "user-student-mariana" && p.studentId !== "user-student-rodrigo" && p.id !== "pay-2" && p.id !== "pay-3" && p.id !== "pay-mariana" && p.id !== "pay-rodrigo")
+    .map((p) => (p.studentId === "user-student-demo" || p.id === "pay-1" ? { ...p, amount: 0 } : p));
+  targetDb.submissions = (targetDb.submissions || []).filter((s) => s.id !== "sub-1" && s.studentId !== "user-student-demo");
+  targetDb.certificates = (targetDb.certificates || []).filter((c) => c.id !== "cert-seed-1" && c.studentId !== "user-student-demo");
+  const lucas = (targetDb.users || []).find((u) => u.id === "user-student-demo");
+  if (lucas) {
+    if ((targetDb.submissions || []).filter((s) => s.studentId === lucas.id).length === 0) {
+      lucas.averageGrade = undefined;
+    }
+  }
 }
 function loadDatabase() {
   try {
@@ -5936,13 +5835,14 @@ function loadDatabase() {
           db.payments.push(initPay);
         }
       }
-      db.submissions = db.submissions || initial.submissions;
-      if (!db.certificates || db.certificates.length === 0) {
-        db.certificates = [...initial.certificates];
-      }
+      db.submissions = db.submissions || [];
+      db.certificates = db.certificates || [];
+
+
       db.emailLogs = db.emailLogs || initial.emailLogs;
       db.visitors = db.visitors && db.visitors.length > 0 ? db.visitors : initial.visitors;
-      db.studentActivities = db.studentActivities || initial.studentActivities;
+      db.studentActivities = db.studentActivities || {};
+      sanitizeDatabaseState(db);
     } else {
       db = getInitialDb();
       saveDatabase();
@@ -6204,6 +6104,8 @@ async function initSupabaseData() {
             if (cloudState.studentActivities) db.studentActivities = cloudState.studentActivities;
             if (cloudState.visitors && Array.isArray(cloudState.visitors)) db.visitors = cloudState.visitors;
           }
+          sanitizeDatabaseState(db);
+          saveDatabase();
           console.log(`[Supabase] Dados sincronizados da nuvem Postgres (${db.users.length} usuários, ${db.enrollments.length} matrículas).`);
         }
       } catch (err) {
