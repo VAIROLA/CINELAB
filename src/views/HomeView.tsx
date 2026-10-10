@@ -615,29 +615,54 @@ export const HomeView: React.FC<HomeViewProps> = ({
             </button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {(currentModules || []).slice(0, 8).map((m) => {
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-5">
+            {(currentModules || []).slice(0, 10).map((m) => {
               const trans = getModuleTranslation(m.id);
+              const modNum = m.number || m.id;
+              const pad = modNum < 10 ? '0' + modNum : '' + modNum;
+              const coverPath = `/images/covers/apostila-${pad}.jpg`;
+              const durationDays = m.durationDays || (modNum === 1 ? 7 : (modNum === 3 || modNum === 5 || modNum === 7 || modNum === 10 ? 10 : (modNum === 2 || modNum === 6 ? 8 : 9)));
+
               return (
                 <div
                   key={m.id}
                   onClick={() => onNavigate('apostilas')}
-                  className="p-4 rounded-xl bg-neutral-900/50 border border-neutral-800 hover:border-neutral-700 transition-all cursor-pointer group"
+                  className="p-3 rounded-2xl bg-neutral-900/60 border border-neutral-800 hover:border-amber-500/50 hover:bg-neutral-900/90 transition-all cursor-pointer group flex flex-col justify-between shadow-lg"
                 >
-                  <div className="flex items-center justify-between text-[11px] font-mono mb-2">
-                    <span className="text-amber-400 font-bold">
-                      {language === 'en' ? `HANDOUT 0${m.number}` : language === 'es' ? `MANUAL 0${m.number}` : language === 'fr' ? `FASCICULE 0${m.number}` : `APOSTILA 0${m.number}`}
-                    </span>
-                    <span className="text-neutral-400 font-mono text-[10px] px-1.5 py-0.5 rounded bg-neutral-800 border border-neutral-700/60">
-                      {(m.durationDays || (m.number === 1 ? 7 : (m.number === 3 || m.number === 5 || m.number === 7 || m.number === 10 ? 10 : (m.number === 2 || m.number === 6 ? 8 : 9))))} {language === 'pt' ? 'dias' : language === 'en' ? 'days' : language === 'es' ? 'días' : 'jours'}
-                    </span>
+                  <div className="relative w-full aspect-[1/1.4] rounded-xl overflow-hidden border border-neutral-700/80 group-hover:border-amber-500/60 bg-neutral-950 shadow-md">
+                    <img
+                      src={coverPath}
+                      alt={`Capa da Apostila ${pad}`}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                      onError={(e) => {
+                        if (e.currentTarget.src !== coverPath && !e.currentTarget.src.endsWith(coverPath)) {
+                          e.currentTarget.src = coverPath;
+                        }
+                      }}
+                    />
+                    <div className="absolute top-2 left-2 px-1.5 py-0.5 rounded-md bg-black/80 backdrop-blur-sm border border-amber-500/40 text-[9px] font-mono font-bold text-amber-400">
+                      {language === 'en' ? `HANDOUT ${pad}` : language === 'es' ? `MANUAL ${pad}` : language === 'fr' ? `FASCICULE ${pad}` : `APOSTILA ${pad}`}
+                    </div>
+                    <div className="absolute top-2 right-2 px-1.5 py-0.5 rounded-md bg-black/80 backdrop-blur-sm border border-neutral-700 text-[9px] font-mono text-neutral-300">
+                      {durationDays} {language === 'pt' ? 'dias' : language === 'en' ? 'days' : language === 'es' ? 'días' : 'jours'}
+                    </div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center p-2.5">
+                      <span className="w-full py-1.5 rounded-lg bg-amber-500 text-neutral-950 font-mono text-[10px] font-bold text-center flex items-center justify-center gap-1 shadow-lg">
+                        <BookOpen className="w-3 h-3" />
+                        <span>{language === 'en' ? 'Explore' : language === 'es' ? 'Ver Manual' : language === 'fr' ? 'Découvrir' : 'Ver Apostila'}</span>
+                      </span>
+                    </div>
                   </div>
-                  <h3 className="text-xs font-bold text-white group-hover:text-amber-300 transition-colors line-clamp-1 mb-1">
-                    {trans.title || m.title}
-                  </h3>
-                  <p className="text-[11px] text-neutral-400 line-clamp-2 leading-relaxed">
-                    {trans.subtitle || m.subtitle}
-                  </p>
+
+                  <div className="mt-2.5 space-y-1">
+                    <h3 className="text-xs font-bold text-white group-hover:text-amber-300 transition-colors line-clamp-1">
+                      {trans.title || m.title}
+                    </h3>
+                    <p className="text-[10px] text-neutral-400 line-clamp-2 leading-relaxed">
+                      {trans.subtitle || m.subtitle}
+                    </p>
+                  </div>
                 </div>
               );
             })}

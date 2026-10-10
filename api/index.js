@@ -1,4 +1,4 @@
-﻿// server.ts
+// server.ts
 import express from "express";
 import path2 from "path";
 import fs2 from "fs";
@@ -746,7 +746,7 @@ var pedagogicalApostilas = [
     description: "Conceitos fundamentais da linguagem cinematogr\xE1fica, a gram\xE1tica dos enquadramentos, as fases da produ\xE7\xE3o audiovisual e a interdepend\xEAncia entre som e imagem.",
     pagesCount: 8,
     pdfUrl: "/materiais/cinelab-apostila-01.pdf",
-    coverUrl: "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=600&q=80",
+    coverUrl: "/images/covers/apostila-01.jpg",
     fileSizeMb: 18.5,
     extraVideos: [
       {
@@ -890,7 +890,7 @@ Audiovisual \xE9 o am\xE1lgama indissoci\xE1vel entre luz projetada e ondas sono
     description: "A trajet\xF3ria hist\xF3rica do cinema mundial e brasileiro: do cinema silencioso \xE0s vanguardas europeias, cinema cl\xE1ssico e contempor\xE2neo.",
     pagesCount: 52,
     pdfUrl: "/uploads/apostilas/apostila-modulo-02-2-APOSTILA_HISTORIA_DO_CINEMA_-_COM-1790652429759.pdf",
-    coverUrl: "https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&w=600&q=80",
+    coverUrl: "/images/covers/apostila-02.jpg",
     fileSizeMb: 2.17,
     extraVideos: [
       {
@@ -1019,7 +1019,7 @@ Com a chegada do som sincronizado em 1927 (*The Jazz Singer*), o cinema sofreu u
     description: "Da ideia embrion\xE1ria \xE0 cena formatada: storyline, logline, sinopse, escaleta, cria\xE7\xE3o de personagens tridimensionais, di\xE1logos e subtexto dram\xE1tico.",
     pagesCount: 4,
     pdfUrl: "/materiais/cinelab-apostila-03.pdf",
-    coverUrl: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=600&q=80",
+    coverUrl: "/images/covers/apostila-03.jpg",
     fileSizeMb: 21,
     extraVideos: [
       {
@@ -1153,7 +1153,7 @@ Com a chegada do som sincronizado em 1927 (*The Jazz Singer*), o cinema sofreu u
     description: "O papel de lideran\xE7a do diretor, decupagem com inten\xE7\xE3o est\xE9tica, ensaios pr\xE1ticos, marca\xE7\xE3o c\xEAnica (blocking) e a condu\xE7\xE3o \xE9tica e respeitosa do elenco.",
     pagesCount: 4,
     pdfUrl: "/materiais/cinelab-apostila-04.pdf",
-    coverUrl: "https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?auto=format&fit=crop&w=600&q=80",
+    coverUrl: "/images/covers/apostila-04.jpg",
     fileSizeMb: 18.9,
     extraVideos: [
       {
@@ -1282,7 +1282,7 @@ O ator n\xE3o consegue interpretar "tristeza"; ele interpreta **a\xE7\xF5es e ob
     description: "A est\xE9tica da luz no cinema, os 4 tipos de ilumina\xE7\xE3o dram\xE1tica, composi\xE7\xE3o visual, profundidade de campo, lentes e opera\xE7\xE3o consciente de c\xE2meras e celulares.",
     pagesCount: 6,
     pdfUrl: "/materiais/cinelab-apostila-05.pdf",
-    coverUrl: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=600&q=80",
+    coverUrl: "/images/covers/apostila-05.jpg",
     fileSizeMb: 22.4,
     extraVideos: [
       {
@@ -1479,7 +1479,7 @@ O ator n\xE3o consegue interpretar "tristeza"; ele interpreta **a\xE7\xF5es e ob
     description: "Capta\xE7\xE3o de som direto no set, microfones direcionais e lapela, ru\xEDdos de sala (room tone), camadas de desenho sonoro (foley, efeitos e trilha) e legisla\xE7\xE3o de \xE1udio.",
     pagesCount: 4,
     pdfUrl: "/materiais/cinelab-apostila-06.pdf",
-    coverUrl: "https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=600&q=80",
+    coverUrl: "/images/covers/apostila-06.jpg",
     fileSizeMb: 18.1,
     extraVideos: [
       {
@@ -1610,7 +1610,7 @@ Grave sempre **pelo menos 60 segundos de room tone absoluto** com a equipe im\xF
     description: "A teoria e pr\xE1tica da montagem, organiza\xE7\xE3o e nomenclatura de m\xEDdias, sincroniza\xE7\xE3o, continuidades, cortes r\xEDtmicos, elipses e finaliza\xE7\xE3o.",
     pagesCount: 4,
     pdfUrl: "/materiais/cinelab-apostila-07.pdf",
-    coverUrl: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=600&q=80",
+    coverUrl: "/images/covers/apostila-07.jpg",
     fileSizeMb: 20.5,
     extraVideos: [
       {
@@ -1742,7 +1742,7 @@ A montagem \xE9 o cora\xE7\xE3o da linguagem cinematogr\xE1fica porque cria pens
     description: "A engenharia da realiza\xE7\xE3o cinematogr\xE1fica: forma\xE7\xE3o de equipes de set, ordem do dia profissional, or\xE7amenta\xE7\xE3o \xE9tica, autoriza\xE7\xF5es e planos de conting\xEAncia.",
     pagesCount: 4,
     pdfUrl: "/materiais/cinelab-apostila-08.pdf",
-    coverUrl: "https://images.unsplash.com/photo-1535016120720-40c646be5580?auto=format&fit=crop&w=600&q=80",
+    coverUrl: "/images/covers/apostila-08.jpg",
     fileSizeMb: 19.4,
     extraVideos: [
       {
@@ -1877,7 +1877,7 @@ A montagem \xE9 o cora\xE7\xE3o da linguagem cinematogr\xE1fica porque cria pens
     description: "O ciclo de vida do curta-metragem ap\xF3s a finaliza\xE7\xE3o: montagem do press-kit, loglines atraentes, stills de alta resolu\xE7\xE3o, trailer/teaser e inscri\xE7\xF5es no circuito de festivais.",
     pagesCount: 4,
     pdfUrl: "/materiais/cinelab-apostila-09.pdf",
-    coverUrl: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=600&q=80",
+    coverUrl: "/images/covers/apostila-09.jpg",
     fileSizeMb: 19.8,
     extraVideos: [
       {
@@ -2010,7 +2010,7 @@ A maioria dos festivais de ponta (Gramado, Tiradentes, Berlim, Clermont-Ferrand)
     description: "A consolida\xE7\xE3o de todas as etapas: o guia passo a passo para a realiza\xE7\xE3o do seu curta de 1 a 5 minutos, do roteiro \xE0 entrega final, autoavalia\xE7\xE3o e certifica\xE7\xE3o profissional.",
     pagesCount: 4,
     pdfUrl: "/materiais/cinelab-apostila-10.pdf",
-    coverUrl: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=600&q=80",
+    coverUrl: "/images/covers/apostila-10.jpg",
     fileSizeMb: 23.5,
     extraVideos: [
       {
@@ -2369,7 +2369,7 @@ var pedagogicalBonusApostilas = [
     pagesCount: 27,
     totalPages: 27,
     pdfUrl: "/materiais/cinelab-bonus-03-analise-filmica.pdf",
-    coverUrl: "https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&w=600&q=80",
+    coverUrl: "/images/covers/apostila-02.jpg",
     unlockedByDefault: false,
     extraVideos: [
       {
@@ -5351,6 +5351,18 @@ function sanitizeDatabaseState(targetDb) {
     if ((targetDb.submissions || []).filter((s) => s.studentId === lucas.id).length === 0) {
       lucas.averageGrade = undefined;
     }
+  }
+  if (targetDb.apostilas && Array.isArray(targetDb.apostilas)) {
+    targetDb.apostilas = targetDb.apostilas.map((a) => {
+      const mod = a.moduleId || a.number || 1;
+      const pad = mod < 10 ? '0' + mod : '' + mod;
+      const canonicalCover = `/images/covers/apostila-${pad}.jpg`;
+      const isOutdated = !a.coverUrl || a.coverUrl.includes('unsplash.com') || (a.coverUrl.startsWith('/uploads/') && !a.coverUrl.includes('base64'));
+      return {
+        ...a,
+        coverUrl: isOutdated ? canonicalCover : a.coverUrl,
+      };
+    });
   }
 }
 function loadDatabase() {
@@ -10828,3 +10840,4 @@ export {
   app,
   server_default as default
 };
+

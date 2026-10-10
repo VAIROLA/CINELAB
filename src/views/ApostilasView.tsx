@@ -492,8 +492,11 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
           const m = info.modules?.find((mod: any) => mod.id === a.moduleId);
           const modNumber = a.number || a.moduleId || 1;
           const canonicalPdf = `/materiais/cinelab-apostila-${modNumber < 10 ? '0' + modNumber : modNumber}.pdf`;
+          const canonicalCover = `/images/covers/apostila-${modNumber < 10 ? '0' + modNumber : modNumber}.jpg`;
+          const isOutdatedCover = !a.coverUrl || a.coverUrl.includes('unsplash.com') || (a.coverUrl.startsWith('/uploads/') && !a.coverUrl.includes('base64'));
           return {
             ...a,
+            coverUrl: !isOutdatedCover ? a.coverUrl : canonicalCover,
             subtitle: m?.subtitle,
             isUnlocked: true,
             unlockDate: m?.startDate || '',
@@ -519,6 +522,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
             id: `ap-${m.id}`,
             moduleId: m.id,
             number: num,
+            coverUrl: `/images/covers/apostila-${num < 10 ? '0' + num : num}.jpg`,
             title: `Apostila 0${num} – ${m.title}`,
             subtitle: m.subtitle,
             summary: m.summary,

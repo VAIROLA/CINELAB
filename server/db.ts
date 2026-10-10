@@ -1,4 +1,4 @@
-﻿import zlib from 'zlib';
+import zlib from 'zlib';
 import fs from 'fs';
 import path from 'path';
 import {
@@ -612,10 +612,16 @@ export function loadDatabase(): void {
           const pedMatch = pedagogicalApostilas.find((p) => p.moduleId === apos.moduleId);
           const isAccidentalDuplicatedTitle = apos.moduleId !== 1 && apos.title === 'Introdução ao Cinema e à Linguagem Audiovisual';
           const resolvedTitle = isAccidentalDuplicatedTitle ? (pedMatch?.title || 'História do Cinema') : (apos.title || pedMatch?.title);
+          const modNum = apos.moduleId || apos.number || 1;
+          const pad = modNum < 10 ? '0' + modNum : '' + modNum;
+          const canonicalCover = `/images/covers/apostila-${pad}.jpg`;
+          const isOutdatedCover = !apos.coverUrl || apos.coverUrl.includes('unsplash.com') || (apos.coverUrl.startsWith('/uploads/') && !apos.coverUrl.includes('base64'));
+          const resolvedCover = !isOutdatedCover ? apos.coverUrl : (pedMatch?.coverUrl || canonicalCover);
           return {
             ...pedMatch,
             ...apos,
             title: resolvedTitle,
+            coverUrl: resolvedCover,
             pdfUrl: apos.pdfUrl || pedMatch?.pdfUrl,
             pagesCount: apos.pagesCount || apos.totalPages || pedMatch?.pagesCount || 30,
             totalPages: apos.totalPages || apos.pagesCount || pedMatch?.totalPages || 30,

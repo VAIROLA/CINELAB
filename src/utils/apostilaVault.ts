@@ -320,8 +320,11 @@ export function getMergedApostilasWithVault(serverApostilas: Apostila[]): Aposti
     const canonicalPages = realPagesMap[modNum] || 6;
 
     if (!local) {
+      const canonicalCover = `/images/covers/apostila-${pad}.jpg`;
+      const isOutdatedOrBrokenCover = !apos.coverUrl || apos.coverUrl.includes('unsplash.com') || (apos.coverUrl.startsWith('/uploads/') && !apos.coverUrl.includes('base64'));
       return {
         ...apos,
+        coverUrl: !isOutdatedOrBrokenCover ? apos.coverUrl : canonicalCover,
         pagesCount: apos.pagesCount && apos.pagesCount === canonicalPages ? apos.pagesCount : canonicalPages,
         totalPages: apos.totalPages && apos.totalPages === canonicalPages ? apos.totalPages : canonicalPages,
         pdfUrl: apos.pdfUrl && !apos.pdfUrl.includes('1790444') && !apos.pdfUrl.includes('1790684') && !apos.pdfUrl.includes('1790652') ? apos.pdfUrl : canonicalPdf,

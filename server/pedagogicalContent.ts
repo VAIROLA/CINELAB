@@ -299,7 +299,7 @@ export const pedagogicalApostilas: Apostila[] = [
       'Conceitos fundamentais da linguagem cinematográfica, a gramática dos enquadramentos, as fases da produção audiovisual e a interdependência entre som e imagem.',
     pagesCount: 8,
     pdfUrl: '/materiais/cinelab-apostila-01.pdf',
-    coverUrl: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=600&q=80',
+    coverUrl: '/images/covers/apostila-01.jpg',
     fileSizeMb: 18.5,
     extraVideos: [
       {
@@ -452,7 +452,7 @@ Audiovisual é o amálgama indissociável entre luz projetada e ondas sonoras. A
       'A trajetória histórica do cinema mundial e brasileiro: do cinema silencioso às vanguardas europeias, cinema clássico e contemporâneo.',
     pagesCount: 52,
     pdfUrl: '/materiais/cinelab-apostila-02.pdf',
-    coverUrl: 'https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&w=600&q=80',
+    coverUrl: '/images/covers/apostila-02.jpg',
     fileSizeMb: 2.17,
     extraVideos: [
       {
@@ -589,7 +589,7 @@ Com a chegada do som sincronizado em 1927 (*The Jazz Singer*), o cinema sofreu u
       'Da ideia embrionária à cena formatada: storyline, logline, sinopse, escaleta, criação de personagens tridimensionais, diálogos e subtexto dramático.',
     pagesCount: 4,
     pdfUrl: '/materiais/cinelab-apostila-03.pdf',
-    coverUrl: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=600&q=80',
+    coverUrl: '/images/covers/apostila-03.jpg',
     fileSizeMb: 21.0,
     extraVideos: [
       {
@@ -731,7 +731,7 @@ Com a chegada do som sincronizado em 1927 (*The Jazz Singer*), o cinema sofreu u
       'O papel de liderança do diretor, decupagem com intenção estética, ensaios práticos, marcação cênica (blocking) e a condução ética e respeitosa do elenco.',
     pagesCount: 4,
     pdfUrl: '/materiais/cinelab-apostila-04.pdf',
-    coverUrl: 'https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?auto=format&fit=crop&w=600&q=80',
+    coverUrl: '/images/covers/apostila-04.jpg',
     fileSizeMb: 18.9,
     extraVideos: [
       {
@@ -868,7 +868,7 @@ O ator não consegue interpretar "tristeza"; ele interpreta **ações e objetivo
       'A estética da luz no cinema, os 4 tipos de iluminação dramática, composição visual, profundidade de campo, lentes e operação consciente de câmeras e celulares.',
     pagesCount: 6,
     pdfUrl: '/materiais/cinelab-apostila-05.pdf',
-    coverUrl: 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=600&q=80',
+    coverUrl: '/images/covers/apostila-05.jpg',
     fileSizeMb: 22.4,
     extraVideos: [
       {
@@ -1075,7 +1075,7 @@ O ator não consegue interpretar "tristeza"; ele interpreta **ações e objetivo
       'Captação de som direto no set, microfones direcionais e lapela, ruídos de sala (room tone), camadas de desenho sonoro (foley, efeitos e trilha) e legislação de áudio.',
     pagesCount: 4,
     pdfUrl: '/materiais/cinelab-apostila-06.pdf',
-    coverUrl: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=600&q=80',
+    coverUrl: '/images/covers/apostila-06.jpg',
     fileSizeMb: 18.1,
     extraVideos: [
       {
@@ -1214,7 +1214,7 @@ Grave sempre **pelo menos 60 segundos de room tone absoluto** com a equipe imóv
       'A teoria e prática da montagem, organização e nomenclatura de mídias, sincronização, continuidades, cortes rítmicos, elipses e finalização.',
     pagesCount: 4,
     pdfUrl: '/materiais/cinelab-apostila-07.pdf',
-    coverUrl: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=600&q=80',
+    coverUrl: '/images/covers/apostila-07.jpg',
     fileSizeMb: 20.5,
     extraVideos: [
       {
@@ -1354,7 +1354,7 @@ A montagem é o coração da linguagem cinematográfica porque cria pensamento n
       'A engenharia da realização cinematográfica: formação de equipes de set, ordem do dia profissional, orçamentação ética, autorizações e planos de contingência.',
     pagesCount: 4,
     pdfUrl: '/materiais/cinelab-apostila-08.pdf',
-    coverUrl: 'https://images.unsplash.com/photo-1535016120720-40c646be5580?auto=format&fit=crop&w=600&q=80',
+    coverUrl: '/images/covers/apostila-08.jpg',
     fileSizeMb: 19.4,
     extraVideos: [
       {
@@ -1497,7 +1497,7 @@ A montagem é o coração da linguagem cinematográfica porque cria pensamento n
       'O ciclo de vida do curta-metragem após a finalização: montagem do press-kit, loglines atraentes, stills de alta resolução, trailer/teaser e inscrições no circuito de festivais.',
     pagesCount: 4,
     pdfUrl: '/materiais/cinelab-apostila-09.pdf',
-    coverUrl: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=600&q=80',
+    coverUrl: '/images/covers/apostila-09.jpg',
     fileSizeMb: 19.8,
     extraVideos: [
       {
@@ -1638,7 +1638,7 @@ A maioria dos festivais de ponta (Gramado, Tiradentes, Berlim, Clermont-Ferrand)
       'A consolidação de todas as etapas: o guia passo a passo para a realização do seu curta de 1 a 5 minutos, do roteiro à entrega final, autoavaliação e certificação profissional.',
     pagesCount: 4,
     pdfUrl: '/materiais/cinelab-apostila-10.pdf',
-    coverUrl: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=600&q=80',
+    coverUrl: '/images/covers/apostila-10.jpg',
     fileSizeMb: 23.5,
     extraVideos: [
       {

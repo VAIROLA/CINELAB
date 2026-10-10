@@ -254,37 +254,68 @@ export const CourseView: React.FC<CourseViewProps> = ({
               `9-10 ${language === 'pt' ? 'dias' : language === 'en' ? 'days' : language === 'es' ? 'días' : 'jours'}`
             );
 
+            const modNum = m.number || m.id;
+            const pad = modNum < 10 ? '0' + modNum : '' + modNum;
+            const coverPath = `/images/covers/apostila-${pad}.jpg`;
+
             return (
               <div
                 key={m.id}
                 className="p-6 rounded-2xl bg-neutral-900/40 border border-neutral-800/80 hover:border-amber-500/40 transition-all flex flex-col md:flex-row md:items-center justify-between gap-6"
               >
-                <div className="space-y-2 max-w-3xl">
-                  <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">
-                      {cur.stagePrefix}{m.number}
-                    </span>
-                    <span className="text-xs text-neutral-500 font-mono">{cur.durationLabel} {durationText}</span>
+                <div className="flex flex-col sm:flex-row gap-5 items-start flex-1">
+                  {/* Capa Oficial da Apostila do Módulo */}
+                  <div
+                    onClick={() => onNavigate('apostilas')}
+                    className="w-24 sm:w-28 md:w-32 shrink-0 aspect-[1/1.4] rounded-xl overflow-hidden border border-neutral-700/80 bg-neutral-950 shadow-lg cursor-pointer group/cover relative"
+                    title={`Ver Apostila 0${modNum}`}
+                  >
+                    <img
+                      src={coverPath}
+                      alt={`Capa da Apostila ${pad}`}
+                      className="w-full h-full object-cover group-hover/cover:scale-105 transition-transform duration-300"
+                      loading="lazy"
+                      onError={(e) => {
+                        if (e.currentTarget.src !== coverPath && !e.currentTarget.src.endsWith(coverPath)) {
+                          e.currentTarget.src = coverPath;
+                        }
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover/cover:opacity-100 transition-opacity flex items-end justify-center pb-2">
+                      <span className="text-[10px] font-mono text-amber-300 font-bold flex items-center gap-1">
+                        <BookOpen className="w-3 h-3" />
+                        <span>Ver Apostila</span>
+                      </span>
+                    </div>
                   </div>
-                  <h3 className="text-base sm:text-lg font-bold text-white">{displayTitle}</h3>
-                  <p className="text-xs font-medium text-amber-300/80">{displaySubtitle}</p>
-                  <p className="text-xs text-neutral-400 leading-relaxed">{displaySummary}</p>
-                  {m.pedagogicalObjective && (
-                    <div className="pt-2 text-xs text-neutral-300">
-                      <span className="font-mono text-amber-400 text-[11px] font-bold block">{cur.pedagogicalObj}</span>
-                      {m.pedagogicalObjective}
+
+                  <div className="space-y-2 max-w-2xl flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                        {cur.stagePrefix}{m.number}
+                      </span>
+                      <span className="text-xs text-neutral-500 font-mono">{cur.durationLabel} {durationText}</span>
                     </div>
-                  )}
-                  {m.directorObjectives && m.directorObjectives.length > 0 && (
-                    <div className="pt-1 text-xs text-neutral-400">
-                      <span className="font-mono text-emerald-400 text-[11px] font-bold block">{cur.directorObj}</span>
-                      <ul className="list-disc list-inside space-y-0.5">
-                        {m.directorObjectives.map((obj, oIdx) => (
-                          <li key={oIdx}>{obj}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
+                    <h3 className="text-base sm:text-lg font-bold text-white">{displayTitle}</h3>
+                    <p className="text-xs font-medium text-amber-300/80">{displaySubtitle}</p>
+                    <p className="text-xs text-neutral-400 leading-relaxed">{displaySummary}</p>
+                    {m.pedagogicalObjective && (
+                      <div className="pt-2 text-xs text-neutral-300">
+                        <span className="font-mono text-amber-400 text-[11px] font-bold block">{cur.pedagogicalObj}</span>
+                        {m.pedagogicalObjective}
+                      </div>
+                    )}
+                    {m.directorObjectives && m.directorObjectives.length > 0 && (
+                      <div className="pt-1 text-xs text-neutral-400">
+                        <span className="font-mono text-emerald-400 text-[11px] font-bold block">{cur.directorObj}</span>
+                        <ul className="list-disc list-inside space-y-0.5">
+                          {m.directorObjectives.map((obj, oIdx) => (
+                            <li key={oIdx}>{obj}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <div className="shrink-0 flex flex-col sm:flex-row md:flex-col gap-2">
