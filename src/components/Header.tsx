@@ -288,7 +288,7 @@ export const Header: React.FC<HeaderProps> = ({
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
           <span className="font-semibold text-white">Matrículas Abertas</span>
           <span className="text-purple-400">•</span>
-          <span className="text-amber-400 font-bold">10 Módulos + 3 Bônus</span>
+          <span className="text-amber-400 font-bold">10 Módulos + 4 Bônus</span>
         </div>
 
         {/* Action Controls */}

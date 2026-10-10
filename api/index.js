@@ -10728,7 +10728,7 @@ Contexto do M\xF3dulo Ativo Selecionado pelo Aluno:
 
 Sua miss\xE3o \xE9 dialogar diretamente com alunos e entusiastas de cinema, tirando d\xFAvidas t\xE9cnicas, art\xEDsticas, te\xF3ricas, conceituais e pr\xE1ticas de todas as etapas do fazer cinematogr\xE1fico.
 
-ESTRUTURA PEDAG\xD3GICA DO CURSO CINELAB (120 HORAS / 10 M\xD3DULOS + 2 B\xD4NUS):
+ESTRUTURA PEDAG\xD3GICA DO CURSO CINELAB (180 HORAS / 10 M\xD3DULOS + 4 B\xD4NUS):
 1. M\xF3dulo 01 - Linguagem Cinematogr\xE1fica: Enquadramentos e escalas de planos (Plano Geral, Plano M\xE9dio, Primeiro Plano, Close-up, Plano Detalhe), regra dos 180\xB0, movimentos de c\xE2mera (panor\xE2mica, tilt, travelling, dolly, grua, steadicam), eixos c\xEAnicos, plong\xE9e e contra-plong\xE9e, campo e contracampo.
 2. M\xF3dulo 02 - Hist\xF3ria do Cinema & An\xE1lise F\xEDlmica: Do silencioso ao sonoro e digital; Cinema Novo e cinema brasileiro; m\xE9todo anal\xEDtico em 6 camadas (Narrativa, Personagem, Espa\xE7o, Imagem, Som e Montagem).
 3. M\xF3dulo 03 - Roteiro & Narrativa: Ideia, storyline, logline, sinopse, argumento/tratamento, escaleta; formata\xE7\xE3o Master Scenes (Courier 12pt, cabe\xE7alhos de cena INT/EXT, a\xE7\xE3o, personagem, di\xE1logo, parent\xE9ticas); estrutura dram\xE1tica de 3 atos (Syd Field) e Jornada do Her\xF3i (Campbell/Vogler).
@@ -10738,9 +10738,11 @@ ESTRUTURA PEDAG\xD3GICA DO CURSO CINELAB (120 HORAS / 10 M\xD3DULOS + 2 B\xD4NUS
 7. M\xF3dulo 07 - Montagem & Edi\xE7\xE3o: Continuidade espa\xE7otemporal, corte na a\xE7\xE3o (cutting on action), corte seco, jump cut, elipses, Efeito Kuleshov, montagem paralela, ritmo e pacing da cena.
 8. M\xF3dulo 08 - Produ\xE7\xE3o Executiva & Planejamento: Or\xE7amento audiovisual, cronograma, ordem do dia (call sheet), autoriza\xE7\xF5es de loca\xE7\xE3o e uso de imagem, leis de incentivo (Lei Paulo Gustavo, Aldir Blanc, Rouanet, FSA/Ancine), plano de conting\xEAncia.
 9. M\xF3dulo 09 - Distribui\xE7\xE3o, Festivais & Mercado: Circuito de festivais (FilmFreeway), janelas de exibi\xE7\xE3o, pitch deck, press-kit, trailer, cartaz e estrat\xE9gias de lan\xE7amento independente.
-10. M\xF3dulo 10 - Projeto Final: Realiza\xE7\xE3o pr\xE1tica de curta-metragem autoral (1 a 5 minutos) com entrega de decupagem, plano de filmagem, roteiro e corte final para o certificado de 120 horas.
+10. M\xF3dulo 10 - Projeto Final: Realiza\xE7\xE3o pr\xE1tica de curta-metragem autoral (1 a 5 minutos) com entrega de decupagem, plano de filmagem, roteiro e corte final para o certificado de 180 horas.
 B\xD4NUS 01: Gloss\xE1rio Completo de Planos e Movimentos de C\xE2mera (30 p\xE1ginas).
 B\xD4NUS 02: Gloss\xE1rio Completo de Roteiro e Dramaturgia Audiovisual (29 p\xE1ginas).
+B\xD4NUS 03: M\xE9todo de An\xE1lise F\xEDlmica em 6 Camadas (27 p\xE1ginas).
+B\xD4NUS 04: Hist\xF3ria do Cinema - Complemento Did\xE1tico (36 p\xE1ginas).
 
 DIRETRIZES DE RESPOSTA:
 - Aluno atendido: ${studentName}.

@@ -27,7 +27,8 @@ export const CourseView: React.FC<CourseViewProps> = ({
 }) => {
   const { t, getModuleTranslation, language } = useLanguage();
   const [localModules, setLocalModules] = useState<CourseModule[]>(modules || []);
-  const [totalHandoutPages, setTotalHandoutPages] = useState<number>(123);
+  const [totalHandoutPages, setTotalHandoutPages] = useState<number>(159);
+  const [bonusApostilas, setBonusApostilas] = useState<any[]>([]);
 
   useEffect(() => {
     if (modules && modules.length > 0) {
@@ -39,6 +40,9 @@ export const CourseView: React.FC<CourseViewProps> = ({
         if (res.modules && res.modules.length > 0 && (!modules || modules.length === 0)) {
           setLocalModules(res.modules);
         }
+        if (res.bonusApostilas && res.bonusApostilas.length > 0) {
+          setBonusApostilas(res.bonusApostilas);
+        }
         const aposPages = (res.apostilas || []).reduce(
           (sum: number, a: any) => sum + (Number(a.totalPages) || Number(a.pagesCount) || 0),
           0
@@ -47,7 +51,7 @@ export const CourseView: React.FC<CourseViewProps> = ({
           (sum: number, b: any) => sum + (Number(b.totalPages) || Number(b.pagesCount) || 0),
           0
         );
-        const total = (aposPages || 64) + (bonusPages || 59);
+        const total = (aposPages || 64) + (bonusPages || 122);
         if (total > 0) {
           setTotalHandoutPages(total);
         }
@@ -58,15 +62,16 @@ export const CourseView: React.FC<CourseViewProps> = ({
   }, [modules]);
 
   const currentModules = (localModules && localModules.length > 0) ? localModules : (modules || []);
+  const bonusCount = bonusApostilas && bonusApostilas.length > 0 ? bonusApostilas.length : 4;
 
   const i18n = {
     pt: {
       badge: 'Grade Curricular Completa',
       title: 'Formação em Cinema & Audiovisual',
-      subtitle: 'Uma formação profunda de 3 meses (90 dias) estruturada em 10 etapas pedagógicas e 3 apostilas bônus. Do conceito dramatúrgico à tela grande.',
+      subtitle: `Uma formação profunda de 3 meses (90 dias) estruturada em 10 etapas pedagógicas e ${bonusCount} apostilas bônus. Do conceito dramatúrgico à tela grande.`,
       card1Title: 'Duração: 3 Meses',
       card1Desc: 'Distribuídos em 10 etapas formativas (90 dias) calibradas pelo volume de conteúdo, garantindo tempo real de reflexão, leitura e pesquisa.',
-      card2Title: '10 Apostilas + 3 Bônus',
+      card2Title: `10 Apostilas + ${bonusCount} Bônus`,
       card2Desc: `Mais de ${totalHandoutPages} páginas de conteúdo autoral e análise de mestre do cinema.`,
       card3Title: '180 Horas com Certificado',
       card3Desc: 'Avaliações contínuas por etapa e emissão de certificado profissional com código verificável nacionalmente por produtoras.',
@@ -79,24 +84,23 @@ export const CourseView: React.FC<CourseViewProps> = ({
       handoutBtn: 'Apostila 0',
       videoBtn: 'Vídeo da Etapa',
       bonusBadge: 'Módulos Complementares',
-      bonusTitle: '3 Apostilas Bônus Especiais',
-      bonus1Tag: 'APOSTILA BÔNUS 01 (30 PÁGINAS)',
+      bonusTitle: `${bonusCount} Apostilas Bônus Especiais`,
       bonus1Title: 'Glossário Completo de Planos',
       bonus1Desc: 'Guia permanente de consulta técnica para decupagem cinematográfica, escalas de planos e movimentos de câmera.',
-      bonus2Tag: 'APOSTILA BÔNUS 02 (29 PÁGINAS)',
       bonus2Title: 'Glossário Completo de Roteiro',
       bonus2Desc: 'Guia permanente de consulta dramatúrgica: da criação de premissa, storyline e sinopse à escaleta e roteiro final.',
-      bonus3Tag: 'APOSTILA BÔNUS 03 (27 PÁGINAS)',
       bonus3Title: 'Método de Análise Fílmica em 6 Camadas',
       bonus3Desc: 'Metodologia exclusiva de decupagem e análise técnica em 6 dimensões cinematográficas para realizadores.',
+      bonus4Title: 'História do Cinema - Complemento',
+      bonus4Desc: 'Guia histórico completo da evolução da linguagem cinematográfica, dos primórdios à era digital contemporânea.',
     },
     en: {
       badge: 'Full Curriculum Syllabus',
       title: 'Filmmaking & Audiovisual Training',
-      subtitle: 'An in-depth 3-month (90-day) training structured into 10 pedagogical stages and 3 bonus handouts. From dramatic conception to the silver screen.',
+      subtitle: `An in-depth 3-month (90-day) training structured into 10 pedagogical stages and ${bonusCount} bonus handouts. From dramatic conception to the silver screen.`,
       card1Title: 'Duration: 3 Months',
       card1Desc: 'Spread across 10 formative stages (90 days) calibrated by technical volume, ensuring ample time for reflection, screening, and set research.',
-      card2Title: '10 Handouts + 3 Bonuses',
+      card2Title: `10 Handouts + ${bonusCount} Bonuses`,
       card2Desc: `Over ${totalHandoutPages} pages of original coursework and cinema master analysis.`,
       card3Title: '180 Hours with Certificate',
       card3Desc: 'Continuous modular assessments and an official professional certificate with public verification for studios and film boards.',
@@ -109,24 +113,23 @@ export const CourseView: React.FC<CourseViewProps> = ({
       handoutBtn: 'Handout 0',
       videoBtn: 'Stage Video',
       bonusBadge: 'Complementary Modules',
-      bonusTitle: '3 Special Bonus Handouts',
-      bonus1Tag: 'BONUS HANDOUT 01 (30 PAGES)',
+      bonusTitle: `${bonusCount} Special Bonus Handouts`,
       bonus1Title: 'Complete Shot Glossary',
       bonus1Desc: 'Permanent technical reference guide for cinematic coverage, shot scales, and camera movements.',
-      bonus2Tag: 'BONUS HANDOUT 02 (29 PAGES)',
       bonus2Title: 'Complete Screenwriting Glossary',
       bonus2Desc: 'Permanent dramaturgical reference: from premise, storyline, and synopsis to beat sheet and final script.',
-      bonus3Tag: 'BONUS HANDOUT 03 (27 PAGES)',
       bonus3Title: '6-Layer Film Analysis Method',
       bonus3Desc: 'Exclusive method for breaking down films across 6 cinematic dimensions as a filmmaker.',
+      bonus4Title: 'History of Cinema - Complement',
+      bonus4Desc: 'Comprehensive historical guide from the origins of silent cinema to the contemporary digital age.',
     },
     es: {
       badge: 'Plan de Estudios Completo',
       title: 'Formación en Cine y Audiovisual',
-      subtitle: 'Una formación intensiva de 3 meses (90 días) estructurada en 10 etapas pedagógicas y 3 manuales bonus. Del concepto dramatúrgico a la gran pantalla.',
+      subtitle: `Una formación intensiva de 3 meses (90 días) estructurada en 10 etapas pedagógicas y ${bonusCount} manuales bonus. Del concepto dramatúrgico a la gran pantalla.`,
       card1Title: 'Duración: 3 Meses',
       card1Desc: 'Distribuidos en 10 etapas formativas (90 días) calibradas según la densidad del contenido, garantizando tiempo real de asimilación.',
-      card2Title: '10 Manuales + 3 Bonus',
+      card2Title: `10 Manuales + ${bonusCount} Bonus`,
       card2Desc: `Más de ${totalHandoutPages} páginas de contenido autoral y análisis de maestros del cine.`,
       card3Title: '180 Horas con Certificado',
       card3Desc: 'Evaluaciones progresivas por etapa y titulación profesional con validación pública para productoras y convocatorias.',
@@ -139,24 +142,23 @@ export const CourseView: React.FC<CourseViewProps> = ({
       handoutBtn: 'Manual 0',
       videoBtn: 'Video de la Etapa',
       bonusBadge: 'Módulos Complementarios',
-      bonusTitle: '3 Manuales Bonus Especiales',
-      bonus1Tag: 'MANUAL BONUS 01 (30 PÁGINAS)',
+      bonusTitle: `${bonusCount} Manuales Bonus Especiales`,
       bonus1Title: 'Glosario Completo de Planos',
       bonus1Desc: 'Guia permanente de consulta técnica para decupaje cinematográfico, escalas de planos e movimentos de cámara.',
-      bonus2Tag: 'MANUAL BONUS 02 (29 PÁGINAS)',
       bonus2Title: 'Glosario Completo de Guion',
       bonus2Desc: 'Guía permanente de consulta dramatúrgica: desde la premisa, storyline y sinopsis hasta la escaleta y guion final.',
-      bonus3Tag: 'MANUAL BONUS 03 (27 PÁGINAS)',
       bonus3Title: 'Método de Análisis Fílmico en 6 Capas',
       bonus3Desc: 'Metodología analítica en 6 dimensiones para desarmar cualquier obra cinematográfica.',
+      bonus4Title: 'Historia del Cine - Complemento',
+      bonus4Desc: 'Guía histórica completa desde los orígenes del cine mudo hasta la era digital contemporánea.',
     },
     fr: {
       badge: 'Programme Pédagogique Complet',
       title: 'Formation en Cinéma & Audiovisuel',
-      subtitle: 'Un enseignement approfondi de 3 mois (90 jours) structuré en 10 étapes pédagogiques et 3 fascicules bonus. De l\'écriture du scénario à la projection.',
+      subtitle: `Un enseignement approfondi de 3 mois (90 jours) structuré en 10 étapes pédagogiques et ${bonusCount} fascicules bonus. De l'écriture du scénario à la projection.`,
       card1Title: 'Durée : 3 Mois',
       card1Desc: 'Répartis sur 10 étapes formatives (90 jours) adaptées à la densité des cours, offrant un temps réel de recul, de visionnage et de pratique.',
-      card2Title: '10 Fascicules + 3 Bonus',
+      card2Title: `10 Fascicules + ${bonusCount} Bonus`,
       card2Desc: `Plus de ${totalHandoutPages} pages de cours exclusifs et d'analyses de maîtres du cinéma.`,
       card3Title: '180 Heures Certifiées',
       card3Desc: 'Évaluations continues par module et certificat professionnel avec code cryptographique vérifiable en ligne.',
@@ -169,16 +171,15 @@ export const CourseView: React.FC<CourseViewProps> = ({
       handoutBtn: 'Fascicule 0',
       videoBtn: 'Vidéo de l\'Étape',
       bonusBadge: 'Modules Complémentaires',
-      bonusTitle: '3 Fascicules Bonus Spéciaux',
-      bonus1Tag: 'FASCICULE BONUS 01 (30 PAGES)',
+      bonusTitle: `${bonusCount} Fascicules Bonus Spéciaux`,
       bonus1Title: 'Glossaire Complet des Plans',
       bonus1Desc: 'Guide permanent de consultation technique pour le découpage, les échelles de plans et mouvements de caméra.',
-      bonus2Tag: 'FASCICULE BONUS 02 (29 PAGES)',
       bonus2Title: 'Glossaire Complet du Scénario',
       bonus2Desc: 'Guide permanent de dramaturgie : de l\'idée, storyline et synopsis au séquencier et scénario final.',
-      bonus3Tag: 'FASCICULE BONUS 03 (27 PAGES)',
       bonus3Title: 'Méthode d\'Analyse Filmique en 6 Couches',
       bonus3Desc: 'Méthodologie d\'analyse et de découpage en 6 dimensions pour disséquer toute œuvre audiovisuelle.',
+      bonus4Title: 'Histoire du Cinéma - Complément',
+      bonus4Desc: 'Guide historique complet des origines du cinéma muet à l\'ère numérique contemporaine.',
     },
   };
 
@@ -354,30 +355,55 @@ export const CourseView: React.FC<CourseViewProps> = ({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="p-5 rounded-xl bg-neutral-800/40 border border-neutral-700/60 space-y-2">
-            <span className="text-xs font-mono font-bold text-amber-400">{cur.bonus1Tag}</span>
-            <h4 className="text-sm font-bold text-white">{cur.bonus1Title}</h4>
-            <p className="text-xs text-neutral-400 leading-relaxed">
-              {cur.bonus1Desc}
-            </p>
-          </div>
-
-          <div className="p-5 rounded-xl bg-neutral-800/40 border border-neutral-700/60 space-y-2">
-            <span className="text-xs font-mono font-bold text-amber-400">{cur.bonus2Tag}</span>
-            <h4 className="text-sm font-bold text-white">{cur.bonus2Title}</h4>
-            <p className="text-xs text-neutral-400 leading-relaxed">
-              {cur.bonus2Desc}
-            </p>
-          </div>
-
-          <div className="p-5 rounded-xl bg-neutral-800/40 border border-neutral-700/60 space-y-2">
-            <span className="text-xs font-mono font-bold text-amber-400">{cur.bonus3Tag}</span>
-            <h4 className="text-sm font-bold text-white">{cur.bonus3Title}</h4>
-            <p className="text-xs text-neutral-400 leading-relaxed">
-              {cur.bonus3Desc}
-            </p>
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {(bonusApostilas && bonusApostilas.length > 0 ? bonusApostilas : [
+            {
+              number: 1,
+              title: cur.bonus1Title,
+              pagesCount: 30,
+              description: cur.bonus1Desc,
+            },
+            {
+              number: 2,
+              title: cur.bonus2Title,
+              pagesCount: 29,
+              description: cur.bonus2Desc,
+            },
+            {
+              number: 3,
+              title: cur.bonus3Title,
+              pagesCount: 27,
+              description: cur.bonus3Desc,
+            },
+            {
+              number: 4,
+              title: cur.bonus4Title,
+              pagesCount: 36,
+              description: cur.bonus4Desc,
+            },
+          ]).map((b: any) => {
+            const bNum = b.number || 1;
+            const pad = bNum < 10 ? '0' + bNum : '' + bNum;
+            const pages = b.pagesCount || b.totalPages || (bNum === 1 ? 30 : (bNum === 2 ? 29 : (bNum === 3 ? 27 : 36)));
+            const tag = language === 'en'
+              ? `BONUS HANDOUT ${pad} (${pages} PAGES)`
+              : language === 'es'
+              ? `MANUAL BONUS ${pad} (${pages} PÁGINAS)`
+              : language === 'fr'
+              ? `FASCICULE BONUS ${pad} (${pages} PAGES)`
+              : `APOSTILA BÔNUS ${pad} (${pages} PÁGINAS)`;
+            return (
+              <div key={b.id || bNum} className="p-5 rounded-xl bg-neutral-800/40 border border-neutral-700/60 space-y-2 flex flex-col justify-between">
+                <div>
+                  <span className="text-xs font-mono font-bold text-amber-400">{tag}</span>
+                  <h4 className="text-sm font-bold text-white mt-1">{b.title}</h4>
+                  <p className="text-xs text-neutral-400 leading-relaxed mt-1">
+                    {b.description || b.summary}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 

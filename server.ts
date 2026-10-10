@@ -4305,7 +4305,7 @@ app.post('/api/ai/tutor', async (req: Request, res: Response) => {
 
 Sua missão é dialogar diretamente com alunos e entusiastas de cinema, tirando dúvidas técnicas, artísticas, teóricas, conceituais e práticas de todas as etapas do fazer cinematográfico.
 
-ESTRUTURA PEDAGÓGICA DO CURSO CINELAB (120 HORAS / 10 MÓDULOS + 2 BÔNUS):
+ESTRUTURA PEDAGÓGICA DO CURSO CINELAB (180 HORAS / 10 MÓDULOS + 4 BÔNUS):
 1. Módulo 01 - Linguagem Cinematográfica: Enquadramentos e escalas de planos (Plano Geral, Plano Médio, Primeiro Plano, Close-up, Plano Detalhe), regra dos 180°, movimentos de câmera (panorâmica, tilt, travelling, dolly, grua, steadicam), eixos cênicos, plongée e contra-plongée, campo e contracampo.
 2. Módulo 02 - História do Cinema & Análise Fílmica: Do silencioso ao sonoro e digital; Cinema Novo e cinema brasileiro; método analítico em 6 camadas (Narrativa, Personagem, Espaço, Imagem, Som e Montagem).
 3. Módulo 03 - Roteiro & Narrativa: Ideia, storyline, logline, sinopse, argumento/tratamento, escaleta; formatação Master Scenes (Courier 12pt, cabeçalhos de cena INT/EXT, ação, personagem, diálogo, parentéticas); estrutura dramática de 3 atos (Syd Field) e Jornada do Herói (Campbell/Vogler).
@@ -4315,9 +4315,11 @@ ESTRUTURA PEDAGÓGICA DO CURSO CINELAB (120 HORAS / 10 MÓDULOS + 2 BÔNUS):
 7. Módulo 07 - Montagem & Edição: Continuidade espaçotemporal, corte na ação (cutting on action), corte seco, jump cut, elipses, Efeito Kuleshov, montagem paralela, ritmo e pacing da cena.
 8. Módulo 08 - Produção Executiva & Planejamento: Orçamento audiovisual, cronograma, ordem do dia (call sheet), autorizações de locação e uso de imagem, leis de incentivo (Lei Paulo Gustavo, Aldir Blanc, Rouanet, FSA/Ancine), plano de contingência.
 9. Módulo 09 - Distribuição, Festivais & Mercado: Circuito de festivais (FilmFreeway), janelas de exibição, pitch deck, press-kit, trailer, cartaz e estratégias de lançamento independente.
-10. Módulo 10 - Projeto Final: Realização prática de curta-metragem autoral (1 a 5 minutos) com entrega de decupagem, plano de filmagem, roteiro e corte final para o certificado de 120 horas.
+10. Módulo 10 - Projeto Final: Realização prática de curta-metragem autoral (1 a 5 minutos) com entrega de decupagem, plano de filmagem, roteiro e corte final para o certificado de 180 horas.
 BÔNUS 01: Glossário Completo de Planos e Movimentos de Câmera (30 páginas).
 BÔNUS 02: Glossário Completo de Roteiro e Dramaturgia Audiovisual (29 páginas).
+BÔNUS 03: Método de Análise Fílmica em 6 Camadas (27 páginas).
+BÔNUS 04: História do Cinema - Complemento Didático (36 páginas).
 
 DIRETRIZES DE RESPOSTA:
 - Aluno atendido: ${studentName}.

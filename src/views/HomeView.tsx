@@ -47,6 +47,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
   const { t, getModuleTranslation, language } = useLanguage();
   const [localSettings, setLocalSettings] = useState<CourseSettings | null>(settings || null);
   const [localModules, setLocalModules] = useState<CourseModule[]>(modules || []);
+  const [bonusApostilas, setBonusApostilas] = useState<any[]>([]);
 
   useEffect(() => {
     if (settings) setLocalSettings(settings);
@@ -55,17 +56,19 @@ export const HomeView: React.FC<HomeViewProps> = ({
   useEffect(() => {
     if (modules && modules.length > 0) {
       setLocalModules(modules);
-    } else if (localModules.length === 0) {
-      api.getPublicCourseInfo()
-        .then((res) => {
-          if (res.settings) setLocalSettings(res.settings);
-          if (res.modules && res.modules.length > 0) setLocalModules(res.modules);
-        })
-        .catch((err) => {
-          console.error('Erro ao buscar dados públicos na Home:', err);
-        });
     }
+    api.getPublicCourseInfo()
+      .then((res) => {
+        if (res.settings) setLocalSettings(res.settings);
+        if (res.modules && res.modules.length > 0) setLocalModules(res.modules);
+        if (res.bonusApostilas && res.bonusApostilas.length > 0) setBonusApostilas(res.bonusApostilas);
+      })
+      .catch((err) => {
+        console.error('Erro ao buscar dados públicos na Home:', err);
+      });
   }, [modules]);
+
+  const bonusCount = bonusApostilas && bonusApostilas.length > 0 ? bonusApostilas.length : 4;
 
   const currentSettings = localSettings || settings;
   const currentModules = (localModules && localModules.length > 0) ? localModules : (modules || []);
@@ -136,10 +139,10 @@ export const HomeView: React.FC<HomeViewProps> = ({
         fr: 'Quelle est la durée totale du cours ?',
       }[language] || 'Qual é a duração total do curso?',
       a: {
-        pt: 'O curso possui duração total de 3 meses (90 dias de formação contínua), distribuídos em 10 etapas pedagógicas calibradas por conteúdo mais as 3 apostilas bônus.',
-        en: 'The course has a total duration of 3 months (90 days of continuous training), distributed across 10 pedagogical stages calibrated by content plus 3 bonus handouts.',
-        es: 'El curso tiene una duración total de 3 meses (90 días de formación continua), distribuidos en 10 etapas pedagógicas más los 3 manuales bono.',
-        fr: 'Le cours a une durée totale de 3 mois (90 jours de formation continue), répartis en 10 étapes pédagogiques plus 3 fascicules bonus.',
+        pt: `O curso possui duração total de 3 meses (90 dias de formação contínua), distribuídos em 10 etapas pedagógicas calibradas por conteúdo mais as ${bonusCount} apostilas bônus.`,
+        en: `The course has a total duration of 3 months (90 days of continuous training), distributed across 10 pedagogical stages calibrated by content plus ${bonusCount} bonus handouts.`,
+        es: `El curso tiene una duración total de 3 meses (90 días de formación continua), distribuidos en 10 etapas pedagógicas más los ${bonusCount} manuales bono.`,
+        fr: `Le cours a une durée totale de 3 mois (90 jours de formation continue), répartis en 10 étapes pédagogiques plus ${bonusCount} fascicules bonus.`,
       }[language] || 'O curso possui duração total de 3 meses...',
     },
     {
@@ -271,7 +274,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 <span className="text-xs text-neutral-400">{t('home.metricDurationLabel')}</span>
               </div>
               <div className="p-3.5 rounded-xl bg-neutral-900/50 border border-neutral-800/80">
-                <span className="block text-2xl font-display font-bold text-white">{t('home.metricHandouts')}</span>
+                <span className="block text-2xl font-display font-bold text-white">10 + {bonusCount}</span>
                 <span className="text-xs text-neutral-400">{t('home.metricHandoutsLabel')}</span>
               </div>
               <div className="p-3.5 rounded-xl bg-neutral-900/50 border border-neutral-800/80">
@@ -599,7 +602,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 {t('home.handoutsBadge')}
               </span>
               <h2 className="text-2xl sm:text-4xl font-display font-bold text-white mt-1">
-                {t('home.handoutsTitle')}
+                {language === 'en' ? `Structure of the 10 Handouts + ${bonusCount} Bonuses` : language === 'es' ? `Estructura de los 10 Manuales + ${bonusCount} Bonos` : language === 'fr' ? `Structure des 10 Fascicules + ${bonusCount} Bonus` : `Estrutura das 10 Apostilas + ${bonusCount} Bônus`}
               </h2>
               <p className="text-xs text-neutral-400 mt-1 max-w-xl">
                 {t('home.handoutsSubtitle')}
@@ -678,9 +681,13 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 <span className="text-[10px] font-mono uppercase tracking-widest text-amber-400 font-bold">
                   {t('home.bonusBadge')}
                 </span>
-                <h3 className="text-sm font-bold text-white">{t('home.bonusTitle')}</h3>
+                <h3 className="text-sm font-bold text-white">
+                  {language === 'en' ? `${bonusCount} Exclusive Bonus Handouts` : language === 'es' ? `${bonusCount} Manuales Bonus Exclusivos` : language === 'fr' ? `${bonusCount} Fascicules Bonus Exclusifs` : `${bonusCount} Apostilas Bônus Exclusivas`}
+                </h3>
                 <p className="text-xs text-neutral-300 mt-0.5">
-                  {t('home.bonusSubtitle')}
+                  {bonusApostilas && bonusApostilas.length > 0
+                    ? bonusApostilas.map((b) => `${b.code || ('Bônus 0' + b.number)}: ${b.title} (${b.pagesCount || b.totalPages || 30} págs)`).join(' • ')
+                    : t('home.bonusSubtitle')}
                 </p>
               </div>
             </div>

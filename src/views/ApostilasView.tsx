@@ -591,6 +591,20 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
             isUnlocked: true,
             unlockDate: '',
           },
+          {
+            id: 'bonus-04',
+            number: 4,
+            code: 'BÔNUS 04',
+            title: 'História do Cinema - Complemento',
+            subtitle: 'Guia Histórico e Complemento Didático Completo',
+            summary: 'A evolução histórica da linguagem cinematográfica: das primeiras projeções às inovações digitais contemporâneas.',
+            description: 'A evolução histórica da linguagem cinematográfica: das primeiras projeções às inovações digitais contemporâneas.',
+            totalPages: 36,
+            pagesCount: 36,
+            pdfUrl: '/materiais/cinelab-bonus-04-historia-do-cinema-complemento.pdf',
+            isUnlocked: true,
+            unlockDate: '',
+          },
         ];
         setBonusApostilas(getMergedBonusWithVault(initialBonusList as any));
       }
@@ -645,11 +659,13 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
     }
   };
 
+  const currentBonusCount = bonusApostilas && bonusApostilas.length > 0 ? bonusApostilas.length : 4;
+
   const i18n = {
     pt: {
       badge: 'Material Didático Exclusivo',
       title: 'Minhas Apostilas de Cinema',
-      subtitle: 'As 10 apostilas didáticas do curso e 3 apostilas bônus. Conteúdo técnico e prático de leitura 100% online integrada na plataforma CINELAB, calibrado em um cronograma imersivo de 3 meses (90 dias).',
+      subtitle: `As 10 apostilas didáticas do curso e ${currentBonusCount} apostilas bônus. Conteúdo técnico e prático de leitura 100% online integrada na plataforma CINELAB, calibrado em um cronograma imersivo de 3 meses (90 dias).`,
       onlineNotice: 'Leitura Online Exclusiva na Plataforma • Sem download',
       visitorNotice: 'Você está navegando como visitante. Para acessar as apostilas na íntegra e responder às avaliações:',
       enrollBtn: 'Faça sua Matrícula no CINELAB',
@@ -679,7 +695,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
       evalDoneNotice: 'Avaliação da etapa concluída',
       viewEvalBtn: 'Ver Avaliação',
       bonusSectionTitle: 'Apostilas Bônus Exclusivas',
-      bonusSectionDesc: '3 Módulos Especiais',
+      bonusSectionDesc: `${currentBonusCount} Módulos Especiais`,
       extraVideosTab: 'Vídeos Extras de Estudo',
       extraVideosBtn: '2 Vídeos Extras',
       trainingEvalTab: 'Avaliação de Treinamento',
@@ -717,7 +733,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
     en: {
       badge: 'Exclusive Educational Material',
       title: 'My Cinema Handouts',
-      subtitle: 'The 10 course didactic handouts and 3 bonus handouts. Technical and practical content for 100% online reading integrated into CINELAB, calibrated over an immersive 3-month (90-day) schedule.',
+      subtitle: `The 10 course didactic handouts and ${currentBonusCount} bonus handouts. Technical and practical content for 100% online reading integrated into CINELAB, calibrated over an immersive 3-month (90-day) schedule.`,
       onlineNotice: 'Exclusive Online Reading on Platform • No Download',
       visitorNotice: 'You are browsing as a guest. To access full handouts and take evaluations:',
       enrollBtn: 'Enroll in CINELAB Now',
@@ -747,7 +763,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
       evalDoneNotice: 'Stage assessment completed',
       viewEvalBtn: 'View Assessment',
       bonusSectionTitle: 'Exclusive Bonus Handouts',
-      bonusSectionDesc: '3 Special Modules',
+      bonusSectionDesc: `${currentBonusCount} Special Modules`,
       extraVideosTab: 'Extra Study Videos',
       extraVideosBtn: '2 Extra Videos',
       trainingEvalTab: 'Training Drill',
@@ -785,7 +801,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
     es: {
       badge: 'Material Didáctico Exclusivo',
       title: 'Mis Manuales de Cine',
-      subtitle: 'Los 10 manuales didácticos del curso y 3 manuales bonus. Contenido técnico y práctico de lectura 100% online integrada en CINELAB, calibrado en un cronograma inmersivo de 3 meses (90 días).',
+      subtitle: `Los 10 manuales didácticos del curso y ${currentBonusCount} manuales bonus. Contenido técnico y práctico de lectura 100% online integrada en CINELAB, calibrado en un cronograma inmersivo de 3 meses (90 días).`,
       onlineNotice: 'Lectura Online Exclusiva en la Plataforma • Sin Descarga',
       visitorNotice: 'Estás navegando como visitante. Para acceder a los manuales completos y responder a las evaluaciones:',
       enrollBtn: 'Matricúlate en CINELAB Ahora',
@@ -815,7 +831,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
       evalDoneNotice: 'Evaluación de la etapa completada',
       viewEvalBtn: 'Ver Evaluación',
       bonusSectionTitle: 'Manuales Bonus Exclusivos',
-      bonusSectionDesc: '3 Módulos Especiales',
+      bonusSectionDesc: `${currentBonusCount} Módulos Especiales`,
       extraVideosTab: 'Videos Extras de Estudio',
       extraVideosBtn: '2 Videos Extras',
       trainingEvalTab: 'Evaluación de Entrenamiento',
@@ -853,7 +869,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
     fr: {
       badge: 'Matériel Pédagogique Exclusif',
       title: 'Mes Fascicules de Cinéma',
-      subtitle: 'Les 10 fascicules pédagogiques du cours et 3 fascicules bonus. Contenu technique et pratique de lecture 100% en ligne intégrée dans CINELAB, calibré sur un calendrier immersif de 3 mois (90 jours).',
+      subtitle: `Les 10 fascicules pédagogiques du cours et ${currentBonusCount} fascicules bonus. Contenu technique et pratique de lecture 100% en ligne intégrée dans CINELAB, calibré sur un calendrier immersif de 3 mois (90 jours).`,
       onlineNotice: 'Lecture en Ligne Exclusive sur la Plateforme • Sans Téléchargement',
       visitorNotice: 'Vous naviguez en tant que visiteur. Pour accéder aux fascicules complets et passer les évaluations :',
       enrollBtn: 'Inscrivez-vous à CINELAB',
@@ -883,7 +899,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
       evalDoneNotice: 'Évaluation de l\'étape terminée',
       viewEvalBtn: 'Voir l\'Évaluation',
       bonusSectionTitle: 'Fascicules Bonus Exclusifs',
-      bonusSectionDesc: '3 Modules Spéciaux',
+      bonusSectionDesc: `${currentBonusCount} Modules Spéciaux`,
       extraVideosTab: "Vidéos Extras d'Étude",
       extraVideosBtn: '2 Vidéos Extras',
       trainingEvalTab: "Évaluation d'Entraînement",
@@ -1517,39 +1533,31 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
+                {bonusApostilas.map((b) => (
+                  <button
+                    key={b.id || b.number}
+                    type="button"
+                    onClick={() => selectBonusForUpload(b.number)}
+                    className={`px-2.5 py-1 text-xs rounded-lg font-mono transition-all cursor-pointer ${
+                      bonusUploadTargetNumber === b.number
+                        ? 'bg-amber-500 text-neutral-950 font-bold shadow'
+                        : 'bg-neutral-900 text-neutral-300 hover:text-white border border-neutral-700'
+                    }`}
+                  >
+                    Bônus 0{b.number}
+                  </button>
+                ))}
                 <button
                   type="button"
-                  onClick={() => selectBonusForUpload(1)}
+                  onClick={() => selectBonusForUpload((bonusApostilas.length || 4) + 1)}
                   className={`px-2.5 py-1 text-xs rounded-lg font-mono transition-all cursor-pointer ${
-                    bonusUploadTargetNumber === 1
+                    bonusUploadTargetNumber === ((bonusApostilas.length || 4) + 1)
                       ? 'bg-amber-500 text-neutral-950 font-bold shadow'
                       : 'bg-neutral-900 text-neutral-300 hover:text-white border border-neutral-700'
                   }`}
                 >
-                  Bônus 01
-                </button>
-                <button
-                  type="button"
-                  onClick={() => selectBonusForUpload(2)}
-                  className={`px-2.5 py-1 text-xs rounded-lg font-mono transition-all cursor-pointer ${
-                    bonusUploadTargetNumber === 2
-                      ? 'bg-amber-500 text-neutral-950 font-bold shadow'
-                      : 'bg-neutral-900 text-neutral-300 hover:text-white border border-neutral-700'
-                  }`}
-                >
-                  Bônus 02
-                </button>
-                <button
-                  type="button"
-                  onClick={() => selectBonusForUpload(3)}
-                  className={`px-2.5 py-1 text-xs rounded-lg font-mono transition-all cursor-pointer ${
-                    bonusUploadTargetNumber === 3
-                      ? 'bg-amber-500 text-neutral-950 font-bold shadow'
-                      : 'bg-neutral-900 text-neutral-300 hover:text-white border border-neutral-700'
-                  }`}
-                >
-                  + Novo Bônus 03
+                  + Novo Bônus 0{(bonusApostilas.length || 4) + 1}
                 </button>
               </div>
             </div>
@@ -1592,10 +1600,14 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                     onChange={(e) => selectBonusForUpload(Number(e.target.value))}
                     className="w-full px-3 py-2 bg-neutral-900 border border-neutral-700 rounded-xl text-white text-xs focus:border-amber-500 focus:outline-none font-sans"
                   >
-                    <option value={1}>Apostila Bônus 01 (Glossário de Planos - 30 págs)</option>
-                    <option value={2}>Apostila Bônus 02 (Glossário de Roteiro - 29 págs)</option>
-                    <option value={3}>Apostila Bônus 03 (Método de Análise Fílmica em 6 Camadas - 27 págs)</option>
-                    <option value={4}>Nova Apostila Bônus 04</option>
+                    {bonusApostilas.map((b) => (
+                      <option key={b.id || b.number} value={b.number}>
+                        Apostila Bônus 0{b.number} ({b.title} - {b.pagesCount || b.totalPages || 30} págs)
+                      </option>
+                    ))}
+                    <option value={(bonusApostilas.length || 4) + 1}>
+                      + Nova Apostila Bônus 0{(bonusApostilas.length || 4) + 1}
+                    </option>
                   </select>
                 </div>
 

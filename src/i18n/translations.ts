@@ -380,10 +380,10 @@ export const UI_TRANSLATIONS: Translations = {
     fr: 'Durée Totale du Cours',
   },
   'home.metricHandouts': {
-    pt: '10 + 2',
-    en: '10 + 2',
-    es: '10 + 2',
-    fr: '10 + 2',
+    pt: '10 + 4',
+    en: '10 + 4',
+    es: '10 + 4',
+    fr: '10 + 4',
   },
   'home.metricHandoutsLabel': {
     pt: 'Apostilas Didáticas',
@@ -712,10 +712,10 @@ export const UI_TRANSLATIONS: Translations = {
     fr: 'Matériel Didactique',
   },
   'home.handoutsTitle': {
-    pt: 'Estrutura das 10 Apostilas + 3 Bônus',
-    en: 'Structure of the 10 Handouts + 3 Bonuses',
-    es: 'Estructura de los 10 Manuales + 3 Bonos',
-    fr: 'Structure des 10 Fascicules + 3 Bonus',
+    pt: 'Estrutura das 10 Apostilas + 4 Bônus',
+    en: 'Structure of the 10 Handouts + 4 Bonuses',
+    es: 'Estructura de los 10 Manuales + 4 Bonos',
+    fr: 'Structure des 10 Fascicules + 4 Bonus',
   },
   'home.handoutsSubtitle': {
     pt: 'Materiais técnicos completos em PDF para leitura protegida, diagramas de iluminação, decupagens reais e referências teóricas.',
@@ -736,16 +736,16 @@ export const UI_TRANSLATIONS: Translations = {
     fr: 'CONTENU SPÉCIAL INCLUS',
   },
   'home.bonusTitle': {
-    pt: '3 Apostilas Bônus Exclusivas',
-    en: '3 Exclusive Bonus Handouts',
-    es: '3 Manuales Bono Exclusivos',
-    fr: '3 Fascicules Bonus Exclusifs',
+    pt: '4 Apostilas Bônus Exclusivas',
+    en: '4 Exclusive Bonus Handouts',
+    es: '4 Manuales Bono Exclusivos',
+    fr: '4 Fascicules Bonus Exclusifs',
   },
   'home.bonusSubtitle': {
-    pt: 'Bônus 01: Glossário Completo de Planos (30 págs) • Bônus 02: Glossário Completo de Roteiro (29 págs) • Bônus 03: Análise Fílmica em 6 Camadas (27 págs).',
-    en: 'Bonus 01: Complete Shot Glossary (30 pages) • Bonus 02: Complete Screenwriting Glossary (29 pages) • Bonus 03: 6-Layer Film Analysis (27 pages).',
-    es: 'Bono 01: Glosario Completo de Planos (30 págs) • Bono 02: Glosario Completo de Guion (29 págs) • Bono 03: Análisis Fílmico en 6 Capas (27 págs).',
-    fr: 'Bonus 01 : Glossaire Complet des Plans (30 pages) • Bonus 02 : Glossaire Complet du Scénario (29 pages) • Bonus 03 : Analyse Filmique en 6 Couches (27 pages).',
+    pt: 'Bônus 01: Glossário Completo de Planos (30 págs) • Bônus 02: Glossário Completo de Roteiro (29 págs) • Bônus 03: Análise Fílmica em 6 Camadas (27 págs) • Bônus 04: História do Cinema - Complemento (36 págs).',
+    en: 'Bonus 01: Complete Shot Glossary (30 pages) • Bonus 02: Complete Screenwriting Glossary (29 pages) • Bonus 03: 6-Layer Film Analysis (27 pages) • Bonus 04: Film History - Complement (36 pages).',
+    es: 'Bono 01: Glosario Completo de Planos (30 págs) • Bono 02: Glosario Completo de Guion (29 págs) • Bono 03: Análisis Fílmico en 6 Capas (27 págs) • Bono 04: Historia del Cine - Complemento (36 págs).',
+    fr: 'Bonus 01 : Glossaire Complet des Plans (30 pages) • Bonus 02 : Glossaire Complet du Scénario (29 pages) • Bonus 03 : Analyse Filmique en 6 Couches (27 pages) • Bonus 04 : Histoire du Cinéma - Complément (36 pages).',
   },
   'home.bonusBtn': {
     pt: 'Garantir Minha Vaga com Bônus',
@@ -880,10 +880,10 @@ export const UI_TRANSLATIONS: Translations = {
     fr: 'Investissez dans Votre Carrière Cinématographique',
   },
   'home.pricingSubtitle': {
-    pt: 'Acesso completo aos 3 meses de formação (90 dias), 10 apostilas didáticas, 3 apostilas bônus, masterclasses em vídeo, atividades, avaliações e certificado.',
-    en: 'Full access to 3 months of immersive training (90 days), 10 pedagogical handouts, 3 bonus guides, video masterclasses, activities, evaluations, and certificate.',
-    es: 'Acceso completo a 3 meses de formación (90 días), 10 manuales, 3 bonos, masterclasses en video, actividades, evaluaciones y certificado.',
-    fr: 'Accès complet aux 3 mois de formation (90 jours), 10 fascicules, 3 bonus, masterclasses vidéo, exercices, évaluations et certificat.',
+    pt: 'Acesso completo aos 3 meses de formação (90 dias), 10 apostilas didáticas, 4 apostilas bônus, masterclasses em vídeo, atividades, avaliações e certificado.',
+    en: 'Full access to 3 months of immersive training (90 days), 10 pedagogical handouts, 4 bonus guides, video masterclasses, activities, evaluations, and certificate.',
+    es: 'Acceso completo a 3 meses de formación (90 días), 10 manuales, 4 bonos, masterclasses en video, actividades, evaluaciones y certificado.',
+    fr: 'Accès complet aux 3 mois de formation (90 jours), 10 fascicules, 4 bonus, masterclasses vidéo, exercices, évaluations et certificat.',
   },
   'home.pricingClassBadge': {
     pt: 'TURMA OFICIAL DE CINEMA',
@@ -946,10 +946,10 @@ export const UI_TRANSLATIONS: Translations = {
     fr: '3 mois de formation intensive (10 étapes pédagogiques)',
   },
   'home.pricingItem2': {
-    pt: '10 Apostilas completas para leitura online + 3 Bônus',
-    en: '10 Full digital handouts for online reading + 3 Bonuses',
-    es: '10 Manuales completos para lectura online + 3 Bonos',
-    fr: '10 Fascicules numériques complets en ligne + 3 Bonus',
+    pt: '10 Apostilas completas para leitura online + 4 Bônus',
+    en: '10 Full digital handouts for online reading + 4 Bonuses',
+    es: '10 Manuales completos para lectura online + 4 Bonos',
+    fr: '10 Fascicules numériques complets en ligne + 4 Bonus',
   },
   'home.pricingItem3': {
     pt: 'Masterclasses em vídeo gravadas pelo professor',
@@ -1026,10 +1026,10 @@ export const UI_TRANSLATIONS: Translations = {
     fr: '• 3 MOIS DE FORMATION COMPLÈTE',
   },
   'banner.ribbonModules': {
-    pt: '• 10 ETAPAS + 3 BÔNUS',
-    en: '• 10 STAGES + 3 BONUSES',
-    es: '• 10 ETAPAS + 3 BONOS',
-    fr: '• 10 ÉTAPES + 3 BONUS',
+    pt: '• 10 ETAPAS + 4 BÔNUS',
+    en: '• 10 STAGES + 4 BONUSES',
+    es: '• 10 ETAPAS + 4 BONOS',
+    fr: '• 10 ÉTAPES + 4 BONUS',
   },
   'banner.ribbonCert': {
     pt: '• CERTIFICADO 180H',
@@ -1086,10 +1086,10 @@ export const UI_TRANSLATIONS: Translations = {
     fr: 'Méthodologie Intensive de 3 Mois (90 Jours d\'Immersion Continue)',
   },
   'banner.benefit2': {
-    pt: '10 Apostilas Técnicas Completas + 3 Apostilas Bônus Especiais',
-    en: '10 Comprehensive Technical Handouts + 3 Special Bonus Guides',
-    es: '10 Manuales Técnicos Completos + 3 Manuales Bono Especiales',
-    fr: '10 Fascicules Techniques Complets + 3 Fascicules Bonus Spéciaux',
+    pt: '10 Apostilas Técnicas Completas + 4 Apostilas Bônus Especiais',
+    en: '10 Comprehensive Technical Handouts + 4 Special Bonus Guides',
+    es: '10 Manuales Técnicos Completos + 4 Manuales Bono Especiales',
+    fr: '10 Fascicules Techniques Complets + 4 Fascicules Bonus Spéciaux',
   },
   'banner.benefit3': {
     pt: 'Masterclasses Exclusivas em Vídeo com o Professor Tony de Luc',
@@ -2742,6 +2742,38 @@ export const MODULE_TRANSLATIONS: Record<
       en: ['Layers 1 & 2: Narrative Structure & Character Construction', 'Layers 3 & 4: Scenic Space & Lighting/Cinematography', 'Layers 5 & 6: Sound Design & Editing Pacing', 'Master Case Studies in World Cinema'],
       es: ['Capas 1 y 2: Narrativa y Construcción de Personajes', 'Capas 3 y 4: Espacio Escénico y Luz/Fotografía', 'Capas 5 y 6: Diseño de Sonido y Ritmo de Montaje', 'Estudios de Caso de Grandes Maestros del Cine'],
       fr: ['Couches 1 & 2 : Récit & Trajectoire des Personnages', 'Couches 3 & 4 : Espace Scénique & Image/Lumière', 'Couches 5 & 6 : Sound Design & Rythme du Montage', 'Études de Cas de Chefs-d\'œuvre du Cinéma'],
+    },
+  },
+  994: {
+    title: {
+      pt: 'Apostila Bônus 04: História do Cinema – Complemento',
+      en: 'Bonus Handout 04: History of Cinema – Complement',
+      es: 'Manual Bónus 04: Historia del Cine – Complemento',
+      fr: 'Fascicule Bonus 04 : Histoire du Cinéma – Complément',
+    },
+    subtitle: {
+      pt: 'Dos Primórdios à Era Digital – Material Complementar Oficial (36 Páginas)',
+      en: 'From Early Origins to Digital Age – Official Complementary Material (36 Pages)',
+      es: 'De los Orígenes a la Era Digital – Material Complementario Oficial (36 Páginas)',
+      fr: 'Des Origines à l\'Ère Numérique – Matériel Complémentaire Officiel (36 Pages)',
+    },
+    summary: {
+      pt: 'Complemento da História do Cinema dos Primórdios à Era Digital: marcos estéticos, revoluções tecnológicas e evolução da linguagem audiovisual.',
+      en: 'Complementary Film History from early beginnings to the digital era: aesthetic milestones, technological revolutions, and cinematic grammar evolution.',
+      es: 'Complemento de la Historia del Cine desde sus inicios hasta la era digital: hitos estéticos, revoluciones técnicas y evolución del lenguaje audiovisual.',
+      fr: 'Complément d\'Histoire du Cinéma des débuts à l\'ère numérique : repères esthétiques, révolutions techniques et évolution du langage audiovisuel.',
+    },
+    apostilaSummary: {
+      pt: 'Apostila exclusiva com 36 páginas detalhando movimentos históricos, autores pioneiros e a transformação do cinema mundial até o audiovisual contemporâneo.',
+      en: 'Exclusive 36-page manual detailing historical movements, pioneering filmmakers, and the transformation of global cinema to contemporary filmmaking.',
+      es: 'Manual exclusivo de 36 páginas que profundiza en movimientos históricos, directores pioneros y la evolución del cine mundial.',
+      fr: 'Fascicule exclusif de 36 pages détaillant les mouvements historiques, les pionniers et l\'évolution du cinéma mondial jusqu\'à nos jours.',
+    },
+    keyThemes: {
+      pt: ['Os Primórdios e o Cinema Silencioso', 'Vanguardas Europeias e Cinema Clássico', 'Modernidade e Novas Ondas', 'Da Película ao Cinema Digital e Contemporâneo'],
+      en: ['Early Beginnings & Silent Cinema', 'European Avant-Garde & Classical Hollywood', 'Modernity & Global New Waves', 'From Celluloid to Digital & Contemporary Cinema'],
+      es: ['Los Inicios y el Cine Mudo', 'Vanguardias Europeas y Cine Clásico', 'Modernidad y Nuevas Olas', 'Del Celuloide al Cine Digital y Contemporáneo'],
+      fr: ['Les Débuts et le Cinéma Muet', 'Avant-Gardes Européennes et Âge d\'Or', 'Modernité et Nouvelles Vagues', 'De la Pellicule au Numérique et au Cinéma Contemporain'],
     },
   },
 };

@@ -958,6 +958,29 @@ export function getFolderHierarchy(lang: Language): CourseFolderCategory[] {
               actionRoute: 'apostilas',
               actionParam: { openBonusId: 'bonus-3' },
             },
+            {
+              id: 'file-bonus-4',
+              name: isPt
+                ? 'Bônus 04: História do Cinema – Complemento.pdf'
+                : isEn
+                ? 'Bonus 04: History of Cinema – Complement.pdf'
+                : isEs
+                ? 'Bônus 04: Historia del Cine – Complemento.pdf'
+                : 'Bonus 04: Histoire du Cinéma – Complément.pdf',
+              type: 'pdf',
+              sizeOrPages: isPt ? '36 páginas • Leitor Canvas' : '36 pages • Canvas Reader',
+              description: isPt
+                ? 'Complemento da História do Cinema dos Primórdios à Era Digital: marcos estéticos, revoluções tecnológicas e evolução da linguagem audiovisual.'
+                : isEn
+                ? 'Complementary Film History from early beginnings to the digital era: aesthetic milestones, technological revolutions, and cinematic grammar evolution.'
+                : isEs
+                ? 'Complemento de la Historia del Cine desde sus inicios hasta la era digital: hitos estéticos, revoluciones técnicas y evolución del lenguaje audiovisual.'
+                : 'Complément d\'Histoire du Cinéma des débuts à l\'ère numérique : repères esthétiques, révolutions techniques et évolution du langage audiovisuel.',
+              status: 'available',
+              moduleId: 2,
+              actionRoute: 'apostilas',
+              actionParam: { openBonusId: 'bonus-4' },
+            },
           ],
         },
       ],
