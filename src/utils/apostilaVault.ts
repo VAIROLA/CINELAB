@@ -184,9 +184,9 @@ export async function updateVaultMetadata(
   }
 ): Promise<void> {
   const isBonus = meta.isBonus || (typeof targetIdOrModuleId === 'number' && targetIdOrModuleId > 990);
-  const bonusNumber = meta.bonusNumber || (typeof targetIdOrModuleId === 'number' && targetIdOrModuleId > 990 ? targetIdOrModuleId - 990 : 1);
-  const moduleId = !isBonus && typeof targetIdOrModuleId === 'number' ? targetIdOrModuleId : undefined;
-  const id = isBonus ? `bonus-${bonusNumber}` : `mod-${moduleId || targetIdOrModuleId}`;
+  const bonusNumber = meta.bonusNumber || (typeof targetIdOrModuleId === 'number' && targetIdOrModuleId > 990 ? targetIdOrModuleId - 990 : (typeof targetIdOrModuleId === 'string' && targetIdOrModuleId.includes('bonus') ? Number(targetIdOrModuleId.replace(/\D/g, '')) : 1));
+  const moduleId = !isBonus ? (typeof targetIdOrModuleId === 'number' ? targetIdOrModuleId : Number(String(targetIdOrModuleId).replace(/\D/g, '') || 1)) : undefined;
+  const id = isBonus ? `bonus-${bonusNumber}` : getVaultKey(targetIdOrModuleId, false);
 
   const currentIndex = getPersistentVaultIndex();
   const existing = currentIndex[id] || { id, moduleId, isBonus, bonusNumber };
@@ -355,13 +355,17 @@ export function getMergedApostilasWithVault(serverApostilas: Apostila[]): Aposti
     const pages = (!isWrongPages && local.pagesCount && local.pagesCount > 0 && !isCorruptedFile) ? local.pagesCount : canonicalPages;
     const effectivePdf = isCorruptedFile ? canonicalPdf : (local.pdfUrl || apos.pdfUrl || canonicalPdf);
 
+    const canonicalCover = `/images/covers/apostila-${modNum < 10 ? '0' + modNum : modNum}.jpg`;
+    const isOutdatedOrBrokenCover = !local.coverUrl || local.coverUrl.includes('unsplash.com') || (local.coverUrl.startsWith('/uploads/') && !local.coverUrl.includes('base64'));
+    const effectiveCover = !isOutdatedOrBrokenCover ? local.coverUrl : ((apos.coverUrl && !apos.coverUrl.includes('unsplash.com')) ? apos.coverUrl : canonicalCover);
+
     return {
       ...apos,
       title: effectiveTitle,
       pagesCount: pages,
       totalPages: pages,
       pdfUrl: effectivePdf,
-      coverUrl: local?.coverUrl || apos.coverUrl,
+      coverUrl: effectiveCover,
       fileSizeMb: local.fileSizeMb || apos.fileSizeMb,
     };
   });

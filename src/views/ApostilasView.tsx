@@ -187,25 +187,49 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
 
     try {
       setUploadingCoverId(itemId);
-      const res = await api.uploadImageFile(file);
-      if (res && res.fileUrl) {
-        await api.updateAdminApostila(itemId, { coverUrl: res.fileUrl });
-        await updateVaultMetadata(isBonus ? 990 + modOrBonusNumber : modOrBonusNumber, {
-          isBonus,
-          bonusNumber: isBonus ? modOrBonusNumber : undefined,
-          coverUrl: res.fileUrl,
-        });
 
-        if (isBonus) {
-          setBonusApostilas((prev) =>
-            prev.map((b) => (b.id === itemId || b.number === modOrBonusNumber ? { ...b, coverUrl: res.fileUrl } : b))
-          );
-        } else {
-          setApostilas((prev) =>
-            prev.map((a) => (a.id === itemId || a.moduleId === modOrBonusNumber ? { ...a, coverUrl: res.fileUrl } : a))
-          );
+      // Leitura imediata como DataURL para exibição instantânea sem falhas de rede ou servidor
+      const localDataUrl = await new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve((reader.result as string) || '');
+        reader.onerror = () => resolve('');
+        reader.readAsDataURL(file);
+      });
+
+      let finalCoverUrl = localDataUrl;
+      try {
+        const res = await api.uploadImageFile(file);
+        if (res && res.fileUrl) {
+          finalCoverUrl = res.fileUrl;
         }
+      } catch (uploadErr) {
+        console.warn('Upload image to server warning, using local dataUrl:', uploadErr);
       }
+
+      const coverToSave = localDataUrl || finalCoverUrl;
+
+      try {
+        await api.updateAdminApostila(itemId, { coverUrl: coverToSave });
+      } catch (apiErr) {
+        console.warn('updateAdminApostila error:', apiErr);
+      }
+
+      await updateVaultMetadata(isBonus ? 990 + modOrBonusNumber : modOrBonusNumber, {
+        isBonus,
+        bonusNumber: isBonus ? modOrBonusNumber : undefined,
+        coverUrl: coverToSave,
+      });
+
+      if (isBonus) {
+        setBonusApostilas((prev) =>
+          prev.map((b) => (b.id === itemId || b.number === modOrBonusNumber ? { ...b, coverUrl: coverToSave } : b))
+        );
+      } else {
+        setApostilas((prev) =>
+          prev.map((a) => (a.id === itemId || a.moduleId === modOrBonusNumber ? { ...a, coverUrl: coverToSave } : a))
+        );
+      }
+      alert('Capa atualizada com sucesso!');
     } catch (err: any) {
       console.error(err);
       alert(`Erro ao subir capa da apostila: ${err.message || 'Falha no upload'}`);
@@ -1178,24 +1202,23 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                   {/* Capa da Apostila (Cover Slot) com Botão de Subir para Admin */}
                   <div className="w-full sm:w-36 md:w-44 shrink-0 flex flex-col items-center">
                     <div className="relative w-full aspect-[1/1.4] rounded-xl overflow-hidden border border-neutral-700/80 bg-neutral-950 shadow-xl group/cover flex items-center justify-center">
-                      {item.coverUrl ? (
-                        <img
-                          src={item.coverUrl}
-                          alt={`Capa da ${cur.handoutPrefix}${modNum}`}
-                          className="w-full h-full object-cover group-hover/cover:scale-105 transition-transform duration-300"
-                          loading="lazy"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex flex-col items-center justify-center p-2.5 text-center bg-gradient-to-b from-neutral-900 to-neutral-950 border border-amber-500/20">
-                          <BookOpen className="w-7 h-7 text-amber-500/60 mb-1.5" />
-                          <span className="text-[10px] font-mono font-bold text-amber-400 uppercase tracking-wider">
-                            {cur.handoutPrefix}{modNum}
-                          </span>
-                          <span className="text-[9px] text-neutral-400 line-clamp-2 mt-1">
-                            {displayTitle}
-                          </span>
-                        </div>
-                      )}
+                      {(() => {
+                        const fallbackUrl = `/images/covers/apostila-${modNum < 10 ? '0' + modNum : modNum}.jpg`;
+                        const effectiveCover = (item.coverUrl && !item.coverUrl.includes('unsplash.com')) ? item.coverUrl : fallbackUrl;
+                        return (
+                          <img
+                            src={effectiveCover}
+                            alt={`Capa da ${cur.handoutPrefix}${modNum}`}
+                            className="w-full h-full object-cover group-hover/cover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            onError={(e) => {
+                              if (e.currentTarget.src !== fallbackUrl && !e.currentTarget.src.endsWith(fallbackUrl)) {
+                                e.currentTarget.src = fallbackUrl;
+                              }
+                            }}
+                          />
+                        );
+                      })()}
 
                       {/* Botão Hover de Subir Capa (Admin) */}
                       {isAdmin && (

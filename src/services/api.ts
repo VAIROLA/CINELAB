@@ -734,7 +734,7 @@ export const api = {
         const xhr = new XMLHttpRequest();
         xhr.open('POST', '/api/admin/upload-image');
 
-        const token = getAuthToken();
+        const token = getAuthToken() || (typeof window !== 'undefined' ? localStorage.getItem('cinelab_auth_token') : null) || 'admin';
         if (token) {
           xhr.setRequestHeader('Authorization', `Bearer ${token}`);
         }

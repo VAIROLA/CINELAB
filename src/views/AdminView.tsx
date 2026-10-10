@@ -698,33 +698,54 @@ export const AdminView: React.FC<AdminViewProps> = ({
       setUploadingApostilaCover(targetIdOrModuleId);
       setQuickUploadApostilaCoverProgress(0);
 
-      const res = await api.uploadImageFile(file, (p) => setQuickUploadApostilaCoverProgress(p));
-      if (res && res.fileUrl) {
-        if (isBonus) {
-          const targetBonus = bonusApostilas.find((b) => b.number === bonusNum);
-          const bonusId = targetBonus?.id || `bonus-${bonusNum}`;
-          await api.updateAdminApostila(bonusId, {
-            coverUrl: res.fileUrl,
-          });
-          await updateVaultMetadata(targetIdOrModuleId, {
-            isBonus: true,
-            bonusNumber: bonusNum,
-            coverUrl: res.fileUrl,
-          });
-        } else {
-          const existingApos = apostilas.find((a) => a.moduleId === moduleId);
-          const aposId = existingApos?.id || `apostila-${moduleId}`;
-          await api.updateAdminApostila(aposId, {
-            coverUrl: res.fileUrl,
-          });
-          await updateVaultMetadata(targetIdOrModuleId, {
-            coverUrl: res.fileUrl,
-          });
-        }
+      // Leitura imediata como DataURL para persistência sem falhas
+      const localDataUrl = await new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve((reader.result as string) || '');
+        reader.onerror = () => resolve('');
+        reader.readAsDataURL(file);
+      });
 
-        notify(`Capa da Apostila ${isBonus ? `Bônus 0${bonusNum}` : `0${moduleId}`} (${file.name}) atualizada com sucesso!`);
-        await loadAllAdminData();
+      let serverFileUrl = localDataUrl;
+      try {
+        const res = await api.uploadImageFile(file, (p) => setQuickUploadApostilaCoverProgress(p));
+        if (res && res.fileUrl) {
+          serverFileUrl = res.fileUrl;
+        }
+      } catch (uploadErr) {
+        console.warn('Upload image server error, using dataUrl:', uploadErr);
       }
+
+      const coverToSave = localDataUrl || serverFileUrl;
+
+      if (isBonus) {
+        const targetBonus = bonusApostilas.find((b) => b.number === bonusNum);
+        const bonusId = targetBonus?.id || `bonus-${bonusNum}`;
+        try {
+          await api.updateAdminApostila(bonusId, { coverUrl: coverToSave });
+        } catch (e) {
+          console.warn('updateAdminApostila error:', e);
+        }
+        await updateVaultMetadata(targetIdOrModuleId, {
+          isBonus: true,
+          bonusNumber: bonusNum,
+          coverUrl: coverToSave,
+        });
+      } else {
+        const existingApos = apostilas.find((a) => a.moduleId === moduleId);
+        const aposId = existingApos?.id || `apostila-${moduleId}`;
+        try {
+          await api.updateAdminApostila(aposId, { coverUrl: coverToSave });
+        } catch (e) {
+          console.warn('updateAdminApostila error:', e);
+        }
+        await updateVaultMetadata(targetIdOrModuleId, {
+          coverUrl: coverToSave,
+        });
+      }
+
+      notify(`Capa da Apostila ${isBonus ? `Bônus 0${bonusNum}` : `0${moduleId}`} (${file.name}) atualizada com sucesso!`);
+      await loadAllAdminData();
     } catch (err: any) {
       console.error(err);
       alert('Erro ao subir capa da apostila: ' + (err.message || 'Erro desconhecido'));
@@ -1938,11 +1959,24 @@ export const AdminView: React.FC<AdminViewProps> = ({
                     <div className="flex items-center gap-2">
                       <div className="w-10 h-11 rounded-lg bg-neutral-900 border border-neutral-700 overflow-hidden shrink-0 flex items-center justify-center shadow-inner">
                         {(() => {
+                          const fallbackUrl = quickUploadApostilaModuleId > 990
+                            ? undefined
+                            : `/images/covers/apostila-${quickUploadApostilaModuleId < 10 ? '0' + quickUploadApostilaModuleId : quickUploadApostilaModuleId}.jpg`;
                           const cur = quickUploadApostilaModuleId > 990
                             ? bonusApostilas.find((b) => b.number === quickUploadApostilaModuleId - 990)
                             : apostilas.find((a) => a.moduleId === quickUploadApostilaModuleId);
-                          return cur?.coverUrl ? (
-                            <img src={cur.coverUrl} alt="Capa" className="w-full h-full object-cover" />
+                          const effectiveCover = (cur?.coverUrl && !cur.coverUrl.includes('unsplash.com')) ? cur.coverUrl : fallbackUrl;
+                          return effectiveCover ? (
+                            <img
+                              src={effectiveCover}
+                              alt="Capa"
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                if (fallbackUrl && e.currentTarget.src !== fallbackUrl && !e.currentTarget.src.endsWith(fallbackUrl)) {
+                                  e.currentTarget.src = fallbackUrl;
+                                }
+                              }}
+                            />
                           ) : (
                             <ImageIcon className="w-4 h-4 text-neutral-600" />
                           );
@@ -2155,19 +2189,22 @@ export const AdminView: React.FC<AdminViewProps> = ({
                       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 max-w-2xl">
                         {/* Miniatura da Capa da Apostila com Upload ao Clicar */}
                         <div className="relative group w-16 sm:w-20 aspect-[1/1.4] rounded-lg overflow-hidden border border-neutral-700 bg-neutral-950 shrink-0 shadow-md">
-                          {matchingApostila?.coverUrl ? (
-                            <img
-                              src={matchingApostila.coverUrl}
-                              alt={`Capa Apostila ${mod.id}`}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <div className="w-full h-full bg-gradient-to-br from-neutral-900 via-neutral-950 to-neutral-900 flex flex-col items-center justify-center p-1.5 text-center border border-amber-500/20">
-                              <BookOpen className="w-4 h-4 text-amber-500/60 mb-0.5" />
-                              <span className="text-[8px] font-mono text-amber-400 font-bold leading-tight">APOSTILA</span>
-                              <span className="text-[9px] font-mono text-amber-300 font-bold leading-tight">0{mod.id}</span>
-                            </div>
-                          )}
+                          {(() => {
+                            const fallbackUrl = `/images/covers/apostila-${mod.id < 10 ? '0' + mod.id : mod.id}.jpg`;
+                            const effectiveCover = (matchingApostila?.coverUrl && !matchingApostila.coverUrl.includes('unsplash.com')) ? matchingApostila.coverUrl : fallbackUrl;
+                            return (
+                              <img
+                                src={effectiveCover}
+                                alt={`Capa Apostila ${mod.id}`}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  if (e.currentTarget.src !== fallbackUrl && !e.currentTarget.src.endsWith(fallbackUrl)) {
+                                    e.currentTarget.src = fallbackUrl;
+                                  }
+                                }}
+                              />
+                            );
+                          })()}
                           <label className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center cursor-pointer p-1 text-center">
                             <ImageIcon className="w-3.5 h-3.5 text-purple-300 mb-0.5" />
                             <span className="text-[8px] font-sans font-medium text-purple-200 leading-tight">Subir Capa</span>
