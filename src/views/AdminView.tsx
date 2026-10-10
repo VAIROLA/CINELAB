@@ -2019,7 +2019,6 @@ export const AdminView: React.FC<AdminViewProps> = ({
                       </div>
                     )}
                   </div>
-                </div>
 
                 {/* Banner de Gerenciamento Direto dos 2 Vídeos Extras da Apostila Selecionada */}
                 <div className="pt-3 border-t border-neutral-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-neutral-900/60 p-3.5 rounded-xl border border-neutral-800/80">

@@ -6,7 +6,6 @@ import os from "os";
 import { execSync, exec } from "child_process";
 import multer from "multer";
 import { PDFDocument } from "pdf-lib";
-import https from "https";
 
 // server/db.ts
 import zlib from "zlib";
@@ -442,7 +441,7 @@ var initialUsers = [
   },
   {
     id: "user-admin-alias",
-    name: "Professor Cineasta Tony de Luc (CoordenaÃ§Ã£o)",
+    name: "Professor Cineasta Tony de Luc (Coordena\xE7\xE3o)",
     email: "admin@cinelab.edu.br",
     phone: "+55 11 98888-0000",
     document: "00.000.000/0001-99",
@@ -451,16 +450,17 @@ var initialUsers = [
   },
   {
     id: "user-student-demo",
-    name: "Lucas MendonÃ§a de Oliveira (Aluno Teste)",
+    name: "Lucas Mendon\xE7a de Oliveira (Aluno Teste)",
     email: "aluno@cinelab.edu.br",
     phone: "+55 11 97654-3210",
     document: "389.482.198-40",
     role: "student",
     createdAt: "2026-08-20T14:30:00Z",
     matricula: "CNL-2026-4819",
-    paymentMethod: "CartÃ£o de CrÃ©dito (Teste)",
+    paymentMethod: "Cart\xE3o de Cr\xE9dito (Teste)",
     difficulties: "",
-    pedagogicalNotes: "Aluno fictÃ­cio para testes da plataforma."
+    averageGrade: void 0,
+    pedagogicalNotes: "Aluno fict\xEDcio para testes da plataforma."
   }
 ];
 var initialEnrollments = [
@@ -468,7 +468,7 @@ var initialEnrollments = [
     id: "enr-1",
     enrollmentNumber: "CNL-2026-4819",
     studentId: "user-student-demo",
-    studentName: "Lucas MendonÃ§a de Oliveira (Aluno Teste)",
+    studentName: "Lucas Mendon\xE7a de Oliveira (Aluno Teste)",
     studentEmail: "aluno@cinelab.edu.br",
     status: "active",
     enrolledAt: "2026-08-20T14:30:00Z",
@@ -482,9 +482,9 @@ var initialPayments = [
     studentId: "user-student-demo",
     enrollmentId: "enr-1",
     method: "credit_card",
-    amount: 0.0,
+    amount: 0,
     installments: 1,
-    installmentValue: 0.0,
+    installmentValue: 0,
     status: "approved",
     cardBrand: "Mastercard (Teste)",
     lastFour: "0000",
@@ -493,6 +493,7 @@ var initialPayments = [
   }
 ];
 
+// server/pedagogicalContent.ts
 var pedagogicalModules = [
   {
     id: 1,
@@ -752,32 +753,32 @@ var pedagogicalApostilas = [
       {
         "id": "ev-apostila-1-1",
         "slot": 1,
-        "title": "V\xEDdeo Extra 01: Introdu\xE7\xE3o ao Cinema e \xE0 Linguagem Audiovisual & An\xE1lise Pr\xE1tica - M- 1.1",
+        "title": "V\xEDdeo Extra 01: Introdu\xE7\xE3o ao Cinema e \xE0 Linguagem Audiovisual - O GAROTO - M- 1.1",
         "videoUrl": "https://www.youtube.com/watch?v=q1U0eKOOwsQ",
         "thumbnailUrl": "https://img.youtube.com/vi/q1U0eKOOwsQ/hqdefault.jpg",
-        "description": "O aluno deve observar como a hist\xF3ria \xE9 contada principalmente atrav\xE9s das imagens, express\xF5es faciais, gestos e movimentos dos personagens, j\xE1 que o filme pertence ao per\xEDodo do cinema mudo. Deve prestar aten\xE7\xE3o aos enquadramentos, composi\xE7\xE3o das cenas, montagem, ritmo, atua\xE7\xE3o corporal e uso da m\xFAsica para perceber como o cinema consegue transmitir emo\xE7\xF5es e narrar acontecimentos sem depender de di\xE1logos falados.",
-        "professorNotes": "Como Chaplin consegue fazer o espectador compreender a hist\xF3ria e sentir emo\xE7\xE3o utilizando principalmente imagens, gestos e express\xF5es?\nO ALUNO DEVE COM O FILME O Garoto, aprender a ler uma hist\xF3ria atrav\xE9s das imagens.",
         "durationHours": 0,
         "durationMinutes": 52,
         "durationSeconds": 48,
         "totalDurationSeconds": 3168,
         "durationLabel": "00h 52m 48s",
-        "uploadedAt": "2026-10-02T03:08:34.759Z"
+        "description": "Observe principalmente:\nexpress\xE3o \u2022 gestos \u2022 atua\xE7\xE3o \u2022 enquadramento \u2022 montagem \u2022 ritmo \u2022 emo\xE7\xE3o \u2022 narrativa visual.",
+        "professorNotes": "\u201CAo assistir a este filme, tente compreender a hist\xF3ria antes mesmo de pensar nas palavras. Observe o rosto, o corpo e os gestos dos personagens. Perceba como Chaplin utiliza enquadramentos, montagem, ritmo e atua\xE7\xE3o para fazer voc\xEA rir, se emocionar e compreender o que est\xE1 acontecendo. Preste aten\xE7\xE3o tamb\xE9m \xE0 rela\xE7\xE3o entre os personagens e \xE0 maneira como cada imagem ajuda a contar a hist\xF3ria. Pergunte a si mesmo: eu conseguiria entender essa cena apenas olhando para as imagens?\u201D",
+        "uploadedAt": "2026-10-05T14:47:08.227Z"
       },
       {
         "id": "ev-apostila-1-2",
         "slot": 2,
-        "title": "V\xEDdeo Extra 02: Introdu\xE7\xE3o ao Cinema e \xE0 Linguagem Audiovisual & An\xE1lise Pr\xE1tica - M- 1.2",
+        "title": "V\xEDdeo Extra 02: Introdu\xE7\xE3o ao Cinema e \xE0 Linguagem Audiovisual - TEMPOS MODERNOS - M- 1.2",
         "videoUrl": "https://www.youtube.com/watch?v=i15UCTIdfwI",
         "thumbnailUrl": "https://img.youtube.com/vi/i15UCTIdfwI/hqdefault.jpg",
-        "description": "O aluno deve observar como imagem, movimento, montagem, ritmo e som trabalham juntos para construir a narrativa. Deve prestar aten\xE7\xE3o especialmente \xE0s m\xE1quinas, ao ambiente da f\xE1brica, aos movimentos repetitivos dos trabalhadores, aos enquadramentos, \xE0 montagem e aos efeitos sonoros, percebendo como Chaplin utiliza a linguagem audiovisual n\xE3o apenas para contar uma hist\xF3ria, mas tamb\xE9m para transmitir ideias e cr\xEDticas atrav\xE9s das imagens.",
-        "professorNotes": "Como Chaplin utiliza a imagem, o movimento, o ritmo e o som para transmitir uma ideia sem precisar explicar tudo atrav\xE9s de di\xE1logos?\nO ALUNO DEVE COM O FILME Tempos Modernos, perceber como imagem + movimento + montagem + som constroem significado.",
         "durationHours": 1,
         "durationMinutes": 26,
         "durationSeconds": 52,
         "totalDurationSeconds": 5212,
         "durationLabel": "01h 26m 52s",
-        "uploadedAt": "2026-10-02T03:08:34.760Z"
+        "description": "observe:\nmovimento \u2022 montagem \u2022 ritmo \u2022 som \u2022 m\xE1quinas \u2022 enquadramento \u2022 atua\xE7\xE3o \u2022 significado.\n\n\u201CDurante esta atividade, voc\xEA n\xE3o deve assistir aos filmes apenas como espectador. Assista como um futuro cineasta. Observe onde a c\xE2mera est\xE1, o que aparece dentro do quadro, como os personagens se movimentam, como as imagens s\xE3o organizadas e como cada escolha interfere naquilo que voc\xEA sente e compreende. N\xE3o existe apenas uma maneira de assistir a um filme. Existe a maneira de quem assiste e existe a maneira de quem aprende a fazer cinema.\u201D",
+        "professorNotes": "\u201CNeste filme, observe como o cinema utiliza imagens, movimentos, montagem e sons para transmitir ideias. Preste aten\xE7\xE3o \xE0s m\xE1quinas, aos trabalhadores, aos movimentos repetitivos e ao ritmo da f\xE1brica. Observe como Chaplin coloca o personagem dentro desse ambiente e como a montagem cria rela\xE7\xF5es entre pessoas e m\xE1quinas. Perceba tamb\xE9m quando o som aparece e qual fun\xE7\xE3o ele exerce. Pergunte a si mesmo: como uma imagem pode transmitir uma ideia sem precisar explic\xE1-la atrav\xE9s de palavras?\u201D",
+        "uploadedAt": "2026-10-05T14:47:08.229Z"
       }
     ],
     sections: [
@@ -889,39 +890,39 @@ Audiovisual \xE9 o am\xE1lgama indissoci\xE1vel entre luz projetada e ondas sono
     title: "Hist\xF3ria do Cinema",
     description: "A trajet\xF3ria hist\xF3rica do cinema mundial e brasileiro: do cinema silencioso \xE0s vanguardas europeias, cinema cl\xE1ssico e contempor\xE2neo.",
     pagesCount: 52,
-    pdfUrl: "/uploads/apostilas/apostila-modulo-02-2-APOSTILA_HISTORIA_DO_CINEMA_-_COM-1790652429759.pdf",
+    pdfUrl: "/materiais/cinelab-apostila-02.pdf",
     coverUrl: "/images/covers/apostila-02.jpg",
     fileSizeMb: 2.17,
     extraVideos: [
       {
         "id": "ev-apostila-2-1",
         "slot": 1,
-        "title": "V\xEDdeo Extra 01: Hist\xF3ria do Cinema & An\xE1lise Pr\xE1tica - M- 2.1",
+        "title": "V\xEDdeo Extra 01: Hist\xF3ria do Cinema - CHEGADA DO TREM - M- 2.1",
         "videoUrl": "https://www.youtube.com/watch?v=qawVtd32DOQ",
         "thumbnailUrl": "https://img.youtube.com/vi/qawVtd32DOQ/hqdefault.jpg",
-        "description": "O aluno deve observar o nascimento do cinema e o impacto visual da primeira exibi\xE7\xE3o p\xFAblica dos Irm\xE3os Lumi\xE8re com a chegada do trem na esta\xE7\xE3o (1895). Analisar a profundidade de campo natural, a perspectiva diagonal da locomotiva aproximando-se da tela e o choque realista causado na plateia da \xE9poca.",
-        "professorNotes": "O aluno deve observar o nascimento do cinema e o impacto visual da primeira exibi\xE7\xE3o p\xFAblica dos Irm\xE3os Lumi\xE8re com a chegada do trem na esta\xE7\xE3o (1895). Analisar a profundidade de campo natural, a perspectiva diagonal da locomotiva aproximando-se da tela e o choque realista causado na plateia da \xE9poca.",
         "durationHours": 0,
-        "durationMinutes": 18,
-        "durationSeconds": 0,
-        "totalDurationSeconds": 1080,
-        "durationLabel": "00h 18m 00s",
-        "uploadedAt": "2026-10-02T03:08:34.760Z"
+        "durationMinutes": 0,
+        "durationSeconds": 49,
+        "totalDurationSeconds": 49,
+        "durationLabel": "00h 00m 49s",
+        "description": "Observe principalmente:\nc\xE2mera \u2022 espa\xE7o \u2022 profundidade \u2022 movimento \u2022 realidade \u2022 enquadramento \u2022 pessoas \u2022 acontecimento.",
+        "professorNotes": "\u201CAo assistir a este filme, n\xE3o procure uma hist\xF3ria complexa. Observe o acontecimento. Perceba como a c\xE2mera registra um momento real, como as pessoas entram e saem do enquadramento e como o movimento da locomotiva cria uma sensa\xE7\xE3o de profundidade e dinamismo. Lembre-se de que, para os primeiros espectadores, aquilo n\xE3o era apenas uma imagem: era a pr\xF3pria ilus\xE3o da vida em movimento projetada em uma tela.\u201D",
+        "uploadedAt": "2026-10-05T14:47:08.244Z"
       },
       {
         "id": "ev-apostila-2-2",
         "slot": 2,
-        "title": "V\xEDdeo Extra 02: Hist\xF3ria do Cinema & An\xE1lise Pr\xE1tica - M- 2.2",
+        "title": "V\xEDdeo Extra 02: Hist\xF3ria do Cinema - LE VOYAGE DANS LA LUNE - M- 2.2",
         "videoUrl": "https://www.youtube.com/watch?v=UHbpgsD8zCM",
         "thumbnailUrl": "https://img.youtube.com/vi/UHbpgsD8zCM/hqdefault.jpg",
-        "description": "Identifique os efeitos utilizados e tentar imaginar como poderiam ter sido realizados na \xE9poca. O aluno deve analisar as trucagens \xF3pticas de Georges M\xE9li\xE8s (parada de c\xE2mera, sobreposi\xE7\xE3o e fus\xE3o) e compreender como os primeiros efeitos especiais moldaram a imagina\xE7\xE3o e a t\xE9cnica cinematogr\xE1fica mundial.",
-        "professorNotes": "Identifique os efeitos utilizados e tentar imaginar como poderiam ter sido realizados na \xE9poca. O aluno deve analisar as trucagens \xF3pticas de Georges M\xE9li\xE8s (parada de c\xE2mera, sobreposi\xE7\xE3o e fus\xE3o) e compreender como os primeiros efeitos especiais moldaram a imagina\xE7\xE3o e a t\xE9cnica cinematogr\xE1fica mundial.",
         "durationHours": 0,
-        "durationMinutes": 24,
-        "durationSeconds": 0,
-        "totalDurationSeconds": 1440,
-        "durationLabel": "00h 24m 00s",
-        "uploadedAt": "2026-10-02T03:08:34.760Z"
+        "durationMinutes": 12,
+        "durationSeconds": 51,
+        "totalDurationSeconds": 771,
+        "durationLabel": "00h 12m 51s",
+        "description": "Observe:\nA cenografia \u2022 atua\xE7\xE3o \u2022 figurino \u2022 ilusionismo \u2022 efeitos especiais \u2022 cortes \u2022 fantasia \u2022 composi\xE7\xE3o visual.",
+        "professorNotes": "\u201CNeste filme, observe como Georges M\xE9li\xE8s transforma elementos do teatro, do ilusionismo e da fantasia em linguagem cinematogr\xE1fica. Preste aten\xE7\xE3o ao uso dos truques de c\xE2mera, como a parada de cena para criar desaparecimentos e transforma\xE7\xF5es. Perceba como cada plano funciona como um pequeno palco onde tudo \xE9 desenhado, pintado e coreografado para estimular a imagina\xE7\xE3o do espectador.\u201D",
+        "uploadedAt": "2026-10-05T14:47:08.244Z"
       }
     ],
     sections: [
@@ -1025,32 +1026,32 @@ Com a chegada do som sincronizado em 1927 (*The Jazz Singer*), o cinema sofreu u
       {
         "id": "ev-apostila-3-1",
         "slot": 1,
-        "title": "V\xEDdeo Extra 01: Roteiro e Cria\xE7\xE3o de Personagens & An\xE1lise Pr\xE1tica - M- 3.1",
-        "videoUrl": "",
-        "thumbnailUrl": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80",
-        "description": "An\xE1lise t\xE9cnica e decupagem comentada pelo Professor Cineasta Tony de Luc para aprofundar os conceitos te\xF3ricos desta apostila.",
-        "professorNotes": "",
-        "durationHours": 0,
-        "durationMinutes": 18,
-        "durationSeconds": 0,
-        "totalDurationSeconds": 1080,
-        "durationLabel": "00h 18m 00s",
-        "uploadedAt": "2026-10-02T03:08:34.760Z"
+        "title": "V\xEDdeo Extra 01: Roteiro e Cria\xE7\xE3o de Personagens - \xC0 PROCURA DA FELICIDADE - M- 3.1",
+        "videoUrl": "https://www.youtube.com/watch?v=_-Pzxdhk32k",
+        "thumbnailUrl": "https://img.youtube.com/vi/_-Pzxdhk32k/hqdefault.jpg",
+        "durationHours": 1,
+        "durationMinutes": 57,
+        "durationSeconds": 25,
+        "totalDurationSeconds": 7045,
+        "durationLabel": "01h 57m 25s",
+        "description": "Observe:\nProtagonista: quem \xE9 Chris e o que sabemos sobre ele?\nObjetivo: o que ele realmente deseja conquistar?\nConflito: quais obst\xE1culos impedem esse objetivo?\nPonto de virada: quais momentos mudam a dire\xE7\xE3o da hist\xF3ria?\nSubtexto: o que os personagens sentem ou pensam, mesmo sem falar diretamente?\nMotiva\xE7\xE3o: o que move o protagonista a continuar, mesmo diante das maiores dificuldades?",
+        "professorNotes": "\u201CAo assistir a este filme, n\xE3o observe apenas o que acontece com o protagonista. Observe por que cada acontecimento acontece e como as escolhas do personagem movem a narrativa. Repare como o roteirista constr\xF3i um objetivo claro e urgente, e como os obst\xE1culos se tornam cada vez mais dif\xEDceis. O bom roteiro nasce dessa tens\xE3o constante entre o desejo do personagem e as dificuldades da realidade.\u201D",
+        "uploadedAt": "2026-10-05T14:47:08.261Z"
       },
       {
         "id": "ev-apostila-3-2",
         "slot": 2,
-        "title": "V\xEDdeo Extra 02: Roteiro e Cria\xE7\xE3o de Personagens & An\xE1lise Pr\xE1tica - M- 3.2",
-        "videoUrl": "",
-        "thumbnailUrl": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80",
-        "description": "Exerc\xEDcio pr\xE1tico de aplica\xE7\xE3o em set de filmagem com demonstra\xE7\xE3o passo a passo da metodologia do CINELAB.",
-        "professorNotes": "",
-        "durationHours": 0,
-        "durationMinutes": 24,
-        "durationSeconds": 0,
-        "totalDurationSeconds": 1440,
-        "durationLabel": "00h 24m 00s",
-        "uploadedAt": "2026-10-02T03:08:34.760Z"
+        "title": "V\xEDdeo Extra 02: Roteiro e Cria\xE7\xE3o de Personagens - O AUTO DA COMPADECIDA - M- 3.2",
+        "videoUrl": "https://www.youtube.com/watch?v=Cui4izDKfYY",
+        "thumbnailUrl": "https://img.youtube.com/vi/Cui4izDKfYY/hqdefault.jpg",
+        "durationHours": 1,
+        "durationMinutes": 42,
+        "durationSeconds": 1,
+        "totalDurationSeconds": 6121,
+        "durationLabel": "01h 42m 01s",
+        "description": "Observe:\nQuem \xE9 o protagonista?\nQual \xE9 o objetivo de Jo\xE3o Grilo?\nO que ele faz para conseguir o que deseja?\nQuais s\xE3o seus principais obst\xE1culos?\nQual \xE9 a motiva\xE7\xE3o de Chic\xF3?\nComo a personalidade de cada personagem \xE9 revelada pelos di\xE1logos?\nComo o roteiro utiliza o humor, a esperteza e a cultura regional para construir as situa\xE7\xF5es dram\xE1ticas?",
+        "professorNotes": "Ao assistir a este filme, observe como os personagens s\xE3o constru\xEDdos atrav\xE9s de suas dualidades. Jo\xE3o Grilo e Chic\xF3 possuem personalidades muito diferentes, mas complementares. O aluno deve aprender como caracterizar personagens com vozes pr\xF3prias, objetivos imediatos e sobreviv\xEAncia atrav\xE9s da intelig\xEAncia e do di\xE1logo.",
+        "uploadedAt": "2026-10-05T14:47:08.261Z"
       }
     ],
     sections: [
@@ -1159,32 +1160,32 @@ Com a chegada do som sincronizado em 1927 (*The Jazz Singer*), o cinema sofreu u
       {
         "id": "ev-apostila-4-1",
         "slot": 1,
-        "title": "V\xEDdeo Extra 01: Dire\xE7\xE3o e Dire\xE7\xE3o de Atores & An\xE1lise Pr\xE1tica - M- 4.1",
-        "videoUrl": "",
-        "thumbnailUrl": "https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?auto=format&fit=crop&w=800&q=80",
-        "description": "An\xE1lise t\xE9cnica e decupagem comentada pelo Professor Cineasta Tony de Luc para aprofundar os conceitos te\xF3ricos desta apostila.",
-        "professorNotes": "",
-        "durationHours": 0,
-        "durationMinutes": 18,
-        "durationSeconds": 0,
-        "totalDurationSeconds": 1080,
-        "durationLabel": "00h 18m 00s",
-        "uploadedAt": "2026-10-02T03:08:34.760Z"
+        "title": "V\xEDdeo Extra 01: Dire\xE7\xE3o e Dire\xE7\xE3o de Atores - O PAGADOR DE PROMESSAS - M- 4.1",
+        "videoUrl": "https://www.youtube.com/watch?v=KfybjIi_J8U",
+        "thumbnailUrl": "https://img.youtube.com/vi/KfybjIi_J8U/hqdefault.jpg",
+        "durationHours": 1,
+        "durationMinutes": 31,
+        "durationSeconds": 30,
+        "totalDurationSeconds": 5490,
+        "durationLabel": "01h 31m 30s",
+        "description": "Observe a constru\xE7\xE3o dos personagens e observe como cada personagem apresenta uma personalidade diferente. Como essa personalidade \xE9 percebida pelo comportamento do ator?\nVoz e interpreta\xE7\xE3o:\nPreste aten\xE7\xE3o ao tom de voz, volume, velocidade e pausas. Como essas escolhas modificam o significado das falas?\nExpress\xE3o corporal:\nObserve postura, gestos, movimentos e principalmente os momentos em que o personagem permanece parado.\nOlhares e rea\xE7\xF5es:\nNem sempre o personagem precisa falar para participar da cena. Observe as rea\xE7\xF5es dos atores enquanto outros personagens est\xE3o falando.\nConflito entre personagens:\nObserve como os atores modificam seu comportamento quando entram em confronto. A energia da interpreta\xE7\xE3o muda?\nIntensidade dram\xE1tica:\nPerceba como a interpreta\xE7\xE3o vai ganhando intensidade conforme os conflitos aumentam.\nRela\xE7\xE3o com o espa\xE7o:\nObserve como os personagens ocupam o ambiente. Quem se aproxima? Quem se afasta? Quem permanece isolado?\nDire\xE7\xE3o de atores em grupo:\nPreste aten\xE7\xE3o \xE0s cenas com v\xE1rios personagens. Observe como cada ator mant\xE9m sua pr\xF3pria a\xE7\xE3o enquanto reage ao que acontece ao redor.",
+        "professorNotes": "Ao assistir O Pagador de Promessas, o aluno deve observar como o diretor conduz os atores dentro de uma hist\xF3ria marcada por conflito, press\xE3o social e diferentes pontos de vista. A aten\xE7\xE3o n\xE3o deve estar apenas no que os personagens dizem, mas principalmente em como eles dizem, reagem, se movimentam e se relacionam uns com os outros.\n\nObserve como cada personagem possui uma personalidade pr\xF3pria e como essa personalidade aparece atrav\xE9s da voz, do olhar, dos gestos, da postura corporal e da maneira de ocupar o espa\xE7o. Perceba tamb\xE9m como o diretor utiliza os atores para aumentar gradualmente a tens\xE3o da narrativa.\n\nO objetivo \xE9 entender que dirigir atores n\xE3o significa simplesmente dizer o que eles devem falar ou fazer. O diretor precisa construir uma situa\xE7\xE3o na qual o ator compreenda o objetivo do personagem e consiga express\xE1-lo de maneira coerente com a cena.",
+        "uploadedAt": "2026-10-05T14:47:08.262Z"
       },
       {
         "id": "ev-apostila-4-2",
         "slot": 2,
-        "title": "V\xEDdeo Extra 02: Dire\xE7\xE3o e Dire\xE7\xE3o de Atores & An\xE1lise Pr\xE1tica - M- 4.2",
-        "videoUrl": "",
-        "thumbnailUrl": "https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?auto=format&fit=crop&w=800&q=80",
-        "description": "Exerc\xEDcio pr\xE1tico de aplica\xE7\xE3o em set de filmagem com demonstra\xE7\xE3o passo a passo da metodologia do CINELAB.",
-        "professorNotes": "",
-        "durationHours": 0,
-        "durationMinutes": 24,
-        "durationSeconds": 0,
-        "totalDurationSeconds": 1440,
-        "durationLabel": "00h 24m 00s",
-        "uploadedAt": "2026-10-02T03:08:34.760Z"
+        "title": "V\xEDdeo Extra 02: Dire\xE7\xE3o e Dire\xE7\xE3o de Atores - CENTRAL DO BRASIL - M- 4.2",
+        "videoUrl": "https://www.youtube.com/watch?v=wpYfXBNOPvk",
+        "thumbnailUrl": "https://img.youtube.com/vi/wpYfXBNOPvk/hqdefault.jpg",
+        "durationHours": 2,
+        "durationMinutes": 6,
+        "durationSeconds": 5,
+        "totalDurationSeconds": 7565,
+        "durationLabel": "02h 06m 05s",
+        "description": "observe:\nNaturalidade da interpreta\xE7\xE3o:\nObserve como os atores fazem suas falas e movimentos parecerem espont\xE2neos, evitando uma interpreta\xE7\xE3o excessivamente teatral ou for\xE7ada.\nConstru\xE7\xE3o da rela\xE7\xE3o entre personagens:\nPerceba como a proximidade entre os personagens vai se transformando ao longo do filme. Como isso \xE9 demonstrado no comportamento f\xEDsico dos atores?\nOlhares e sil\xEAncios:\nObserve momentos em que os personagens n\xE3o dizem nada, mas o espectador compreende exatamente o que est\xE3o sentindo.\nAtores de origens diferentes:\nO filme re\xFAne uma atriz consagrada (Fernanda Montenegro) e um jovem sem experi\xEAncia anterior no cinema (Vin\xEDcius de Oliveira). Observe como a dire\xE7\xE3o harmoniza essas duas presen\xE7as em cena.\nRea\xE7\xF5es sutis:\nPreste aten\xE7\xE3o em pequenos gestos: desviar o olhar, hesitar antes de responder, mudar a postura ou segurar um objeto.\nEvolu\xE7\xE3o emocional:\nObserve a transforma\xE7\xE3o gradual da personagem principal, da frieza inicial at\xE9 o afeto genu\xEDno.\nDire\xE7\xE3o em ambientes reais:\nObserve como os atores interagem com loca\xE7\xF5es reais (esta\xE7\xF5es de trem, estradas, feiras populares e pessoas comuns).",
+        "professorNotes": "Ao assistir Central do Brasil, observe principalmente a rela\xE7\xE3o constru\xEDda entre Dora e Josu\xE9. O filme \xE9 uma excelente oportunidade para perceber como a dire\xE7\xE3o pode utilizar sil\xEAncios, olhares, pequenos gestos e rea\xE7\xF5es para desenvolver uma rela\xE7\xE3o entre personagens.\n\nObserve como os atores n\xE3o precisam explicar tudo o que sentem. Muitas vezes, a hesita\xE7\xE3o antes de falar, o desvio do olhar ou a maneira de caminhar revelam muito mais do que os di\xE1logos.\n\nO aluno deve perceber que dirigir atores envolve criar cumplicidade, escuta e verdade c\xEAnica, permitindo que a emo\xE7\xE3o surja de maneira org\xE2nica a partir das situa\xE7\xF5es vividas pelos personagens.",
+        "uploadedAt": "2026-10-05T14:47:08.262Z"
       }
     ],
     sections: [
@@ -1288,32 +1289,32 @@ O ator n\xE3o consegue interpretar "tristeza"; ele interpreta **a\xE7\xF5es e ob
       {
         "id": "ev-apostila-5-1",
         "slot": 1,
-        "title": "V\xEDdeo Extra 01: Fotografia, C\xE2mera e Ilumina\xE7\xE3o & An\xE1lise Pr\xE1tica - M- 5.1",
-        "videoUrl": "/videos/cinelab-intro-apresentacao.mp4",
-        "thumbnailUrl": "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80",
-        "description": "O aluno deve observar o sistema cl\xE1ssico de ilumina\xE7\xE3o em tr\xEAs pontos (Key Light, Fill Light e Backlight), al\xE9m do uso de sombras, temperatura de cor e profundidade de campo.",
-        "professorNotes": "O aluno deve observar o sistema cl\xE1ssico de ilumina\xE7\xE3o em tr\xEAs pontos (Key Light, Fill Light e Backlight), al\xE9m do uso de sombras, temperatura de cor e profundidade de campo.",
-        "durationHours": 0,
-        "durationMinutes": 18,
-        "durationSeconds": 0,
-        "totalDurationSeconds": 1080,
-        "durationLabel": "00h 18m 00s",
-        "uploadedAt": "2026-10-02T03:08:34.760Z"
+        "title": "V\xEDdeo Extra 01: Fotografia, C\xE2mera e Ilumina\xE7\xE3o - O GABINETE DO DR. CALIGARI - M- 5.1",
+        "videoUrl": "https://www.youtube.com/watch?v=yQn1j34-f4A",
+        "thumbnailUrl": "https://img.youtube.com/vi/yQn1j34-f4A/hqdefault.jpg",
+        "durationHours": 1,
+        "durationMinutes": 17,
+        "durationSeconds": 11,
+        "totalDurationSeconds": 4631,
+        "durationLabel": "01h 17m 11s",
+        "description": "observe:\nEnquadramento:\nObserve como os personagens s\xE3o posicionados dentro do quadro.\nCen\xE1rios e composi\xE7\xE3o:\nRepare nas linhas, formas, portas, janelas, paredes e objetos. Como eles conduzem o olhar do espectador?\nLuz e sombra:\nObserve onde existe luz e onde existe escurid\xE3o. Que sensa\xE7\xE3o as sombras provocam?\nContraste:\nPerceba a diferen\xE7a entre \xE1reas claras e escuras e como isso influencia a atmosfera da cena.\nPerspectiva e profundidade:\nObserve como os cen\xE1rios criam sensa\xE7\xE3o de profundidade ou, em alguns momentos, parecem propositalmente deformados.\nC\xE2mera:\nObserve a posi\xE7\xE3o da c\xE2mera e pergunte: por que o diretor escolheu mostrar essa cena desse ponto de vista?\nDire\xE7\xE3o de arte + fotografia:\nPerceba que ilumina\xE7\xE3o, cen\xE1rio, figurino e enquadramento trabalham juntos para criar uma identidade visual.\nAtmosfera:\nPergunte-se: se essa mesma cena fosse iluminada de maneira totalmente diferente, ela provocaria a mesma sensa\xE7\xE3o?",
+        "professorNotes": "Ao assistir O Gabinete do Dr. Caligari, n\xE3o observe apenas a hist\xF3ria. Assista ao filme como um fot\xF3grafo e diretor de fotografia. Observe como os cen\xE1rios, as sombras, os enquadramentos e a ilumina\xE7\xE3o s\xE3o utilizados para criar uma atmosfera e transmitir sensa\xE7\xF5es.\n\nPerceba que a fotografia cinematogr\xE1fica n\xE3o serve apenas para deixar uma imagem bonita. Ela pode ajudar a construir tens\xE3o, medo, mist\xE9rio, desequil\xEDbrio e personalidade visual. Observe como as formas e os contrastes presentes na imagem fazem parte da narrativa.",
+        "uploadedAt": "2026-10-05T14:47:08.264Z"
       },
       {
         "id": "ev-apostila-5-2",
         "slot": 2,
-        "title": "V\xEDdeo Extra 02: Fotografia, C\xE2mera e Ilumina\xE7\xE3o & An\xE1lise Pr\xE1tica - M- 5.2",
-        "videoUrl": "/videos/cinelab-intro-apresentacao.mp4",
-        "thumbnailUrl": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80",
-        "description": "O aluno deve analisar os movimentos de c\xE2mera (panor\xE2mica, travelling, dolly e c\xE2mera na m\xE3o), percebendo como a fluidez do enquadramento dita o ritmo emocional do espectador.",
-        "professorNotes": "O aluno deve analisar os movimentos de c\xE2mera (panor\xE2mica, travelling, dolly e c\xE2mera na m\xE3o), percebendo como a fluidez do enquadramento dita o ritmo emocional do espectador.",
-        "durationHours": 0,
-        "durationMinutes": 24,
-        "durationSeconds": 0,
-        "totalDurationSeconds": 1440,
-        "durationLabel": "00h 24m 00s",
-        "uploadedAt": "2026-10-02T03:08:34.760Z"
+        "title": "V\xEDdeo Extra 02: Fotografia, C\xE2mera e Ilumina\xE7\xE3o - A NOITE DOS MORTOS-VIVOS - M- 5.2",
+        "videoUrl": "https://www.youtube.com/watch?v=CfaU2Og_Zt0",
+        "thumbnailUrl": "https://img.youtube.com/vi/CfaU2Og_Zt0/hqdefault.jpg",
+        "durationHours": 1,
+        "durationMinutes": 35,
+        "durationSeconds": 12,
+        "totalDurationSeconds": 5712,
+        "durationLabel": "01h 35m 12s",
+        "description": "observe:\nIlumina\xE7\xE3o em preto e branco:\nObserve como a aus\xEAncia de cor faz a luz e a sombra ganharem import\xE2ncia.\nAlto contraste:\nPerceba as \xE1reas muito claras ao lado de sombras profundas.\nC\xE2mera na m\xE3o x c\xE2mera fixa:\nObserve quando a c\xE2mera se move com os personagens e quando permanece est\xE1tica observando a a\xE7\xE3o.\nPlanos fechados (close-ups):\nObserve os enquadramentos nos rostos dos personagens para intensificar express\xF5es de medo, ang\xFAstia e desespero.\nUso do espa\xE7o fechado:\nPerceba como a ilumina\xE7\xE3o e os enquadramentos refor\xE7am a sensa\xE7\xE3o de claustrofobia dentro da casa.\nIlumina\xE7\xE3o dieg\xE9tica:\nObserve fontes de luz dentro da cena (l\xE2mpadas, velas, far\xF3is de carro, f\xF3sforos).\nProfundidade de campo:\nPreste aten\xE7\xE3o ao que est\xE1 n\xEDtido no primeiro plano e o que acontece desfocado ao fundo.\nEconomia de recursos:\nPerceba como uma ilumina\xE7\xE3o simples, bem direcionada, cria atmosfera sem necessidade de equipamentos caros.",
+        "professorNotes": "Em A Noite dos Mortos-Vivos, observe como uma produ\xE7\xE3o visualmente simples consegue criar tens\xE3o atrav\xE9s das escolhas de c\xE2mera, enquadramento e ilumina\xE7\xE3o.\n\nN\xE3o procure apenas equipamentos sofisticados. Observe como o diretor utiliza aquilo que tem dispon\xEDvel para construir uma atmosfera cinematogr\xE1fica. A ilumina\xE7\xE3o de baixo or\xE7amento, quando bem pensada, torna-se uma ferramenta art\xEDstica poderosa para gerar medo, claustrofobia e realismo.",
+        "uploadedAt": "2026-10-05T14:47:08.264Z"
       }
     ],
     sections: [
@@ -1485,32 +1486,32 @@ O ator n\xE3o consegue interpretar "tristeza"; ele interpreta **a\xE7\xF5es e ob
       {
         "id": "ev-apostila-6-1",
         "slot": 1,
-        "title": "V\xEDdeo Extra 01: Som e Trilha Sonora & An\xE1lise Pr\xE1tica - M- 6.1",
-        "videoUrl": "/videos/cinelab-intro-apresentacao.mp4",
-        "thumbnailUrl": "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80",
-        "description": "O aluno deve identificar a capta\xE7\xE3o de di\xE1logo com microfone direcional (Boom), a capta\xE7\xE3o do som ambiente (room tone) e a import\xE2ncia do sil\xEAncio como elemento dram\xE1tico.",
-        "professorNotes": "O aluno deve identificar a capta\xE7\xE3o de di\xE1logo com microfone direcional (Boom), a capta\xE7\xE3o do som ambiente (room tone) e a import\xE2ncia do sil\xEAncio como elemento dram\xE1tico.",
-        "durationHours": 0,
-        "durationMinutes": 18,
-        "durationSeconds": 0,
-        "totalDurationSeconds": 1080,
-        "durationLabel": "00h 18m 00s",
-        "uploadedAt": "2026-10-02T03:08:34.760Z"
+        "title": "V\xEDdeo Extra 01: Som e Trilha Sonora - O HOMEM QUE COPIAVA - M- 6.1",
+        "videoUrl": "https://www.youtube.com/watch?v=fjT-CtR4AWs",
+        "thumbnailUrl": "https://img.youtube.com/vi/fjT-CtR4AWs/hqdefault.jpg",
+        "durationHours": 2,
+        "durationMinutes": 5,
+        "durationSeconds": 2,
+        "totalDurationSeconds": 7502,
+        "durationLabel": "02h 05m 02s",
+        "description": "Observe:\nVoz e narra\xE7\xE3o:\nObserve como a voz do personagem pode conduzir a narrativa e revelar informa\xE7\xF5es que n\xE3o est\xE3o necessariamente sendo mostradas pela imagem.\nSons ambientes:\nPreste aten\xE7\xE3o aos sons da cidade, tr\xE2nsito, m\xE1quinas copiadoras, passos, portas e ru\xEDdos cotidianos.\nM\xFAsica:\nIdentifique quando a trilha musical entra, qual emo\xE7\xE3o ela refor\xE7a e quando ela para de tocar.\nFoley e ru\xEDdos de a\xE7\xE3o:\nObserve o som de notas de dinheiro sendo contadas, papel sendo manipulado, objetos e passos.\nSil\xEAncios:\nRepare nos momentos em que a aus\xEAncia de som cria expectativa ou reflex\xE3o.\nRitmo sonoro:\nPerceba como a montagem do som acompanha o ritmo dos pensamentos do protagonista.",
+        "professorNotes": "Ao assistir O Homem Que Copiava, n\xE3o observe somente a hist\xF3ria. Preste aten\xE7\xE3o em tudo aquilo que voc\xEA escuta e perceba como o som participa da constru\xE7\xE3o da narrativa.\n\nObserve a rela\xE7\xE3o entre voz, m\xFAsica, ru\xEDdos, sons ambientes e imagem. Perceba que determinados sons podem representar pensamentos, mem\xF3rias, ironias ou sentimentos do protagonista.\n\nO som no cinema n\xE3o serve apenas para acompanhar a imagem. Ele pode contar coisas que a imagem n\xE3o mostra.",
+        "uploadedAt": "2026-10-05T14:47:08.265Z"
       },
       {
         "id": "ev-apostila-6-2",
         "slot": 2,
-        "title": "V\xEDdeo Extra 02: Som e Trilha Sonora & An\xE1lise Pr\xE1tica - M- 6.2",
-        "videoUrl": "/videos/cinelab-intro-apresentacao.mp4",
-        "thumbnailUrl": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80",
-        "description": "O aluno deve observar a constru\xE7\xE3o das camadas sonoras (foley, efeitos sonoros dieg\xE9ticos e n\xE3o-dieg\xE9ticos) e a harmonia entre trilha musical e di\xE1logos.",
-        "professorNotes": "O aluno deve observar a constru\xE7\xE3o das camadas sonoras (foley, efeitos sonoros dieg\xE9ticos e n\xE3o-dieg\xE9ticos) e a harmonia entre trilha musical e di\xE1logos.",
-        "durationHours": 0,
-        "durationMinutes": 24,
-        "durationSeconds": 0,
-        "totalDurationSeconds": 1440,
-        "durationLabel": "00h 24m 00s",
-        "uploadedAt": "2026-10-02T03:08:34.760Z"
+        "title": "V\xEDdeo Extra 02: Som e Trilha Sonora - O SOM AO REDOR - M- 6.2",
+        "videoUrl": "https://www.youtube.com/watch?v=OOUtn06aP9I",
+        "thumbnailUrl": "https://img.youtube.com/vi/OOUtn06aP9I/hqdefault.jpg",
+        "durationHours": 2,
+        "durationMinutes": 10,
+        "durationSeconds": 59,
+        "totalDurationSeconds": 7859,
+        "durationLabel": "02h 10m 59s",
+        "description": "Observe:\nSom ambiente:\nFeche os olhos durante alguns momentos e tente identificar quantos sons diferentes existem na cena.\nSons fora do quadro:\nObserve os sons que voc\xEA escuta sem conseguir ver imediatamente sua origem.\nConstru\xE7\xE3o do espa\xE7o:\nPergunte: se retir\xE1ssemos o som, ainda ter\xEDamos a mesma percep\xE7\xE3o daquele lugar?\nSons cotidianos:\nPreste aten\xE7\xE3o aos sons aparentemente banais: televis\xE3o, carros, port\xF5es, aparelhos dom\xE9sticos, animais, passos etc.\nSons como suspense:\nObserve quando um som aparentemente comum passa a provocar tens\xE3o.\nDire\xE7\xE3o de som:\nPerceba se determinados sons est\xE3o mais pr\xF3ximos ou mais distantes e como isso cria profundidade.\nSil\xEAncio:\nObserve quando o ambiente fica inesperadamente silencioso.\nM\xFAsica x som ambiente:\nIdentifique quando existe m\xFAsica propriamente dita e quando a emo\xE7\xE3o \xE9 criada apenas pelos sons do ambiente.\nSom subjetivo:\nObserve se existem momentos em que o tratamento sonoro parece representar a percep\xE7\xE3o ou o estado emocional de determinado personagem.",
+        "professorNotes": "Em O Som ao Redor, fa\xE7a um exerc\xEDcio diferente: tente perceber o ambiente antes mesmo de pensar na hist\xF3ria.\n\nObserve quantas informa\xE7\xF5es chegam ao espectador atrav\xE9s dos sons. Port\xF5es, carros, televis\xF5es, conversas, cachorros, aparelhos dom\xE9sticos, ru\xEDdos da rua e sons distantes ajudam a construir o espa\xE7o onde a hist\xF3ria acontece.\n\nPerceba tamb\xE9m que alguns sons aparentemente comuns podem adquirir outro significado dentro da narrativa. Um ru\xEDdo distante pode criar expectativa; um som repetitivo pode provocar inc\xF4modo; um sil\xEAncio repentino pode chamar a aten\xE7\xE3o.\n\nO objetivo \xE9 compreender que o espa\xE7o cinematogr\xE1fico tamb\xE9m \xE9 constru\xEDdo pelo ouvido. Uma cena n\xE3o precisa mostrar tudo para fazer o espectador perceber que algo est\xE1 acontecendo.",
+        "uploadedAt": "2026-10-05T14:47:08.265Z"
       }
     ],
     sections: [
@@ -1616,32 +1617,32 @@ Grave sempre **pelo menos 60 segundos de room tone absoluto** com a equipe im\xF
       {
         "id": "ev-apostila-7-1",
         "slot": 1,
-        "title": "V\xEDdeo Extra 01: Montagem e P\xF3s-Produ\xE7\xE3o & An\xE1lise Pr\xE1tica - M- 7.1",
-        "videoUrl": "/videos/cinelab-intro-apresentacao.mp4",
-        "thumbnailUrl": "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80",
-        "description": "O aluno deve observar a regra dos 180 graus, cortes em a\xE7\xE3o, elipses temporais e a montagem paralela, percebendo como o corte cria sentido novo entre duas tomadas.",
-        "professorNotes": "O aluno deve observar a regra dos 180 graus, cortes em a\xE7\xE3o, elipses temporais e a montagem paralela, percebendo como o corte cria sentido novo entre duas tomadas.",
-        "durationHours": 0,
-        "durationMinutes": 18,
-        "durationSeconds": 0,
-        "totalDurationSeconds": 1080,
-        "durationLabel": "00h 18m 00s",
-        "uploadedAt": "2026-10-02T03:08:34.760Z"
+        "title": "V\xEDdeo Extra 01: Montagem e P\xF3s-Produ\xE7\xE3o - A GREVE - M- 7.1",
+        "videoUrl": "https://www.youtube.com/watch?v=VD40vLjRaNA",
+        "thumbnailUrl": "https://img.youtube.com/vi/VD40vLjRaNA/hqdefault.jpg",
+        "durationHours": 1,
+        "durationMinutes": 28,
+        "durationSeconds": 56,
+        "totalDurationSeconds": 5336,
+        "durationLabel": "01h 28m 56s",
+        "description": "Observe:\nCorte entre planos:\nObserve quando o diretor corta de uma imagem para outra e pergunte por que aquele corte acontece.\nAssocia\xE7\xE3o de imagens:\nObserve duas imagens diferentes colocadas em sequ\xEAncia. Que ideia surge da combina\xE7\xE3o?\nContraste:\nPerceba quando o filme coloca situa\xE7\xF5es ou personagens opostos lado a lado.\nMontagem paralela:\nObserve quando acontecimentos diferentes s\xE3o alternados pela montagem.\nRitmo:\nPerceba quando os cortes ficam mais r\xE1pidos ou mais demorados.\nRepeti\xE7\xE3o:\nObserve se determinados tipos de imagens ou a\xE7\xF5es s\xE3o repetidos e qual efeito isso produz.\nMet\xE1fora visual:\nProcure imagens que representam uma ideia diferente daquela que aparece literalmente na cena.\nConstru\xE7\xE3o de tens\xE3o:\nObserve como a montagem organiza diferentes a\xE7\xF5es para aumentar a expectativa.\nSequ\xEAncia final:\nPreste aten\xE7\xE3o especial \xE0 associa\xE7\xE3o entre a repress\xE3o aos trabalhadores e as imagens de animais. Pergunte: o que a montagem est\xE1 dizendo que nenhuma dessas imagens diria sozinha?",
+        "professorNotes": "Ao assistir A Greve, n\xE3o tente acompanhar somente a hist\xF3ria. Assista prestando aten\xE7\xE3o \xE0 maneira como uma imagem \xE9 colocada ao lado da outra.\n\nPergunte-se constantemente: por que o diretor escolheu cortar exatamente neste momento? Por que colocou esta imagem depois daquela?\n\nPerceba que a montagem n\xE3o serve apenas para organizar as cenas. Ela pode criar ideias, compara\xE7\xF5es, emo\xE7\xF5es e significados que n\xE3o est\xE3o presentes em nenhum plano isoladamente.\n\nObserve tamb\xE9m o ritmo dos cortes. Quando a a\xE7\xE3o fica mais intensa, a montagem pode se tornar mais din\xE2mica. Quando o diretor quer criar determinada sensa\xE7\xE3o, pode alterar a dura\xE7\xE3o e a combina\xE7\xE3o dos planos.\n\nO objetivo \xE9 compreender que montar \xE9 construir uma narrativa atrav\xE9s da rela\xE7\xE3o entre imagens.",
+        "uploadedAt": "2026-10-05T14:47:08.266Z"
       },
       {
         "id": "ev-apostila-7-2",
         "slot": 2,
-        "title": "V\xEDdeo Extra 02: Montagem e P\xF3s-Produ\xE7\xE3o & An\xE1lise Pr\xE1tica - M- 7.2",
-        "videoUrl": "/videos/cinelab-intro-apresentacao.mp4",
-        "thumbnailUrl": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80",
-        "description": "O aluno deve atentar para a corre\xE7\xE3o de cor, curvas de gama e color grading est\xE9tico, unificando a identidade visual das di\xE1rias de filmagem.",
-        "professorNotes": "O aluno deve atentar para a corre\xE7\xE3o de cor, curvas de gama e color grading est\xE9tico, unificando a identidade visual das di\xE1rias de filmagem.",
-        "durationHours": 0,
-        "durationMinutes": 24,
-        "durationSeconds": 0,
-        "totalDurationSeconds": 1440,
-        "durationLabel": "00h 24m 00s",
-        "uploadedAt": "2026-10-02T03:08:34.760Z"
+        "title": "V\xEDdeo Extra 02: Montagem e P\xF3s-Produ\xE7\xE3o - A GENERAL - M- 7.2",
+        "videoUrl": "https://www.youtube.com/watch?v=520-x-oNWlA",
+        "thumbnailUrl": "https://img.youtube.com/vi/520-x-oNWlA/hqdefault.jpg",
+        "durationHours": 1,
+        "durationMinutes": 18,
+        "durationSeconds": 32,
+        "totalDurationSeconds": 4712,
+        "durationLabel": "01h 18m 32s",
+        "description": "Observe:\nContinuidade da a\xE7\xE3o:\nObserve como os cortes permitem acompanhar uma a\xE7\xE3o sem perder a no\xE7\xE3o do que est\xE1 acontecendo.\nDire\xE7\xE3o do movimento:\nObserve para onde os trens, ve\xEDculos e personagens se deslocam em cada plano. Como a montagem mant\xE9m a coer\xEAncia de dire\xE7\xE3o?\nMontagem para o humor:\nPerceba como o timing do corte determina o efeito c\xF4mico da cena (antecipa\xE7\xE3o, surpresa e rea\xE7\xE3o).\nCortes no movimento:\nObserve os cortes realizados durante uma a\xE7\xE3o f\xEDsica para tornar a transi\xE7\xE3o impercept\xEDvel.\nClareza espacial:\nMesmo em cenas complexas com grandes m\xE1quinas em movimento, o espectador sempre sabe onde cada elemento est\xE1 posicionado.",
+        "professorNotes": "Ao assistir A General, observe o filme como um exerc\xEDcio de montagem. N\xE3o se preocupe apenas em acompanhar a aventura de Johnnie Gray. Procure perceber como diferentes planos s\xE3o organizados para que o espectador compreenda perfeitamente a a\xE7\xE3o.\n\nObserve como a montagem acompanha persegui\xE7\xF5es, movimentos de trens, obst\xE1culos e a\xE7\xF5es f\xEDsicas mantendo sempre a clareza espacial e a continuidade do movimento.\n\nO aluno deve compreender que a montagem n\xE3o serve apenas para criar efeitos dram\xE1ticos ou po\xE9ticos; ela \xE9 a ferramenta essencial para organizar a a\xE7\xE3o e guiar a aten\xE7\xE3o da plateia com precis\xE3o cir\xFArgica.",
+        "uploadedAt": "2026-10-05T14:47:08.266Z"
       }
     ],
     sections: [
@@ -1748,32 +1749,32 @@ A montagem \xE9 o cora\xE7\xE3o da linguagem cinematogr\xE1fica porque cria pens
       {
         "id": "ev-apostila-8-1",
         "slot": 1,
-        "title": "V\xEDdeo Extra 01: Produ\xE7\xE3o Executiva e Planejamento & An\xE1lise Pr\xE1tica - M- 8.1",
-        "videoUrl": "/videos/cinelab-intro-apresentacao.mp4",
-        "thumbnailUrl": "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80",
-        "description": "O aluno deve observar a planilha or\xE7ament\xE1ria por etapas (desenvolvimento, pr\xE9-produ\xE7\xE3o, produ\xE7\xE3o e p\xF3s), cronograma de filmagem e gest\xE3o de equipe.",
-        "professorNotes": "O aluno deve observar a planilha or\xE7ament\xE1ria por etapas (desenvolvimento, pr\xE9-produ\xE7\xE3o, produ\xE7\xE3o e p\xF3s), cronograma de filmagem e gest\xE3o de equipe.",
-        "durationHours": 0,
-        "durationMinutes": 18,
-        "durationSeconds": 0,
-        "totalDurationSeconds": 1080,
-        "durationLabel": "00h 18m 00s",
-        "uploadedAt": "2026-10-02T03:08:34.760Z"
+        "title": "V\xEDdeo Extra 01: Produ\xE7\xE3o Executiva e Planejamento - BAILE PERFUMADO - M- 8.1",
+        "videoUrl": "https://www.youtube.com/watch?v=_8ZrfthVE24",
+        "thumbnailUrl": "https://img.youtube.com/vi/_8ZrfthVE24/hqdefault.jpg",
+        "durationHours": 1,
+        "durationMinutes": 32,
+        "durationSeconds": 42,
+        "totalDurationSeconds": 5562,
+        "durationLabel": "01h 32m 42s",
+        "description": "Observe:\nLoca\xE7\xF5es:\nObserve os diferentes ambientes utilizados e pense nas dificuldades de filmar em regi\xF5es externas e afastadas.\nDire\xE7\xE3o de arte:\nObserve como cen\xE1rios e ambientes s\xE3o preparados para representar uma determinada \xE9poca.\nFigurinos:\nPerceba a quantidade de personagens e como suas roupas ajudam a construir o per\xEDodo hist\xF3rico.\nObjetos de cena:\nObserve armas, ve\xEDculos, equipamentos, objetos pessoais e elementos utilizados pelos personagens.\nVe\xEDculos e deslocamentos:\nObserve quantos ve\xEDculos aparecem e imagine toda a log\xEDstica necess\xE1ria para disponibiliz\xE1-los durante as filmagens.\nContinuidade:\nObserve roupas, objetos e caracter\xEDsticas dos ambientes entre diferentes cenas.\nPesquisa hist\xF3rica:\nPerceba como a produ\xE7\xE3o precisou pesquisar personagens, \xE9poca, costumes, lugares e acontecimentos hist\xF3ricos.\nOrganiza\xE7\xE3o da equipe:\nO aluno deve perceber que uma produ\xE7\xE3o envolve muito mais profissionais do que apenas diretor e atores.\nRecursos financeiros:\nPergunte: quanto custaria transportar equipe, equipamentos, figurinos, ve\xEDculos e materiais para realizar uma produ\xE7\xE3o desse tipo?\nPlanejamento de uma produ\xE7\xE3o de \xE9poca:\nImagine que voc\xEA fosse o produtor respons\xE1vel pelo filme. O que precisaria ser resolvido antes de iniciar as filmagens?",
+        "professorNotes": "Ao assistir Baile Perfumado, assista tamb\xE9m como produtor. Procure enxergar tudo aquilo que foi necess\xE1rio organizar para transformar uma hist\xF3ria ambientada no sert\xE3o dos anos 1930 em um filme.\n\nObserve as loca\xE7\xF5es, deslocamentos, figurinos, objetos de cena, ve\xEDculos, cen\xE1rios, prepara\xE7\xE3o dos ambientes e quantidade de profissionais envolvidos na realiza\xE7\xE3o.\n\nPense sempre al\xE9m daquilo que aparece na tela: quanto planejamento foi necess\xE1rio para que aquela cena pudesse existir?\n\nO objetivo \xE9 compreender que a produ\xE7\xE3o executiva transforma uma ideia cinematogr\xE1fica em uma opera\xE7\xE3o concreta, envolvendo pessoas, recursos, tempo, log\xEDstica, or\xE7amento e tomada de decis\xF5es.",
+        "uploadedAt": "2026-10-05T14:47:08.267Z"
       },
       {
         "id": "ev-apostila-8-2",
         "slot": 2,
-        "title": "V\xEDdeo Extra 02: Produ\xE7\xE3o Executiva e Planejamento & An\xE1lise Pr\xE1tica - M- 8.2",
-        "videoUrl": "/videos/cinelab-intro-apresentacao.mp4",
-        "thumbnailUrl": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80",
-        "description": "O aluno deve analisar a estrutura da Ordem do Dia (Call Sheet), autoriza\xE7\xF5es de loca\xE7\xE3o, direitos de imagem e log\xEDstica di\xE1ria de produ\xE7\xE3o no set.",
-        "professorNotes": "O aluno deve analisar a estrutura da Ordem do Dia (Call Sheet), autoriza\xE7\xF5es de loca\xE7\xE3o, direitos de imagem e log\xEDstica di\xE1ria de produ\xE7\xE3o no set.",
-        "durationHours": 0,
-        "durationMinutes": 24,
-        "durationSeconds": 0,
-        "totalDurationSeconds": 1440,
-        "durationLabel": "00h 24m 00s",
-        "uploadedAt": "2026-10-02T03:08:34.760Z"
+        "title": "V\xEDdeo Extra 02: Produ\xE7\xE3o Executiva e Planejamento - CINEMA, ASPIRINAS E URUBUS - M- 8.2",
+        "videoUrl": "https://www.youtube.com/watch?v=jmXpJND14LI",
+        "thumbnailUrl": "https://img.youtube.com/vi/jmXpJND14LI/hqdefault.jpg",
+        "durationHours": 1,
+        "durationMinutes": 35,
+        "durationSeconds": 56,
+        "totalDurationSeconds": 5756,
+        "durationLabel": "01h 35m 56s",
+        "description": "Observe:\nLoca\xE7\xF5es:\nObserve os locais onde as cenas foram realizadas e pense nas dificuldades de produ\xE7\xE3o de cada ambiente.\nDeslocamento da equipe:\nObserve que os personagens est\xE3o constantemente viajando. Imagine a log\xEDstica necess\xE1ria para transportar equipe e equipamentos.\nVe\xEDculos:\nO caminh\xE3o \xE9 praticamente um elemento central da narrativa. Pense nas necessidades de produ\xE7\xE3o relacionadas a ele.\nObjetos de cena:\nObserve os objetos utilizados pelos personagens. Pergunte como foram selecionados, transportados e organizados.\nFigurino:\nObserve a continuidade das roupas durante as diferentes cenas.\nContinuidade:\nPreste aten\xE7\xE3o \xE0 posi\xE7\xE3o dos objetos, roupas, ve\xEDculos e personagens entre diferentes momentos.\nCondi\xE7\xF5es naturais:\nObserve calor, poeira, paisagem, ilumina\xE7\xE3o natural e estrada. Como esses fatores podem interferir no planejamento?\nTempo de filmagem:\nPergunte: quanto tempo uma equipe precisaria permanecer em cada loca\xE7\xE3o para realizar essas cenas?\nOrganiza\xE7\xE3o da equipe:\nImagine quais profissionais precisariam estar presentes para que cada sequ\xEAncia pudesse ser realizada.\nOr\xE7amento:\nPense em quais elementos provavelmente representam custos: transporte, alimenta\xE7\xE3o, hospedagem, equipamentos, equipe, ve\xEDculos, loca\xE7\xF5es e produ\xE7\xE3o de arte.",
+        "professorNotes": "Ao assistir Cinema, Aspirinas e Urubus, observe o filme pensando como produtor. N\xE3o se concentre somente nos personagens e na hist\xF3ria. Procure imaginar tudo aquilo que foi necess\xE1rio para que cada cena pudesse existir.\n\nObserve as loca\xE7\xF5es, deslocamentos, ve\xEDculos, figurinos, objetos de cena, elenco, equipe e as caracter\xEDsticas do ambiente. Pense nas dificuldades que uma produ\xE7\xE3o enfrenta quando trabalha em regi\xF5es afastadas, com grandes deslocamentos e condi\xE7\xF5es espec\xEDficas de clima e espa\xE7o.\n\nO exerc\xEDcio \xE9 aprender a olhar para uma cena pronta e perguntar: \u201CO que foi necess\xE1rio organizar para que esta cena pudesse ser filmada?\u201D\n\nUm produtor precisa aprender a enxergar aquilo que o espectador normalmente n\xE3o percebe.",
+        "uploadedAt": "2026-10-05T14:47:08.267Z"
       }
     ],
     sections: [
@@ -1883,32 +1884,32 @@ A montagem \xE9 o cora\xE7\xE3o da linguagem cinematogr\xE1fica porque cria pens
       {
         "id": "ev-apostila-9-1",
         "slot": 1,
-        "title": "V\xEDdeo Extra 01: Distribui\xE7\xE3o, Festivais e Mercado Audiovisual & An\xE1lise Pr\xE1tica - M- 9.1",
-        "videoUrl": "/videos/cinelab-intro-apresentacao.mp4",
-        "thumbnailUrl": "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80",
-        "description": "O aluno deve observar os circuitos de festivais nacionais e internacionais, janelas de exibi\xE7\xE3o, plataformas de streaming e prepara\xE7\xE3o de press kit oficial.",
-        "professorNotes": "O aluno deve observar os circuitos de festivais nacionais e internacionais, janelas de exibi\xE7\xE3o, plataformas de streaming e prepara\xE7\xE3o de press kit oficial.",
-        "durationHours": 0,
-        "durationMinutes": 18,
-        "durationSeconds": 0,
-        "totalDurationSeconds": 1080,
-        "durationLabel": "00h 18m 00s",
-        "uploadedAt": "2026-10-02T03:08:34.760Z"
+        "title": "V\xEDdeo Extra 01: Distribui\xE7\xE3o, Festivais e Mercado Audiovisual - QUE HORAS ELA VOLTA? - M- 9.1",
+        "videoUrl": "https://www.youtube.com/watch?v=Ks9VIZejfw8",
+        "thumbnailUrl": "https://img.youtube.com/vi/Ks9VIZejfw8/hqdefault.jpg",
+        "durationHours": 1,
+        "durationMinutes": 51,
+        "durationSeconds": 40,
+        "totalDurationSeconds": 6700,
+        "durationLabel": "01h 51m 40s",
+        "description": "Observe:\nQual \xE9 o p\xFAblico potencial do filme?\nQue caracter\xEDsticas da hist\xF3ria podem despertar interesse fora do Brasil?\nComo o tema brasileiro pode ser compreendido por espectadores de outros pa\xEDses?\nPor que um festival internacional pode ser importante para a carreira de um filme?\nComo uma premia\xE7\xE3o pode aumentar o interesse de distribuidores?\nO que pode fazer um filme independente chamar aten\xE7\xE3o do mercado?\nObserve a diferen\xE7a entre produzir um filme e conseguir faz\xEA-lo chegar ao p\xFAblico.\nPesquise depois da sess\xE3o quais festivais o filme frequentou e quais pr\xEAmios recebeu.\nPesquise em quantos pa\xEDses o filme foi lan\xE7ado.\nCompare o mercado nacional com o mercado internacional da obra.",
+        "professorNotes": "\u201CAo assistir a Que Horas Ela Volta?, voc\xEA n\xE3o deve olhar apenas para a hist\xF3ria. Pense no filme como um produto audiovisual que precisou encontrar seu p\xFAblico. Observe como uma obra brasileira, com uma hist\xF3ria profundamente ligada \xE0 realidade do pa\xEDs, conseguiu ultrapassar as fronteiras nacionais por meio dos festivais, das premia\xE7\xF5es e da distribui\xE7\xE3o internacional.\u201D\n\nO objetivo \xE9 compreender que produzir um bom filme \xE9 apenas uma etapa. Depois da produ\xE7\xE3o, \xE9 necess\xE1rio pensar em onde o filme ser\xE1 exibido, para quem ser\xE1 apresentado, quais festivais podem receb\xEA-lo, como ser\xE1 vendido e como poder\xE1 alcan\xE7ar outros mercados.",
+        "uploadedAt": "2026-10-05T14:47:08.269Z"
       },
       {
         "id": "ev-apostila-9-2",
         "slot": 2,
-        "title": "V\xEDdeo Extra 02: Distribui\xE7\xE3o, Festivais e Mercado Audiovisual & An\xE1lise Pr\xE1tica - M- 9.2",
-        "videoUrl": "/videos/cinelab-intro-apresentacao.mp4",
-        "thumbnailUrl": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80",
-        "description": "O aluno deve atentar para a apresenta\xE7\xE3o de projetos (Pitch Deck de 5 a 10 minutos), logline comercial, sinopse de venda e negocia\xE7\xE3o com distribuidoras.",
-        "professorNotes": "O aluno deve atentar para a apresenta\xE7\xE3o de projetos (Pitch Deck de 5 a 10 minutos), logline comercial, sinopse de venda e negocia\xE7\xE3o com distribuidoras.",
+        "title": "V\xEDdeo Extra 02: Distribui\xE7\xE3o, Festivais e Mercado Audiovisual - COMO FUNCIONA A DISTRIBUI\xC7\xC3O DE UM FILME (Insight) - M- 9.2",
+        "videoUrl": "https://www.youtube.com/watch?v=misa0VVsNaM",
+        "thumbnailUrl": "https://img.youtube.com/vi/misa0VVsNaM/hqdefault.jpg",
         "durationHours": 0,
-        "durationMinutes": 24,
-        "durationSeconds": 0,
-        "totalDurationSeconds": 1440,
-        "durationLabel": "00h 24m 00s",
-        "uploadedAt": "2026-10-02T03:08:34.760Z"
+        "durationMinutes": 13,
+        "durationSeconds": 25,
+        "totalDurationSeconds": 805,
+        "durationLabel": "00h 13m 25s",
+        "description": "Observe:\nPrimeiros passos para distribuir:\nAs recomenda\xE7\xF5es das representantes da Olhar Distribui\xE7\xE3o sobre o que fazer quando se tem um filme pronto (ou em desenvolvimento).\n\nA import\xE2ncia de pesquisar mercados e festivais que acontecem dentro de eventos de cinema pelo pa\xEDs.\n\nEstrat\xE9gia de festivais como porta de entrada:\nComo o v\xEDdeo explica que festivais funcionam como vitrine para contatos com distribuidoras, programadores e compradores.\nA ideia de escolher festivais de forma estrat\xE9gica (perfil do filme, p\xFAblico, premia\xE7\xE3o, mercado).\n\nRela\xE7\xE3o entre realizador e distribuidora:\nO que uma distribuidora espera do filme e do produtor (material de divulga\xE7\xE3o, trailer, stills, sinopse, ficha t\xE9cnica).\nComo se d\xE1 a negocia\xE7\xE3o de janelas de exibi\xE7\xE3o (cinema, TV, streaming, VoD) e a divis\xE3o de receitas.",
+        "professorNotes": "Observe:\nComo um realizador deve pensar a distribui\xE7\xE3o desde o in\xEDcio do projeto. A orienta\xE7\xE3o \xE9 que o aluno assista como se fosse um produtor/distribuidor, anotando passos, estrat\xE9gias e erros comuns que podem impedir o filme de circular.",
+        "uploadedAt": "2026-10-05T14:47:08.269Z"
       }
     ],
     sections: [
@@ -2016,32 +2017,32 @@ A maioria dos festivais de ponta (Gramado, Tiradentes, Berlim, Clermont-Ferrand)
       {
         "id": "ev-apostila-10-1",
         "slot": 1,
-        "title": "V\xEDdeo Extra 01: Projeto Final & An\xE1lise Pr\xE1tica - M- 10.1",
-        "videoUrl": "/videos/cinelab-intro-apresentacao.mp4",
-        "thumbnailUrl": "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80",
-        "description": "O aluno deve revisar o checklist completo para filmagem do curta-metragem: roteiro finalizado, decupagem plano a plano, plano de filmagem e testes de equipamento.",
-        "professorNotes": "O aluno deve revisar o checklist completo para filmagem do curta-metragem: roteiro finalizado, decupagem plano a plano, plano de filmagem e testes de equipamento.",
+        "title": "V\xEDdeo Extra 01: Projeto Final - NAPO (Curta-Metragem) - M- 10.1",
+        "videoUrl": "https://www.youtube.com/watch?v=k1vCrsZ80M4",
+        "thumbnailUrl": "https://img.youtube.com/vi/k1vCrsZ80M4/hqdefault.jpg",
         "durationHours": 0,
-        "durationMinutes": 18,
-        "durationSeconds": 0,
-        "totalDurationSeconds": 1080,
-        "durationLabel": "00h 18m 00s",
-        "uploadedAt": "2026-10-02T03:08:34.760Z"
+        "durationMinutes": 16,
+        "durationSeconds": 40,
+        "totalDurationSeconds": 1e3,
+        "durationLabel": "00h 16m 40s",
+        "description": "Observe:\nA narrativa visual completa de um curta-metragem multipremiado.\nComo o roteiro, a dire\xE7\xE3o de arte, a trilha sonora e a anima\xE7\xE3o se unem para transmitir uma hist\xF3ria sens\xEDvel sem a necessidade de di\xE1logos falados.\nAnalise o arco dram\xE1tico, a rela\xE7\xE3o entre os personagens e o impacto emocional do cl\xEDmax.",
+        "professorNotes": "Ao assistir ao curta-metragem Napo (dirigido por Gustavo Ribeiro e produzido pela Miralumo Films), o aluno deve analisar a s\xEDntese de todas as etapas de realiza\xE7\xE3o cinematogr\xE1fica aprendidas ao longo do curso. Repare na excel\xEAncia t\xE9cnica, na precis\xE3o da decupagem e na for\xE7a de uma ideia concisa executada com rigor e sensibilidade art\xEDstica.",
+        "uploadedAt": "2026-10-05T14:47:08.270Z"
       },
       {
         "id": "ev-apostila-10-2",
         "slot": 2,
-        "title": "V\xEDdeo Extra 02: Projeto Final & An\xE1lise Pr\xE1tica - M- 10.2",
-        "videoUrl": "/videos/cinelab-intro-apresentacao.mp4",
-        "thumbnailUrl": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80",
-        "description": "O aluno deve acompanhar as diretrizes para exporta\xE7\xE3o do Master em ProRes/H.264, trailer oficial, cartaz de divulga\xE7\xE3o e submiss\xE3o para a Mostra CINELAB.",
-        "professorNotes": "O aluno deve acompanhar as diretrizes para exporta\xE7\xE3o do Master em ProRes/H.264, trailer oficial, cartaz de divulga\xE7\xE3o e submiss\xE3o para a Mostra CINELAB.",
+        "title": "V\xEDdeo Extra 02: Projeto Final - HOJE EU QUERO VOLTAR SOZINHO (Curta-Metragem) - M- 10.2",
+        "videoUrl": "https://www.youtube.com/watch?v=mQuoIuLUxmo",
+        "thumbnailUrl": "https://img.youtube.com/vi/mQuoIuLUxmo/hqdefault.jpg",
         "durationHours": 0,
-        "durationMinutes": 24,
-        "durationSeconds": 0,
-        "totalDurationSeconds": 1440,
-        "durationLabel": "00h 24m 00s",
-        "uploadedAt": "2026-10-02T03:08:34.760Z"
+        "durationMinutes": 17,
+        "durationSeconds": 15,
+        "totalDurationSeconds": 1035,
+        "durationLabel": "00h 17m 15s",
+        "description": "Observe:\nA estrutura dram\xE1tica de um curta-metragem ficcional que conquistou dezenas de pr\xEAmios e originou um longa-metragem de sucesso internacional.\nPreste aten\xE7\xE3o na dire\xE7\xE3o de atores, na naturalidade dos di\xE1logos, na sutileza da fotografia e no planejamento de produ\xE7\xE3o.",
+        "professorNotes": "Ao assistir ao curta-metragem Eu N\xE3o Quero Voltar Sozinho / Hoje Eu Quero Voltar Sozinho (Dir. Daniel Ribeiro), observe como um roteiro focado em conflitos humanos genu\xEDnos, aliado a uma produ\xE7\xE3o eficiente e dire\xE7\xE3o precisa, pode criar um curta-metragem de enorme alcance e reconhecimento.",
+        "uploadedAt": "2026-10-05T14:47:08.270Z"
       }
     ],
     sections: [
@@ -2150,6 +2151,7 @@ var pedagogicalBonusApostilas = [
     pdfUrl: "/materiais/cinelab-bonus-01-glossario-planos.pdf",
     coverUrl: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=600&q=80",
     unlockedByDefault: false,
+    requiredModule: 3,
     extraVideos: [
       {
         "id": "ev-bonus-01-1",
@@ -2263,6 +2265,7 @@ var pedagogicalBonusApostilas = [
     pdfUrl: "/materiais/cinelab-bonus-02-glossario-roteiro.pdf",
     coverUrl: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=600&q=80",
     unlockedByDefault: false,
+    requiredModule: 3,
     extraVideos: [
       {
         "id": "ev-bonus-02-1",
@@ -2369,8 +2372,9 @@ var pedagogicalBonusApostilas = [
     pagesCount: 27,
     totalPages: 27,
     pdfUrl: "/materiais/cinelab-bonus-03-analise-filmica.pdf",
-    coverUrl: "/images/covers/apostila-02.jpg",
+    coverUrl: "https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&w=600&q=80",
     unlockedByDefault: false,
+    requiredModule: 6,
     extraVideos: [
       {
         "id": "ev-bonus-03-1",
@@ -5097,6 +5101,142 @@ var pedagogicalEvaluations = [
   }
 ];
 
+// server/supabaseSync.ts
+import https from "https";
+var SUPABASE_URL = process.env.SUPABASE_URL || "https://qzhfhhvjwjrmjlmzfcid.supabase.co";
+var SUPABASE_KEY = process.env.SUPABASE_KEY || Buffer.from("c2Jfc2VjcmV0X0FTMXV1T2ZuZWVXNkU3cVR5aDNjaWdfc2pLUXByUTY=", "base64").toString("utf-8");
+var hostname = new URL(SUPABASE_URL).hostname;
+function supabaseRequest(pathName, method, body) {
+  return new Promise((resolve, reject) => {
+    const postData = body ? JSON.stringify(body) : "";
+    const req = https.request({
+      hostname,
+      port: 443,
+      path: "/rest/v1/" + pathName,
+      method,
+      timeout: 6e3,
+      headers: {
+        "apikey": SUPABASE_KEY,
+        "Authorization": "Bearer " + SUPABASE_KEY,
+        "Content-Type": "application/json",
+        "Prefer": "resolution=merge-duplicates,return=representation"
+      }
+    }, (res) => {
+      let data = "";
+      res.on("data", (chunk) => data += chunk);
+      res.on("end", () => {
+        if (res.statusCode && res.statusCode >= 200 && res.statusCode < 300) {
+          try {
+            resolve(data ? JSON.parse(data) : null);
+          } catch {
+            resolve(data);
+          }
+        } else {
+          resolve(null);
+        }
+      });
+    });
+    req.on("timeout", () => {
+      req.destroy();
+      resolve(null);
+    });
+    req.on("error", (err) => {
+      console.warn("[Supabase] Warning during request:", err.message);
+      resolve(null);
+    });
+    if (postData) req.write(postData);
+    req.end();
+  });
+}
+async function loadStateFromSupabase() {
+  try {
+    const res = await supabaseRequest("cinelab_state?key=eq.main&select=*", "GET");
+    if (res && Array.isArray(res) && res.length > 0 && res[0].data) {
+      return res[0].data;
+    }
+  } catch (err) {
+    console.warn("[Supabase] Falha ao carregar estado da nuvem:", err.message);
+  }
+  return null;
+}
+async function saveStateToSupabase(db2) {
+  if (!db2) return;
+  try {
+    await supabaseRequest("cinelab_state", "POST", [{
+      key: "main",
+      data: db2,
+      updated_at: (/* @__PURE__ */ new Date()).toISOString()
+    }]);
+    if (db2.users && Array.isArray(db2.users) && db2.users.length > 0) {
+      const usersRows = db2.users.map((u) => ({
+        id: u.id,
+        name: u.name,
+        email: u.email,
+        password_hash: u.passwordHash || "aluno123",
+        role: u.role || "student",
+        created_at: u.createdAt || (/* @__PURE__ */ new Date()).toISOString()
+      }));
+      supabaseRequest("users", "POST", usersRows).catch(() => {
+      });
+    }
+    if (db2.enrollments && Array.isArray(db2.enrollments) && db2.enrollments.length > 0) {
+      const enrollRows = db2.enrollments.map((e) => ({
+        id: e.id,
+        user_id: e.userId || e.studentId,
+        course_id: e.courseId || "cinelab-direcao",
+        status: e.status || "active",
+        enrolled_at: e.enrolledAt || (/* @__PURE__ */ new Date()).toISOString(),
+        expires_at: e.expiresAt || null,
+        current_module_id: e.currentModuleId || 1,
+        progress: e.progress || {}
+      }));
+      supabaseRequest("enrollments", "POST", enrollRows).catch(() => {
+      });
+    }
+    if (db2.payments && Array.isArray(db2.payments) && db2.payments.length > 0) {
+      const paymentRows = db2.payments.map((p) => ({
+        id: p.id,
+        enrollment_id: p.enrollmentId,
+        user_id: p.userId || p.studentId,
+        amount: p.amount || 0,
+        status: p.status || "paid",
+        method: p.method || "credit_card",
+        transaction_id: p.transactionId || null,
+        paid_at: p.paidAt || p.approvedAt || p.createdAt || (/* @__PURE__ */ new Date()).toISOString(),
+        details: p.details || {}
+      }));
+      supabaseRequest("payments", "POST", paymentRows).catch(() => {
+      });
+    }
+    if (db2.submissions && Array.isArray(db2.submissions) && db2.submissions.length > 0) {
+      const subRows = db2.submissions.map((s) => ({
+        id: s.id,
+        user_id: s.userId || s.studentId,
+        module_id: s.moduleId || 1,
+        grade: s.grade || 0,
+        status: s.status || "approved",
+        submitted_at: s.submittedAt || (/* @__PURE__ */ new Date()).toISOString(),
+        answers: s.answers || []
+      }));
+      supabaseRequest("submissions", "POST", subRows).catch(() => {
+      });
+    }
+    if (db2.certificates && Array.isArray(db2.certificates) && db2.certificates.length > 0) {
+      const certRows = db2.certificates.map((c) => ({
+        id: c.id,
+        user_id: c.userId || c.studentId,
+        validation_code: c.validationCode || c.code || c.id,
+        issued_at: c.issuedAt || (/* @__PURE__ */ new Date()).toISOString(),
+        pdf_url: c.pdfUrl || ""
+      }));
+      supabaseRequest("certificates", "POST", certRows).catch(() => {
+      });
+    }
+  } catch (err) {
+    console.warn("[Supabase] Falha na sincroniza\xE7\xE3o ass\xEDncrona:", err.message);
+  }
+}
+
 // server/db.ts
 var DB_DIR = path.join(process.cwd(), "data");
 var DB_FILE = path.join(DB_DIR, "cinelab-db.json");
@@ -5143,7 +5283,7 @@ function getInitialDb() {
     settings: { ...initialCourseSettings },
     users: initialUsers.map((u) => ({
       ...u,
-      passwordHash: u.role === "admin" ? "admin123" : "aluno123"
+      passwordHash: u.role === "admin" ? "5240Luc@$" : "aluno123"
     })),
     enrollments: [...initialEnrollments],
     payments: [...initialPayments],
@@ -5248,7 +5388,6 @@ function initExtraVideosForApostila(apos, defaultSuffix) {
   const cleanAposTitle = (apos.title || defaultSuffix).replace(/^Apostila\s*\d+\s*:\s*/i, "").trim();
   let slot1 = existing.find((v) => v.slot === 1) || (pedVideos[0] ? { ...pedVideos[0] } : null);
   let slot2 = existing.find((v) => v.slot === 2) || (pedVideos[1] ? { ...pedVideos[1] } : null);
-
   if (!slot1) {
     if (pedVideos[0]) {
       slot1 = { ...pedVideos[0] };
@@ -5273,7 +5412,20 @@ function initExtraVideosForApostila(apos, defaultSuffix) {
     if (!slot1.title || slot1.title.includes("Estudo Dirigido & An\xE1lise Pr\xE1tica \u2013 M\xF3dulo") || slot1.title.includes("M\xF3dulo 0")) {
       slot1.title = pedVideos[0]?.title || `V\xEDdeo Extra 01: ${cleanAposTitle} & An\xE1lise Pr\xE1tica - ${modPrefix}.1`;
     }
-    if (modNum === 1 && (!slot1.videoUrl || slot1.videoUrl.includes("cinelab-intro-apresentacao.mp4"))) {
+    if ((!slot1.videoUrl || slot1.videoUrl.trim() === "" || slot1.videoUrl.includes("cinelab-intro-apresentacao.mp4")) && pedVideos[0]?.videoUrl) {
+      slot1.videoUrl = pedVideos[0].videoUrl;
+      slot1.thumbnailUrl = pedVideos[0].thumbnailUrl || slot1.thumbnailUrl;
+      slot1.title = pedVideos[0].title || slot1.title;
+      slot1.description = pedVideos[0].description || slot1.description;
+      slot1.durationHours = pedVideos[0].durationHours ?? slot1.durationHours;
+      slot1.durationMinutes = pedVideos[0].durationMinutes ?? slot1.durationMinutes;
+      slot1.durationSeconds = pedVideos[0].durationSeconds ?? slot1.durationSeconds;
+      slot1.totalDurationSeconds = pedVideos[0].totalDurationSeconds ?? slot1.totalDurationSeconds;
+      slot1.durationLabel = pedVideos[0].durationLabel || slot1.durationLabel;
+      if (!slot1.professorNotes || slot1.professorNotes.trim() === "") {
+        slot1.professorNotes = pedVideos[0].professorNotes || "";
+      }
+    } else if (modNum === 1 && (!slot1.videoUrl || slot1.videoUrl.includes("cinelab-intro-apresentacao.mp4"))) {
       slot1.videoUrl = "https://www.youtube.com/watch?v=q1U0eKOOwsQ";
       slot1.thumbnailUrl = "https://img.youtube.com/vi/q1U0eKOOwsQ/hqdefault.jpg";
       slot1.durationHours = 0;
@@ -5282,14 +5434,13 @@ function initExtraVideosForApostila(apos, defaultSuffix) {
       slot1.totalDurationSeconds = 3168;
       slot1.durationLabel = "00h 52m 48s";
       if (!slot1.professorNotes || slot1.professorNotes.trim() === "") {
-        slot1.professorNotes = "Como Chaplin consegue fazer o espectador compreender a hist\xF3ria e sentir emo\xE7\xE3o utilizando principalmente imagens, gestos e express\xF5es?\nO ALUNO DEVE COM O FILME O Garoto, aprender a ler uma hist\xF3ria atrav\xE9s das imagens.";
+        slot1.professorNotes = pedVideos[0]?.professorNotes || "";
       }
     } else if (modNum === 2 && (!slot1.videoUrl || slot1.videoUrl.includes("cinelab-intro-apresentacao.mp4"))) {
       slot1.videoUrl = "https://www.youtube.com/watch?v=qawVtd32DOQ";
       slot1.thumbnailUrl = "https://img.youtube.com/vi/qawVtd32DOQ/hqdefault.jpg";
     }
   }
-
   if (!slot2) {
     if (pedVideos[1]) {
       slot2 = { ...pedVideos[1] };
@@ -5297,7 +5448,7 @@ function initExtraVideosForApostila(apos, defaultSuffix) {
       slot2 = {
         id: `ev-${apos.id || "apos"}-2`,
         slot: 2,
-        title: `V\xEDdeo Extra 02: ${cleanAposTitle} & An\xE1lise Pr\xE1tica - ${modPrefix}.2`,
+        title: `V\xEDdeo Extra 02: ${cleanAposTitle} - ${modPrefix}.2`,
         description: `Exerc\xEDcio pr\xE1tico de aplica\xE7\xE3o em set de filmagem com demonstra\xE7\xE3o passo a passo da metodologia do CINELAB.`,
         videoUrl: modNum === 2 ? "https://www.youtube.com/watch?v=UHbpgsD8zCM" : "",
         thumbnailUrl: modNum === 2 ? "https://img.youtube.com/vi/UHbpgsD8zCM/hqdefault.jpg" : "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80",
@@ -5312,9 +5463,22 @@ function initExtraVideosForApostila(apos, defaultSuffix) {
     }
   } else {
     if (!slot2.title || slot2.title.includes("Estudo de Caso & Exerc\xEDcio T\xE9cnico \u2013 M\xF3dulo") || slot2.title.includes("M\xF3dulo 0")) {
-      slot2.title = pedVideos[1]?.title || `V\xEDdeo Extra 02: ${cleanAposTitle} & An\xE1lise Pr\xE1tica - ${modPrefix}.2`;
+      slot2.title = pedVideos[1]?.title || `V\xEDdeo Extra 02: ${cleanAposTitle} - ${modPrefix}.2`;
     }
-    if (modNum === 1 && (!slot2.videoUrl || slot2.videoUrl === "")) {
+    if ((!slot2.videoUrl || slot2.videoUrl.trim() === "" || slot2.videoUrl.includes("cinelab-intro-apresentacao.mp4")) && pedVideos[1]?.videoUrl) {
+      slot2.videoUrl = pedVideos[1].videoUrl;
+      slot2.thumbnailUrl = pedVideos[1].thumbnailUrl || slot2.thumbnailUrl;
+      slot2.title = pedVideos[1].title || slot2.title;
+      slot2.description = pedVideos[1].description || slot2.description;
+      slot2.durationHours = pedVideos[1].durationHours ?? slot2.durationHours;
+      slot2.durationMinutes = pedVideos[1].durationMinutes ?? slot2.durationMinutes;
+      slot2.durationSeconds = pedVideos[1].durationSeconds ?? slot2.durationSeconds;
+      slot2.totalDurationSeconds = pedVideos[1].totalDurationSeconds ?? slot2.totalDurationSeconds;
+      slot2.durationLabel = pedVideos[1].durationLabel || slot2.durationLabel;
+      if (!slot2.professorNotes || slot2.professorNotes.trim() === "") {
+        slot2.professorNotes = pedVideos[1].professorNotes || "";
+      }
+    } else if (modNum === 1 && (!slot2.videoUrl || slot2.videoUrl === "")) {
       slot2.videoUrl = "https://www.youtube.com/watch?v=i15UCTIdfwI";
       slot2.thumbnailUrl = "https://img.youtube.com/vi/i15UCTIdfwI/hqdefault.jpg";
       slot2.durationHours = 1;
@@ -5323,14 +5487,13 @@ function initExtraVideosForApostila(apos, defaultSuffix) {
       slot2.totalDurationSeconds = 5212;
       slot2.durationLabel = "01h 26m 52s";
       if (!slot2.professorNotes || slot2.professorNotes.trim() === "") {
-        slot2.professorNotes = "Como Chaplin utiliza a imagem, o movimento, o ritmo e o som para transmitir uma ideia sem precisar explicar tudo atrav\xE9s de di\xE1logos?\nO ALUNO DEVE COM O FILME Tempos Modernos, perceber como imagem + movimento + montagem + som constroem significado.";
+        slot2.professorNotes = pedVideos[1]?.professorNotes || "";
       }
     } else if (modNum === 2 && (!slot2.videoUrl || slot2.videoUrl === "")) {
       slot2.videoUrl = "https://www.youtube.com/watch?v=UHbpgsD8zCM";
       slot2.thumbnailUrl = "https://img.youtube.com/vi/UHbpgsD8zCM/hqdefault.jpg";
     }
   }
-
   return [slot1, slot2];
 }
 function sanitizeDatabaseState(targetDb) {
@@ -5341,28 +5504,14 @@ function sanitizeDatabaseState(targetDb) {
   targetDb.enrollments = (targetDb.enrollments || []).filter(
     (e) => e.studentId !== "user-student-mariana" && e.studentId !== "user-student-rodrigo" && !e.id.includes("mariana") && !e.id.includes("rodrigo") && e.id !== "enr-2" && e.id !== "enr-3"
   );
-  targetDb.payments = (targetDb.payments || [])
-    .filter((p) => p.studentId !== "user-student-mariana" && p.studentId !== "user-student-rodrigo" && p.id !== "pay-2" && p.id !== "pay-3" && p.id !== "pay-mariana" && p.id !== "pay-rodrigo")
-    .map((p) => (p.studentId === "user-student-demo" || p.id === "pay-1" ? { ...p, amount: 0 } : p));
+  targetDb.payments = (targetDb.payments || []).filter((p) => p.studentId !== "user-student-mariana" && p.studentId !== "user-student-rodrigo" && p.id !== "pay-2" && p.id !== "pay-3" && p.id !== "pay-mariana" && p.id !== "pay-rodrigo").map((p) => p.studentId === "user-student-demo" || p.id === "pay-1" ? { ...p, amount: 0 } : p);
   targetDb.submissions = (targetDb.submissions || []).filter((s) => s.id !== "sub-1" && s.studentId !== "user-student-demo");
   targetDb.certificates = (targetDb.certificates || []).filter((c) => c.id !== "cert-seed-1" && c.studentId !== "user-student-demo");
   const lucas = (targetDb.users || []).find((u) => u.id === "user-student-demo");
   if (lucas) {
     if ((targetDb.submissions || []).filter((s) => s.studentId === lucas.id).length === 0) {
-      lucas.averageGrade = undefined;
+      lucas.averageGrade = void 0;
     }
-  }
-  if (targetDb.apostilas && Array.isArray(targetDb.apostilas)) {
-    targetDb.apostilas = targetDb.apostilas.map((a) => {
-      const mod = a.moduleId || a.number || 1;
-      const pad = mod < 10 ? '0' + mod : '' + mod;
-      const canonicalCover = `/images/covers/apostila-${pad}.jpg`;
-      const isOutdated = !a.coverUrl || a.coverUrl.includes('unsplash.com') || (a.coverUrl.startsWith('/uploads/') && !a.coverUrl.includes('base64'));
-      return {
-        ...a,
-        coverUrl: isOutdated ? canonicalCover : a.coverUrl,
-      };
-    });
   }
 }
 function loadDatabase() {
@@ -5617,10 +5766,16 @@ function loadDatabase() {
           const pedMatch = pedagogicalApostilas.find((p) => p.moduleId === apos.moduleId);
           const isAccidentalDuplicatedTitle = apos.moduleId !== 1 && apos.title === "Introdu\xE7\xE3o ao Cinema e \xE0 Linguagem Audiovisual";
           const resolvedTitle = isAccidentalDuplicatedTitle ? pedMatch?.title || "Hist\xF3ria do Cinema" : apos.title || pedMatch?.title;
+          const modNum = apos.moduleId || apos.number || 1;
+          const pad = modNum < 10 ? "0" + modNum : "" + modNum;
+          const canonicalCover = `/images/covers/apostila-${pad}.jpg`;
+          const isOutdatedCover = !apos.coverUrl || apos.coverUrl.includes("unsplash.com") || apos.coverUrl.startsWith("/uploads/") && !apos.coverUrl.includes("base64");
+          const resolvedCover = !isOutdatedCover ? apos.coverUrl : pedMatch?.coverUrl || canonicalCover;
           return {
             ...pedMatch,
             ...apos,
             title: resolvedTitle,
+            coverUrl: resolvedCover,
             pdfUrl: apos.pdfUrl || pedMatch?.pdfUrl,
             pagesCount: apos.pagesCount || apos.totalPages || pedMatch?.pagesCount || 30,
             totalPages: apos.totalPages || apos.pagesCount || pedMatch?.totalPages || 30,
@@ -5849,8 +6004,6 @@ function loadDatabase() {
       }
       db.submissions = db.submissions || [];
       db.certificates = db.certificates || [];
-
-
       db.emailLogs = db.emailLogs || initial.emailLogs;
       db.visitors = db.visitors && db.visitors.length > 0 ? db.visitors : initial.visitors;
       db.studentActivities = db.studentActivities || {};
@@ -5905,7 +6058,7 @@ function saveDatabase() {
       console.warn("Could not mirror to WELCOME_CONFIG_FILE:", wErr);
     }
     saveStateToSupabase(db).catch((err) => {
-      console.warn('[Supabase] Falha no salvamento assíncrono em nuvem:', err?.message || err);
+      console.warn("[Supabase] Falha no salvamento ass\xEDncrono em nuvem:", err?.message || err);
     });
   } catch (err) {
     if (err?.code !== "EROFS") {
@@ -5913,147 +6066,8 @@ function saveDatabase() {
     }
   }
 }
-
-const SUPABASE_URL = process.env.SUPABASE_URL || 'https://qzhfhhvjwjrmjlmzfcid.supabase.co';
-const SUPABASE_KEY = process.env.SUPABASE_KEY || Buffer.from('c2Jfc2VjcmV0X0FTMXV1T2ZuZWVXNkU3cVR5aDNjaWdfc2pLUXByUTY=', 'base64').toString('utf-8');
-const supabaseHostname = new URL(SUPABASE_URL).hostname;
-
-function supabaseRequest(pathName, method, body) {
-  return new Promise((resolve) => {
-    const postData = body ? JSON.stringify(body) : '';
-    const req = https.request({
-      hostname: supabaseHostname,
-      port: 443,
-      path: '/rest/v1/' + pathName,
-      method,
-      timeout: 6000,
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_KEY,
-        'Content-Type': 'application/json',
-        'Prefer': 'resolution=merge-duplicates,return=representation'
-      }
-    }, (res) => {
-      let data = '';
-      res.on('data', chunk => data += chunk);
-      res.on('end', () => {
-        if (res.statusCode && res.statusCode >= 200 && res.statusCode < 300) {
-          try {
-            resolve(data ? JSON.parse(data) : null);
-          } catch {
-            resolve(data);
-          }
-        } else {
-          resolve(null);
-        }
-      });
-    });
-    req.on('timeout', () => {
-      req.destroy();
-      resolve(null);
-    });
-    req.on('error', (err) => {
-      console.warn('[Supabase] Warning during request:', err.message);
-      resolve(null);
-    });
-    if (postData) req.write(postData);
-    req.end();
-  });
-}
-
-async function loadStateFromSupabase() {
-  try {
-    const res = await supabaseRequest('cinelab_state?key=eq.main&select=*', 'GET');
-    if (res && Array.isArray(res) && res.length > 0 && res[0].data) {
-      return res[0].data;
-    }
-  } catch (err) {
-    console.warn('[Supabase] Falha ao carregar estado da nuvem:', err.message);
-  }
-  return null;
-}
-
-async function saveStateToSupabase(dbState) {
-  if (!dbState) return;
-  try {
-    await supabaseRequest('cinelab_state', 'POST', [{
-      key: 'main',
-      data: dbState,
-      updated_at: new Date().toISOString()
-    }]);
-
-    if (dbState.users && Array.isArray(dbState.users) && dbState.users.length > 0) {
-      const usersRows = dbState.users.map((u) => ({
-        id: u.id,
-        name: u.name,
-        email: u.email,
-        password_hash: u.passwordHash || 'aluno123',
-        role: u.role || 'student',
-        created_at: u.createdAt || new Date().toISOString()
-      }));
-      supabaseRequest('users', 'POST', usersRows).catch(() => {});
-    }
-
-    if (dbState.enrollments && Array.isArray(dbState.enrollments) && dbState.enrollments.length > 0) {
-      const enrollRows = dbState.enrollments.map((e) => ({
-        id: e.id,
-        user_id: e.userId || e.studentId,
-        course_id: e.courseId || 'cinelab-direcao',
-        status: e.status || 'active',
-        enrolled_at: e.enrolledAt || new Date().toISOString(),
-        expires_at: e.expiresAt || null,
-        current_module_id: e.currentModuleId || 1,
-        progress: e.progress || {}
-      }));
-      supabaseRequest('enrollments', 'POST', enrollRows).catch(() => {});
-    }
-
-    if (dbState.payments && Array.isArray(dbState.payments) && dbState.payments.length > 0) {
-      const paymentRows = dbState.payments.map((p) => ({
-        id: p.id,
-        enrollment_id: p.enrollmentId,
-        user_id: p.userId || p.studentId,
-        amount: p.amount || 0,
-        status: p.status || 'paid',
-        method: p.method || 'credit_card',
-        transaction_id: p.transactionId || null,
-        paid_at: p.paidAt || p.approvedAt || p.createdAt || new Date().toISOString(),
-        details: p.details || {}
-      }));
-      supabaseRequest('payments', 'POST', paymentRows).catch(() => {});
-    }
-
-    if (dbState.submissions && Array.isArray(dbState.submissions) && dbState.submissions.length > 0) {
-      const subRows = dbState.submissions.map((s) => ({
-        id: s.id,
-        user_id: s.userId || s.studentId,
-        module_id: s.moduleId || 1,
-        grade: s.grade || 0,
-        status: s.status || 'approved',
-        submitted_at: s.submittedAt || new Date().toISOString(),
-        answers: s.answers || []
-      }));
-      supabaseRequest('submissions', 'POST', subRows).catch(() => {});
-    }
-
-    if (dbState.certificates && Array.isArray(dbState.certificates) && dbState.certificates.length > 0) {
-      const certRows = dbState.certificates.map((c) => ({
-        id: c.id,
-        user_id: c.userId || c.studentId,
-        validation_code: c.validationCode || c.code || c.id,
-        issued_at: c.issuedAt || new Date().toISOString(),
-        pdf_url: c.pdfUrl || ''
-      }));
-      supabaseRequest('certificates', 'POST', certRows).catch(() => {});
-    }
-  } catch (err) {
-    console.warn('[Supabase] Falha na sincronização assíncrona:', err.message);
-  }
-}
-
-let supabaseHydrated = false;
-let hydratingPromise = null;
-
+var supabaseHydrated = false;
+var hydratingPromise = null;
 async function initSupabaseData() {
   if (supabaseHydrated) return;
   if (!hydratingPromise) {
@@ -6071,41 +6085,35 @@ async function initSupabaseData() {
             if (cloudState.certificates) db.certificates = cloudState.certificates;
             if (cloudState.settings) db.settings = { ...db.settings, ...cloudState.settings };
             if (cloudState.apostilas && Array.isArray(cloudState.apostilas)) {
-              const realPages = { 1: 8, 2: 52, 3: 7, 4: 6, 5: 6, 6: 6, 7: 6, 8: 6, 9: 6, 10: 6 };
-              db.apostilas = cloudState.apostilas.map(a => {
+              const realPages = { 1: 8, 2: 52, 3: 4, 4: 4, 5: 6, 6: 4, 7: 4, 8: 4, 9: 4, 10: 4 };
+              db.apostilas = cloudState.apostilas.map((a) => {
                 const mod = a.moduleId || a.number || 1;
-                const pad = mod < 10 ? '0' + mod : '' + mod;
+                const pad = mod < 10 ? "0" + mod : "" + mod;
                 const canonicalPdf = `/materiais/cinelab-apostila-${pad}.pdf`;
-                const isCorrupted = !a.pdfUrl || a.pdfUrl.includes('1790444') || a.pdfUrl.includes('1790684') || a.pdfUrl.includes('1790652');
+                const isCorrupted = !a.pdfUrl || a.pdfUrl.includes("1790444") || a.pdfUrl.includes("1790684") || a.pdfUrl.includes("1790652");
                 const pages = realPages[mod] || a.pagesCount || a.totalPages || 4;
                 return {
                   ...a,
                   pdfUrl: isCorrupted ? canonicalPdf : a.pdfUrl,
                   pagesCount: pages,
-                  totalPages: pages,
+                  totalPages: pages
                 };
               });
             }
             if (cloudState.bonusApostilas && Array.isArray(cloudState.bonusApostilas)) {
-              db.bonusApostilas = cloudState.bonusApostilas.map(b => {
-                const defaultPages = b.number === 1 ? 30 : (b.number === 3 ? 27 : 29);
-                const canonicalPdf = b.number === 1
-                  ? '/materiais/cinelab-bonus-01-glossario-planos.pdf'
-                  : (b.number === 3 ? '/materiais/cinelab-bonus-03-analise-filmica.pdf' : '/materiais/cinelab-bonus-02-glossario-roteiro.pdf');
-                const canonicalTitle = b.number === 1
-                  ? 'Glossário Completo de Planos'
-                  : (b.number === 3 ? 'Método de Análise Fílmica em 6 Camadas' : 'Glossário Completo de Roteiro');
-                const safePdf = (!b.pdfUrl || b.pdfUrl.includes('1791222') || b.pdfUrl.includes('uploads/apostilas') || b.pdfUrl.includes('1790684'))
-                  ? canonicalPdf
-                  : b.pdfUrl;
-                const safePages = (b.pagesCount && b.pagesCount !== 4 && b.pagesCount !== 24 && b.pagesCount !== 96 && b.pagesCount !== 104) ? b.pagesCount : defaultPages;
+              db.bonusApostilas = cloudState.bonusApostilas.map((b) => {
+                const defaultPages = b.number === 1 ? 30 : b.number === 3 ? 27 : 29;
+                const canonicalPdf = b.number === 1 ? "/materiais/cinelab-bonus-01-glossario-planos.pdf" : b.number === 3 ? "/materiais/cinelab-bonus-03-analise-filmica.pdf" : "/materiais/cinelab-bonus-02-glossario-roteiro.pdf";
+                const canonicalTitle = b.number === 1 ? "Gloss\xE1rio Completo de Planos" : b.number === 3 ? "M\xE9todo de An\xE1lise F\xEDlmica em 6 Camadas" : "Gloss\xE1rio Completo de Roteiro";
+                const safePdf = !b.pdfUrl || b.pdfUrl.includes("1791222") || b.pdfUrl.includes("uploads/apostilas") || b.pdfUrl.includes("1790684") ? canonicalPdf : b.pdfUrl;
+                const safePages = b.pagesCount && b.pagesCount !== 4 && b.pagesCount !== 24 && b.pagesCount !== 96 && b.pagesCount !== 104 ? b.pagesCount : defaultPages;
                 return {
                   ...b,
-                  title: b.title && !b.title.includes('Pitching') ? b.title : canonicalTitle,
+                  title: b.title && !b.title.includes("Pitching") ? b.title : canonicalTitle,
                   pdfUrl: safePdf,
                   pagesCount: safePages,
                   totalPages: safePages,
-                  isUnlocked: true,
+                  isUnlocked: true
                 };
               });
             }
@@ -6118,10 +6126,10 @@ async function initSupabaseData() {
           }
           sanitizeDatabaseState(db);
           saveDatabase();
-          console.log(`[Supabase] Dados sincronizados da nuvem Postgres (${db.users.length} usuários, ${db.enrollments.length} matrículas).`);
+          console.log(`[Supabase] Dados sincronizados da nuvem Postgres (${db.users.length} usu\xE1rios, ${db.enrollments.length} matr\xEDculas).`);
         }
       } catch (err) {
-        console.warn('[Supabase] Falha ao sincronizar com nuvem na inicialização:', err?.message || err);
+        console.warn("[Supabase] Falha ao sincronizar com nuvem na inicializa\xE7\xE3o:", err?.message || err);
       } finally {
         supabaseHydrated = true;
       }
@@ -6129,7 +6137,6 @@ async function initSupabaseData() {
   }
   await hydratingPromise;
 }
-
 function getDb() {
   if (!db) {
     loadDatabase();
@@ -6162,7 +6169,7 @@ function calculateModuleTimeline(moduleId, studentEnrollment) {
   } else if (settings.cohortStartDate) {
     studentStartDate = new Date(settings.cohortStartDate);
   } else {
-    studentStartDate = new Date();
+    studentStartDate = /* @__PURE__ */ new Date();
   }
   let cumulativeDaysStart = 0;
   for (let i = 1; i < moduleId; i++) {
@@ -6821,19 +6828,35 @@ L'av\xE8nement du son synchronis\xE9 en 1927 (Le Chanteur de Jazz) figea d'abord
       {
         title: "1. Escalas de Planos Fundamentais",
         subtitle: "A rela\xE7\xE3o de dist\xE2ncia e psicologia entre a c\xE2mera e o sujeito",
-        content: `O gloss\xE1rio de planos \xE9 o vocabul\xE1rio prim\xE1rio do diretor:\n\u2022 Grande Plano Geral (GPG): O ambiente domina a figura humana, transmitindo solid\xE3o ou grandiosidade.\n\u2022 Plano Geral (PG): O personagem \xE9 visto de corpo inteiro dentro do espa\xE7o dram\xE1tico.\n\u2022 Plano Americano (PA): Enquadramento dos joelhos para cima, ideal para confrontos e a\xE7\xE3o.\n\u2022 Plano M\xE9dio (PM): Da cintura para cima, o plano padr\xE3o para di\xE1logos e rela\xE7\xF5es interpessoais.\n\u2022 Primeiro Plano (PP / Close-Up): Do busto ou ombros para cima, revelando emo\xE7\xF5es \xEDntimas.\n\u2022 Plano Detalhe (PD / Macro): Isola um elemento espec\xEDfico (um olho, um anel, uma arma).`,
+        content: `O gloss\xE1rio de planos \xE9 o vocabul\xE1rio prim\xE1rio do diretor:
+\u2022 Grande Plano Geral (GPG): O ambiente domina a figura humana, transmitindo solid\xE3o ou grandiosidade.
+\u2022 Plano Geral (PG): O personagem \xE9 visto de corpo inteiro dentro do espa\xE7o dram\xE1tico.
+\u2022 Plano Americano (PA): Enquadramento dos joelhos para cima, ideal para confrontos e a\xE7\xE3o.
+\u2022 Plano M\xE9dio (PM): Da cintura para cima, o plano padr\xE3o para di\xE1logos e rela\xE7\xF5es interpessoais.
+\u2022 Primeiro Plano (PP / Close-Up): Do busto ou ombros para cima, revelando emo\xE7\xF5es \xEDntimas.
+\u2022 Plano Detalhe (PD / Macro): Isola um elemento espec\xEDfico (um olho, um anel, uma arma).`,
         tonyNotes: "Escolha a escala do plano pela emo\xE7\xE3o que voc\xEA quer provocar no espectador, nunca por comodidade."
       },
       {
         title: "2. \xC2ngulos de C\xE2mera e Perspectivas \xD3pticas",
         subtitle: "Plong\xE9e, Contra-Plong\xE9e, N\xEDvel dos Olhos e Ponto de Vista (POV)",
-        content: `O \xE2ngulo altera a rela\xE7\xE3o de poder e hierarquia dram\xE1tica:\n\u2022 N\xEDvel dos Olhos: Neutralidade, empatia e verossimilhan\xE7a direta com o espectador.\n\u2022 Plong\xE9e (C\xE2mera Alta): C\xE2mera olha de cima para baixo, diminuindo o personagem ou transmitindo vulnerabilidade.\n\u2022 Contra-Plong\xE9e (C\xE2mera Baixa): C\xE2mera olha de baixo para cima, agigantando a figura e transmitindo autoridade ou amea\xE7a.\n\u2022 Plano Zenital: 90 graus perpendiculares ao solo, transformando a cena em mapa visual ou labirinto.\n\u2022 Plano Holand\xEAs (Dutch Angle): Horizonte inclinado para gerar instabilidade, loucura ou desequil\xEDbrio psicol\xF3gico.`,
+        content: `O \xE2ngulo altera a rela\xE7\xE3o de poder e hierarquia dram\xE1tica:
+\u2022 N\xEDvel dos Olhos: Neutralidade, empatia e verossimilhan\xE7a direta com o espectador.
+\u2022 Plong\xE9e (C\xE2mera Alta): C\xE2mera olha de cima para baixo, diminuindo o personagem ou transmitindo vulnerabilidade.
+\u2022 Contra-Plong\xE9e (C\xE2mera Baixa): C\xE2mera olha de baixo para cima, agigantando a figura e transmitindo autoridade ou amea\xE7a.
+\u2022 Plano Zenital: 90 graus perpendiculares ao solo, transformando a cena em mapa visual ou labirinto.
+\u2022 Plano Holand\xEAs (Dutch Angle): Horizonte inclinado para gerar instabilidade, loucura ou desequil\xEDbrio psicol\xF3gico.`,
         tonyNotes: "Um \xE2ngulo inclinado s\xF3 tem for\xE7a se o restante da cena for equilibrado. O contraste gera o significado."
       },
       {
         title: "3. Movimentos de C\xE2mera e Din\xE2mica Espacial",
         subtitle: "Panor\xE2mica, Travelling, Steadicam, Grua e C\xE2mera na M\xE3o",
-        content: `A c\xE2mera em movimento transforma o tempo em espa\xE7o dram\xE1tico:\n\u2022 Panor\xE2mica (Pan): Rota\xE7\xE3o horizontal sobre o pr\xF3prio eixo para revelar novos elementos ou seguir personagens.\n\u2022 Tilt: Movimento vertical (para cima ou para baixo) revelando altura, status ou suspense.\n\u2022 Travelling / Dolly: Deslocamento f\xEDsico da c\xE2mera pelo set (aproxima\xE7\xE3o, afastamento ou acompanhamento lateral).\n\u2022 Steadicam / Gimbal: Fluidez flutuante que coloca o p\xFAblico no ritmo da caminhada do personagem.\n\u2022 C\xE2mera na M\xE3o: Respira\xE7\xE3o org\xE2nica que transmite urg\xEAncia, realismo documental ou desespero interior.`,
+        content: `A c\xE2mera em movimento transforma o tempo em espa\xE7o dram\xE1tico:
+\u2022 Panor\xE2mica (Pan): Rota\xE7\xE3o horizontal sobre o pr\xF3prio eixo para revelar novos elementos ou seguir personagens.
+\u2022 Tilt: Movimento vertical (para cima ou para baixo) revelando altura, status ou suspense.
+\u2022 Travelling / Dolly: Deslocamento f\xEDsico da c\xE2mera pelo set (aproxima\xE7\xE3o, afastamento ou acompanhamento lateral).
+\u2022 Steadicam / Gimbal: Fluidez flutuante que coloca o p\xFAblico no ritmo da caminhada do personagem.
+\u2022 C\xE2mera na M\xE3o: Respira\xE7\xE3o org\xE2nica que transmite urg\xEAncia, realismo documental ou desespero interior.`,
         tonyNotes: "Nunca mova a c\xE2mera sem uma motiva\xE7\xE3o narrativa: o movimento deve seguir a a\xE7\xE3o ou revelar uma informa\xE7\xE3o crucial."
       }
     ],
@@ -6841,19 +6864,35 @@ L'av\xE8nement du son synchronis\xE9 en 1927 (Le Chanteur de Jazz) figea d'abord
       {
         title: "1. Core Shot Scales and Framing",
         subtitle: "Psychological and spatial distance between camera and dramatic subject",
-        content: `The shot glossary is the director's primary vocabulary:\n\u2022 Extreme Long Shot (ELS): Landscape dwarfs the human subject, evoking isolation, vastness, or environment.\n\u2022 Long Shot (LS): Character seen full-length within dramatic space, grounding physical action.\n\u2022 Medium Long Shot (MLS / American): Knees up framing, historically born for western standoffs and direct conflict.\n\u2022 Medium Shot (MS): Waist-up framing, the gold standard for conversational chemistry and social dynamics.\n\u2022 Close-Up (CU): Chest/shoulders up, unveiling psychological interiority, truth, and suppressed emotion.\n\u2022 Extreme Close-Up / Detail (ECU): Isolates a specific element (an eye, a letter, a trembling hand).`,
+        content: `The shot glossary is the director's primary vocabulary:
+\u2022 Extreme Long Shot (ELS): Landscape dwarfs the human subject, evoking isolation, vastness, or environment.
+\u2022 Long Shot (LS): Character seen full-length within dramatic space, grounding physical action.
+\u2022 Medium Long Shot (MLS / American): Knees up framing, historically born for western standoffs and direct conflict.
+\u2022 Medium Shot (MS): Waist-up framing, the gold standard for conversational chemistry and social dynamics.
+\u2022 Close-Up (CU): Chest/shoulders up, unveiling psychological interiority, truth, and suppressed emotion.
+\u2022 Extreme Close-Up / Detail (ECU): Isolates a specific element (an eye, a letter, a trembling hand).`,
         tonyNotes: "Choose shot scale strictly based on emotional intent, never for logistical convenience."
       },
       {
         title: "2. Camera Angles and Optical Perspectives",
         subtitle: "High Angle, Low Angle, Eye Level, Bird's Eye, and Dutch Tilt",
-        content: `Camera angle dictates emotional power hierarchy in cinema:\n\u2022 Eye Level: Neutrality, human empathy, and honest connection with the audience.\n\u2022 High Angle (Plong\xE9e): Looking down upon the subject, imparting vulnerability, weakness, or insignificance.\n\u2022 Low Angle (Contra-Plong\xE9e): Looking up from below, empowering the subject with authority, dominance, or dread.\n\u2022 Bird's Eye (Top-Down / Zenithal): 90 degrees directly above, reducing characters to pieces on a cosmic chessboard.\n\u2022 Dutch Angle (Canted Frame): Tilted horizon creating psychological disorientation, dread, or madness.`,
+        content: `Camera angle dictates emotional power hierarchy in cinema:
+\u2022 Eye Level: Neutrality, human empathy, and honest connection with the audience.
+\u2022 High Angle (Plong\xE9e): Looking down upon the subject, imparting vulnerability, weakness, or insignificance.
+\u2022 Low Angle (Contra-Plong\xE9e): Looking up from below, empowering the subject with authority, dominance, or dread.
+\u2022 Bird's Eye (Top-Down / Zenithal): 90 degrees directly above, reducing characters to pieces on a cosmic chessboard.
+\u2022 Dutch Angle (Canted Frame): Tilted horizon creating psychological disorientation, dread, or madness.`,
         tonyNotes: "A tilted frame carries dramatic weight only when the world surrounding it was previously stable."
       },
       {
         title: "3. Camera Movement and Dynamic Space",
         subtitle: "Pans, Tilts, Dolly Tracks, Steadicam, Cranes, and Handheld Work",
-        content: `Moving the camera weaves time into spatial tension:\n\u2022 Pan: Horizontal pivoting around the nodal point to track subjects or reveal environmental clues.\n\u2022 Tilt: Vertical tilting up or down to reveal scale, status, or emerging narrative threats.\n\u2022 Dolly / Tracking Shot: Physical camera displacement through set (push-in for realization, pull-out for loneliness).\n\u2022 Steadicam / Gimbal: Weightless fluidity guiding viewers through labyrinthine corridors.\n\u2022 Handheld Camera: Visceral human breathing imparting urgency, war-zone realism, or mental collapse.`,
+        content: `Moving the camera weaves time into spatial tension:
+\u2022 Pan: Horizontal pivoting around the nodal point to track subjects or reveal environmental clues.
+\u2022 Tilt: Vertical tilting up or down to reveal scale, status, or emerging narrative threats.
+\u2022 Dolly / Tracking Shot: Physical camera displacement through set (push-in for realization, pull-out for loneliness).
+\u2022 Steadicam / Gimbal: Weightless fluidity guiding viewers through labyrinthine corridors.
+\u2022 Handheld Camera: Visceral human breathing imparting urgency, war-zone realism, or mental collapse.`,
         tonyNotes: "Never move the camera gratuitously: movements must be driven by character impulse or narrative revelation."
       }
     ],
@@ -6861,19 +6900,35 @@ L'av\xE8nement du son synchronis\xE9 en 1927 (Le Chanteur de Jazz) figea d'abord
       {
         title: "1. Escalas de Planos Fundamentales",
         subtitle: "La relaci\xF3n de distancia y psicolog\xEDa entre la c\xE1mara y el sujeto",
-        content: `El glosario de planos es el vocabulario primordial del realizador:\n\u2022 Gran Plano General (GPG): El entorno domina por completo, transmitiendo soledad o inmensidad.\n\u2022 Plano General (PG): El personaje aparece de cuerpo entero dentro del espacio dram\xE1tico.\n\u2022 Plano Americano (PA): Encuadre de las rodillas hacia arriba, ideal para confrontaciones y acci\xF3n.\n\u2022 Plano Medio (PM): De la cintura para arriba, el est\xE1ndar de di\xE1logo e interacci\xF3n.\n\u2022 Primer Plano (PP / Close-Up): Del busto hacia arriba, desvelando emociones \xEDntimas.\n\u2022 Plano Detalle (PD): A\xEDsla un elemento espec\xEDfico (un ojo, una nota, un gatillo).`,
+        content: `El glosario de planos es el vocabulario primordial del realizador:
+\u2022 Gran Plano General (GPG): El entorno domina por completo, transmitiendo soledad o inmensidad.
+\u2022 Plano General (PG): El personaje aparece de cuerpo entero dentro del espacio dram\xE1tico.
+\u2022 Plano Americano (PA): Encuadre de las rodillas hacia arriba, ideal para confrontaciones y acci\xF3n.
+\u2022 Plano Medio (PM): De la cintura para arriba, el est\xE1ndar de di\xE1logo e interacci\xF3n.
+\u2022 Primer Plano (PP / Close-Up): Del busto hacia arriba, desvelando emociones \xEDntimas.
+\u2022 Plano Detalle (PD): A\xEDsla un elemento espec\xEDfico (un ojo, una nota, un gatillo).`,
         tonyNotes: "Elige la escala del plano por la emoci\xF3n que buscas despertar, jam\xE1s por comodidad de rodaje."
       },
       {
         title: "2. \xC1ngulos de C\xE1mara y Perspectivas \xD3pticas",
         subtitle: "Picado, Contrapicado, Nivel de Ojos, Cenital y Plano Holand\xE9s",
-        content: `El \xE1ngulo transforma la jerarqu\xEDa de poder dram\xE1tico:\n\u2022 Nivel de Ojos: Empat\xEDa y complicidad directa con el espectador.\n\u2022 Picado: C\xE1mara de arriba hacia abajo, empeque\xF1eciendo al personaje o transmitiendo vulnerabilidad.\n\u2022 Contrapicado: C\xE1mara de abajo hacia arriba, agigantando la figura con autoridad o amenaza.\n\u2022 Plano Cenital: 90 grados perpendicular al suelo, convirtiendo la escena en un mapa visual.\n\u2022 Plano Holand\xE9s: Horizonte inclinado para generar desequilibrio psicol\xF3gico o tensi\xF3n.`,
+        content: `El \xE1ngulo transforma la jerarqu\xEDa de poder dram\xE1tico:
+\u2022 Nivel de Ojos: Empat\xEDa y complicidad directa con el espectador.
+\u2022 Picado: C\xE1mara de arriba hacia abajo, empeque\xF1eciendo al personaje o transmitiendo vulnerabilidad.
+\u2022 Contrapicado: C\xE1mara de abajo hacia arriba, agigantando la figura con autoridad o amenaza.
+\u2022 Plano Cenital: 90 grados perpendicular al suelo, convirtiendo la escena en un mapa visual.
+\u2022 Plano Holand\xE9s: Horizonte inclinado para generar desequilibrio psicol\xF3gico o tensi\xF3n.`,
         tonyNotes: "Un encuadre inclinado tiene valor solo cuando el resto del universo f\xEDlmico conserva el orden."
       },
       {
         title: "3. Movimientos de C\xE1mara y Din\xE1mica Espacial",
         subtitle: "Panor\xE1mica, Travelling, Steadicam, Gr\xFAa y C\xE1mara en Mano",
-        content: `La c\xE1mara en movimiento convierte el tiempo en espacio dram\xE1tico:\n\u2022 Panor\xE1mica (Pan): Rotaci\xF3n horizontal sobre su eje para revelar informaci\xF3n o seguir personajes.\n\u2022 Tilt: Movimiento vertical que revela altura, jerarqu\xEDa o misterio.\n\u2022 Travelling / Dolly: Desplazamiento f\xEDsico por el set (acercamiento dram\xE1tico o seguimiento lateral).\n\u2022 Steadicam: Fluidez a\xE9rea que sumerge al p\xFAblico en el paso del personaje.\n\u2022 C\xE1mara en Mano: Respiraci\xF3n visceral que transmite urgencia, realismo documental o desespero.`,
+        content: `La c\xE1mara en movimiento convierte el tiempo en espacio dram\xE1tico:
+\u2022 Panor\xE1mica (Pan): Rotaci\xF3n horizontal sobre su eje para revelar informaci\xF3n o seguir personajes.
+\u2022 Tilt: Movimiento vertical que revela altura, jerarqu\xEDa o misterio.
+\u2022 Travelling / Dolly: Desplazamiento f\xEDsico por el set (acercamiento dram\xE1tico o seguimiento lateral).
+\u2022 Steadicam: Fluidez a\xE9rea que sumerge al p\xFAblico en el paso del personaje.
+\u2022 C\xE1mara en Mano: Respiraci\xF3n visceral que transmite urgencia, realismo documental o desespero.`,
         tonyNotes: "Nunca desplaces la c\xE1mara sin justificaci\xF3n narrativa: el movimiento debe nacer de la acci\xF3n dram\xE1tica."
       }
     ],
@@ -6881,19 +6936,35 @@ L'av\xE8nement du son synchronis\xE9 en 1927 (Le Chanteur de Jazz) figea d'abord
       {
         title: "1. \xC9chelles de Plans Fondamentales",
         subtitle: "La distance psychologique et spatiale entre la cam\xE9ra et le personnage",
-        content: `Le glossaire des plans constitue la grammaire premi\xE8re du r\xE9alisateur :\n\u2022 Tr\xE8s Grand Plan G\xE9n\xE9ral (TGPG / Plan d'Ensemble) : Le d\xE9cor domine la silhouette humaine, traduisant solitude ou immensit\xE9.\n\u2022 Plan G\xE9n\xE9ral (PG) : Le personnage appara\xEEt en entier, situant pr\xE9cis\xE9ment son action dans l'espace.\n\u2022 Plan Italien / Am\xE9ricain (PA) : Cadrage \xE0 mi-cuisse, historiquement cr\xE9\xE9 pour valoriser les duels et l'action.\n\u2022 Plan Moyen / Rapproch\xE9 Taille (PRT) : De la taille vers le haut, r\xE9f\xE9rence classique du dialogue.\n\u2022 Gros Plan (GP) : Des \xE9paules au sommet de la t\xEAte, plongeant au c\u0153ur de la v\xE9rit\xE9 \xE9motionnelle.\n\u2022 Tr\xE8s Gros Plan / Plan de D\xE9tail (PDet) : Isole un objet d\xE9terminant (un regard, une lettre, une d\xE9tente).`,
+        content: `Le glossaire des plans constitue la grammaire premi\xE8re du r\xE9alisateur :
+\u2022 Tr\xE8s Grand Plan G\xE9n\xE9ral (TGPG / Plan d'Ensemble) : Le d\xE9cor domine la silhouette humaine, traduisant solitude ou immensit\xE9.
+\u2022 Plan G\xE9n\xE9ral (PG) : Le personnage appara\xEEt en entier, situant pr\xE9cis\xE9ment son action dans l'espace.
+\u2022 Plan Italien / Am\xE9ricain (PA) : Cadrage \xE0 mi-cuisse, historiquement cr\xE9\xE9 pour valoriser les duels et l'action.
+\u2022 Plan Moyen / Rapproch\xE9 Taille (PRT) : De la taille vers le haut, r\xE9f\xE9rence classique du dialogue.
+\u2022 Gros Plan (GP) : Des \xE9paules au sommet de la t\xEAte, plongeant au c\u0153ur de la v\xE9rit\xE9 \xE9motionnelle.
+\u2022 Tr\xE8s Gros Plan / Plan de D\xE9tail (PDet) : Isole un objet d\xE9terminant (un regard, une lettre, une d\xE9tente).`,
         tonyNotes: "Choisissez l'\xE9chelle de votre plan d'apr\xE8s l'\xE9motion \xE0 transmettre, jamais par commodit\xE9 technique."
       },
       {
         title: "2. Angles de Prise de Vue et Perspectives Optiques",
         subtitle: "Plong\xE9e, Contre-Plong\xE9e, Hauteur d'Yeux, Z\xE9nithal et Cadrage D\xE9bull\xE9",
-        content: `L'angle modifie directement les rapports de force dramatiques :\n\u2022 Hauteur d'Yeux : \xC9quilibre moral, neutralit\xE9 et empathie naturelle avec le spectateur.\n\u2022 Plong\xE9e : Regard de haut en bas, fragilisant le personnage ou accentuant sa d\xE9tresse.\n\u2022 Contre-Plong\xE9e : Regard de bas en haut, magnifiant la stature pour insuffler puissance ou menace.\n\u2022 Vue Z\xE9nithale : Regard perpendiculaire au sol \xE0 90 degr\xE9s, m\xE9tamorphosant la sc\xE8ne en \xE9chiquier abstrait.\n\u2022 Cadrage D\xE9bull\xE9 (Dutch Angle) : Horizon inclin\xE9 traduisant instabilit\xE9 mentale, vertige ou folie.`,
+        content: `L'angle modifie directement les rapports de force dramatiques :
+\u2022 Hauteur d'Yeux : \xC9quilibre moral, neutralit\xE9 et empathie naturelle avec le spectateur.
+\u2022 Plong\xE9e : Regard de haut en bas, fragilisant le personnage ou accentuant sa d\xE9tresse.
+\u2022 Contre-Plong\xE9e : Regard de bas en haut, magnifiant la stature pour insuffler puissance ou menace.
+\u2022 Vue Z\xE9nithale : Regard perpendiculaire au sol \xE0 90 degr\xE9s, m\xE9tamorphosant la sc\xE8ne en \xE9chiquier abstrait.
+\u2022 Cadrage D\xE9bull\xE9 (Dutch Angle) : Horizon inclin\xE9 traduisant instabilit\xE9 mentale, vertige ou folie.`,
         tonyNotes: "Un cadre pench\xE9 ne prend son sens que si le reste de votre mise en sc\xE8ne est rigoureusement ancr\xE9."
       },
       {
         title: "3. Mouvements d'Appareil et Spatialisation",
         subtitle: "Panoramique, Travelling, Steadicam, Grue et Cam\xE9ra Port\xE9e",
-        content: `Le mouvement de cam\xE9ra m\xE9tamorphose le temps en \xE9motion pure :\n\u2022 Panoramique : Rotation sur l'axe optique pour d\xE9voiler une surprise ou accompagner une trajectoire.\n\u2022 Travelling (Dolly) : D\xE9placement physique fluide dans le d\xE9cor (avanc\xE9e dramatique, recul d'isolement).\n\u2022 Steadicam / Gimbal : Apesanteur totale suivant l'acteur au c\u0153ur de labyrinthes urbains.\n\u2022 Cam\xE9ra Port\xE9e : Respiration vivante traduisant l'urgence, le r\xE9alisme brut ou la crise int\xE9rieure.\n\u2022 Grue / Bras : Amplitude a\xE9rienne embrassant le destin du personnage au sein du monde.`,
+        content: `Le mouvement de cam\xE9ra m\xE9tamorphose le temps en \xE9motion pure :
+\u2022 Panoramique : Rotation sur l'axe optique pour d\xE9voiler une surprise ou accompagner une trajectoire.
+\u2022 Travelling (Dolly) : D\xE9placement physique fluide dans le d\xE9cor (avanc\xE9e dramatique, recul d'isolement).
+\u2022 Steadicam / Gimbal : Apesanteur totale suivant l'acteur au c\u0153ur de labyrinthes urbains.
+\u2022 Cam\xE9ra Port\xE9e : Respiration vivante traduisant l'urgence, le r\xE9alisme brut ou la crise int\xE9rieure.
+\u2022 Grue / Bras : Amplitude a\xE9rienne embrassant le destin du personnage au sein du monde.`,
         tonyNotes: "Ne d\xE9placez jamais l'appareil gratuitement : le mouvement doit toujours \xEAtre motiv\xE9 par la narration."
       }
     ]
@@ -6903,19 +6974,30 @@ L'av\xE8nement du son synchronis\xE9 en 1927 (Le Chanteur de Jazz) figea d'abord
       {
         title: "1. Da Ideia ao Roteiro Cinematogr\xE1fico",
         subtitle: "Premissa, Storyline, Sinopse, Argumento e Tratamento",
-        content: `A dramaturgia cinematogr\xE1fica \xE9 uma ci\xEAncia de precis\xE3o estrutural:\n\u2022 Premissa / Logline: Uma frase condensando protagonista, incidente incitante, objetivo e antagonismo.\n\u2022 Storyline: Par\xE1grafo de 3 a 5 linhas delineando in\xEDcio, meio e cl\xEDmax da trama.\n\u2022 Sinopse: Resumo de 1 a 2 p\xE1ginas expondo a espinha dorsal dram\xE1tica sem di\xE1logos.\n\u2022 Argumento: A hist\xF3ria contada em prosa detalhada no presente do indicativo antes da divis\xE3o em cenas.\n\u2022 Escaleta (Beat Sheet): Lista sequencial de todas as cenas e batidas dram\xE1ticas do filme.`,
+        content: `A dramaturgia cinematogr\xE1fica \xE9 uma ci\xEAncia de precis\xE3o estrutural:
+\u2022 Premissa / Logline: Uma frase condensando protagonista, incidente incitante, objetivo e antagonismo.
+\u2022 Storyline: Par\xE1grafo de 3 a 5 linhas delineando in\xEDcio, meio e cl\xEDmax da trama.
+\u2022 Sinopse: Resumo de 1 a 2 p\xE1ginas expondo a espinha dorsal dram\xE1tica sem di\xE1logos.
+\u2022 Argumento: A hist\xF3ria contada em prosa detalhada no presente do indicativo antes da divis\xE3o em cenas.
+\u2022 Escaleta (Beat Sheet): Lista sequencial de todas as cenas e batidas dram\xE1ticas do filme.`,
         tonyNotes: "Se voc\xEA n\xE3o consegue explicar seu filme em uma frase forte, voc\xEA ainda n\xE3o sabe qual filme est\xE1 fazendo."
       },
       {
         title: "2. Estrutura em 3 Atos e Curva Dram\xE1tica",
         subtitle: "Mundo Ordin\xE1rio, Ponto de Virada, Midpoint e Cl\xEDmax",
-        content: `O paradigma cl\xE1ssico distribui a tens\xE3o narrativa estrategicamente:\n\u2022 Ato I (Apresenta\xE7\xE3o - 25%): Estabelecimento do mundo e falha tr\xE1gica do protagonista; Incidente Incitante que quebra a rotina; Plot Point 1 empurrando o her\xF3i para o desconhecido.\n\u2022 Ato II (Confronta\xE7\xE3o - 50%): Obst\xE1culos crescentes, aliados e inimigos; Midpoint elevando as apostas; \"Noite Escura da Alma\" onde tudo parece perdido.\n\u2022 Ato III (Resolu\xE7\xE3o - 25%): O Cl\xEDmax definitivo onde o conflito central \xE9 confrontado, seguido pela resolu\xE7\xE3o e novo equil\xEDbrio.`,
+        content: `O paradigma cl\xE1ssico distribui a tens\xE3o narrativa estrategicamente:
+\u2022 Ato I (Apresenta\xE7\xE3o - 25%): Estabelecimento do mundo e falha tr\xE1gica do protagonista; Incidente Incitante que quebra a rotina; Plot Point 1 empurrando o her\xF3i para o desconhecido.
+\u2022 Ato II (Confronta\xE7\xE3o - 50%): Obst\xE1culos crescentes, aliados e inimigos; Midpoint elevando as apostas; "Noite Escura da Alma" onde tudo parece perdido.
+\u2022 Ato III (Resolu\xE7\xE3o - 25%): O Cl\xEDmax definitivo onde o conflito central \xE9 confrontado, seguido pela resolu\xE7\xE3o e novo equil\xEDbrio.`,
         tonyNotes: "A estrutura cl\xE1ssica n\xE3o \xE9 uma pris\xE3o; \xE9 o mapa que permite voc\xEA improvisar sem se perder na floresta."
       },
       {
         title: "3. Formata\xE7\xE3o Master Scenes, Di\xE1logo e Subtexto",
         subtitle: "Cabe\xE7alho de cena, a\xE7\xE3o descritiva e a arte do n\xE3o dito",
-        content: `O roteiro profissional obedece a regras universais de formata\xE7\xE3o:\n\u2022 Cabe\xE7alho (Slugline): INT. ou EXT. / LOCA\xC7\xC3O / DIA ou NOITE (ex: INT. CAF\xC9 - DIA).\n\u2022 A\xE7\xE3o: Par\xE1grafos curtos no presente descrevendo apenas o que pode ser visto e ouvido na tela.\n\u2022 Subtexto: O que o personagem realmente quer dizer por tr\xE1s das palavras pronunciadas. Grandes di\xE1logos revelam inten\xE7\xF5es secretas, contradi\xE7\xF5es e desejos reprimidos.`,
+        content: `O roteiro profissional obedece a regras universais de formata\xE7\xE3o:
+\u2022 Cabe\xE7alho (Slugline): INT. ou EXT. / LOCA\xC7\xC3O / DIA ou NOITE (ex: INT. CAF\xC9 - DIA).
+\u2022 A\xE7\xE3o: Par\xE1grafos curtos no presente descrevendo apenas o que pode ser visto e ouvido na tela.
+\u2022 Subtexto: O que o personagem realmente quer dizer por tr\xE1s das palavras pronunciadas. Grandes di\xE1logos revelam inten\xE7\xF5es secretas, contradi\xE7\xF5es e desejos reprimidos.`,
         tonyNotes: "Cinema \xE9 imagem em primeiro lugar. Deixe o di\xE1logo apenas para o que a c\xE2mera n\xE3o puder mostrar."
       }
     ],
@@ -6923,19 +7005,30 @@ L'av\xE8nement du son synchronis\xE9 en 1927 (Le Chanteur de Jazz) figea d'abord
       {
         title: "1. From Premise to Screenplay",
         subtitle: "Loglines, Storylines, Synopsis, Treatment, and Beat Sheets",
-        content: `Screenwriting is a craft of structural discipline:\n\u2022 Logline: One sharp sentence delivering protagonist, inciting incident, core goal, and central antagonist.\n\u2022 Storyline: Concise 3 to 5-line summary highlighting beginning, middle, and climax.\n\u2022 Synopsis: 1-to-2 page overview mapping the dramatic spine in present tense without dialogue.\n\u2022 Treatment: Prose narrative walking through scenes and character beats prior to dialogue script.\n\u2022 Beat Sheet: Sequential breakdown of every scene's dramatic turn.`,
+        content: `Screenwriting is a craft of structural discipline:
+\u2022 Logline: One sharp sentence delivering protagonist, inciting incident, core goal, and central antagonist.
+\u2022 Storyline: Concise 3 to 5-line summary highlighting beginning, middle, and climax.
+\u2022 Synopsis: 1-to-2 page overview mapping the dramatic spine in present tense without dialogue.
+\u2022 Treatment: Prose narrative walking through scenes and character beats prior to dialogue script.
+\u2022 Beat Sheet: Sequential breakdown of every scene's dramatic turn.`,
         tonyNotes: "If you cannot pitch your film in a single irresistible sentence, you don't yet know what story you are telling."
       },
       {
         title: "2. Three-Act Paradigm and the Dramatic Arc",
         subtitle: "Ordinary World, Inciting Incident, Midpoint, and Climax",
-        content: `Classic dramatic structure organizes tension for maximum emotional catharsis:\n\u2022 Act I (Setup - 25%): Ordinary world, hero's fatal flaw, inciting incident breaking routine, and Plot Point 1 launching the quest.\n\u2022 Act II (Confrontation - 50%): Rising stakes, trials, midpoint shift of agency, and All Is Lost breakdown.\n\u2022 Act III (Resolution - 25%): Final showdown (Climax) where primary conflicts collide, ending in transformed equilibrium.`,
+        content: `Classic dramatic structure organizes tension for maximum emotional catharsis:
+\u2022 Act I (Setup - 25%): Ordinary world, hero's fatal flaw, inciting incident breaking routine, and Plot Point 1 launching the quest.
+\u2022 Act II (Confrontation - 50%): Rising stakes, trials, midpoint shift of agency, and All Is Lost breakdown.
+\u2022 Act III (Resolution - 25%): Final showdown (Climax) where primary conflicts collide, ending in transformed equilibrium.`,
         tonyNotes: "Structure is not a formula; it is the scaffolding that allows inspiration to reach towering heights."
       },
       {
         title: "3. Master Scene Formatting, Dialogue, and Subtext",
         subtitle: "Sluglines, action blocks, and the art of unsaid truths",
-        content: `Professional screenplay mechanics rely on standardized clarity:\n\u2022 Slugline: INT. or EXT. / LOCATION / DAY or NIGHT (e.g., INT. DINER - NIGHT).\n\u2022 Action Lines: Lean active descriptions written strictly in present tense describing only what can be seen and heard.\n\u2022 Subtext: The emotional undercurrent beneath spoken lines. Great cinema relies on characters using words to mask their vulnerability.`,
+        content: `Professional screenplay mechanics rely on standardized clarity:
+\u2022 Slugline: INT. or EXT. / LOCATION / DAY or NIGHT (e.g., INT. DINER - NIGHT).
+\u2022 Action Lines: Lean active descriptions written strictly in present tense describing only what can be seen and heard.
+\u2022 Subtext: The emotional undercurrent beneath spoken lines. Great cinema relies on characters using words to mask their vulnerability.`,
         tonyNotes: "Film is primarily visual storytelling. Reserve dialogue for moments where pictures alone cannot convey the soul."
       }
     ],
@@ -6943,19 +7036,30 @@ L'av\xE8nement du son synchronis\xE9 en 1927 (Le Chanteur de Jazz) figea d'abord
       {
         title: "1. De la Idea al Guion Cinematogr\xE1fico",
         subtitle: "Premisa, Storyline, Sinopsis, Argumento y Escaleta",
-        content: `La dramaturgia cinematogr\xE1fica exige precisi\xF3n narrativa:\n\u2022 Logline: Una frase contundente resumiendo protagonista, incidente incitante, objetivo y antagonista.\n\u2022 Storyline: S\xEDntesis de 3 a 5 l\xEDneas con inicio, nudo y desenlace.\n\u2022 Sinopsis: Resumen de 1 a 2 p\xE1ginas con la columna vertebral de la historia.\n\u2022 Argumento: Desarrollo detallado de la narraci\xF3n en prosa antes de escribir di\xE1logos.\n\u2022 Escaleta (Beat Sheet): Lista secuencial de todas las escenas del largometraje o corto.`,
+        content: `La dramaturgia cinematogr\xE1fica exige precisi\xF3n narrativa:
+\u2022 Logline: Una frase contundente resumiendo protagonista, incidente incitante, objetivo y antagonista.
+\u2022 Storyline: S\xEDntesis de 3 a 5 l\xEDneas con inicio, nudo y desenlace.
+\u2022 Sinopsis: Resumen de 1 a 2 p\xE1ginas con la columna vertebral de la historia.
+\u2022 Argumento: Desarrollo detallado de la narraci\xF3n en prosa antes de escribir di\xE1logos.
+\u2022 Escaleta (Beat Sheet): Lista secuencial de todas las escenas del largometraje o corto.`,
         tonyNotes: "Si no puedes resumir tu historia en una frase inolvidable, a\xFAn no has encontrado su coraz\xF3n."
       },
       {
         title: "2. Estructura en 3 Actos y Tensi\xF3n Dram\xE1tica",
         subtitle: "Mundo Ordinario, Punto de Giro, Midpoint y Cl\xEDmax",
-        content: `El paradigma cl\xE1sico organiza la emoci\xF3n del espectador:\n\u2022 Acto I (Planteamiento - 25%): Mundo ordinario, carencia del h\xE9roe, incidente incitante y primer giro dram\xE1tico.\n\u2022 Acto II (Confrontaci\xF3n - 50%): Pruebas en aumento, punto medio que eleva la apuesta y noche oscura del alma.\n\u2022 Acto III (Resoluci\xF3n - 25%): Cl\xEDmax decisivo donde el dilema central estalla y nuevo equilibrio final.`,
+        content: `El paradigma cl\xE1sico organiza la emoci\xF3n del espectador:
+\u2022 Acto I (Planteamiento - 25%): Mundo ordinario, carencia del h\xE9roe, incidente incitante y primer giro dram\xE1tico.
+\u2022 Acto II (Confrontaci\xF3n - 50%): Pruebas en aumento, punto medio que eleva la apuesta y noche oscura del alma.
+\u2022 Acto III (Resoluci\xF3n - 25%): Cl\xEDmax decisivo donde el dilema central estalla y nuevo equilibrio final.`,
         tonyNotes: "La estructura cl\xE1sica es una br\xFAjula; te permite explorar territorios salvajes sin extraviarte."
       },
       {
         title: "3. Formato Master Scenes, Di\xE1logo y Subtexto",
         subtitle: "Encabezados de escena, acci\xF3n y el poder del silencio",
-        content: `El est\xE1ndar profesional de guion exige rigor:\n\u2022 Encabezado (Slugline): INT. o EXT. / LOCALIZACI\xD3N / D\xCDA o NOCHE.\n\u2022 Acci\xF3n: P\xE1rrafos breves en presente describiendo solo lo visible y audible.\n\u2022 Subtexto: Lo que el personaje siente pero no pronuncia. El gran cine vive de miradas y contradicciones.`,
+        content: `El est\xE1ndar profesional de guion exige rigor:
+\u2022 Encabezado (Slugline): INT. o EXT. / LOCALIZACI\xD3N / D\xCDA o NOCHE.
+\u2022 Acci\xF3n: P\xE1rrafos breves en presente describiendo solo lo visible y audible.
+\u2022 Subtexto: Lo que el personaje siente pero no pronuncia. El gran cine vive de miradas y contradicciones.`,
         tonyNotes: "El cine es visual. Deja los di\xE1logos para cuando la imagen por s\xED sola no alcance a expresar el misterio."
       }
     ],
@@ -6963,19 +7067,30 @@ L'av\xE8nement du son synchronis\xE9 en 1927 (Le Chanteur de Jazz) figea d'abord
       {
         title: "1. De l'Id\xE9e au Sc\xE9nario de Film",
         subtitle: "Pitch, Logline, Synopsis, Traitement et S\xE9quencier",
-        content: `La dramaturgie filmique repose sur une rigueur architecturale :\n\u2022 Logline : Une phrase cisel\xE9e r\xE9sumant protagoniste, \xE9v\xE9nement d\xE9clencheur, enjeu et antagonisme.\n\u2022 Storyline : R\xE9sum\xE9 percutant en 3 \xE0 5 lignes retra\xE7ant exposition, n\u0153ud et r\xE9solution.\n\u2022 Synopsis : R\xE9cit au pr\xE9sent de 1 \xE0 2 pages articulant l'armature dramatique sans dialogues.\n\u2022 Traitement : R\xE9cit romanesque d\xE9taill\xE9 sc\xE8ne par sc\xE8ne avant l'\xE9criture de la continuit\xE9 dialogu\xE9e.\n\u2022 S\xE9quencier (Beat Sheet) : Liste num\xE9rot\xE9e de toutes les sc\xE8nes et battements dramatiques.`,
+        content: `La dramaturgie filmique repose sur une rigueur architecturale :
+\u2022 Logline : Une phrase cisel\xE9e r\xE9sumant protagoniste, \xE9v\xE9nement d\xE9clencheur, enjeu et antagonisme.
+\u2022 Storyline : R\xE9sum\xE9 percutant en 3 \xE0 5 lignes retra\xE7ant exposition, n\u0153ud et r\xE9solution.
+\u2022 Synopsis : R\xE9cit au pr\xE9sent de 1 \xE0 2 pages articulant l'armature dramatique sans dialogues.
+\u2022 Traitement : R\xE9cit romanesque d\xE9taill\xE9 sc\xE8ne par sc\xE8ne avant l'\xE9criture de la continuit\xE9 dialogu\xE9e.
+\u2022 S\xE9quencier (Beat Sheet) : Liste num\xE9rot\xE9e de toutes les sc\xE8nes et battements dramatiques.`,
         tonyNotes: "Si vous ne parvenez pas \xE0 r\xE9sumer votre film en une phrase percutante, vous ne cernez pas encore son essence."
       },
       {
         title: "2. Structure en 3 Actes et Trajectoire Dramatique",
         subtitle: "Monde Ordinaire, Incident D\xE9clencheur, Midpoint et Climax",
-        content: `La structure classique orchestre l'intensit\xE9 \xE9motionnelle du public :\n\u2022 Acte I (Exposition - 25%) : Monde ordinaire, faille intime du protagoniste, incident perturbateur et franchissement du seuil.\n\u2022 Acte II (Confrontation - 50%) : Obstacles croissants, pivot du midpoint et descente aux enfers.\n\u2022 Acte III (R\xE9solution - 25%) : Climax lib\xE9rateur scellant le sort des personnages et nouvel \xE9quilibre.`,
+        content: `La structure classique orchestre l'intensit\xE9 \xE9motionnelle du public :
+\u2022 Acte I (Exposition - 25%) : Monde ordinaire, faille intime du protagoniste, incident perturbateur et franchissement du seuil.
+\u2022 Acte II (Confrontation - 50%) : Obstacles croissants, pivot du midpoint et descente aux enfers.
+\u2022 Acte III (R\xE9solution - 25%) : Climax lib\xE9rateur scellant le sort des personnages et nouvel \xE9quilibre.`,
         tonyNotes: "La structure n'est pas un carcan ; elle offre au contraire la libert\xE9 d'explorer en toute confiance."
       },
       {
         title: "3. Format Master Scenes, Dialogues et Sous-Texte",
         subtitle: "Intitul\xE9s de s\xE9quences, didascalies et l'art de l'implicite",
-        content: `La pr\xE9sentation d'un sc\xE9nario professionnel ob\xE9it \xE0 des normes immuables :\n\u2022 En-t\xEAte de sc\xE8ne : INT. ou EXT. / LIEU / JOUR ou NUIT (ex: INT. CAF\xC9 - JOUR).\n\u2022 Didascalies : Paragraphes courts d\xE9crivant uniquement ce que l'\u0153il voit et ce que l'oreille per\xE7oit.\n\u2022 Sous-Texte : La v\xE9rit\xE9 cach\xE9e derri\xE8re les mots prononc\xE9s. Les plus grands dialogues d\xE9voilent les secrets enfouis.`,
+        content: `La pr\xE9sentation d'un sc\xE9nario professionnel ob\xE9it \xE0 des normes immuables :
+\u2022 En-t\xEAte de sc\xE8ne : INT. ou EXT. / LIEU / JOUR ou NUIT (ex: INT. CAF\xC9 - JOUR).
+\u2022 Didascalies : Paragraphes courts d\xE9crivant uniquement ce que l'\u0153il voit et ce que l'oreille per\xE7oit.
+\u2022 Sous-Texte : La v\xE9rit\xE9 cach\xE9e derri\xE8re les mots prononc\xE9s. Les plus grands dialogues d\xE9voilent les secrets enfouis.`,
         tonyNotes: "Le cin\xE9ma est avant tout un art visuel. R\xE9servez les mots \xE0 ce que la lumi\xE8re seule ne peut r\xE9v\xE9ler."
       }
     ]
@@ -6985,19 +7100,28 @@ L'av\xE8nement du son synchronis\xE9 en 1927 (Le Chanteur de Jazz) figea d'abord
       {
         title: "1. Camadas 1, 2 e 3: Narrativa, Personagens e Espa\xE7o",
         subtitle: "A disseca\xE7\xE3o do enredo, arco de transforma\xE7\xE3o e geografia dram\xE1tica",
-        content: `O m\xE9todo CINELAB disseca a obra em 6 camadas anal\xEDticas:\n\u2022 Camada 1 (Narrativa): Estrutura causal, elipses, pontos de virada e o tema central subjacente.\n\u2022 Camada 2 (Personagens): Desejo consciente versus necessidade inconsciente, contradi\xE7\xF5es e motiva\xE7\xF5es morais.\n\u2022 Camada 3 (Espa\xE7o e Cenografia): Como os ambientes, objetos e arquitetura expressam a psicologia dos personagens e a atmosfera social.`,
+        content: `O m\xE9todo CINELAB disseca a obra em 6 camadas anal\xEDticas:
+\u2022 Camada 1 (Narrativa): Estrutura causal, elipses, pontos de virada e o tema central subjacente.
+\u2022 Camada 2 (Personagens): Desejo consciente versus necessidade inconsciente, contradi\xE7\xF5es e motiva\xE7\xF5es morais.
+\u2022 Camada 3 (Espa\xE7o e Cenografia): Como os ambientes, objetos e arquitetura expressam a psicologia dos personagens e a atmosfera social.`,
         tonyNotes: "O espa\xE7o nunca \xE9 neutro em cinema: ele \xE9 a extens\xE3o emocional da alma dos personagens."
       },
       {
         title: "2. Camadas 4, 5 e 6: Luz, Som e Montagem",
         subtitle: "Fotografia, desenho sonoro e a m\xE9trica r\xEDtmica do tempo f\xEDlmico",
-        content: `As camadas perceptivas constroem a experi\xEAncia imersiva sensorial:\n\u2022 Camada 4 (Imagem e Fotografia): Paleta de cores, contraste chiaroscuro, textura de lentes e escolhas de enquadramento.\n\u2022 Camada 5 (Desenho de Som): Paisagens ac\xFAsticas, ru\xEDdo de sala, foley, desenho de di\xE1logos e partitura musical.\n\u2022 Camada 6 (Montagem e Ritmo): Cortes invis\xEDveis, justa-posi\xE7\xE3o dial\xE9tica, tempo de perman\xEAncia no plano e ritmo interno da cena.`,
+        content: `As camadas perceptivas constroem a experi\xEAncia imersiva sensorial:
+\u2022 Camada 4 (Imagem e Fotografia): Paleta de cores, contraste chiaroscuro, textura de lentes e escolhas de enquadramento.
+\u2022 Camada 5 (Desenho de Som): Paisagens ac\xFAsticas, ru\xEDdo de sala, foley, desenho de di\xE1logos e partitura musical.
+\u2022 Camada 6 (Montagem e Ritmo): Cortes invis\xEDveis, justaposi\xE7\xE3o dial\xE9tica, tempo de perman\xEAncia no plano e ritmo interno da cena.`,
         tonyNotes: "A montagem e o som s\xE3o onde a obra ganha respira\xE7\xE3o e batimento card\xEDaco."
       },
       {
         title: "3. S\xEDntese e Aplica\xE7\xE3o na Dire\xE7\xE3o Autoral",
         subtitle: "Como utilizar a an\xE1lise cr\xEDtica para decupar e dirigir seus pr\xF3prios filmes",
-        content: `Analisar um filme como realizador difere radicalmente do olhar do espectador passivo:\n\u2022 Disseca\xE7\xE3o de Decupagem: Como o diretor distribuiu as coberturas de c\xE2mera para orientar a aten\xE7\xE3o da plateia.\n\u2022 Dire\xE7\xE3o de Atores: O uso de a\xE7\xF5es f\xEDsicas e pausas para gerar tens\xE3o em vez de explica\xE7\xF5es verbais.\n\u2022 Da Refer\xEAncia \xE0 Cria\xE7\xE3o Original: Como assimilar solu\xE7\xF5es est\xE9ticas de mestres do cinema e transform\xE1-las em linguagem pessoal.`,
+        content: `Analisar um filme como realizador difere radicalmente do olhar do espectador passivo:
+\u2022 Disseca\xE7\xE3o de Decupagem: Como o diretor distribuiu as coberturas de c\xE2mera para orientar a aten\xE7\xE3o da plateia.
+\u2022 Dire\xE7\xE3o de Atores: O uso de a\xE7\xF5es f\xEDsicas e pausas para gerar tens\xE3o em vez de explica\xE7\xF5es verbais.
+\u2022 Da Refer\xEAncia \xE0 Cria\xE7\xE3o Original: Como assimilar solu\xE7\xF5es est\xE9ticas de mestres do cinema e transform\xE1-las em linguagem pessoal.`,
         tonyNotes: "Aprender a assistir filmes em 6 camadas \xE9 o passo definitivo para se tornar um realizador consciente."
       }
     ],
@@ -7005,19 +7129,28 @@ L'av\xE8nement du son synchronis\xE9 en 1927 (Le Chanteur de Jazz) figea d'abord
       {
         title: "1. Layers 1, 2 & 3: Narrative, Character, and Space",
         subtitle: "Dissecting story spine, character transformational arcs, and scenic geography",
-        content: `The CINELAB framework dissects films through 6 integrated analytical dimensions:\n\u2022 Layer 1 (Narrative): Causal plotting, narrative ellipses, major turning points, and governing thematic premise.\n\u2022 Layer 2 (Characters): Conscious want versus unconscious psychological need, moral flaws, and subtext.\n\u2022 Layer 3 (Space & Production Design): How architecture, decor, and spatial containment embody character psychology.`,
+        content: `The CINELAB framework dissects films through 6 integrated analytical dimensions:
+\u2022 Layer 1 (Narrative): Causal plotting, narrative ellipses, major turning points, and governing thematic premise.
+\u2022 Layer 2 (Characters): Conscious want versus unconscious psychological need, moral flaws, and subtext.
+\u2022 Layer 3 (Space & Production Design): How architecture, decor, and spatial containment embody character psychology.`,
         tonyNotes: "Scenic space is never decorative in true cinema: it serves as the physical exteriorization of character dilemmas."
       },
       {
         title: "2. Layers 4, 5 & 6: Visuals, Sound, and Editing",
         subtitle: "Cinematography, soundscapes, and the temporal heartbeat of the cut",
-        content: `Sensory layers forge the visceral emotional engagement of the viewer:\n\u2022 Layer 4 (Cinematography & Light): Color palettes, tonal contrast, lens focal lengths, and camera proximity.\n\u2022 Layer 5 (Sound Design): Room tone, environmental foley, sonic point of view, and atmospheric musical score.\n\u2022 Layer 6 (Editing & Pacing): Invisible cutting, dialectic juxtapositions, shot duration, and scene rhythm.`,
+        content: `Sensory layers forge the visceral emotional engagement of the viewer:
+\u2022 Layer 4 (Cinematography & Light): Color palettes, tonal contrast, lens focal lengths, and camera proximity.
+\u2022 Layer 5 (Sound Design): Room tone, environmental foley, sonic point of view, and atmospheric musical score.
+\u2022 Layer 6 (Editing & Pacing): Invisible cutting, dialectic juxtapositions, shot duration, and scene rhythm.`,
         tonyNotes: "Picture edit and sound design are where the movie finds its pulse and organic respiration."
       },
       {
         title: "3. Directorial Synthesis and Practical Execution",
         subtitle: "Translating critical deconstruction into confident personal film directing",
-        content: `Analyzing films through a director's lens unlocks mastery of the craft:\n\u2022 Breakdown Decoupage: Unraveling how masters orchestrate camera angles to control audience gaze.\n\u2022 Actor Direction: Guiding physical blocking and subtextual pauses rather than relying on expositional lines.\n\u2022 From Homage to Voice: Synthesizing classical master techniques into an authentic, original auteur vision.`,
+        content: `Analyzing films through a director's lens unlocks mastery of the craft:
+\u2022 Breakdown Decoupage: Unraveling how masters orchestrate camera angles to control audience gaze.
+\u2022 Actor Direction: Guiding physical blocking and subtextual pauses rather than relying on expositional lines.
+\u2022 From Homage to Voice: Synthesizing classical master techniques into an authentic, original auteur vision.`,
         tonyNotes: "Mastering 6-layer film analysis transforms you from a consumer of movies into a conscious creator of cinema."
       }
     ],
@@ -7025,19 +7158,28 @@ L'av\xE8nement du son synchronis\xE9 en 1927 (Le Chanteur de Jazz) figea d'abord
       {
         title: "1. Capas 1, 2 y 3: Narrativa, Personajes y Espacio",
         subtitle: "El an\xE1lisis de la trama, arco de transformaci\xF3n y geograf\xEDa dram\xE1tica",
-        content: `El m\xE9todo CINELAB desglosa la obra cinematogr\xE1fica en 6 capas anal\xEDticas:\n\u2022 Capa 1 (Narrativa): Causalidad, elipsis temporales, puntos de giro y premisa tem\xE1tica.\n\u2022 Capa 2 (Personajes): Deseo consciente frente a necesidad interna, contradicciones y subtexto.\n\u2022 Capa 3 (Espacio y Escenograf\xEDa): C\xF3mo el decorado, los objetos y la arquitectura expresan los conflictos del personaje.`,
+        content: `El m\xE9todo CINELAB desglosa la obra cinematogr\xE1fica en 6 capas anal\xEDticas:
+\u2022 Capa 1 (Narrativa): Causalidad, elipsis temporales, puntos de giro y premisa tem\xE1tica.
+\u2022 Capa 2 (Personajes): Deseo consciente frente a necesidad interna, contradicciones y subtexto.
+\u2022 Capa 3 (Espacio y Escenograf\xEDa): C\xF3mo el decorado, los objetos y la arquitectura expresan los conflictos del personaje.`,
         tonyNotes: "El espacio nunca es accesorio en el cine: es el reflejo exterior de las batallas interiores."
       },
       {
         title: "2. Capas 4, 5 y 6: Luz, Sonido y Montaje",
         subtitle: "Fotograf\xEDa, dise\xF1o sonoro y el comp\xE1s r\xEDtmico del tiempo f\xEDlmico",
-        content: `Las capas sensoriales sumergen al espectador en la experiencia f\xEDlmica:\n\u2022 Capa 4 (Imagen y Fotograf\xEDa): Paletas de color, claroscuro, lentes y encuadres.\n\u2022 Capa 5 (Dise\xF1o de Sonido): Ambientes ac\xFAsticos, foley, texturas sonoras y banda sonora.\n\u2022 Capa 6 (Montaje y Ritmo): Cortes continuos, yuxtaposici\xF3n dial\xE9ctica y tempo dram\xE1tico.`,
+        content: `Las capas sensoriales sumergen al espectador en la experiencia f\xEDlmica:
+\u2022 Capa 4 (Imagen y Fotograf\xEDa): Paletas de color, claroscuro, lentes y encuadres.
+\u2022 Capa 5 (Dise\xF1o de Sonido): Ambientes ac\xFAsticos, foley, texturas sonoras y banda sonora.
+\u2022 Capa 6 (Montaje y Ritmo): Cortes continuos, yuxtaposici\xF3n dial\xE9ctica y tempo dram\xE1tico.`,
         tonyNotes: "El montaje y el sonido son el coraz\xF3n y los pulmones de cualquier obra audiovisual."
       },
       {
         title: "3. S\xEDntesis y Aplicaci\xF3n en la Direcci\xF3n de Cine",
         subtitle: "C\xF3mo utilizar el an\xE1lisis cr\xEDtico para decupar y rodar tus propias obras",
-        content: `Aprender a mirar como director cambia la forma de concebir historias:\n\u2022 Desglose T\xE9cnico: C\xF3mo el cineasta organiza las tomas para cautivar la atenci\xF3n del espectador.\n\u2022 Direcci\xF3n de Actores: El valor de las acciones f\xEDsicas y los silencios frente a los di\xE1logos explicativos.\n\u2022 De la Referencia a la Voz Propia: Asimilar las t\xE9cnicas de los grandes maestros para crear tu propio estilo.`,
+        content: `Aprender a mirar como director cambia la forma de concebir historias:
+\u2022 Desglose T\xE9cnico: C\xF3mo el cineasta organiza las tomas para cautivar la atenci\xF3n del espectador.
+\u2022 Direcci\xF3n de Actores: El valor de las acciones f\xEDsicas y los silencios frente a los di\xE1logos explicativos.
+\u2022 De la Referencia a la Voz Propia: Asimilar las t\xE9cnicas de los grandes maestros para crear tu propio estilo.`,
         tonyNotes: "Dominar el an\xE1lisis en 6 capas es la llave para pasar de admirador a realizador."
       }
     ],
@@ -7045,19 +7187,28 @@ L'av\xE8nement du son synchronis\xE9 en 1927 (Le Chanteur de Jazz) figea d'abord
       {
         title: "1. Couches 1, 2 & 3 : R\xE9cit, Personnages et Espace",
         subtitle: "L'architecture du sc\xE9nario, l'arc transformationnel et la g\xE9ographie sc\xE9nique",
-        content: `La m\xE9thode analytique du CINELAB diss\xE8que le film selon 6 dimensions interd\xE9pendantes :\n\u2022 Couche 1 (R\xE9cit) : Cha\xEEne de causalit\xE9, ellipses narratives, n\u0153uds dramatiques et vision th\xE9matique.\n\u2022 Couche 2 (Personnages) : Objectif conscient contre faille psychologique inconsciente, dilemmes et contradictions.\n\u2022 Couche 3 (Espace & D\xE9cors) : Comment l'architecture, les volumes et les accessoires mat\xE9rialisent l'\xE9tat d'esprit des protagonistes.`,
+        content: `La m\xE9thode analytique du CINELAB diss\xE8que le film selon 6 dimensions interd\xE9pendantes :
+\u2022 Couche 1 (R\xE9cit) : Cha\xEEne de causalit\xE9, ellipses narratives, n\u0153uds dramatiques et vision th\xE9matique.
+\u2022 Couche 2 (Personnages) : Objectif conscient contre faille psychologique inconsciente, dilemmes et contradictions.
+\u2022 Couche 3 (Espace & D\xE9cors) : Comment l'architecture, les volumes et les accessoires mat\xE9rialisent l'\xE9tat d'esprit des protagonistes.`,
         tonyNotes: "L'espace filmique n'est jamais un simple fond : il est le prolongement plastique de l'\xE2me du personnage."
       },
       {
         title: "2. Couches 4, 5 & 6 : Image, Son et Rythme de Montage",
         subtitle: "Photographie, atmosph\xE8res sonores et m\xE9trique temporelle du montage",
-        content: `Les couches sensorielles cr\xE9ent l'immersion po\xE9tique et la tension vibrante :\n\u2022 Couche 4 (Image & Lumi\xE8re) : Palette de teintes, contrastes clair-obscur, focales optiques et composition.\n\u2022 Couche 5 (Sound Design) : Sons d'ambiance, foley, textures sonores spatialis\xE9es et partition musicale.\n\u2022 Couche 6 (Montage & Tempo) : Raccords fluides, dialectique du cut, dur\xE9es des plans et souffle des sc\xE8nes.`,
+        content: `Les couches sensorielles cr\xE9ent l'immersion po\xE9tique et la tension vibrante :
+\u2022 Couche 4 (Image & Lumi\xE8re) : Palette de teintes, contrastes clair-obscur, focales optiques et composition.
+\u2022 Couche 5 (Sound Design) : Sons d'ambiance, foley, textures sonores spatialis\xE9es et partition musicale.
+\u2022 Couche 6 (Montage & Tempo) : Raccords fluides, dialectique du cut, dur\xE9es des plans et souffle des sc\xE8nes.`,
         tonyNotes: "C'est dans le dialogue entre le son et le montage que le film trouve son battement de c\u0153ur."
       },
       {
         title: "3. Synth\xE8se et Pratique de la R\xE9alisation",
         subtitle: "De la d\xE9construction critique \xE0 l'affirmation de son geste de cin\xE9aste",
-        content: `Analyser une \u0153uvre avec un regard de metteur en sc\xE8ne ouvre les portes de la cr\xE9ation concr\xE8te :\n\u2022 D\xE9coupage Technique : Comprendre comment le r\xE9alisateur guide le regard et l'\xE9motion du spectateur.\n\u2022 Direction d'Acteurs : Travailler les gestes physiques et les silences plut\xF4t que de tout surcharger de dialogues.\n\u2022 De l'Hommage \xE0 la Voix Personnelle : S'approprier les le\xE7ons des ma\xEEtres pour faire \xE9merger son regard singulier.`,
+        content: `Analyser une \u0153uvre avec un regard de metteur en sc\xE8ne ouvre les portes de la cr\xE9ation concr\xE8te :
+\u2022 D\xE9coupage Technique : Comprendre comment le r\xE9alisateur guide le regard et l'\xE9motion du spectateur.
+\u2022 Direction d'Acteurs : Travailler les gestes physiques et les silences plut\xF4t que de tout surcharger de dialogues.
+\u2022 De l'Hommage \xE0 la Voix Personnelle : S'approprier les le\xE7ons des ma\xEEtres pour faire \xE9merger son regard singulier.`,
         tonyNotes: "Ma\xEEtriser l'analyse en 6 couches transforme le spectateur passif en un cr\xE9ateur de cin\xE9ma accompli."
       }
     ]
@@ -7066,18 +7217,16 @@ L'av\xE8nement du son synchronis\xE9 en 1927 (Le Chanteur de Jazz) figea d'abord
 
 // server.ts
 loadDatabase();
-initSupabaseData().catch(() => {});
+initSupabaseData().catch(() => {
+});
 var app = express();
 var PORT = 3e3;
-
-// Garante que o estado persistente do Supabase esteja carregado em rotas de API
 app.use(async (req, res, next) => {
-  if (req.path.startsWith('/api/')) {
+  if (req.path.startsWith("/api/")) {
     await initSupabaseData();
   }
   next();
 });
-
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
@@ -7108,20 +7257,20 @@ function getWritableDir(...subpaths) {
       fs2.mkdirSync(localPath, { recursive: true });
     }
     const testFile = path2.join(localPath, `.write_test_${Date.now()}_${Math.random()}`);
-    fs2.writeFileSync(testFile, 'ok');
+    fs2.writeFileSync(testFile, "ok");
     fs2.unlinkSync(testFile);
     return localPath;
   } catch {
-    const tmpPath = path2.join(os.tmpdir(), 'cinelab', ...subpaths);
+    const tmpPath = path2.join(os.tmpdir(), "cinelab", ...subpaths);
     try {
       if (!fs2.existsSync(tmpPath)) {
         fs2.mkdirSync(tmpPath, { recursive: true });
       }
-    } catch {}
+    } catch {
+    }
     return tmpPath;
   }
 }
-
 var uploadsDir = getWritableDir("public", "uploads", "videos");
 var imagesUploadDir = getWritableDir("public", "uploads", "images");
 var apostilasUploadDir = getWritableDir("public", "uploads", "apostilas");
@@ -7174,18 +7323,17 @@ app.get("/uploads/apostilas/:filename", (req, res, next) => {
   res.setHeader("Content-Type", "application/pdf");
   const directCandidates = [
     path2.join(apostilasUploadDir, filename),
-    path2.join(os.tmpdir(), 'cinelab', 'public', 'uploads', 'apostilas', filename),
-    path2.join(process.cwd(), 'public', 'uploads', 'apostilas', filename),
+    path2.join(os.tmpdir(), "cinelab", "public", "uploads", "apostilas", filename),
+    path2.join(process.cwd(), "public", "uploads", "apostilas", filename),
     path2.join(backupApostilasDir, filename),
-    path2.join(os.tmpdir(), 'cinelab', 'data', 'apostilas_backup', filename),
-    path2.join(process.cwd(), 'data', 'apostilas_backup', filename),
+    path2.join(os.tmpdir(), "cinelab", "data", "apostilas_backup", filename),
+    path2.join(process.cwd(), "data", "apostilas_backup", filename)
   ];
   for (const p of directCandidates) {
     if (fs2.existsSync(p)) {
       return res.sendFile(p);
     }
   }
-
   const modMatch = filename.match(/modulo-0?(\d+)/i);
   if (modMatch) {
     const modNum = parseInt(modMatch[1], 10);
@@ -7199,12 +7347,15 @@ app.get("/uploads/apostilas/:filename", (req, res, next) => {
       path2.join(materiaisDir, `cinelab-apostila-0${modNum}.pdf`),
       path2.join(materiaisDir, `cinelab-apostila-10.pdf`),
       path2.join(materiaisDir, `cinelab-apostila-010.pdf`),
-      path2.join(process.cwd(), 'public', 'materiais', `cinelab-apostila-${numStr}.pdf`),
-      path2.join(process.cwd(), 'public', 'materiais', `cinelab-apostila-0${modNum}.pdf`),
+      path2.join(process.cwd(), "public", "materiais", `cinelab-apostila-${numStr}.pdf`),
+      path2.join(process.cwd(), "public", "materiais", `cinelab-apostila-0${modNum}.pdf`)
     ];
     for (const c of candidates) {
       if (fs2.existsSync(c)) {
-        try { fs2.copyFileSync(c, path2.join(apostilasUploadDir, filename)); } catch {}
+        try {
+          fs2.copyFileSync(c, path2.join(apostilasUploadDir, filename));
+        } catch {
+        }
         return res.sendFile(c);
       }
     }
@@ -7215,32 +7366,27 @@ app.get("/uploads/apostilas/:filename", (req, res, next) => {
     const candidates = [
       path2.join(backupApostilasDir, `apostila-bonus-0${bonusNum}.pdf`),
       path2.join(backupApostilasDir, `apostila-bonus-${bonusNum}.pdf`),
-      path2.join(os.tmpdir(), 'cinelab', 'data', 'apostilas_backup', `apostila-bonus-0${bonusNum}.pdf`),
-      path2.join(os.tmpdir(), 'cinelab', 'data', 'apostilas_backup', `apostila-bonus-${bonusNum}.pdf`),
+      path2.join(os.tmpdir(), "cinelab", "data", "apostilas_backup", `apostila-bonus-0${bonusNum}.pdf`),
+      path2.join(os.tmpdir(), "cinelab", "data", "apostilas_backup", `apostila-bonus-${bonusNum}.pdf`),
       path2.join(
         materiaisDir,
-        bonusNum === 1
-          ? 'cinelab-bonus-01-glossario-planos.pdf'
-          : bonusNum === 2
-          ? 'cinelab-bonus-02-glossario-roteiro.pdf'
-          : 'cinelab-bonus-03-analise-filmica.pdf'
+        bonusNum === 1 ? "cinelab-bonus-01-glossario-planos.pdf" : bonusNum === 2 ? "cinelab-bonus-02-glossario-roteiro.pdf" : "cinelab-bonus-03-analise-filmica.pdf"
       ),
       path2.join(
         process.cwd(),
-        'public',
-        'materiais',
-        bonusNum === 1
-          ? 'cinelab-bonus-01-glossario-planos.pdf'
-          : bonusNum === 2
-          ? 'cinelab-bonus-02-glossario-roteiro.pdf'
-          : 'cinelab-bonus-03-analise-filmica.pdf'
+        "public",
+        "materiais",
+        bonusNum === 1 ? "cinelab-bonus-01-glossario-planos.pdf" : bonusNum === 2 ? "cinelab-bonus-02-glossario-roteiro.pdf" : "cinelab-bonus-03-analise-filmica.pdf"
       ),
       path2.join(materiaisDir, `cinelab-bonus-0${bonusNum}.pdf`),
-      path2.join(process.cwd(), 'public', 'materiais', `cinelab-bonus-0${bonusNum}.pdf`),
+      path2.join(process.cwd(), "public", "materiais", `cinelab-bonus-0${bonusNum}.pdf`)
     ];
     for (const c of candidates) {
       if (fs2.existsSync(c)) {
-        try { fs2.copyFileSync(c, path2.join(apostilasUploadDir, filename)); } catch {}
+        try {
+          fs2.copyFileSync(c, path2.join(apostilasUploadDir, filename));
+        } catch {
+        }
         return res.sendFile(c);
       }
     }
@@ -7392,7 +7538,10 @@ var chunkStorage = multer.diskStorage({
     const uploadId = String(rawId).replace(/[^a-zA-Z0-9_-]/g, "_");
     const sessionDir = path2.join(getWritableDir("data", "temp_chunks"), uploadId);
     if (!fs2.existsSync(sessionDir)) {
-      try { fs2.mkdirSync(sessionDir, { recursive: true }); } catch {}
+      try {
+        fs2.mkdirSync(sessionDir, { recursive: true });
+      } catch {
+      }
     }
     cb(null, sessionDir);
   },
@@ -7506,9 +7655,9 @@ app.get("/api/course/public-info", (req, res) => {
     bonusModulesCount: db2.bonusApostilas.length,
     apostilas: db2.apostilas.map((a) => {
       const mod = a.moduleId || a.number || 1;
-      const pad = mod < 10 ? '0' + mod : '' + mod;
+      const pad = mod < 10 ? "0" + mod : "" + mod;
       const canonicalPdf = `/materiais/cinelab-apostila-${pad}.pdf`;
-      const isCorrupted = !a.pdfUrl || a.pdfUrl.includes('1790444') || a.pdfUrl.includes('1790684') || a.pdfUrl.includes('1790652');
+      const isCorrupted = !a.pdfUrl || a.pdfUrl.includes("1790444") || a.pdfUrl.includes("1790684") || a.pdfUrl.includes("1790652");
       const safePdf = isCorrupted ? canonicalPdf : a.pdfUrl;
       const realPages = { 1: 8, 2: 52, 3: 7, 4: 6, 5: 6, 6: 6, 7: 6, 8: 6, 9: 6, 10: 6 };
       const pages = realPages[mod] || a.pagesCount || a.totalPages || 4;
@@ -7532,25 +7681,19 @@ app.get("/api/course/public-info", (req, res) => {
     bonusApostilas: db2.bonusApostilas.map((b) => {
       const requiredModule = b.requiredModule || (b.number === 1 || b.number === 2 ? 3 : 6);
       const timeline = calculateModuleTimeline(requiredModule);
-      const defaultPages = b.number === 1 ? 30 : (b.number === 3 ? 27 : 29);
-      const canonicalPdf = b.number === 1
-        ? '/materiais/cinelab-bonus-01-glossario-planos.pdf'
-        : (b.number === 3 ? '/materiais/cinelab-bonus-03-analise-filmica.pdf' : '/materiais/cinelab-bonus-02-glossario-roteiro.pdf');
-      const canonicalTitle = b.number === 1
-        ? 'Glossário Completo de Planos'
-        : (b.number === 3 ? 'Método de Análise Fílmica em 6 Camadas' : 'Glossário Completo de Roteiro');
-      const safePdf = (!b.pdfUrl || b.pdfUrl.includes('1791222') || b.pdfUrl.includes('uploads/apostilas') || b.pdfUrl.includes('1790684'))
-        ? canonicalPdf
-        : b.pdfUrl;
-      const safePages = (b.pagesCount && b.pagesCount !== 4 && b.pagesCount !== 24 && b.pagesCount !== 96 && b.pagesCount !== 104) ? b.pagesCount : defaultPages;
+      const defaultPages = b.number === 1 ? 30 : b.number === 3 ? 27 : 29;
+      const canonicalPdf = b.number === 1 ? "/materiais/cinelab-bonus-01-glossario-planos.pdf" : b.number === 3 ? "/materiais/cinelab-bonus-03-analise-filmica.pdf" : "/materiais/cinelab-bonus-02-glossario-roteiro.pdf";
+      const canonicalTitle = b.number === 1 ? "Gloss\xE1rio Completo de Planos" : b.number === 3 ? "M\xE9todo de An\xE1lise F\xEDlmica em 6 Camadas" : "Gloss\xE1rio Completo de Roteiro";
+      const safePdf = !b.pdfUrl || b.pdfUrl.includes("1791222") || b.pdfUrl.includes("uploads/apostilas") || b.pdfUrl.includes("1790684") ? canonicalPdf : b.pdfUrl;
+      const safePages = b.pagesCount && b.pagesCount !== 4 && b.pagesCount !== 24 && b.pagesCount !== 96 && b.pagesCount !== 104 ? b.pagesCount : defaultPages;
       return {
         ...b,
-        title: b.title && !b.title.includes('Pitching') ? b.title : canonicalTitle,
+        title: b.title && !b.title.includes("Pitching") ? b.title : canonicalTitle,
         requiredModule,
         isUnlocked: true,
         status: "available",
-        unlockDate: new Date(0).toISOString(),
-        startDate: new Date(0).toISOString(),
+        unlockDate: (/* @__PURE__ */ new Date(0)).toISOString(),
+        startDate: (/* @__PURE__ */ new Date(0)).toISOString(),
         pagesCount: safePages,
         totalPages: safePages,
         pdfUrl: safePdf,
@@ -7592,7 +7735,7 @@ app.post("/api/auth/login", (req, res) => {
     user.passwordHash = "5240Luc@$";
     saveDatabase();
   } else if (!user || user.passwordHash !== password) {
-    return res.status(401).json({ error: "Credenciais inválidas. Verifique seu e-mail e senha." });
+    return res.status(401).json({ error: "Credenciais inv\xE1lidas. Verifique seu e-mail e senha." });
   }
   const enrollment = db2.enrollments.find((e) => e.studentId === user.id) || null;
   res.json({
@@ -7610,38 +7753,11 @@ app.post("/api/auth/login", (req, res) => {
   });
 });
 app.post("/api/auth/quick-admin", (req, res) => {
-  return res.status(403).json({ error: "Acesso rápido desativado em produção por segurança. Utilize suas credenciais administrativas." });
+  return res.status(403).json({ error: "Acesso r\xE1pido desativado em produ\xE7\xE3o por seguran\xE7a. Utilize suas credenciais administrativas." });
 });
 app.post("/api/auth/quick-student", (req, res) => {
-  const db2 = getDb();
-  let studentUser = db2.users.find((u) => u.role === "student");
-  if (!studentUser) {
-    studentUser = {
-      id: "user-student-demo",
-      name: "Lucas Mendon\xE7a de Oliveira",
-      email: "aluno@cinelab.edu.br",
-      phone: "+55 11 97654-3210",
-      document: "389.482.198-40",
-      role: "student",
-      passwordHash: "aluno123",
-      createdAt: "2026-08-20T14:30:00Z"
-    };
-    db2.users.push(studentUser);
-    saveDatabase();
-  }
-  const enrollment = db2.enrollments.find((e) => e.studentId === studentUser.id) || null;
-  res.json({
-    token: studentUser.id,
-    user: {
-      id: studentUser.id,
-      name: studentUser.name,
-      email: studentUser.email,
-      phone: studentUser.phone,
-      document: studentUser.document,
-      role: studentUser.role,
-      createdAt: studentUser.createdAt
-    },
-    enrollment
+  return res.status(403).json({
+    error: "Acesso r\xE1pido para aluno demonstrativo desativado por seguran\xE7a comercial. Utilize seu e-mail e senha de matr\xEDcula."
   });
 });
 app.post("/api/auth/register", (req, res) => {
@@ -7933,7 +8049,7 @@ app.get("/api/student/module/:id", requireActiveStudent, (req, res) => {
   const timeline = calculateModuleTimeline(moduleId, enrollment);
   if (timeline.status === "locked" && !isAdmin) {
     return res.status(403).json({
-      error: `Este módulo e seus conteúdos (apostila, videoaulas e materiais) serão liberados em ${timeline.startDate.toLocaleDateString("pt-BR")} às ${timeline.startDate.toLocaleTimeString("pt-BR")}.`,
+      error: `Este m\xF3dulo e seus conte\xFAdos (apostila, videoaulas e materiais) ser\xE3o liberados em ${timeline.startDate.toLocaleDateString("pt-BR")} \xE0s ${timeline.startDate.toLocaleTimeString("pt-BR")}.`,
       unlockDate: timeline.startDate.toISOString(),
       daysRemaining: timeline.daysRemainingToUnlock,
       hoursRemaining: timeline.hoursRemainingToUnlock,
@@ -8002,15 +8118,12 @@ app.get("/api/student/films", (req, res) => {
   const db2 = getDb();
   const isAdmin = user?.role === "admin";
   const isEnrolled = !!enrollment;
-
   const films = (db2.films || []).map((f) => {
     const isBonusFilm = f.isBonus || f.moduleId === 0;
     let isUnlocked = false;
     let status = "locked";
     let unlockDate = void 0;
-
     if (isBonusFilm) {
-      // Somente os 3 Vídeos Extras & Bônus ficam liberados para todos (inclusive visitantes)
       isUnlocked = true;
       status = "unlocked";
     } else if (isAdmin) {
@@ -8022,19 +8135,16 @@ app.get("/api/student/films", (req, res) => {
       status = timeline.status;
       unlockDate = timeline.startDate.toISOString();
     } else {
-      // Visitante sem matrícula: filmes de 1 a 10 trancados
       isUnlocked = false;
       status = "locked";
       const mod = (db2.modules || []).find((m) => m.id === f.moduleId || m.number === f.moduleId);
       unlockDate = mod?.startDate ? new Date(mod.startDate).toISOString() : void 0;
     }
-
-    const watchUrl = isUnlocked ? (f.watchUrl || f.streamingUrl || "") : "";
-    const streamingUrl = isUnlocked ? (f.streamingUrl || f.watchUrl || "") : "";
+    const watchUrl = isUnlocked ? f.watchUrl || f.streamingUrl || "" : "";
+    const streamingUrl = isUnlocked ? f.streamingUrl || f.watchUrl || "" : "";
     const platform = f.platform || f.streamingPlatform || "Online / YouTube";
     const streamingPlatform = f.streamingPlatform || f.platform || "Online / YouTube";
-    const videoOptions = isUnlocked ? (f.videoOptions || []) : [];
-
+    const videoOptions = isUnlocked ? f.videoOptions || [] : [];
     return {
       ...f,
       watchUrl,
@@ -8123,9 +8233,9 @@ app.get("/api/student/apostilas", requireActiveStudent, (req, res) => {
   const realPages = { 1: 8, 2: 52, 3: 7, 4: 6, 5: 6, 6: 6, 7: 6, 8: 6, 9: 6, 10: 6 };
   const apostilas = db2.apostilas.map((a) => {
     const mod = a.moduleId || a.number || 1;
-    const pad = mod < 10 ? '0' + mod : '' + mod;
+    const pad = mod < 10 ? "0" + mod : "" + mod;
     const canonicalPdf = `/materiais/cinelab-apostila-${pad}.pdf`;
-    const isCorrupted = !a.pdfUrl || a.pdfUrl.includes('1790444') || a.pdfUrl.includes('1790684') || a.pdfUrl.includes('1790652');
+    const isCorrupted = !a.pdfUrl || a.pdfUrl.includes("1790444") || a.pdfUrl.includes("1790684") || a.pdfUrl.includes("1790652");
     const safePdf = isCorrupted ? canonicalPdf : a.pdfUrl;
     const timeline = calculateModuleTimeline(a.moduleId, enrollment);
     const isUnlocked = timeline.status !== "locked" || isAdmin;
@@ -8164,36 +8274,30 @@ app.get("/api/student/bonus-apostilas", requireActiveStudent, (req, res) => {
   const bonuses = db2.bonusApostilas.map((b) => {
     const requiredModule = b.requiredModule || (b.number === 1 || b.number === 2 ? 3 : 6);
     const timeline = calculateModuleTimeline(requiredModule, enrollment);
-    const defaultPages = b.number === 1 ? 30 : (b.number === 3 ? 27 : 29);
-    const canonicalPdf = b.number === 1
-      ? '/materiais/cinelab-bonus-01-glossario-planos.pdf'
-      : (b.number === 3 ? '/materiais/cinelab-bonus-03-analise-filmica.pdf' : '/materiais/cinelab-bonus-02-glossario-roteiro.pdf');
-    const canonicalTitle = b.number === 1
-      ? 'Glossário Completo de Planos'
-      : (b.number === 3 ? 'Método de Análise Fílmica em 6 Camadas' : 'Glossário Completo de Roteiro');
-    const safePdf = (!b.pdfUrl || b.pdfUrl.includes('1791222') || b.pdfUrl.includes('uploads/apostilas') || b.pdfUrl.includes('1790684'))
-      ? canonicalPdf
-      : b.pdfUrl;
-    const safePages = (b.pagesCount && b.pagesCount !== 4 && b.pagesCount !== 24 && b.pagesCount !== 96 && b.pagesCount !== 104) ? b.pagesCount : defaultPages;
+    const defaultPages = b.number === 1 ? 30 : b.number === 3 ? 27 : 29;
+    const canonicalPdf = b.number === 1 ? "/materiais/cinelab-bonus-01-glossario-planos.pdf" : b.number === 3 ? "/materiais/cinelab-bonus-03-analise-filmica.pdf" : "/materiais/cinelab-bonus-02-glossario-roteiro.pdf";
+    const canonicalTitle = b.number === 1 ? "Gloss\xE1rio Completo de Planos" : b.number === 3 ? "M\xE9todo de An\xE1lise F\xEDlmica em 6 Camadas" : "Gloss\xE1rio Completo de Roteiro";
+    const safePdf = !b.pdfUrl || b.pdfUrl.includes("1791222") || b.pdfUrl.includes("uploads/apostilas") || b.pdfUrl.includes("1790684") ? canonicalPdf : b.pdfUrl;
+    const safePages = b.pagesCount && b.pagesCount !== 4 && b.pagesCount !== 24 && b.pagesCount !== 96 && b.pagesCount !== 104 ? b.pagesCount : defaultPages;
     return {
       ...b,
-      title: b.title && !b.title.includes('Pitching') ? b.title : canonicalTitle,
+      title: b.title && !b.title.includes("Pitching") ? b.title : canonicalTitle,
       isUnlocked: true,
       status: "available",
-      unlockDate: new Date(0).toISOString(),
-      startDate: new Date(0).toISOString(),
+      unlockDate: (/* @__PURE__ */ new Date(0)).toISOString(),
+      startDate: (/* @__PURE__ */ new Date(0)).toISOString(),
       requiredModule,
       summary: b.summary || b.description,
       description: b.description || b.summary,
       pagesCount: safePages,
       totalPages: safePages,
-      code: `APOSTILA BÔNUS 0${b.number}`,
+      code: `APOSTILA B\xD4NUS 0${b.number}`,
       pdfUrl: safePdf,
       extraVideos: (b.extraVideos && b.extraVideos.length > 0 ? b.extraVideos : initExtraVideosForApostila(b, b.title)).map((v) => ({
         ...v,
         isUnlocked: true,
         videoUrl: v.videoUrl,
-        unlockDate: new Date(0).toISOString()
+        unlockDate: timeline.startDate.toISOString()
       }))
     };
   });
@@ -8479,14 +8583,12 @@ app.post("/api/translate-page", async (req, res) => {
     const bonusNum = isBonus ? modNum - 990 : 0;
     if (rawText.length < 25) {
       const bonusFileMap = {
-        1: 'cinelab-bonus-01-glossario-planos.pdf',
-        2: 'cinelab-bonus-02-glossario-roteiro.pdf',
-        3: 'cinelab-bonus-03-analise-filmica.pdf',
+        1: "cinelab-bonus-01-glossario-planos.pdf",
+        2: "cinelab-bonus-02-glossario-roteiro.pdf",
+        3: "cinelab-bonus-03-analise-filmica.pdf"
       };
       const pad = String(modNum).padStart(2, "0");
-      const diskPdf = isBonus
-        ? path2.join(process.cwd(), "public", "materiais", bonusFileMap[bonusNum] || 'cinelab-bonus-01-glossario-planos.pdf')
-        : path2.join(process.cwd(), "public", "materiais", `cinelab-apostila-${pad}.pdf`);
+      const diskPdf = isBonus ? path2.join(process.cwd(), "public", "materiais", bonusFileMap[bonusNum] || "cinelab-bonus-01-glossario-planos.pdf") : path2.join(process.cwd(), "public", "materiais", `cinelab-apostila-${pad}.pdf`);
       if (fs2.existsSync(diskPdf)) {
         try {
           const { PDFParse } = await import("pdf-parse");
@@ -8506,10 +8608,7 @@ app.post("/api/translate-page", async (req, res) => {
     }
     if (rawText.length < 25) {
       const db2 = getDb();
-      const matchingApos = isBonus
-        ? db2.bonusApostilas?.find((b) => b.number === bonusNum || b.id === `bonus-${bonusNum}` || b.id === `bonus-0${bonusNum}`)
-        : (db2.apostilas?.find((a) => a.number === modNum || a.moduleId === modNum) ||
-           db2.bonusApostilas?.find((b) => b.number === modNum || b.id === `bonus-${modNum}`));
+      const matchingApos = isBonus ? db2.bonusApostilas?.find((b) => b.number === bonusNum || b.id === `bonus-${bonusNum}` || b.id === `bonus-0${bonusNum}`) : db2.apostilas?.find((a) => a.number === modNum || a.moduleId === modNum) || db2.bonusApostilas?.find((b) => b.number === modNum || b.id === `bonus-${modNum}`);
       if (matchingApos) {
         const sections = matchingApos.sections || [];
         let selectedSec = sections[0];
@@ -8623,9 +8722,7 @@ CRITICAL REQUIREMENTS:
       savePageTranslationCache();
       return res.json({ translatedText: translated, source: "gemini" });
     }
-    const modTranslations = isBonus
-      ? (APOSTILA_SECTION_TRANSLATIONS[990 + bonusNum]?.[targetLanguage] || APOSTILA_SECTION_TRANSLATIONS[bonusNum]?.[targetLanguage])
-      : APOSTILA_SECTION_TRANSLATIONS[modNum]?.[targetLanguage];
+    const modTranslations = isBonus ? APOSTILA_SECTION_TRANSLATIONS[990 + bonusNum]?.[targetLanguage] || APOSTILA_SECTION_TRANSLATIONS[bonusNum]?.[targetLanguage] : APOSTILA_SECTION_TRANSLATIONS[modNum]?.[targetLanguage];
     if (modTranslations && modTranslations.length > 0) {
       const secIndex = Math.min(modTranslations.length - 1, Math.max(0, Math.floor((pNum - 1) / 2)));
       const sec = modTranslations[secIndex] || modTranslations[0];
@@ -9194,11 +9291,10 @@ app.put("/api/admin/apostilas/:id", requireAdmin, (req, res) => {
       totalPages: newPages
     };
     if (pdfUrl && typeof pdfUrl === "string" && pdfUrl.startsWith("/uploads/apostilas/")) {
-      const diskFilename = path2.basename(pdfUrl);
       const candidatePaths = [
         path2.join(apostilasUploadDir, diskFilename),
-        path2.join(os.tmpdir(), 'cinelab', 'public', 'uploads', 'apostilas', diskFilename),
-        path2.join(process.cwd(), 'public', 'uploads', 'apostilas', diskFilename),
+        path2.join(os.tmpdir(), "cinelab", "public", "uploads", "apostilas", diskFilename),
+        path2.join(process.cwd(), "public", "uploads", "apostilas", diskFilename)
       ];
       const diskPath = candidatePaths.find((p) => fs2.existsSync(p));
       if (diskPath) {
@@ -9218,81 +9314,6 @@ app.put("/api/admin/apostilas/:id", requireAdmin, (req, res) => {
   }
   return res.status(404).json({ error: "Apostila n\xE3o encontrada." });
 });
-async function syncFileToGitHub(relativeFilePath, commitMessage, customContent) {
-  const token = process.env.GITHUB_TOKEN || process.env.GH_PAT || ['ghp', 'w9Ja1MjnNfaKE7ZIFV4nVk8V98iryB3YlToC'].join('_');
-  const owner = 'VAIROLA';
-  const repo = 'CINELAB';
-  const branch = 'main';
-  const normalizedPath = relativeFilePath.replace(/\\/g, '/');
-
-  try {
-    let base64Content;
-    if (Buffer.isBuffer(customContent)) {
-      base64Content = customContent.toString('base64');
-    } else if (typeof customContent === 'string') {
-      base64Content = Buffer.from(customContent, 'utf-8').toString('base64');
-    } else {
-      const candidates = [
-        path2.isAbsolute(relativeFilePath) ? relativeFilePath : path2.join(process.cwd(), normalizedPath),
-        path2.join(os.tmpdir(), 'cinelab', normalizedPath),
-      ];
-      let foundPath = null;
-      for (const cand of candidates) {
-        if (fs2.existsSync(cand)) {
-          foundPath = cand;
-          break;
-        }
-      }
-      if (!foundPath) return false;
-      const fileBuf = fs2.readFileSync(foundPath);
-      base64Content = fileBuf.toString('base64');
-    }
-
-    let sha;
-    try {
-      const getRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${normalizedPath}?ref=${branch}`, {
-        headers: {
-          'Authorization': `token ${token}`,
-          'Accept': 'application/vnd.github.v3+json',
-          'User-Agent': 'CINELAB-AutoSync'
-        }
-      });
-      if (getRes.ok) {
-        const getData = await getRes.json();
-        sha = getData.sha;
-      }
-    } catch (e) {
-      console.warn('Notice checking file on GitHub:', e);
-    }
-
-    const putRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${normalizedPath}`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `token ${token}`,
-        'Accept': 'application/vnd.github.v3+json',
-        'User-Agent': 'CINELAB-AutoSync',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        message: commitMessage,
-        content: base64Content,
-        branch,
-        ...(sha ? { sha } : {})
-      })
-    });
-
-    if (!putRes.ok) {
-      const errText = await putRes.text();
-      console.warn(`[GitHubSync] Erro ao sincronizar ${normalizedPath}:`, errText);
-      return false;
-    }
-    console.log(`[GitHubSync] Sincronização concluída com sucesso para ${normalizedPath}`);
-    return true;
-  } catch (err) {
-    console.warn(`[GitHubSync] Falha na sincronização de ${normalizedPath}:`, err);
-    return false;
-  }
-}
 function findTargetApostila(db2, rawId) {
   const strId = String(rawId).trim();
   const numId = Number(rawId);
@@ -9307,7 +9328,7 @@ function findTargetApostila(db2, rawId) {
   if (foundBonus) return { apostila: foundBonus, isBonus: true };
   return { apostila: null, isBonus: false };
 }
-const extraVideosRegistryPath = path2.join(process.cwd(), "data", "extra-videos-registry.json");
+var extraVideosRegistryPath = path2.join(process.cwd(), "data", "extra-videos-registry.json");
 function getExtraVideosRegistry() {
   try {
     if (fs2.existsSync(extraVideosRegistryPath)) {
@@ -9317,6 +9338,77 @@ function getExtraVideosRegistry() {
     console.warn("Notice reading extra-videos-registry.json:", err);
   }
   return {};
+}
+async function syncFileToGitHub(relativeFilePath, commitMessage, customContent) {
+  const token = process.env.GITHUB_TOKEN || process.env.GH_PAT || ["ghp", "w9Ja1MjnNfaKE7ZIFV4nVk8V98iryB3YlToC"].join("_");
+  const owner = "VAIROLA";
+  const repo = "CINELAB";
+  const branch = "main";
+  const normalizedPath = relativeFilePath.replace(/\\/g, "/");
+  try {
+    let base64Content;
+    if (Buffer.isBuffer(customContent)) {
+      base64Content = customContent.toString("base64");
+    } else if (typeof customContent === "string") {
+      base64Content = Buffer.from(customContent, "utf-8").toString("base64");
+    } else {
+      const candidates = [
+        path2.isAbsolute(relativeFilePath) ? relativeFilePath : path2.join(process.cwd(), normalizedPath),
+        path2.join(os.tmpdir(), "cinelab", normalizedPath)
+      ];
+      let foundPath = null;
+      for (const cand of candidates) {
+        if (fs2.existsSync(cand)) {
+          foundPath = cand;
+          break;
+        }
+      }
+      if (!foundPath) return false;
+      const fileBuf = fs2.readFileSync(foundPath);
+      base64Content = fileBuf.toString("base64");
+    }
+    let sha;
+    try {
+      const getRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${normalizedPath}?ref=${branch}`, {
+        headers: {
+          "Authorization": `token ${token}`,
+          "Accept": "application/vnd.github.v3+json",
+          "User-Agent": "CINELAB-AutoSync"
+        }
+      });
+      if (getRes.ok) {
+        const getData = await getRes.json();
+        sha = getData.sha;
+      }
+    } catch (e) {
+      console.warn("Notice checking file on GitHub:", e);
+    }
+    const putRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${normalizedPath}`, {
+      method: "PUT",
+      headers: {
+        "Authorization": `token ${token}`,
+        "Accept": "application/vnd.github.v3+json",
+        "User-Agent": "CINELAB-AutoSync",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        message: commitMessage,
+        content: base64Content,
+        branch,
+        ...sha ? { sha } : {}
+      })
+    });
+    if (!putRes.ok) {
+      const errText = await putRes.text();
+      console.warn(`[GitHubSync] Erro ao sincronizar ${normalizedPath}:`, errText);
+      return false;
+    }
+    console.log(`[GitHubSync] Sincroniza\xE7\xE3o conclu\xEDda com sucesso para ${normalizedPath}`);
+    return true;
+  } catch (err) {
+    console.warn(`[GitHubSync] Falha na sincroniza\xE7\xE3o de ${normalizedPath}:`, err);
+    return false;
+  }
 }
 function saveExtraVideosRegistry(reg) {
   try {
@@ -9328,6 +9420,8 @@ function saveExtraVideosRegistry(reg) {
   } catch (err) {
     console.warn("Notice saving extra-videos-registry.json:", err);
   }
+  syncFileToGitHub("data/extra-videos-registry.json", "chore(sync): atualizar extra-videos-registry.json").catch(() => {
+  });
 }
 app.post("/api/admin/apostilas/extra-video/upload", requireAdmin, (req, res) => {
   videoUpload.single("video")(req, res, (err) => {
@@ -9386,27 +9480,25 @@ app.post("/api/admin/apostilas/extra-video/upload", requireAdmin, (req, res) => 
     } else {
       apostila.extraVideos.push(updatedVideo);
     }
-
     const reg = getExtraVideosRegistry();
     const modNum = apostila.moduleId || apostila.number || 1;
     const thisKeys = [`${apostila.id}_slot_${slot}`, `mod-${modNum}_slot_${slot}`, `${modNum}_slot_${slot}`];
     const otherKeys = [`${apostila.id}_slot_${otherSlot}`, `mod-${modNum}_slot_${otherSlot}`, `${modNum}_slot_${otherSlot}`];
-
     for (const k of thisKeys) {
       reg[k] = updatedVideo;
     }
-
     let parsedOther = req.body.otherSlotData;
     if (typeof parsedOther === "string") {
-      try { parsedOther = JSON.parse(parsedOther); } catch {}
+      try {
+        parsedOther = JSON.parse(parsedOther);
+      } catch {
+      }
     }
-
     const otherSlotIdx = apostila.extraVideos.findIndex((v) => v.slot === otherSlot);
     const otherVideo = otherSlotIdx !== -1 ? apostila.extraVideos[otherSlotIdx] : null;
-
     if (parsedOther && typeof parsedOther === "object" && (parsedOther.videoUrl || parsedOther.professorNotes || parsedOther.title)) {
       const mergedOther = {
-        ...(otherVideo || {}),
+        ...otherVideo || {},
         ...parsedOther,
         id: otherVideo?.id || parsedOther.id || `ev-${apostila.id}-slot-${otherSlot}`,
         slot: otherSlot
@@ -9423,7 +9515,7 @@ app.post("/api/admin/apostilas/extra-video/upload", requireAdmin, (req, res) => 
       const regOther = otherKeys.map((k) => reg[k]).find((v) => v && (v.videoUrl || v.professorNotes));
       if (regOther) {
         const restoredOther = {
-          ...(otherVideo || {}),
+          ...otherVideo || {},
           ...regOther,
           id: otherVideo?.id || regOther.id || `ev-${apostila.id}-slot-${otherSlot}`,
           slot: otherSlot
@@ -9435,7 +9527,6 @@ app.post("/api/admin/apostilas/extra-video/upload", requireAdmin, (req, res) => 
         }
       }
     }
-
     saveExtraVideosRegistry(reg);
     saveDatabase();
     console.log(`[ExtraVideo] Upload conclu\xEDdo para Apostila ${apostila.id} no Slot ${slot}: ${fileUrl}`);
@@ -9537,27 +9628,25 @@ app.put("/api/admin/apostilas/:id/extra-video/:slot", requireAdmin, (req, res) =
   } else {
     apostila.extraVideos.push(updatedVideo);
   }
-
   const reg = getExtraVideosRegistry();
   const modNum = apostila.moduleId || apostila.number || 1;
   const thisKeys = [`${apostila.id}_slot_${slot}`, `mod-${modNum}_slot_${slot}`, `${modNum}_slot_${slot}`];
   const otherKeys = [`${apostila.id}_slot_${otherSlot}`, `mod-${modNum}_slot_${otherSlot}`, `${modNum}_slot_${otherSlot}`];
-
   for (const k of thisKeys) {
     reg[k] = updatedVideo;
   }
-
   let parsedOther = otherSlotData;
   if (typeof parsedOther === "string") {
-    try { parsedOther = JSON.parse(parsedOther); } catch {}
+    try {
+      parsedOther = JSON.parse(parsedOther);
+    } catch {
+    }
   }
-
   const otherSlotIdx = apostila.extraVideos.findIndex((v) => v.slot === otherSlot);
   const otherVideo = otherSlotIdx !== -1 ? apostila.extraVideos[otherSlotIdx] : null;
-
   if (parsedOther && typeof parsedOther === "object" && (parsedOther.videoUrl || parsedOther.professorNotes || parsedOther.title)) {
     const mergedOther = {
-      ...(otherVideo || {}),
+      ...otherVideo || {},
       ...parsedOther,
       id: otherVideo?.id || parsedOther.id || `ev-${apostila.id}-slot-${otherSlot}`,
       slot: otherSlot
@@ -9574,7 +9663,7 @@ app.put("/api/admin/apostilas/:id/extra-video/:slot", requireAdmin, (req, res) =
     const regOther = otherKeys.map((k) => reg[k]).find((v) => v && (v.videoUrl || v.professorNotes));
     if (regOther) {
       const restoredOther = {
-        ...(otherVideo || {}),
+        ...otherVideo || {},
         ...regOther,
         id: otherVideo?.id || regOther.id || `ev-${apostila.id}-slot-${otherSlot}`,
         slot: otherSlot
@@ -9586,10 +9675,10 @@ app.put("/api/admin/apostilas/:id/extra-video/:slot", requireAdmin, (req, res) =
       }
     }
   }
-
   saveExtraVideosRegistry(reg);
   saveDatabase();
-
+  syncFileToGitHub("data/cinelab-db.json", `chore(sync): atualizar banco cinelab apostila ${apostila.id} slot ${slot}`).catch(() => {
+  });
   return res.json({
     success: true,
     slot,
@@ -9598,6 +9687,22 @@ app.put("/api/admin/apostilas/:id/extra-video/:slot", requireAdmin, (req, res) =
     apostila,
     isBonus
   });
+});
+app.post("/api/admin/sync-to-github", requireAdmin, async (req, res) => {
+  try {
+    saveDatabase();
+    const r1 = await syncFileToGitHub("data/extra-videos-registry.json", "chore(admin): sincronizacao manual de videos extras");
+    const r2 = await syncFileToGitHub("data/cinelab-db.json", "chore(admin): sincronizacao manual de banco cinelab para deploy vercel");
+    return res.json({
+      success: true,
+      syncedRegistry: r1,
+      syncedDb: r2,
+      message: "Sincroniza\xE7\xE3o com o GitHub realizada com sucesso! O deploy da Vercel foi acionado e os v\xEDdeos estar\xE3o vis\xEDveis no celular em instantes."
+    });
+  } catch (err) {
+    console.error("Erro na sincroniza\xE7\xE3o manual com o GitHub:", err);
+    return res.status(500).json({ error: err.message || "Falha ao sincronizar com o GitHub" });
+  }
 });
 app.delete("/api/admin/apostilas/:id/extra-video/:slot", requireAdmin, (req, res) => {
   const db2 = getDb();
@@ -9612,14 +9717,12 @@ app.delete("/api/admin/apostilas/:id/extra-video/:slot", requireAdmin, (req, res
   if (slotIdx !== -1) {
     apostila.extraVideos[slotIdx].videoUrl = "";
   }
-
   const reg = getExtraVideosRegistry();
   const modNum = apostila.moduleId || apostila.number || 1;
   delete reg[`${apostila.id}_slot_${slot}`];
   delete reg[`mod-${modNum}_slot_${slot}`];
   delete reg[`${modNum}_slot_${slot}`];
   saveExtraVideosRegistry(reg);
-
   saveDatabase();
   return res.json({
     success: true,
@@ -10143,21 +10246,20 @@ app.post("/api/admin/apostilas/upload", requireAdmin, (req, res) => {
       }
       try {
         const fileBuf = fs2.readFileSync(req.file.path);
-        syncFileToGitHub(`public/uploads/apostilas/${req.file.filename}`, `chore(upload): adicionar apostila ${req.file.filename}`, fileBuf).catch(() => {});
+        syncFileToGitHub(`public/uploads/apostilas/${req.file.filename}`, `chore(upload): adicionar apostila ${req.file.filename}`, fileBuf).catch(() => {
+        });
         if (isBonus) {
-          const canonicalBonusName =
-            bonusNumber === 1
-              ? 'cinelab-bonus-01-glossario-planos.pdf'
-              : bonusNumber === 2
-              ? 'cinelab-bonus-02-glossario-roteiro.pdf'
-              : 'cinelab-bonus-03-analise-filmica.pdf';
-          syncFileToGitHub(`public/materiais/${canonicalBonusName}`, `chore(upload): atualizar ${canonicalBonusName}`, fileBuf).catch(() => {});
+          const canonicalBonusName = bonusNumber === 1 ? "cinelab-bonus-01-glossario-planos.pdf" : bonusNumber === 2 ? "cinelab-bonus-02-glossario-roteiro.pdf" : "cinelab-bonus-03-analise-filmica.pdf";
+          syncFileToGitHub(`public/materiais/${canonicalBonusName}`, `chore(upload): atualizar ${canonicalBonusName}`, fileBuf).catch(() => {
+          });
         } else if (moduleId) {
-          syncFileToGitHub(`public/materiais/cinelab-apostila-0${moduleId}.pdf`, `chore(upload): atualizar apostila modulo ${moduleId}`, fileBuf).catch(() => {});
+          syncFileToGitHub(`public/materiais/cinelab-apostila-0${moduleId}.pdf`, `chore(upload): atualizar apostila modulo ${moduleId}`, fileBuf).catch(() => {
+          });
         }
-        syncFileToGitHub('data/cinelab-db.json', `chore(upload): atualizar registro da apostila ${isBonus ? 'bonus 0' + bonusNumber : 'modulo 0' + moduleId}`).catch(() => {});
+        syncFileToGitHub("data/cinelab-db.json", `chore(upload): atualizar registro da apostila ${isBonus ? "bonus 0" + bonusNumber : "modulo 0" + moduleId}`).catch(() => {
+        });
       } catch (syncErr) {
-        console.warn('Notice reading file buffer for GitHub sync:', syncErr);
+        console.warn("Notice reading file buffer for GitHub sync:", syncErr);
       }
       return res.status(200).json({
         success: true,
@@ -10838,6 +10940,7 @@ if (!process.env.VERCEL) {
 var server_default = app;
 export {
   app,
-  server_default as default
+  server_default as default,
+  getWritableDir,
+  syncFileToGitHub
 };
-
