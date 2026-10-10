@@ -7691,7 +7691,7 @@ app.get("/api/course/public-info", (req, res) => {
         extraVideos: a.extraVideos && a.extraVideos.length > 0 ? a.extraVideos : initExtraVideosForApostila(a, a.title)
       };
     }),
-    bonusApostilas: (db2.bonusApostilas || []).map((b) => {
+    bonusApostilas: (db2.bonusApostilas || []).filter((b) => b && typeof b.number === 'number' && b.number <= 20 && !String(b.id).includes('99') && !String(b.number).includes('99')).map((b) => {
       const padNum = String(b.number || 1).padStart(2, "0");
       const requiredModule = b.requiredModule || (b.number === 1 || b.number === 2 ? 3 : b.number === 4 ? 2 : 6);
       const timeline = calculateModuleTimeline(requiredModule);
@@ -7993,7 +7993,7 @@ app.get("/api/student/dashboard", requireActiveStudent, (req, res) => {
     100,
     Math.round(completedModulesCount / 10 * 50 + totalSubmissions / 10 * 50)
   );
-  const bonusWithStatus = db2.bonusApostilas.map((b) => {
+  const bonusWithStatus = db2.bonusApostilas.filter((b) => b && typeof b.number === 'number' && b.number <= 20 && !String(b.id).includes('99') && !String(b.number).includes('99')).map((b) => {
     const requiredModule = b.requiredModule || (b.number === 1 || b.number === 2 ? 3 : 6);
     const reqTimeline = calculateModuleTimeline(requiredModule, enrollment);
     const isUnlocked = reqTimeline.status !== "locked" || user?.role === "admin";
@@ -8290,7 +8290,7 @@ app.get("/api/student/bonus-apostilas", requireActiveStudent, (req, res) => {
   const { enrollment, user } = authenticate(req);
   const db2 = getDb();
   const isAdmin = user?.role === "admin";
-  const bonuses = db2.bonusApostilas.map((b) => {
+  const bonuses = db2.bonusApostilas.filter((b) => b && typeof b.number === 'number' && b.number <= 20 && !String(b.id).includes('99') && !String(b.number).includes('99')).map((b) => {
     const requiredModule = b.requiredModule || (b.number === 1 || b.number === 2 ? 3 : 6);
     const timeline = calculateModuleTimeline(requiredModule, enrollment);
     const defaultPages = b.number === 1 ? 30 : b.number === 3 ? 27 : 29;
@@ -10369,7 +10369,9 @@ app.get("/api/admin/apostilas/status", requireAdmin, (_req, res) => {
       isBonus: false
     };
   });
-  const bonusList = (db2.bonusApostilas || []).map((b) => {
+  const bonusList = (db2.bonusApostilas || [])
+    .filter((b) => b && typeof b.number === 'number' && b.number <= 20 && !String(b.id).includes('99') && !String(b.number).includes('99'))
+    .map((b) => {
     let existsOnDisk = false;
     let diskLocation = "";
     if (b.pdfUrl) {

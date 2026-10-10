@@ -183,7 +183,8 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
 
     const isBonus = Boolean((item as any).isBonus || (item as any).number > 990 || item.id?.startsWith('bonus') || (item as any).code?.includes('BÔNUS'));
     const itemId = item.id;
-    const modOrBonusNumber = (item as any).moduleId || item.number || 1;
+    const rawNum = item.number || ((item as any).moduleId && (item as any).moduleId > 990 ? (item as any).moduleId - 990 : (item as any).moduleId) || 1;
+    const modOrBonusNumber = isBonus && rawNum > 990 ? rawNum - 990 : rawNum;
 
     try {
       setUploadingCoverId(itemId);
@@ -214,7 +215,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
         console.warn('updateAdminApostila error:', apiErr);
       }
 
-      await updateVaultMetadata(isBonus ? 990 + modOrBonusNumber : modOrBonusNumber, {
+      await updateVaultMetadata(isBonus ? `bonus-${modOrBonusNumber}` : modOrBonusNumber, {
         isBonus,
         bonusNumber: isBonus ? modOrBonusNumber : undefined,
         coverUrl: coverToSave,

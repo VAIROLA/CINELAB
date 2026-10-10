@@ -43,6 +43,66 @@ function openVaultDb(): Promise<IDBDatabase> {
 }
 
 /**
+ * Expurga de forma agressiva e definitiva chaves fantasmas (ex: bonus-991, bonus-992, bonus-993, bonus-994)
+ * do LocalStorage e do IndexedDB, garantindo que nunca apareçam na interface.
+ */
+export function purgePhantomVaultItems(): void {
+  if (typeof window === 'undefined' || !window.localStorage) return;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      let changed = false;
+      Object.keys(parsed).forEach((k) => {
+        if (k.startsWith('bonus-')) {
+          const num = Number(k.replace('bonus-', ''));
+          if (isNaN(num) || num > 20 || String(k).includes('99') || String(num).includes('99')) {
+            delete parsed[k];
+            changed = true;
+          }
+        }
+      });
+      if (changed) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+      }
+    }
+
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+      const key = localStorage.key(i);
+      if (key && (key.includes('bonus-99') || key.includes('bonus-099') || /^bonus-\d{3,}$/.test(key))) {
+        localStorage.removeItem(key);
+      }
+    }
+  } catch (e) {
+    console.warn('Erro ao expurgar chaves do LocalStorage:', e);
+  }
+
+  if (window.indexedDB) {
+    openVaultDb().then((db) => {
+      try {
+        const tx = db.transaction(STORE_NAME, 'readwrite');
+        const store = tx.objectStore(STORE_NAME);
+        const req = store.getAllKeys();
+        req.onsuccess = () => {
+          const keys = req.result || [];
+          keys.forEach((key) => {
+            const kStr = String(key);
+            if (kStr.includes('99') || (kStr.startsWith('bonus-') && Number(kStr.replace('bonus-', '')) > 20)) {
+              store.delete(key);
+            }
+          });
+        };
+      } catch (_) {}
+    }).catch(() => {});
+  }
+}
+
+// Executa limpeza automática imediata
+if (typeof window !== 'undefined') {
+  purgePhantomVaultItems();
+}
+
+/**
  * Lê o armazenamento síncrono local de metadados
  */
 export function getPersistentVaultIndex(): Record<string, Partial<VaultApostilaItem>> {
@@ -50,7 +110,21 @@ export function getPersistentVaultIndex(): Record<string, Partial<VaultApostilaI
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
-      return JSON.parse(raw);
+      const parsed = JSON.parse(raw);
+      let changed = false;
+      Object.keys(parsed).forEach((k) => {
+        if (k.startsWith('bonus-')) {
+          const num = Number(k.replace('bonus-', ''));
+          if (isNaN(num) || num > 20 || String(k).includes('99') || String(num).includes('99')) {
+            delete parsed[k];
+            changed = true;
+          }
+        }
+      });
+      if (changed) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+      }
+      return parsed;
     }
   } catch (e) {
     console.warn('Erro ao ler STORAGE_KEY:', e);
@@ -64,7 +138,19 @@ export function getPersistentVaultIndex(): Record<string, Partial<VaultApostilaI
 export function savePersistentVaultIndex(index: Record<string, Partial<VaultApostilaItem>>): void {
   if (typeof window === 'undefined' || !window.localStorage) return;
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(index));
+    // Garante que nenhuma chave fantasma seja salva
+    const cleanIndex: Record<string, Partial<VaultApostilaItem>> = {};
+    Object.keys(index).forEach((k) => {
+      if (k.startsWith('bonus-')) {
+        const num = Number(k.replace('bonus-', ''));
+        if (num <= 20 && !String(k).includes('99') && !String(num).includes('99')) {
+          cleanIndex[k] = index[k];
+        }
+      } else {
+        cleanIndex[k] = index[k];
+      }
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(cleanIndex));
   } catch (e) {
     console.warn('Erro ao gravar STORAGE_KEY:', e);
   }
@@ -75,9 +161,16 @@ export function savePersistentVaultIndex(index: Record<string, Partial<VaultApos
  */
 export function getVaultItemId(target: number | string, isBonus?: boolean): string {
   if (typeof target === 'string') {
-    if (target.startsWith('mod-') || target.startsWith('bonus-')) return target;
+    if (target.startsWith('mod-')) return target;
+    if (target.startsWith('bonus-')) {
+      const n = Number(target.replace('bonus-', ''));
+      const cleanN = n > 990 ? n - 990 : n;
+      return `bonus-${cleanN}`;
+    }
     if (target === '991' || target === 'bonus-01') return 'bonus-1';
     if (target === '992' || target === 'bonus-02') return 'bonus-2';
+    if (target === '993' || target === 'bonus-03') return 'bonus-3';
+    if (target === '994' || target === 'bonus-04') return 'bonus-4';
     if (/^\d+$/.test(target)) {
       const num = Number(target);
       if (isBonus || num > 990) return `bonus-${num > 990 ? num - 990 : num}`;
@@ -107,9 +200,24 @@ export async function saveApostilaToVault(
     pdfUrl?: string;
   }
 ): Promise<void> {
-  const isBonus = meta.isBonus || (typeof targetIdOrModuleId === 'number' && targetIdOrModuleId > 990);
-  const bonusNumber = meta.bonusNumber || (typeof targetIdOrModuleId === 'number' && targetIdOrModuleId > 990 ? targetIdOrModuleId - 990 : 1);
-  const moduleId = !isBonus && typeof targetIdOrModuleId === 'number' ? targetIdOrModuleId : undefined;
+  const isBonus = Boolean(meta.isBonus || (typeof targetIdOrModuleId === 'number' && targetIdOrModuleId > 990) || (typeof targetIdOrModuleId === 'string' && targetIdOrModuleId.includes('bonus')));
+  let bonusNumber = meta.bonusNumber;
+  if (!bonusNumber) {
+    if (typeof targetIdOrModuleId === 'number' && targetIdOrModuleId > 990) {
+      bonusNumber = targetIdOrModuleId - 990;
+    } else if (typeof targetIdOrModuleId === 'string' && targetIdOrModuleId.includes('bonus')) {
+      const parsedNum = Number(targetIdOrModuleId.replace(/\D/g, ''));
+      bonusNumber = parsedNum > 990 ? parsedNum - 990 : parsedNum;
+    } else if (typeof targetIdOrModuleId === 'number') {
+      bonusNumber = targetIdOrModuleId;
+    } else {
+      bonusNumber = 1;
+    }
+  }
+  if (bonusNumber > 990) {
+    bonusNumber = bonusNumber - 990;
+  }
+  const moduleId = !isBonus && typeof targetIdOrModuleId === 'number' && targetIdOrModuleId <= 990 ? targetIdOrModuleId : undefined;
   const id = isBonus ? `bonus-${bonusNumber}` : `mod-${moduleId || targetIdOrModuleId}`;
 
   const fileName = meta.fileName || (file instanceof File ? file.name : `${id}.pdf`);
@@ -183,10 +291,25 @@ export async function updateVaultMetadata(
     fileSizeMb?: number;
   }
 ): Promise<void> {
-  const isBonus = meta.isBonus || (typeof targetIdOrModuleId === 'number' && targetIdOrModuleId > 990);
-  const bonusNumber = meta.bonusNumber || (typeof targetIdOrModuleId === 'number' && targetIdOrModuleId > 990 ? targetIdOrModuleId - 990 : (typeof targetIdOrModuleId === 'string' && targetIdOrModuleId.includes('bonus') ? Number(targetIdOrModuleId.replace(/\D/g, '')) : 1));
-  const moduleId = !isBonus ? (typeof targetIdOrModuleId === 'number' ? targetIdOrModuleId : Number(String(targetIdOrModuleId).replace(/\D/g, '') || 1)) : undefined;
-  const id = isBonus ? `bonus-${bonusNumber}` : getVaultKey(targetIdOrModuleId, false);
+  const isBonus = Boolean(meta.isBonus || (typeof targetIdOrModuleId === 'number' && targetIdOrModuleId > 990) || (typeof targetIdOrModuleId === 'string' && targetIdOrModuleId.includes('bonus')));
+  let bonusNumber = meta.bonusNumber;
+  if (!bonusNumber) {
+    if (typeof targetIdOrModuleId === 'number' && targetIdOrModuleId > 990) {
+      bonusNumber = targetIdOrModuleId - 990;
+    } else if (typeof targetIdOrModuleId === 'string' && targetIdOrModuleId.includes('bonus')) {
+      const parsedNum = Number(targetIdOrModuleId.replace(/\D/g, ''));
+      bonusNumber = parsedNum > 990 ? parsedNum - 990 : parsedNum;
+    } else if (typeof targetIdOrModuleId === 'number') {
+      bonusNumber = targetIdOrModuleId;
+    } else {
+      bonusNumber = 1;
+    }
+  }
+  if (bonusNumber > 990) {
+    bonusNumber = bonusNumber - 990;
+  }
+  const moduleId = !isBonus ? (typeof targetIdOrModuleId === 'number' ? (targetIdOrModuleId > 990 ? targetIdOrModuleId - 990 : targetIdOrModuleId) : Number(String(targetIdOrModuleId).replace(/\D/g, '') || 1)) : undefined;
+  const id = isBonus ? `bonus-${bonusNumber}` : getVaultItemId(targetIdOrModuleId, false);
 
   const currentIndex = getPersistentVaultIndex();
   const existing = currentIndex[id] || { id, moduleId, isBonus, bonusNumber };
@@ -449,20 +572,20 @@ export function getMergedBonusWithVault(serverBonus: BonusApostila[]): BonusApos
     baseList.push(found ? { ...canon, ...found } : canon);
   });
 
-  // Include any bonus items from server with number >= 4
+  // Include any bonus items from server with number >= 4 (and <= 20, non-phantom)
   if (Array.isArray(serverBonus)) {
     serverBonus.forEach((s) => {
-      if (s && s.number > 3 && !baseList.some((b) => b.number === s.number || b.id === s.id)) {
+      if (s && s.number > 3 && s.number <= 20 && !String(s.number).includes('99') && !String(s.id).includes('99') && !baseList.some((b) => b.number === s.number || b.id === s.id)) {
         baseList.push(s);
       }
     });
   }
 
-  // Include any bonus items stored in local vault with number >= 4
+  // Include any bonus items stored in local vault with number >= 4 (and <= 20, non-phantom)
   Object.keys(vault).forEach((k) => {
     if (k.startsWith('bonus-')) {
       const num = Number(k.replace('bonus-', ''));
-      if (num > 3 && !baseList.some((b) => b.number === num)) {
+      if (num > 3 && num <= 20 && !String(num).includes('99') && !String(k).includes('99') && !baseList.some((b) => b.number === num)) {
         const item = vault[k];
         baseList.push({
           id: k,
@@ -484,9 +607,13 @@ export function getMergedBonusWithVault(serverBonus: BonusApostila[]): BonusApos
     }
   });
 
-  baseList.sort((a, b) => (a.number || 0) - (b.number || 0));
+  const cleanBaseList = baseList.filter(
+    (b) => b && typeof b.number === 'number' && b.number >= 1 && b.number <= 20 && !String(b.number).includes('99') && !String(b.id).includes('99')
+  );
 
-  const result = baseList.map((b) => {
+  cleanBaseList.sort((a, b) => (a.number || 0) - (b.number || 0));
+
+  const result = cleanBaseList.map((b) => {
     const key = `bonus-${b.number}`;
     const local = vault[key];
 
@@ -581,7 +708,9 @@ export function getMergedBonusWithVault(serverBonus: BonusApostila[]): BonusApos
     savePersistentVaultIndex(vault);
   }
 
-  return result;
+  return result.filter(
+    (b) => b && typeof b.number === 'number' && b.number >= 1 && b.number <= 20 && !String(b.number).includes('99') && !String(b.id).includes('99')
+  );
 }
 
 /**
