@@ -368,6 +368,17 @@ function sanitizeDatabaseState(targetDb: any): void {
       lucas.averageGrade = undefined;
     }
   }
+
+  const b4 = (targetDb.bonusApostilas || []).find((b: any) => b.number === 4 || b.id === 'bonus-04');
+  if (b4) {
+    b4.pdfUrl = '/materiais/cinelab-bonus-04-historia-do-cinema-complemento.pdf';
+    if (!b4.coverUrl || b4.coverUrl.includes('unsplash.com') || b4.coverUrl.startsWith('/uploads/')) {
+      b4.coverUrl = '/images/covers/apostila-04.jpg';
+    }
+    b4.pagesCount = 36;
+    b4.totalPages = 36;
+    b4.fileSizeMb = 2.17;
+  }
 }
 export function loadDatabase(): void {
   try {

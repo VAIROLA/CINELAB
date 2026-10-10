@@ -5513,6 +5513,16 @@ function sanitizeDatabaseState(targetDb) {
       lucas.averageGrade = void 0;
     }
   }
+  const b4 = (targetDb.bonusApostilas || []).find((b) => b.number === 4 || b.id === "bonus-04");
+  if (b4) {
+    b4.pdfUrl = "/materiais/cinelab-bonus-04-historia-do-cinema-complemento.pdf";
+    if (!b4.coverUrl || b4.coverUrl.includes("unsplash.com") || b4.coverUrl.startsWith("/uploads/")) {
+      b4.coverUrl = "/images/covers/apostila-04.jpg";
+    }
+    b4.pagesCount = 36;
+    b4.totalPages = 36;
+    b4.fileSizeMb = 2.17;
+  }
 }
 function loadDatabase() {
   try {
@@ -7687,8 +7697,9 @@ app.get("/api/course/public-info", (req, res) => {
       const timeline = calculateModuleTimeline(requiredModule);
       const defaultPages = b.number === 1 ? 30 : b.number === 3 ? 27 : b.number === 4 ? 36 : 29;
       const canonicalPdf = b.number === 1 ? "/materiais/cinelab-bonus-01-glossario-planos.pdf" : b.number === 3 ? "/materiais/cinelab-bonus-03-analise-filmica.pdf" : b.number === 4 ? "/materiais/cinelab-bonus-04-historia-do-cinema-complemento.pdf" : "/materiais/cinelab-bonus-02-glossario-roteiro.pdf";
-      const canonicalTitle = b.number === 1 ? "Gloss\xE1rio Completo de Planos" : b.number === 3 ? "M\xE9todo de An\xE1lise F\xEDlmica em 6 Camadas" : b.number === 4 ? (b.title || "HISTORIA_DO_CINEMA - COMPLEMENTO") : "Gloss\xE1rio Completo de Roteiro";
-      const safePdf = b.number <= 3 ? (!b.pdfUrl || b.pdfUrl.includes("1791222") ? canonicalPdf : b.pdfUrl) : (b.pdfUrl || canonicalPdf);
+      const safePdf = b.number === 4
+        ? (!b.pdfUrl || b.pdfUrl.includes("bonus-02") || b.pdfUrl.includes("1790684") || b.pdfUrl.includes("1791222") ? canonicalPdf : b.pdfUrl)
+        : (b.number <= 3 ? (!b.pdfUrl || b.pdfUrl.includes("1791222") ? canonicalPdf : b.pdfUrl) : (b.pdfUrl || canonicalPdf));
       const safePages = b.pagesCount && b.pagesCount !== 4 && b.pagesCount !== 24 && b.pagesCount !== 96 && b.pagesCount !== 104 ? b.pagesCount : (b.number === 4 && b.totalPages ? b.totalPages : defaultPages);
       const canonicalBonusCover = `/images/covers/apostila-${padNum}.jpg`;
       const isOutdatedBonusCover = !b.coverUrl || b.coverUrl.includes("unsplash.com") || (b.coverUrl.startsWith("/uploads/") && !b.coverUrl.includes("base64") && !b.coverUrl.includes("apostila-"));

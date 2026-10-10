@@ -582,9 +582,11 @@ app.get('/api/course/public-info', (req: Request, res: Response) => {
         ? 'Glossário Completo de Planos'
         : (b.number === 3 ? 'Método de Análise Fílmica em 6 Camadas' : 'Glossário Completo de Roteiro');
 
-      const safePdf = b.number <= 3
-        ? ((!b.pdfUrl || b.pdfUrl.includes('1791222') || b.pdfUrl.includes('1790684')) ? canonicalPdf : b.pdfUrl)
-        : (b.pdfUrl || `/materiais/cinelab-bonus-0${b.number}-historia-do-cinema-complemento.pdf`);
+      const safePdf = b.number === 4
+        ? (!b.pdfUrl || b.pdfUrl.includes('bonus-02') || b.pdfUrl.includes('1790684') || b.pdfUrl.includes('1791222') ? '/materiais/cinelab-bonus-04-historia-do-cinema-complemento.pdf' : b.pdfUrl)
+        : (b.number <= 3
+          ? ((!b.pdfUrl || b.pdfUrl.includes('1791222') || b.pdfUrl.includes('1790684')) ? canonicalPdf : b.pdfUrl)
+          : (b.pdfUrl || `/materiais/cinelab-bonus-0${b.number}-historia-do-cinema-complemento.pdf`));
 
       const safeTitle = b.number <= 3
         ? (b.title && !b.title.includes('Pitching') ? b.title : canonicalTitle)
