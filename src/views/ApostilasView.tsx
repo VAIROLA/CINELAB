@@ -1734,14 +1734,31 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
             const isWaiting = false;
 
             const bTrans = bonusTranslations[b.number]?.[language] || bonusTranslations[b.number]?.pt;
+            const bFallbackTitle = b.number === 1
+              ? 'Glossário Completo de Planos'
+              : b.number === 2
+              ? 'Glossário Completo de Roteiro'
+              : b.number === 3
+              ? 'Método de Análise Fílmica em 6 Camadas'
+              : `Apostila Bônus 0${b.number}`;
+
             const bDisplayTitle = language === 'pt'
-              ? (b.title && !b.title.includes('Pitching') && !b.title.includes('Guerrilha') ? b.title : (bTrans?.title || (b.number === 1 ? 'Glossário Completo de Planos' : b.number === 2 ? 'Glossário Completo de Roteiro' : (b.number === 3 ? 'Método de Análise Fílmica em 6 Camadas' : `Apostila Bônus 0${b.number}`)))))
-              : (bTrans?.title || b.title);
+              ? (b.title && !b.title.includes('Pitching') && !b.title.includes('Guerrilha') ? b.title : (bTrans?.title || bFallbackTitle))
+              : (bTrans?.title || b.title || bFallbackTitle);
+
+            const bFallbackSummary = b.number === 1
+              ? 'Guia permanente de consulta técnica para decupagem cinematográfica, escalas de planos e movimentos de câmera.'
+              : b.number === 2
+              ? 'Guia permanente de consulta dramatúrgica: da criação de premissa, storyline e sinopse à escaleta e roteiro final.'
+              : b.number === 3
+              ? 'A metodologia analítica do CINELAB em 6 camadas para dissecar qualquer obra audiovisual como realizador.'
+              : 'Material didático complementar do CINELAB.';
+
             const bDisplaySummary = language === 'pt'
               ? ((b.summary || b.description) && !(b.summary || b.description).includes('empacotamento') && !(b.summary || b.description).includes('Pitching') && !(b.summary || b.description).includes('Guerrilha')
                   ? (b.summary || b.description)
-                  : (bTrans?.summary || (b.number === 1 ? 'Guia permanente de consulta técnica para decupagem cinematográfica, escalas de planos e movimentos de câmera.' : b.number === 2 ? 'Guia permanente de consulta dramatúrgica: da criação de premissa, storyline e sinopse à escaleta e roteiro final.' : (b.number === 3 ? 'A metodologia analítica do CINELAB em 6 camadas para dissecar qualquer obra audiovisual como realizador.' : 'Material didático complementar do CINELAB.'))))
-              : (bTrans?.summary || b.summary || b.description);
+                  : (bTrans?.summary || bFallbackSummary))
+              : (bTrans?.summary || b.summary || b.description || bFallbackSummary);
             const displayPages = (b.pagesCount && b.pagesCount !== 4 && b.pagesCount !== 24 && b.pagesCount !== 35 && b.pagesCount !== 40 && b.pagesCount !== 96 && b.pagesCount !== 104) ? b.pagesCount : (b.number === 1 ? 30 : (b.number === 3 ? 27 : (b.number === 2 ? 29 : 30)));
             const canonicalBonusPdf = b.number === 1
               ? '/materiais/cinelab-bonus-01-glossario-planos.pdf'
