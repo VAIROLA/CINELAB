@@ -5,6 +5,7 @@ import {
   X,
   AlertCircle,
   Upload,
+  Image as ImageIcon,
   CheckCircle2,
   Loader2,
   FileText,
@@ -34,6 +35,7 @@ export const BonusApostilaEditModal: React.FC<BonusApostilaEditModalProps> = ({
   const [subtitle, setSubtitle] = useState('');
   const [description, setDescription] = useState('');
   const [pdfUrl, setPdfUrl] = useState('');
+  const [coverUrl, setCoverUrl] = useState('');
   const [pagesCount, setPagesCount] = useState<number>(30);
   const [fileSizeMb, setFileSizeMb] = useState<number | undefined>(undefined);
   const [loading, setLoading] = useState(false);
@@ -45,6 +47,11 @@ export const BonusApostilaEditModal: React.FC<BonusApostilaEditModalProps> = ({
   const [isPdfDragOver, setIsPdfDragOver] = useState(false);
   const pdfFileInputRef = useRef<HTMLInputElement>(null);
 
+  // Apostila Cover upload state
+  const [uploadingCover, setUploadingCover] = useState(false);
+  const [coverUploadProgress, setCoverUploadProgress] = useState(0);
+  const coverFileInputRef = useRef<HTMLInputElement>(null);
+
   const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
@@ -53,8 +60,9 @@ export const BonusApostilaEditModal: React.FC<BonusApostilaEditModalProps> = ({
       setSubtitle(bonusApostila.subtitle || '');
       setDescription(bonusApostila.description || bonusApostila.summary || '');
       setPdfUrl(bonusApostila.pdfUrl || '');
+      setCoverUrl(bonusApostila.coverUrl || '');
       const rawPages = bonusApostila.pagesCount || bonusApostila.totalPages;
-      setPagesCount(rawPages && rawPages !== 96 && rawPages !== 104 ? rawPages : (bonusApostila.number === 1 ? 30 : 29));
+      setPagesCount(rawPages && rawPages !== 96 && rawPages !== 104 ? rawPages : (bonusApostila.number === 1 ? 30 : (bonusApostila.number === 3 ? 27 : 29)));
       setFileSizeMb(bonusApostila.fileSizeMb);
       setUploadedPdfFileName('');
       setErrorMessage('');
@@ -118,17 +126,60 @@ export const BonusApostilaEditModal: React.FC<BonusApostilaEditModalProps> = ({
     }
   };
 
+  const handleCoverUpload = async (file: File) => {
+    if (!file) return;
+    const isImage = file.type.startsWith('image/') || /\.(jpe?g|png|webp|avif|bmp)$/i.test(file.name);
+    if (!isImage) {
+      setErrorMessage('Formato inválido. Selecione um arquivo de imagem (JPG, PNG, WebP).');
+      return;
+    }
+
+    try {
+      setUploadingCover(true);
+      setCoverUploadProgress(0);
+      setErrorMessage('');
+
+      // Leitura imediata como DataURL
+      const localDataUrl = await new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve((reader.result as string) || '');
+        reader.onerror = () => resolve('');
+        reader.readAsDataURL(file);
+      });
+
+      let finalCover = localDataUrl;
+      try {
+        const res = await api.uploadImageFile(file, (p) => setCoverUploadProgress(p));
+        if (res && res.fileUrl) {
+          finalCover = res.fileUrl;
+        }
+      } catch (uploadErr) {
+        console.warn('Upload image server warning:', uploadErr);
+      }
+
+      setCoverUrl(finalCover);
+    } catch (err: any) {
+      console.error(err);
+      setErrorMessage(err.message || 'Falha ao subir imagem da capa.');
+    } finally {
+      setUploadingCover(false);
+      setCoverUploadProgress(0);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setErrorMessage('');
 
     try {
-      await api.updateAdminApostila(bonusApostila.id, {
+      const targetId = bonusApostila.id || `bonus-0${bonusNum}`;
+      await api.updateAdminApostila(targetId, {
         title,
         subtitle,
         description,
         pdfUrl,
+        coverUrl,
         pagesCount: Number(pagesCount),
       });
 
@@ -140,13 +191,14 @@ export const BonusApostilaEditModal: React.FC<BonusApostilaEditModalProps> = ({
           title,
           pagesCount: Number(pagesCount),
           pdfUrl,
+          coverUrl,
           fileSizeMb,
         });
       } catch (e) {
         console.warn('Vault metadata update error:', e);
       }
 
-      onSuccess(`Apostila Bônus 0${bonusNum} atualizada com sucesso! (${pagesCount} páginas)`);
+      onSuccess(`Apostila Bônus 0${bonusNum} ("${title || `Bônus 0${bonusNum}`}") salva com sucesso! (${pagesCount} páginas)`);
       onClose();
     } catch (err: any) {
       setErrorMessage(err.message || 'Erro ao atualizar dados da apostila bônus.');
@@ -351,6 +403,103 @@ export const BonusApostilaEditModal: React.FC<BonusApostilaEditModalProps> = ({
                 placeholder="/materiais/cinelab-bonus-01-glossario-planos.pdf"
                 className="w-full px-3.5 py-2 bg-neutral-950 border border-neutral-700 rounded-xl text-white text-xs focus:outline-none focus:border-amber-500 font-sans"
               />
+            </div>
+          </div>
+
+          {/* Upload Capa da Apostila Bônus (Imagem) */}
+          <div className="pt-3 border-t border-neutral-800 space-y-3">
+            <div className="flex items-center justify-between">
+              <label className="block text-purple-400 font-bold text-xs flex items-center gap-1.5 font-mono">
+                <ImageIcon className="w-4 h-4 text-purple-400" />
+                <span>Capa da Apostila Bônus (Imagem JPG, PNG, WebP)</span>
+              </label>
+              {coverUrl && (
+                <span className="text-[10px] text-emerald-400 flex items-center gap-1 font-mono font-semibold">
+                  <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                  Capa Ativa
+                </span>
+              )}
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3 items-center bg-neutral-950/70 p-3 rounded-2xl border border-neutral-800">
+              {/* Preview da Capa */}
+              <div className="w-20 aspect-[1/1.4] rounded-xl overflow-hidden border border-purple-500/40 bg-neutral-950 shadow-md shrink-0 flex items-center justify-center">
+                {coverUrl ? (
+                  <img
+                    src={coverUrl}
+                    alt="Preview da Capa"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex flex-col items-center justify-center p-1 text-center bg-gradient-to-b from-neutral-900 to-neutral-950 text-neutral-500">
+                    <BookOpen className="w-5 h-5 text-purple-400/60 mb-1" />
+                    <span className="text-[8px] font-mono text-purple-300 font-bold uppercase">
+                      BÔNUS 0{bonusNum}
+                    </span>
+                    <span className="text-[7px] text-neutral-500 mt-0.5">Sem Capa</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Botão de Subir Imagem de Capa */}
+              <div className="flex-1 space-y-2 w-full">
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => coverFileInputRef.current?.click()}
+                    disabled={uploadingCover}
+                    className="px-3.5 py-2 bg-neutral-800 hover:bg-neutral-700 text-purple-300 hover:text-white border border-purple-500/40 rounded-xl text-xs font-sans transition-colors cursor-pointer flex items-center gap-1.5 shadow-sm"
+                  >
+                    {uploadingCover ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin text-purple-400" />
+                        <span>Subindo Imagem {coverUploadProgress}%...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="w-3.5 h-3.5 text-purple-400" />
+                        <span>{coverUrl ? 'Alterar Imagem da Capa' : 'Subir Imagem da Capa (JPG/PNG)'}</span>
+                      </>
+                    )}
+                  </button>
+
+                  <input
+                    type="file"
+                    ref={coverFileInputRef}
+                    accept="image/jpeg,image/png,image/webp,image/avif"
+                    disabled={uploadingCover}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleCoverUpload(file);
+                    }}
+                    className="hidden"
+                  />
+
+                  {coverUrl && (
+                    <button
+                      type="button"
+                      onClick={() => setCoverUrl('')}
+                      className="px-2.5 py-2 bg-neutral-900 hover:bg-neutral-800 text-neutral-400 hover:text-rose-400 border border-neutral-800 rounded-xl text-xs transition cursor-pointer"
+                      title="Remover capa"
+                    >
+                      Remover
+                    </button>
+                  )}
+                </div>
+
+                <div>
+                  <input
+                    type="text"
+                    value={coverUrl}
+                    onChange={(e) => setCoverUrl(e.target.value)}
+                    placeholder="URL direta da capa: /images/covers/apostila-04.jpg"
+                    className="w-full px-3 py-1.5 bg-neutral-900 border border-neutral-700/80 rounded-xl text-white text-[11px] focus:outline-none focus:border-purple-500 font-mono"
+                  />
+                  <span className="text-[10px] text-neutral-400 block mt-1">
+                    Envie uma imagem vertical pelo botão ou use uma das capas da escola (ex: /images/covers/apostila-04.jpg)
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
 

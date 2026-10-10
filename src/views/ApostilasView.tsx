@@ -1064,15 +1064,16 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
             }
           }}
           onOpenBonusReader={(bonusId) => {
-            const bNum = bonusId.includes('3') ? 3 : bonusId.includes('2') ? 2 : 1;
+            const rawDigits = Number(String(bonusId).replace(/\D/g, ''));
+            const bNum = rawDigits > 990 ? rawDigits - 990 : (rawDigits > 0 ? rawDigits : 1);
             const bFound = bonusApostilas.find(b => b.number === bNum);
             const canonicalPdf = bNum === 1
               ? '/materiais/cinelab-bonus-01-glossario-planos.pdf'
-              : (bNum === 3 ? '/materiais/cinelab-bonus-03-analise-filmica.pdf' : '/materiais/cinelab-bonus-02-glossario-roteiro.pdf');
+              : (bNum === 2 ? '/materiais/cinelab-bonus-02-glossario-roteiro.pdf' : (bNum === 3 ? '/materiais/cinelab-bonus-03-analise-filmica.pdf' : (bFound?.pdfUrl || `/materiais/cinelab-bonus-0${bNum}-historia-do-cinema-complemento.pdf`)));
             const canonicalTitle = bNum === 1
               ? 'Glossário Completo de Planos'
-              : (bNum === 3 ? 'Método de Análise Fílmica em 6 Camadas' : 'Glossário Completo de Roteiro');
-            const pages = bNum === 1 ? 30 : (bNum === 3 ? 27 : 29);
+              : (bNum === 2 ? 'Glossário Completo de Roteiro' : (bNum === 3 ? 'Método de Análise Fílmica em 6 Camadas' : `Apostila Bônus 0${bNum}`));
+            const pages = bFound?.pagesCount || bFound?.totalPages || (bNum === 1 ? 30 : (bNum === 3 ? 27 : 29));
             handleOpenApostila({
               id: bFound?.id || `bonus-0${bNum}`,
               moduleId: 990 + bNum,
@@ -1083,7 +1084,8 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
               totalPages: pages,
               pagesCount: pages,
               pdfUrl: bFound?.pdfUrl || canonicalPdf,
-              contentMarkdown: `# BÔNUS 0${bNum} – ${canonicalTitle}`,
+              coverUrl: bFound?.coverUrl || `/images/covers/apostila-${bNum < 10 ? '0' + bNum : bNum}.jpg`,
+              contentMarkdown: `# BÔNUS 0${bNum} – ${bFound?.title || canonicalTitle}`,
             }, 'pdf');
           }}
           onOpenBonusApostila={(bonusNum) => {
@@ -1091,11 +1093,11 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
             const bFound = bonusApostilas.find(b => b.number === bNum);
             const canonicalPdf = bNum === 1
               ? '/materiais/cinelab-bonus-01-glossario-planos.pdf'
-              : (bNum === 3 ? '/materiais/cinelab-bonus-03-analise-filmica.pdf' : '/materiais/cinelab-bonus-02-glossario-roteiro.pdf');
+              : (bNum === 2 ? '/materiais/cinelab-bonus-02-glossario-roteiro.pdf' : (bNum === 3 ? '/materiais/cinelab-bonus-03-analise-filmica.pdf' : (bFound?.pdfUrl || `/materiais/cinelab-bonus-0${bNum}-historia-do-cinema-complemento.pdf`)));
             const canonicalTitle = bNum === 1
               ? 'Glossário Completo de Planos'
-              : (bNum === 3 ? 'Método de Análise Fílmica em 6 Camadas' : 'Glossário Completo de Roteiro');
-            const pages = bNum === 1 ? 30 : (bNum === 3 ? 27 : 29);
+              : (bNum === 2 ? 'Glossário Completo de Roteiro' : (bNum === 3 ? 'Método de Análise Fílmica em 6 Camadas' : `Apostila Bônus 0${bNum}`));
+            const pages = bFound?.pagesCount || bFound?.totalPages || (bNum === 1 ? 30 : (bNum === 3 ? 27 : 29));
             handleOpenApostila({
               id: bFound?.id || `bonus-0${bNum}`,
               moduleId: 990 + bNum,
@@ -1106,7 +1108,8 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
               totalPages: pages,
               pagesCount: pages,
               pdfUrl: bFound?.pdfUrl || canonicalPdf,
-              contentMarkdown: `# BÔNUS 0${bNum} – ${canonicalTitle}`,
+              coverUrl: bFound?.coverUrl || `/images/covers/apostila-${bNum < 10 ? '0' + bNum : bNum}.jpg`,
+              contentMarkdown: `# BÔNUS 0${bNum} – ${bFound?.title || canonicalTitle}`,
             }, 'pdf');
           }}
           onOpenTrainingQuiz={(modNum) => {
@@ -1732,18 +1735,18 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
 
             const bTrans = bonusTranslations[b.number]?.[language] || bonusTranslations[b.number]?.pt;
             const bDisplayTitle = language === 'pt'
-              ? (b.title && !b.title.includes('Pitching') && !b.title.includes('Guerrilha') ? b.title : (bTrans?.title || (b.number === 1 ? 'Glossário Completo de Planos' : b.number === 2 ? 'Glossário Completo de Roteiro' : 'Método de Análise Fílmica em 6 Camadas')))
+              ? (b.title && !b.title.includes('Pitching') && !b.title.includes('Guerrilha') ? b.title : (bTrans?.title || (b.number === 1 ? 'Glossário Completo de Planos' : b.number === 2 ? 'Glossário Completo de Roteiro' : (b.number === 3 ? 'Método de Análise Fílmica em 6 Camadas' : `Apostila Bônus 0${b.number}`)))))
               : (bTrans?.title || b.title);
             const bDisplaySummary = language === 'pt'
               ? ((b.summary || b.description) && !(b.summary || b.description).includes('empacotamento') && !(b.summary || b.description).includes('Pitching') && !(b.summary || b.description).includes('Guerrilha')
                   ? (b.summary || b.description)
-                  : (bTrans?.summary || (b.number === 1 ? 'Guia permanente de consulta técnica para decupagem cinematográfica, escalas de planos e movimentos de câmera.' : b.number === 2 ? 'Guia permanente de consulta dramatúrgica: da criação de premissa, storyline e sinopse à escaleta e roteiro final.' : 'A metodologia analítica do CINELAB em 6 camadas para dissecar qualquer obra audiovisual como realizador.')))
+                  : (bTrans?.summary || (b.number === 1 ? 'Guia permanente de consulta técnica para decupagem cinematográfica, escalas de planos e movimentos de câmera.' : b.number === 2 ? 'Guia permanente de consulta dramatúrgica: da criação de premissa, storyline e sinopse à escaleta e roteiro final.' : (b.number === 3 ? 'A metodologia analítica do CINELAB em 6 camadas para dissecar qualquer obra audiovisual como realizador.' : 'Material didático complementar do CINELAB.'))))
               : (bTrans?.summary || b.summary || b.description);
-            const displayPages = (b.pagesCount && b.pagesCount !== 4 && b.pagesCount !== 24 && b.pagesCount !== 35 && b.pagesCount !== 40 && b.pagesCount !== 96 && b.pagesCount !== 104) ? b.pagesCount : (b.number === 1 ? 30 : (b.number === 3 ? 27 : 29));
+            const displayPages = (b.pagesCount && b.pagesCount !== 4 && b.pagesCount !== 24 && b.pagesCount !== 35 && b.pagesCount !== 40 && b.pagesCount !== 96 && b.pagesCount !== 104) ? b.pagesCount : (b.number === 1 ? 30 : (b.number === 3 ? 27 : (b.number === 2 ? 29 : 30)));
             const canonicalBonusPdf = b.number === 1
               ? '/materiais/cinelab-bonus-01-glossario-planos.pdf'
-              : (b.number === 3 ? '/materiais/cinelab-bonus-03-analise-filmica.pdf' : '/materiais/cinelab-bonus-02-glossario-roteiro.pdf');
-            const safeBonusPdf = (!b.pdfUrl || b.pdfUrl.includes('1790444') || b.pdfUrl.includes('1791222')) ? canonicalBonusPdf : b.pdfUrl;
+              : (b.number === 2 ? '/materiais/cinelab-bonus-02-glossario-roteiro.pdf' : (b.number === 3 ? '/materiais/cinelab-bonus-03-analise-filmica.pdf' : (b.pdfUrl || `/materiais/cinelab-bonus-0${b.number}-historia-do-cinema-complemento.pdf`)));
+            const safeBonusPdf = (!b.pdfUrl || (b.number <= 3 && (b.pdfUrl.includes('1790444') || b.pdfUrl.includes('1791222')))) ? canonicalBonusPdf : b.pdfUrl;
 
             return (
               <div

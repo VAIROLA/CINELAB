@@ -7681,20 +7681,21 @@ app.get("/api/course/public-info", (req, res) => {
         extraVideos: a.extraVideos && a.extraVideos.length > 0 ? a.extraVideos : initExtraVideosForApostila(a, a.title)
       };
     }),
-    bonusApostilas: db2.bonusApostilas.map((b) => {
-      const requiredModule = b.requiredModule || (b.number === 1 || b.number === 2 ? 3 : 6);
+    bonusApostilas: (db2.bonusApostilas || []).map((b) => {
+      const padNum = String(b.number || 1).padStart(2, "0");
+      const requiredModule = b.requiredModule || (b.number === 1 || b.number === 2 ? 3 : b.number === 4 ? 2 : 6);
       const timeline = calculateModuleTimeline(requiredModule);
-      const defaultPages = b.number === 1 ? 30 : b.number === 3 ? 27 : 29;
-      const canonicalPdf = b.number === 1 ? "/materiais/cinelab-bonus-01-glossario-planos.pdf" : b.number === 3 ? "/materiais/cinelab-bonus-03-analise-filmica.pdf" : "/materiais/cinelab-bonus-02-glossario-roteiro.pdf";
-      const canonicalTitle = b.number === 1 ? "Gloss\xE1rio Completo de Planos" : b.number === 3 ? "M\xE9todo de An\xE1lise F\xEDlmica em 6 Camadas" : "Gloss\xE1rio Completo de Roteiro";
-      const safePdf = !b.pdfUrl || b.pdfUrl.includes("1791222") || b.pdfUrl.includes("uploads/apostilas") || b.pdfUrl.includes("1790684") ? canonicalPdf : b.pdfUrl;
-      const safePages = b.pagesCount && b.pagesCount !== 4 && b.pagesCount !== 24 && b.pagesCount !== 96 && b.pagesCount !== 104 ? b.pagesCount : defaultPages;
-      const canonicalBonusCover = b.number === 1 ? "/images/covers/apostila-01.jpg" : b.number === 2 ? "/images/covers/apostila-02.jpg" : "/images/covers/apostila-03.jpg";
-      const isOutdatedBonusCover = !b.coverUrl || b.coverUrl.includes("unsplash.com") || b.coverUrl.startsWith("/uploads/") && !b.coverUrl.includes("base64");
+      const defaultPages = b.number === 1 ? 30 : b.number === 3 ? 27 : b.number === 4 ? 36 : 29;
+      const canonicalPdf = b.number === 1 ? "/materiais/cinelab-bonus-01-glossario-planos.pdf" : b.number === 3 ? "/materiais/cinelab-bonus-03-analise-filmica.pdf" : b.number === 4 ? "/materiais/cinelab-bonus-04-historia-do-cinema-complemento.pdf" : "/materiais/cinelab-bonus-02-glossario-roteiro.pdf";
+      const canonicalTitle = b.number === 1 ? "Gloss\xE1rio Completo de Planos" : b.number === 3 ? "M\xE9todo de An\xE1lise F\xEDlmica em 6 Camadas" : b.number === 4 ? (b.title || "HISTORIA_DO_CINEMA - COMPLEMENTO") : "Gloss\xE1rio Completo de Roteiro";
+      const safePdf = b.number <= 3 ? (!b.pdfUrl || b.pdfUrl.includes("1791222") ? canonicalPdf : b.pdfUrl) : (b.pdfUrl || canonicalPdf);
+      const safePages = b.pagesCount && b.pagesCount !== 4 && b.pagesCount !== 24 && b.pagesCount !== 96 && b.pagesCount !== 104 ? b.pagesCount : (b.number === 4 && b.totalPages ? b.totalPages : defaultPages);
+      const canonicalBonusCover = `/images/covers/apostila-${padNum}.jpg`;
+      const isOutdatedBonusCover = !b.coverUrl || b.coverUrl.includes("unsplash.com") || (b.coverUrl.startsWith("/uploads/") && !b.coverUrl.includes("base64") && !b.coverUrl.includes("apostila-"));
       const safeBonusCover = !isOutdatedBonusCover ? b.coverUrl : canonicalBonusCover;
       return {
         ...b,
-        title: b.title && !b.title.includes("Pitching") ? b.title : canonicalTitle,
+        title: (b.number > 3 && b.title) ? b.title : (b.title && !b.title.includes("Pitching") ? b.title : canonicalTitle),
         requiredModule,
         coverUrl: safeBonusCover,
         isUnlocked: true,
@@ -7704,7 +7705,7 @@ app.get("/api/course/public-info", (req, res) => {
         pagesCount: safePages,
         totalPages: safePages,
         pdfUrl: safePdf,
-        extraVideos: b.extraVideos && b.extraVideos.length > 0 ? b.extraVideos : initExtraVideosForApostila(b, b.title)
+        extraVideos: b.extraVideos && b.extraVideos.length > 0 ? b.extraVideos : initExtraVideosForApostila(b, b.title || `B\xF4nus ${padNum}`)
       };
     }),
     now: now.toISOString()
@@ -9281,23 +9282,55 @@ app.put("/api/admin/apostilas/:id", requireAdmin, (req, res) => {
     saveDatabase();
     return res.json({ success: true, apostila: db2.apostilas[index], isBonus: false });
   }
-  const bonusIndex = db2.bonusApostilas.findIndex(
-    (b) => b.id === apostilaId || b.id === `bonus-${apostilaId}` || apostilaId === "bonus-01" && b.number === 1 || apostilaId === "bonus-02" && b.number === 2 || apostilaId === "bonus-03" && b.number === 3 || apostilaId === "bonus-1" && b.number === 1 || apostilaId === "bonus-2" && b.number === 2 || apostilaId === "bonus-3" && b.number === 3 || apostilaId === "991" && b.number === 1 || apostilaId === "992" && b.number === 2 || apostilaId === "993" && b.number === 3
+  const bonusMatch = apostilaId.match(/(\d+)/);
+  const bonusNumFromId = bonusMatch ? Number(bonusMatch[1]) : null;
+  const normalizedBonusNum = bonusNumFromId !== null && bonusNumFromId > 990 ? bonusNumFromId - 990 : bonusNumFromId;
+
+  let bonusIndex = db2.bonusApostilas.findIndex(
+    (b) => b.id === apostilaId || b.id === `bonus-${apostilaId}` || (normalizedBonusNum !== null && b.number === normalizedBonusNum)
   );
+  if (bonusIndex === -1 && normalizedBonusNum !== null) {
+    const pad = String(normalizedBonusNum).padStart(2, "0");
+    const newBonus = {
+      id: `bonus-${pad}`,
+      number: normalizedBonusNum,
+      code: `BÔNUS ${pad}`,
+      title: title || `Apostila Bônus ${pad}`,
+      subtitle: subtitle || "Material didático complementar exclusivo CINELAB.",
+      summary: description || "Material didático complementar exclusivo CINELAB.",
+      description: description || "Material didático complementar exclusivo CINELAB.",
+      pagesCount: Number(pagesCount) || 30,
+      totalPages: Number(pagesCount) || 30,
+      pdfUrl: pdfUrl || "",
+      coverUrl: coverUrl || `/images/covers/apostila-${pad}.jpg`,
+      unlockedByDefault: false,
+      requiredModule: 2,
+      isUnlocked: true,
+      status: "available",
+      notes: `Apostila Bônus ${pad}`,
+      fileSizeMb: 1.0,
+      extraVideos: [],
+      startDate: new Date(0).toISOString(),
+      unlockDate: new Date(0).toISOString()
+    };
+    db2.bonusApostilas.push(newBonus);
+    bonusIndex = db2.bonusApostilas.length - 1;
+  }
   if (bonusIndex !== -1) {
     const bNumber = db2.bonusApostilas[bonusIndex].number;
-    const newPages = pagesCount !== void 0 && Number(pagesCount) > 0 ? Number(pagesCount) : db2.bonusApostilas[bonusIndex].pagesCount || db2.bonusApostilas[bonusIndex].totalPages || (bNumber === 1 ? 30 : bNumber === 2 ? 29 : 4);
+    const newPages = pagesCount !== void 0 && Number(pagesCount) > 0 ? Number(pagesCount) : db2.bonusApostilas[bonusIndex].pagesCount || db2.bonusApostilas[bonusIndex].totalPages || 30;
     db2.bonusApostilas[bonusIndex] = {
       ...db2.bonusApostilas[bonusIndex],
       title: title || db2.bonusApostilas[bonusIndex].title,
       subtitle: subtitle || db2.bonusApostilas[bonusIndex].subtitle,
       description: description || db2.bonusApostilas[bonusIndex].description,
       pdfUrl: pdfUrl || db2.bonusApostilas[bonusIndex].pdfUrl,
-      coverUrl: coverUrl || db2.bonusApostilas[bonusIndex].coverUrl,
+      coverUrl: coverUrl !== void 0 ? coverUrl : db2.bonusApostilas[bonusIndex].coverUrl,
       pagesCount: newPages,
       totalPages: newPages
     };
     if (pdfUrl && typeof pdfUrl === "string" && pdfUrl.startsWith("/uploads/apostilas/")) {
+      const diskFilename = path2.basename(pdfUrl);
       const candidatePaths = [
         path2.join(apostilasUploadDir, diskFilename),
         path2.join(os.tmpdir(), "cinelab", "public", "uploads", "apostilas", diskFilename),
@@ -9307,7 +9340,7 @@ app.put("/api/admin/apostilas/:id", requireAdmin, (req, res) => {
       if (diskPath) {
         try {
           fs2.copyFileSync(diskPath, path2.join(backupApostilasDir, `apostila-bonus-0${bNumber}.pdf`));
-          const canonicalBonusName = bNumber === 1 ? "cinelab-bonus-01-glossario-planos.pdf" : bNumber === 2 ? "cinelab-bonus-02-glossario-roteiro.pdf" : "cinelab-bonus-03-analise-filmica.pdf";
+          const canonicalBonusName = bNumber === 1 ? "cinelab-bonus-01-glossario-planos.pdf" : bNumber === 2 ? "cinelab-bonus-02-glossario-roteiro.pdf" : bNumber === 3 ? "cinelab-bonus-03-analise-filmica.pdf" : `cinelab-bonus-0${bNumber}-complemento.pdf`;
           fs2.copyFileSync(diskPath, path2.join(materiaisDir, canonicalBonusName));
           const stat = fs2.statSync(diskPath);
           db2.bonusApostilas[bonusIndex].fileSizeMb = Number((stat.size / (1024 * 1024)).toFixed(2));
@@ -9317,6 +9350,7 @@ app.put("/api/admin/apostilas/:id", requireAdmin, (req, res) => {
       }
     }
     saveDatabase();
+    syncFileToGitHub("data/cinelab-db.json", `chore(admin): atualizar apostila bonus 0${bNumber}`).catch(() => {});
     return res.json({ success: true, apostila: db2.bonusApostilas[bonusIndex], isBonus: true });
   }
   return res.status(404).json({ error: "Apostila n\xE3o encontrada." });
@@ -10256,7 +10290,7 @@ app.post("/api/admin/apostilas/upload", requireAdmin, (req, res) => {
         syncFileToGitHub(`public/uploads/apostilas/${req.file.filename}`, `chore(upload): adicionar apostila ${req.file.filename}`, fileBuf).catch(() => {
         });
         if (isBonus) {
-          const canonicalBonusName = bonusNumber === 1 ? "cinelab-bonus-01-glossario-planos.pdf" : bonusNumber === 2 ? "cinelab-bonus-02-glossario-roteiro.pdf" : "cinelab-bonus-03-analise-filmica.pdf";
+          const canonicalBonusName = bonusNumber === 1 ? "cinelab-bonus-01-glossario-planos.pdf" : bonusNumber === 2 ? "cinelab-bonus-02-glossario-roteiro.pdf" : bonusNumber === 3 ? "cinelab-bonus-03-analise-filmica.pdf" : `cinelab-bonus-0${bonusNumber}-historia-do-cinema-complemento.pdf`;
           syncFileToGitHub(`public/materiais/${canonicalBonusName}`, `chore(upload): atualizar ${canonicalBonusName}`, fileBuf).catch(() => {
           });
         } else if (moduleId) {

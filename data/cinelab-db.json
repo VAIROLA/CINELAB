@@ -2589,6 +2589,28 @@
       ],
       "startDate": "1970-01-01T00:00:00.000Z",
       "unlockDate": "1970-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "bonus-04",
+      "number": 4,
+      "code": "BÔNUS 04",
+      "title": "HISTORIA_DO_CINEMA - COMPLEMENTO",
+      "subtitle": "Complemento da História do Cinema dos Primórdios à Era Digital",
+      "summary": "Complemento da História do Cinema dos Primórdios à Era Digital - exclusivo CINELAB.",
+      "description": "Complemento da História do Cinema dos Primórdios à Era Digital - exclusivo CINELAB.",
+      "pagesCount": 36,
+      "totalPages": 36,
+      "pdfUrl": "/materiais/cinelab-bonus-04-historia-do-cinema-complemento.pdf",
+      "coverUrl": "/images/covers/apostila-04.jpg",
+      "unlockedByDefault": false,
+      "requiredModule": 2,
+      "isUnlocked": true,
+      "status": "available",
+      "notes": "Apostila Bônus 04",
+      "fileSizeMb": 2.17,
+      "extraVideos": [],
+      "startDate": "1970-01-01T00:00:00.000Z",
+      "unlockDate": "1970-01-01T00:00:00.000Z"
     }
   ],
   "activities": [

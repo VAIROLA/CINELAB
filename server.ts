@@ -581,18 +581,25 @@ app.get('/api/course/public-info', (req: Request, res: Response) => {
       const canonicalTitle = b.number === 1
         ? 'Glossário Completo de Planos'
         : (b.number === 3 ? 'Método de Análise Fílmica em 6 Camadas' : 'Glossário Completo de Roteiro');
-      const safePdf = (!b.pdfUrl || b.pdfUrl.includes('1791222') || b.pdfUrl.includes('uploads/apostilas') || b.pdfUrl.includes('1790684'))
-        ? canonicalPdf
-        : b.pdfUrl;
-      const safePages = (b.pagesCount && b.pagesCount !== 4 && b.pagesCount !== 24 && b.pagesCount !== 96 && b.pagesCount !== 104) ? b.pagesCount : defaultPages;
-      const canonicalBonusCover = b.number === 1
-        ? '/images/covers/apostila-01.jpg'
-        : (b.number === 2 ? '/images/covers/apostila-02.jpg' : '/images/covers/apostila-03.jpg');
+
+      const safePdf = b.number <= 3
+        ? ((!b.pdfUrl || b.pdfUrl.includes('1791222') || b.pdfUrl.includes('1790684')) ? canonicalPdf : b.pdfUrl)
+        : (b.pdfUrl || `/materiais/cinelab-bonus-0${b.number}-historia-do-cinema-complemento.pdf`);
+
+      const safeTitle = b.number <= 3
+        ? (b.title && !b.title.includes('Pitching') ? b.title : canonicalTitle)
+        : (b.title || `Apostila Bônus 0${b.number}`);
+
+      const safePages = (b.pagesCount && b.pagesCount !== 4 && b.pagesCount !== 24 && b.pagesCount !== 96 && b.pagesCount !== 104)
+        ? b.pagesCount
+        : (b.number <= 3 ? defaultPages : 30);
+
+      const canonicalBonusCover = `/images/covers/apostila-${b.number < 10 ? '0' + b.number : b.number}.jpg`;
       const isOutdatedBonusCover = !b.coverUrl || b.coverUrl.includes('unsplash.com') || (b.coverUrl.startsWith('/uploads/') && !b.coverUrl.includes('base64'));
       const safeBonusCover = !isOutdatedBonusCover ? b.coverUrl : canonicalBonusCover;
       return {
         ...b,
-        title: b.title && !b.title.includes('Pitching') ? b.title : canonicalTitle,
+        title: safeTitle,
         requiredModule,
         coverUrl: safeBonusCover,
         isUnlocked: true,
@@ -2589,26 +2596,24 @@ app.put('/api/admin/apostilas/:id', requireAdmin, (req: Request, res: Response) 
   }
 
   // 2. Check in bonus apostilas
+  const isBonusTarget =
+    apostilaId.startsWith('bonus') ||
+    (!isNaN(Number(apostilaId)) && Number(apostilaId) > 990);
+
   const bonusIndex = db.bonusApostilas.findIndex(
     (b) =>
       b.id === apostilaId ||
       b.id === `bonus-${apostilaId}` ||
-      (apostilaId === 'bonus-01' && b.number === 1) ||
-      (apostilaId === 'bonus-02' && b.number === 2) ||
-      (apostilaId === 'bonus-03' && b.number === 3) ||
-      (apostilaId === 'bonus-1' && b.number === 1) ||
-      (apostilaId === 'bonus-2' && b.number === 2) ||
-      (apostilaId === 'bonus-3' && b.number === 3) ||
-      (apostilaId === '991' && b.number === 1) ||
-      (apostilaId === '992' && b.number === 2) ||
-      (apostilaId === '993' && b.number === 3)
+      (apostilaId.startsWith('bonus-') && b.number === Number(apostilaId.replace(/\D/g, ''))) ||
+      (!isNaN(Number(apostilaId)) && Number(apostilaId) > 990 && b.number === Number(apostilaId) - 990) ||
+      (!isNaN(Number(apostilaId)) && b.number === Number(apostilaId))
   );
 
   if (bonusIndex !== -1) {
     const bNumber = db.bonusApostilas[bonusIndex].number;
     const newPages = pagesCount !== undefined && Number(pagesCount) > 0
       ? Number(pagesCount)
-      : (db.bonusApostilas[bonusIndex].pagesCount || db.bonusApostilas[bonusIndex].totalPages || (bNumber === 1 ? 30 : bNumber === 2 ? 29 : 4));
+      : (db.bonusApostilas[bonusIndex].pagesCount || db.bonusApostilas[bonusIndex].totalPages || (bNumber === 1 ? 30 : bNumber === 2 ? 29 : 30));
 
     db.bonusApostilas[bonusIndex] = {
       ...db.bonusApostilas[bonusIndex],
@@ -2616,13 +2621,14 @@ app.put('/api/admin/apostilas/:id', requireAdmin, (req: Request, res: Response) 
       subtitle: subtitle || db.bonusApostilas[bonusIndex].subtitle,
       description: description || db.bonusApostilas[bonusIndex].description,
       pdfUrl: pdfUrl || db.bonusApostilas[bonusIndex].pdfUrl,
-      coverUrl: coverUrl || db.bonusApostilas[bonusIndex].coverUrl,
+      coverUrl: coverUrl !== undefined ? coverUrl : db.bonusApostilas[bonusIndex].coverUrl,
       pagesCount: newPages,
       totalPages: newPages,
     };
 
     // If PDF exists in uploads, sync to backup and materiais canonical names
     if (pdfUrl && typeof pdfUrl === 'string' && pdfUrl.startsWith('/uploads/apostilas/')) {
+      const diskFilename = path.basename(pdfUrl);
       const candidatePaths = [
         path.join(apostilasUploadDir, diskFilename),
         path.join(os.tmpdir(), 'cinelab', 'public', 'uploads', 'apostilas', diskFilename),
@@ -2637,7 +2643,9 @@ app.put('/api/admin/apostilas/:id', requireAdmin, (req: Request, res: Response) 
               ? 'cinelab-bonus-01-glossario-planos.pdf'
               : bNumber === 2
               ? 'cinelab-bonus-02-glossario-roteiro.pdf'
-              : 'cinelab-bonus-03-analise-filmica.pdf';
+              : bNumber === 3
+              ? 'cinelab-bonus-03-analise-filmica.pdf'
+              : `cinelab-bonus-0${bNumber}-historia-do-cinema-complemento.pdf`;
           fs.copyFileSync(diskPath, path.join(materiaisDir, canonicalBonusName));
           const stat = fs.statSync(diskPath);
           db.bonusApostilas[bonusIndex].fileSizeMb = Number((stat.size / (1024 * 1024)).toFixed(2));
@@ -2648,7 +2656,35 @@ app.put('/api/admin/apostilas/:id', requireAdmin, (req: Request, res: Response) 
     }
 
     saveDatabase();
+    syncFileToGitHub('data/cinelab-db.json', `chore(db): atualizar apostila bonus ${bNumber}`, JSON.stringify(db, null, 2)).catch(() => {});
     return res.json({ success: true, apostila: db.bonusApostilas[bonusIndex], isBonus: true });
+  }
+
+  // Auto-create new bonus if not yet in database
+  if (isBonusTarget) {
+    const rawDigits = Number(String(apostilaId).replace(/\D/g, ''));
+    const bNumber = rawDigits > 990 ? rawDigits - 990 : (rawDigits > 0 ? rawDigits : db.bonusApostilas.length + 1);
+    const newBonus = {
+      id: `bonus-0${bNumber}`,
+      number: bNumber,
+      code: `BÔNUS 0${bNumber}`,
+      title: title || `Apostila Bônus 0${bNumber}`,
+      subtitle: subtitle || '',
+      description: description || 'Material didático complementar oficial.',
+      summary: description || 'Material didático complementar oficial.',
+      pagesCount: Number(pagesCount) || 30,
+      totalPages: Number(pagesCount) || 30,
+      pdfUrl: pdfUrl || '',
+      coverUrl: coverUrl || `/images/covers/apostila-${bNumber < 10 ? '0' + bNumber : bNumber}.jpg`,
+      unlockedByDefault: false,
+      isUnlocked: true,
+      status: 'available' as const,
+      notes: `Apostila Bônus 0${bNumber}`,
+    };
+    db.bonusApostilas.push(newBonus as any);
+    saveDatabase();
+    syncFileToGitHub('data/cinelab-db.json', `chore(db): cadastrar apostila bonus 0${bNumber}`, JSON.stringify(db, null, 2)).catch(() => {});
+    return res.json({ success: true, apostila: newBonus, isBonus: true });
   }
 
   return res.status(404).json({ error: 'Apostila não encontrada.' });

@@ -441,17 +441,77 @@ export function getMergedBonusWithVault(serverBonus: BonusApostila[]): BonusApos
     } as any,
   ];
 
-  // Base list starts with canonical items
-  const baseList = (Array.isArray(serverBonus) && serverBonus.length > 0)
-    ? canonicalBonusList.map(canon => {
-        const found = serverBonus.find(s => s.number === canon.number);
-        return found ? { ...canon, ...found } : canon;
-      })
-    : canonicalBonusList;
+  // Base list starts with canonical items 1, 2, 3
+  const baseList: BonusApostila[] = [];
+
+  canonicalBonusList.forEach((canon) => {
+    const found = Array.isArray(serverBonus) ? serverBonus.find((s) => s.number === canon.number) : null;
+    baseList.push(found ? { ...canon, ...found } : canon);
+  });
+
+  // Include any bonus items from server with number >= 4
+  if (Array.isArray(serverBonus)) {
+    serverBonus.forEach((s) => {
+      if (s && s.number > 3 && !baseList.some((b) => b.number === s.number || b.id === s.id)) {
+        baseList.push(s);
+      }
+    });
+  }
+
+  // Include any bonus items stored in local vault with number >= 4
+  Object.keys(vault).forEach((k) => {
+    if (k.startsWith('bonus-')) {
+      const num = Number(k.replace('bonus-', ''));
+      if (num > 3 && !baseList.some((b) => b.number === num)) {
+        const item = vault[k];
+        baseList.push({
+          id: k,
+          number: num,
+          code: `BÔNUS 0${num}`,
+          title: item.title || `Apostila Bônus 0${num}`,
+          description: (item as any).description || 'Material pedagógico complementar oficial do CINELAB.',
+          summary: (item as any).summary || (item as any).description || 'Material pedagógico complementar oficial do CINELAB.',
+          pagesCount: item.pagesCount || 30,
+          totalPages: item.pagesCount || 30,
+          pdfUrl: item.pdfUrl || '',
+          coverUrl: item.coverUrl || `/images/covers/apostila-${num < 10 ? '0' + num : num}.jpg`,
+          unlockedByDefault: false,
+          isUnlocked: true,
+          status: 'available',
+          notes: `Apostila Bônus 0${num}`,
+        } as any);
+      }
+    }
+  });
+
+  baseList.sort((a, b) => (a.number || 0) - (b.number || 0));
 
   const result = baseList.map((b) => {
     const key = `bonus-${b.number}`;
     const local = vault[key];
+
+    // For custom bonus apostilas (number > 3), preserve all custom values and covers
+    if (b.number > 3) {
+      const title = local?.title || b.title || `Apostila Bônus 0${b.number}`;
+      const summary = (local as any)?.summary || b.summary || b.description || 'Material didático complementar do CINELAB.';
+      const pages = local?.pagesCount || b.pagesCount || b.totalPages || 30;
+      const pdf = local?.pdfUrl || b.pdfUrl || '';
+      const fallbackCover = `/images/covers/apostila-${b.number < 10 ? '0' + b.number : b.number}.jpg`;
+      const cover = local?.coverUrl || b.coverUrl || fallbackCover;
+      return {
+        ...b,
+        title,
+        subtitle: b.subtitle || '',
+        summary,
+        description: summary,
+        pagesCount: pages,
+        totalPages: pages,
+        pdfUrl: pdf,
+        coverUrl: cover,
+        fileSizeMb: local?.fileSizeMb || b.fileSizeMb || 2.0,
+      };
+    }
+
     const defaultPages = b.number === 1 ? 30 : (b.number === 3 ? 27 : 29);
     const canonicalTitle = b.number === 1
       ? 'Glossário Completo de Planos'

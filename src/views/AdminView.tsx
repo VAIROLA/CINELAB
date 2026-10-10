@@ -2468,6 +2468,8 @@ export const AdminView: React.FC<AdminViewProps> = ({
                         pagesCount: 50,
                         summary: '',
                         description: '',
+                        pdfUrl: '',
+                        coverUrl: '',
                         isUnlocked: true,
                       } as any);
                       setBonusModalOpen(true);
