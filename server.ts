@@ -551,6 +551,9 @@ app.get('/api/course/public-info', (req: Request, res: Response) => {
       const safePdf = isCorrupted ? canonicalPdf : a.pdfUrl;
       const realPages: Record<number, number> = { 1: 8, 2: 52, 3: 7, 4: 6, 5: 6, 6: 6, 7: 6, 8: 6, 9: 6, 10: 6 };
       const pages = realPages[mod] || a.pagesCount || a.totalPages || 4;
+      const canonicalCover = `/images/covers/apostila-${pad}.jpg`;
+      const isOutdatedCover = !a.coverUrl || a.coverUrl.includes('unsplash.com') || (a.coverUrl.startsWith('/uploads/') && !a.coverUrl.includes('base64'));
+      const resolvedCover = !isOutdatedCover ? a.coverUrl : canonicalCover;
       return {
         id: a.id,
         moduleId: a.moduleId,
@@ -561,7 +564,7 @@ app.get('/api/course/public-info', (req: Request, res: Response) => {
         pagesCount: pages,
         totalPages: pages,
         pdfUrl: safePdf,
-        coverUrl: a.coverUrl,
+        coverUrl: resolvedCover,
         fileSizeMb: a.fileSizeMb,
         isUnlocked: true,
         status: "available",
@@ -582,10 +585,16 @@ app.get('/api/course/public-info', (req: Request, res: Response) => {
         ? canonicalPdf
         : b.pdfUrl;
       const safePages = (b.pagesCount && b.pagesCount !== 4 && b.pagesCount !== 24 && b.pagesCount !== 96 && b.pagesCount !== 104) ? b.pagesCount : defaultPages;
+      const canonicalBonusCover = b.number === 1
+        ? '/images/covers/apostila-01.jpg'
+        : (b.number === 2 ? '/images/covers/apostila-02.jpg' : '/images/covers/apostila-03.jpg');
+      const isOutdatedBonusCover = !b.coverUrl || b.coverUrl.includes('unsplash.com') || (b.coverUrl.startsWith('/uploads/') && !b.coverUrl.includes('base64'));
+      const safeBonusCover = !isOutdatedBonusCover ? b.coverUrl : canonicalBonusCover;
       return {
         ...b,
         title: b.title && !b.title.includes('Pitching') ? b.title : canonicalTitle,
         requiredModule,
+        coverUrl: safeBonusCover,
         isUnlocked: true,
         status: 'available' as const,
         unlockDate: new Date(0).toISOString(),
