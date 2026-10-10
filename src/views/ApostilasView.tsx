@@ -13,6 +13,7 @@ import {
   formatPdfViewerUrl,
   getVaultBlobUrl,
   saveApostilaToVault,
+  updateVaultMetadata,
   getMergedApostilasWithVault,
   getMergedBonusWithVault,
   autoRestoreVaultToServer,
@@ -38,6 +39,7 @@ import {
   Shield,
   Globe,
   Upload,
+  Image as ImageIcon,
   Plus,
   AlertCircle,
   Loader2,
@@ -167,6 +169,50 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
     Boolean(user && user.role === 'student' && (!enrollment || enrollment.status === 'active' || enrollment.status === 'completed'));
 
   const isAdmin = Boolean(user?.role === 'admin');
+
+  // Estado e função para upload da capa de cada apostila diretamente da tela
+  const [uploadingCoverId, setUploadingCoverId] = useState<string | number | null>(null);
+
+  const handleUploadCover = async (item: Apostila | BonusApostila, file: File) => {
+    if (!isAdmin || !file) return;
+    const isImage = file.type.startsWith('image/') || /\.(jpe?g|png|webp|svg|gif|avif|bmp)$/i.test(file.name);
+    if (!isImage) {
+      alert('Por favor, selecione um arquivo de imagem válido (JPG, PNG, WebP).');
+      return;
+    }
+
+    const isBonus = Boolean((item as any).isBonus || (item as any).number > 990 || item.id?.startsWith('bonus') || (item as any).code?.includes('BÔNUS'));
+    const itemId = item.id;
+    const modOrBonusNumber = (item as any).moduleId || item.number || 1;
+
+    try {
+      setUploadingCoverId(itemId);
+      const res = await api.uploadImageFile(file);
+      if (res && res.fileUrl) {
+        await api.updateAdminApostila(itemId, { coverUrl: res.fileUrl });
+        await updateVaultMetadata(isBonus ? 990 + modOrBonusNumber : modOrBonusNumber, {
+          isBonus,
+          bonusNumber: isBonus ? modOrBonusNumber : undefined,
+          coverUrl: res.fileUrl,
+        });
+
+        if (isBonus) {
+          setBonusApostilas((prev) =>
+            prev.map((b) => (b.id === itemId || b.number === modOrBonusNumber ? { ...b, coverUrl: res.fileUrl } : b))
+          );
+        } else {
+          setApostilas((prev) =>
+            prev.map((a) => (a.id === itemId || a.moduleId === modOrBonusNumber ? { ...a, coverUrl: res.fileUrl } : a))
+          );
+        }
+      }
+    } catch (err: any) {
+      console.error(err);
+      alert(`Erro ao subir capa da apostila: ${err.message || 'Falha no upload'}`);
+    } finally {
+      setUploadingCoverId(null);
+    }
+  };
 
   useEffect(() => {
     try {
@@ -1128,93 +1174,167 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                     : 'bg-neutral-900/35 border-neutral-800/60'
                 }`}
               >
-                <div className="space-y-4">
-                  {/* Card Header */}
-                  <div className="flex items-center justify-between text-xs font-mono">
-                    <div className="flex items-center gap-2">
-                      <span className="text-amber-400 font-bold tracking-wide">
-                        {cur.handoutPrefix}{modNum}
-                      </span>
-                      {item.durationLabel && (
-                        <span className="text-[11px] text-neutral-400 bg-neutral-800/80 px-2 py-0.5 rounded border border-neutral-700/60">
-                          {item.durationLabel}
-                        </span>
+                <div className="flex flex-col sm:flex-row gap-5 items-start">
+                  {/* Capa da Apostila (Cover Slot) com Botão de Subir para Admin */}
+                  <div className="w-full sm:w-36 md:w-44 shrink-0 flex flex-col items-center">
+                    <div className="relative w-full aspect-[1/1.4] rounded-xl overflow-hidden border border-neutral-700/80 bg-neutral-950 shadow-xl group/cover flex items-center justify-center">
+                      {item.coverUrl ? (
+                        <img
+                          src={item.coverUrl}
+                          alt={`Capa da ${cur.handoutPrefix}${modNum}`}
+                          className="w-full h-full object-cover group-hover/cover:scale-105 transition-transform duration-300"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex flex-col items-center justify-center p-2.5 text-center bg-gradient-to-b from-neutral-900 to-neutral-950 border border-amber-500/20">
+                          <BookOpen className="w-7 h-7 text-amber-500/60 mb-1.5" />
+                          <span className="text-[10px] font-mono font-bold text-amber-400 uppercase tracking-wider">
+                            {cur.handoutPrefix}{modNum}
+                          </span>
+                          <span className="text-[9px] text-neutral-400 line-clamp-2 mt-1">
+                            {displayTitle}
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Botão Hover de Subir Capa (Admin) */}
+                      {isAdmin && (
+                        <label className="absolute inset-0 bg-black/85 opacity-0 group-hover/cover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1.5 cursor-pointer p-2 text-center text-white">
+                          {uploadingCoverId === item.id ? (
+                            <>
+                              <Loader2 className="w-5 h-5 animate-spin text-amber-400" />
+                              <span className="text-[10px] font-bold text-amber-300">Subindo...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Upload className="w-5 h-5 text-amber-400" />
+                              <span className="text-[10px] font-bold font-mono text-amber-300">
+                                {item.coverUrl ? 'Alterar Capa' : 'Subir Capa'}
+                              </span>
+                              <span className="text-[9px] text-neutral-400">JPG, PNG</span>
+                            </>
+                          )}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            disabled={uploadingCoverId !== null}
+                            className="hidden"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) handleUploadCover(item, file);
+                            }}
+                          />
+                        </label>
                       )}
                     </div>
-                    {statusBadge}
-                  </div>
 
-                  {/* Title & Description */}
-                  <div>
-                    <h3 className="text-base font-bold text-white mb-1 leading-snug">
-                      {displayTitle}
-                    </h3>
-                    {displaySubtitle && (
-                      <p className="text-xs font-medium text-amber-300/80 mb-2">
-                        {displaySubtitle}
-                      </p>
+                    {isAdmin && (
+                      <label className="mt-2 w-full py-1.5 px-2 rounded-lg bg-neutral-800/90 hover:bg-neutral-700 border border-amber-500/30 text-amber-300 hover:text-white text-[10px] font-mono font-semibold flex items-center justify-center gap-1 cursor-pointer transition">
+                        <Upload className="w-3 h-3 text-amber-400" />
+                        <span>Subir Capa</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          disabled={uploadingCoverId !== null}
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) handleUploadCover(item, file);
+                          }}
+                        />
+                      </label>
                     )}
-                    <p className="text-xs text-neutral-400 leading-relaxed line-clamp-3">
-                      {displaySummary}
-                    </p>
                   </div>
 
-                  {/* Reading Metadata & Online Reader CTA */}
-                  <div className="pt-2 space-y-2">
-                    <div className="flex items-center justify-between text-[11px] font-mono text-neutral-400">
-                      <span>{item.totalPages || item.pagesCount || 30} {cur.pagesUnit}</span>
-                      <span>{cur.readingOnPlatform}</span>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
-                      <button
-                        disabled={isLocked}
-                        onClick={() => handleOpenApostila(item, 'pdf')}
-                        className={`w-full py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-md active:scale-98 ${
-                          isLocked
-                            ? 'bg-neutral-800 text-neutral-500 opacity-60 cursor-not-allowed border border-neutral-700/50'
-                            : 'bg-amber-500 hover:bg-amber-400 text-neutral-950 cursor-pointer shadow-amber-500/10'
-                        }`}
-                        title={isLocked ? `Liberada em ${formatDateTime(item.startDate)}` : "Ler apostila em PDF na plataforma (download protegido)"}
-                      >
-                        {isLocked ? <Lock className="w-3.5 h-3.5 shrink-0 text-neutral-500" /> : <BookOpen className="w-3.5 h-3.5 shrink-0" />}
-                        <span className="truncate">{isLocked ? 'Bloqueada' : cur.readOnlineBtn}</span>
-                      </button>
-
-                      <button
-                        disabled={isLocked}
-                        onClick={() => handleOpenApostila(item, 'extra-videos')}
-                        className={`w-full py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-98 ${
-                          isLocked
-                            ? 'bg-neutral-800 text-neutral-500 opacity-60 cursor-not-allowed border border-neutral-700/50'
-                            : 'bg-neutral-800 hover:bg-neutral-700 text-amber-300 border border-neutral-700 hover:border-amber-500/50 cursor-pointer'
-                        }`}
-                        title={isLocked ? `Liberados em ${formatDateTime(item.startDate)}` : "Assistir aos 2 vídeos extras para estudo desta apostila"}
-                      >
-                        {isLocked ? <Lock className="w-3.5 h-3.5 shrink-0 text-neutral-500" /> : <Film className="w-3.5 h-3.5 text-amber-400 shrink-0" />}
-                        <span className="truncate">{isLocked ? cur.locked : cur.extraVideosBtn}</span>
-                      </button>
-
-                      <button
-                        disabled={isLocked}
-                        onClick={() => handleOpenTraining(item, modNum)}
-                        className={`w-full py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all border active:scale-98 ${
-                          isLocked
-                            ? 'bg-neutral-800 text-neutral-500 opacity-60 cursor-not-allowed border-neutral-700/50'
-                            : completedTrainings[`etapa-${modNum}`]
-                            ? 'bg-emerald-950/50 hover:bg-emerald-900/50 text-emerald-300 border-emerald-600/60 shadow-sm cursor-pointer'
-                            : 'bg-neutral-800 hover:bg-neutral-700 text-amber-300 border-amber-500/40 hover:border-amber-400 cursor-pointer'
-                        }`}
-                        title={isLocked ? `Liberada em ${formatDateTime(item.startDate)}` : "Fazer Avaliação de Treinamento prática da etapa"}
-                      >
-                        {isLocked ? <Lock className="w-3.5 h-3.5 shrink-0 text-neutral-500" /> : <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />}
-                        <span className="truncate">{isLocked ? cur.locked : cur.trainingEvalBtn}</span>
-                        {completedTrainings[`etapa-${modNum}`] && !isLocked && (
-                          <span className="text-[10px] font-mono bg-emerald-500/20 text-emerald-300 px-1 py-0.2 rounded shrink-0">
-                            {completedTrainings[`etapa-${modNum}`].score}/{completedTrainings[`etapa-${modNum}`].total}
+                  {/* Lado Direito: Informações da Apostila */}
+                  <div className="flex-1 min-w-0 space-y-4">
+                    {/* Card Header */}
+                    <div className="flex items-center justify-between text-xs font-mono">
+                      <div className="flex items-center gap-2">
+                        <span className="text-amber-400 font-bold tracking-wide">
+                          {cur.handoutPrefix}{modNum}
+                        </span>
+                        {item.durationLabel && (
+                          <span className="text-[11px] text-neutral-400 bg-neutral-800/80 px-2 py-0.5 rounded border border-neutral-700/60">
+                            {item.durationLabel}
                           </span>
                         )}
-                      </button>
+                      </div>
+                      {statusBadge}
+                    </div>
+
+                    {/* Title & Description */}
+                    <div>
+                      <h3 className="text-base font-bold text-white mb-1 leading-snug">
+                        {displayTitle}
+                      </h3>
+                      {displaySubtitle && (
+                        <p className="text-xs font-medium text-amber-300/80 mb-2">
+                          {displaySubtitle}
+                        </p>
+                      )}
+                      <p className="text-xs text-neutral-400 leading-relaxed line-clamp-3">
+                        {displaySummary}
+                      </p>
+                    </div>
+
+                    {/* Reading Metadata & Online Reader CTA */}
+                    <div className="pt-2 space-y-2">
+                      <div className="flex items-center justify-between text-[11px] font-mono text-neutral-400">
+                        <span>{item.totalPages || item.pagesCount || 30} {cur.pagesUnit}</span>
+                        <span>{cur.readingOnPlatform}</span>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
+                        <button
+                          disabled={isLocked}
+                          onClick={() => handleOpenApostila(item, 'pdf')}
+                          className={`w-full py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-md active:scale-98 ${
+                            isLocked
+                              ? 'bg-neutral-800 text-neutral-500 opacity-60 cursor-not-allowed border border-neutral-700/50'
+                              : 'bg-amber-500 hover:bg-amber-400 text-neutral-950 cursor-pointer shadow-amber-500/10'
+                          }`}
+                          title={isLocked ? `Liberada em ${formatDateTime(item.startDate)}` : "Ler apostila em PDF na plataforma (download protegido)"}
+                        >
+                          {isLocked ? <Lock className="w-3.5 h-3.5 shrink-0 text-neutral-500" /> : <BookOpen className="w-3.5 h-3.5 shrink-0" />}
+                          <span className="truncate">{isLocked ? 'Bloqueada' : cur.readOnlineBtn}</span>
+                        </button>
+
+                        <button
+                          disabled={isLocked}
+                          onClick={() => handleOpenApostila(item, 'extra-videos')}
+                          className={`w-full py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-98 ${
+                            isLocked
+                              ? 'bg-neutral-800 text-neutral-500 opacity-60 cursor-not-allowed border border-neutral-700/50'
+                              : 'bg-neutral-800 hover:bg-neutral-700 text-amber-300 border border-neutral-700 hover:border-amber-500/50 cursor-pointer'
+                          }`}
+                          title={isLocked ? `Liberados em ${formatDateTime(item.startDate)}` : "Assistir aos 2 vídeos extras para estudo desta apostila"}
+                        >
+                          {isLocked ? <Lock className="w-3.5 h-3.5 shrink-0 text-neutral-500" /> : <Film className="w-3.5 h-3.5 text-amber-400 shrink-0" />}
+                          <span className="truncate">{isLocked ? cur.locked : cur.extraVideosBtn}</span>
+                        </button>
+
+                        <button
+                          disabled={isLocked}
+                          onClick={() => handleOpenTraining(item, modNum)}
+                          className={`w-full py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all border active:scale-98 ${
+                            isLocked
+                              ? 'bg-neutral-800 text-neutral-500 opacity-60 cursor-not-allowed border-neutral-700/50'
+                              : completedTrainings[`etapa-${modNum}`]
+                              ? 'bg-emerald-950/50 hover:bg-emerald-900/50 text-emerald-300 border-emerald-600/60 shadow-sm cursor-pointer'
+                              : 'bg-neutral-800 hover:bg-neutral-700 text-amber-300 border-amber-500/40 hover:border-amber-400 cursor-pointer'
+                          }`}
+                          title={isLocked ? `Liberada em ${formatDateTime(item.startDate)}` : "Fazer Avaliação de Treinamento prática da etapa"}
+                        >
+                          {isLocked ? <Lock className="w-3.5 h-3.5 shrink-0 text-neutral-500" /> : <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />}
+                          <span className="truncate">{isLocked ? cur.locked : cur.trainingEvalBtn}</span>
+                          {completedTrainings[`etapa-${modNum}`] && !isLocked && (
+                            <span className="text-[10px] font-mono bg-emerald-500/20 text-emerald-300 px-1 py-0.2 rounded shrink-0">
+                              {completedTrainings[`etapa-${modNum}`].score}/{completedTrainings[`etapa-${modNum}`].total}
+                            </span>
+                          )}
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1603,30 +1723,104 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                 key={b.id}
                 className="p-6 sm:p-7 rounded-3xl bg-neutral-900/80 border-2 border-amber-500/30 hover:border-amber-500/60 transition-all space-y-4 flex flex-col justify-between shadow-xl"
               >
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between text-xs font-mono">
-                    <span className="px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 font-bold border border-amber-500/40">
-                      {cur.bonusCardBadge ? cur.bonusCardBadge(b.number) : (b.code || `BÔNUS 0${b.number}`)}
-                    </span>
-                    {/* NÚMERO DE PÁGINAS DESTACADO */}
-                    <span className="px-3 py-1 rounded-lg bg-neutral-800 text-amber-300 font-mono text-xs font-bold border border-neutral-700/80 shadow-inner flex items-center gap-1.5">
-                      <BookOpen className="w-3.5 h-3.5 text-amber-400" />
-                      <span>{displayPages} {cur.bonusPagesUnit}</span>
-                    </span>
+                <div className="flex flex-col sm:flex-row gap-4 items-start">
+                  {/* Capa da Apostila Bônus */}
+                  <div className="w-full sm:w-28 md:w-32 shrink-0 flex flex-col items-center">
+                    <div className="relative w-full aspect-[1/1.4] rounded-xl overflow-hidden border border-amber-500/40 bg-neutral-950 shadow-xl group/cover flex items-center justify-center">
+                      {b.coverUrl ? (
+                        <img
+                          src={b.coverUrl}
+                          alt={`Capa da ${b.code || `BÔNUS 0${b.number}`}`}
+                          className="w-full h-full object-cover group-hover/cover:scale-105 transition-transform duration-300"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex flex-col items-center justify-center p-2 text-center bg-gradient-to-b from-neutral-900 to-neutral-950 border border-amber-500/20">
+                          <BookOpen className="w-6 h-6 text-amber-500/60 mb-1" />
+                          <span className="text-[9px] font-mono font-bold text-amber-400 uppercase tracking-wider">
+                            {b.code || `BÔNUS 0${b.number}`}
+                          </span>
+                          <span className="text-[8px] text-neutral-400 line-clamp-2 mt-0.5">
+                            {bDisplayTitle}
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Botão Hover de Subir Capa (Admin) */}
+                      {isAdmin && (
+                        <label className="absolute inset-0 bg-black/85 opacity-0 group-hover/cover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1 cursor-pointer p-1.5 text-center text-white">
+                          {uploadingCoverId === b.id ? (
+                            <>
+                              <Loader2 className="w-4 h-4 animate-spin text-amber-400" />
+                              <span className="text-[9px] font-bold text-amber-300">Subindo...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Upload className="w-4 h-4 text-amber-400" />
+                              <span className="text-[9px] font-bold font-mono text-amber-300">
+                                {b.coverUrl ? 'Alterar Capa' : 'Subir Capa'}
+                              </span>
+                              <span className="text-[8px] text-neutral-400">JPG, PNG</span>
+                            </>
+                          )}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            disabled={uploadingCoverId !== null}
+                            className="hidden"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) handleUploadCover(b, file);
+                            }}
+                          />
+                        </label>
+                      )}
+                    </div>
+
+                    {isAdmin && (
+                      <label className="mt-2 w-full py-1 px-1.5 rounded-lg bg-neutral-800/90 hover:bg-neutral-700 border border-amber-500/30 text-amber-300 hover:text-white text-[9px] font-mono font-semibold flex items-center justify-center gap-1 cursor-pointer transition">
+                        <Upload className="w-2.5 h-2.5 text-amber-400" />
+                        <span>Subir Capa</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          disabled={uploadingCoverId !== null}
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) handleUploadCover(b, file);
+                          }}
+                        />
+                      </label>
+                    )}
                   </div>
 
-                  {/* NOME DA APOSTILA DESTACADO */}
-                  <h3 className="text-base sm:text-lg font-bold text-white leading-snug font-display">
-                    {bDisplayTitle}
-                  </h3>
+                  {/* Informações da Apostila Bônus */}
+                  <div className="flex-1 min-w-0 space-y-3">
+                    <div className="flex items-center justify-between text-xs font-mono">
+                      <span className="px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 font-bold border border-amber-500/40">
+                        {cur.bonusCardBadge ? cur.bonusCardBadge(b.number) : (b.code || `BÔNUS 0${b.number}`)}
+                      </span>
+                      {/* NÚMERO DE PÁGINAS DESTACADO */}
+                      <span className="px-3 py-1 rounded-lg bg-neutral-800 text-amber-300 font-mono text-xs font-bold border border-neutral-700/80 shadow-inner flex items-center gap-1.5">
+                        <BookOpen className="w-3.5 h-3.5 text-amber-400" />
+                        <span>{displayPages} {cur.bonusPagesUnit}</span>
+                      </span>
+                    </div>
 
-                  <p className="text-xs text-neutral-300 leading-relaxed line-clamp-2 min-h-[2.5rem]">
-                    {bDisplaySummary}
-                  </p>
+                    {/* NOME DA APOSTILA DESTACADO */}
+                    <h3 className="text-base sm:text-lg font-bold text-white leading-snug font-display">
+                      {bDisplayTitle}
+                    </h3>
 
-                  <div className="text-[11px] font-mono text-neutral-400 flex items-center gap-1.5 pt-1">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                    <span className="text-emerald-400 font-semibold">{cur.pdfAvailable}</span>
+                    <p className="text-xs text-neutral-300 leading-relaxed line-clamp-2 min-h-[2.5rem]">
+                      {bDisplaySummary}
+                    </p>
+
+                    <div className="text-[11px] font-mono text-neutral-400 flex items-center gap-1.5 pt-1">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                      <span className="text-emerald-400 font-semibold">{cur.pdfAvailable}</span>
+                    </div>
                   </div>
                 </div>
 

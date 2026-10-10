@@ -18,6 +18,7 @@ export interface VaultApostilaItem {
   fileSizeMb?: number;
   pdfBlob?: Blob;
   pdfUrl?: string;
+  coverUrl?: string;
   updatedAt: string;
 }
 
@@ -178,6 +179,7 @@ export async function updateVaultMetadata(
     title?: string;
     pagesCount?: number;
     pdfUrl?: string;
+    coverUrl?: string;
     fileSizeMb?: number;
   }
 ): Promise<void> {
@@ -194,6 +196,7 @@ export async function updateVaultMetadata(
     title: meta.title !== undefined ? meta.title : existing.title,
     pagesCount: meta.pagesCount !== undefined && Number(meta.pagesCount) > 0 ? Number(meta.pagesCount) : existing.pagesCount,
     pdfUrl: meta.pdfUrl !== undefined ? meta.pdfUrl : existing.pdfUrl,
+    coverUrl: meta.coverUrl !== undefined ? meta.coverUrl : existing.coverUrl,
     fileSizeMb: meta.fileSizeMb !== undefined ? meta.fileSizeMb : existing.fileSizeMb,
     updatedAt: new Date().toISOString(),
   };
@@ -210,6 +213,7 @@ export async function updateVaultMetadata(
         if (meta.title !== undefined) item.title = meta.title;
         if (meta.pagesCount !== undefined && Number(meta.pagesCount) > 0) item.pagesCount = Number(meta.pagesCount);
         if (meta.pdfUrl !== undefined) item.pdfUrl = meta.pdfUrl;
+        if (meta.coverUrl !== undefined) item.coverUrl = meta.coverUrl;
         if (meta.fileSizeMb !== undefined) item.fileSizeMb = meta.fileSizeMb;
         item.updatedAt = new Date().toISOString();
         store.put(item);
@@ -357,6 +361,7 @@ export function getMergedApostilasWithVault(serverApostilas: Apostila[]): Aposti
       pagesCount: pages,
       totalPages: pages,
       pdfUrl: effectivePdf,
+      coverUrl: local?.coverUrl || apos.coverUrl,
       fileSizeMb: local.fileSizeMb || apos.fileSizeMb,
     };
   });
@@ -500,6 +505,7 @@ export function getMergedBonusWithVault(serverBonus: BonusApostila[]): BonusApos
       pagesCount: pages,
       totalPages: pages,
       pdfUrl: (!isOutdatedLocal && local?.pdfUrl) ? local.pdfUrl : (b.pdfUrl || canonicalPdf),
+      coverUrl: local?.coverUrl || b.coverUrl,
       fileSizeMb: local?.fileSizeMb || b.fileSizeMb || (b.number === 1 ? 0.35 : b.number === 2 ? 0.38 : 0.42),
     };
   });
