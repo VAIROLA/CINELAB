@@ -35,15 +35,20 @@ export const CourseBannerPromo: React.FC<CourseBannerPromoProps> = ({
   className = '',
 }) => {
   const { t, language, currency } = useLanguage();
+  const effectiveCurrency =
+    (language === 'fr' && currency === 'BRL') ? 'EUR' :
+    ((language === 'en' || language === 'es') && currency === 'BRL') ? 'USD' :
+    (currency || (language === 'fr' ? 'EUR' : language === 'en' || language === 'es' ? 'USD' : 'BRL'));
+
   const price = settings?.coursePrice || 1000.00;
   const originalPrice = settings?.coursePriceOriginal || 2000.00;
   const maxInstallments = settings?.maxInstallments || 12;
   const installmentValue = (price / maxInstallments).toFixed(2);
   const diffSavings = (originalPrice - price).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  const priceParts = getPriceDisplayParts(price, currency);
-  const originalPriceFormatted = formatCurrencyPrice(originalPrice, currency);
-  const installmentsText = formatInstallmentOption(price, maxInstallments, currency, language);
-  const savingsText = formatSavingsText(originalPrice, price, currency, language);
+  const priceParts = getPriceDisplayParts(price, effectiveCurrency);
+  const originalPriceFormatted = formatCurrencyPrice(originalPrice, effectiveCurrency);
+  const installmentsText = formatInstallmentOption(price, maxInstallments, effectiveCurrency, language);
+  const savingsText = formatSavingsText(originalPrice, price, effectiveCurrency, language);
 
   const allTexts = {
     pt: {

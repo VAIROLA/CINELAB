@@ -33,6 +33,10 @@ export const EnrollmentView: React.FC<EnrollmentViewProps> = ({
   user,
 }) => {
   const { language, currency } = useLanguage();
+  const effectiveCurrency =
+    (language === 'fr' && currency === 'BRL') ? 'EUR' :
+    ((language === 'en' || language === 'es') && currency === 'BRL') ? 'USD' :
+    (currency || (language === 'fr' ? 'EUR' : language === 'en' || language === 'es' ? 'USD' : 'BRL'));
   // Se o usuário logado for ADMIN, NUNCA pré-preenche com os dados administrativos
   const isStudentUser = Boolean(currentUser?.role === 'student' || user?.role === 'student');
   const activeStudent = isStudentUser ? (currentUser || user) : null;
@@ -575,13 +579,13 @@ export const EnrollmentView: React.FC<EnrollmentViewProps> = ({
                 <div className="flex items-center justify-between text-neutral-400">
                   <span>{cur.marketValue}</span>
                   <span className="text-neutral-500 line-through font-mono">
-                    {formatCurrencyPrice(originalPrice, currency)}
+                    {formatCurrencyPrice(originalPrice, effectiveCurrency)}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-emerald-400 font-medium">
                   <span>{cur.specialDiscount}</span>
                   <span className="font-mono font-bold">
-                    - {formatCurrencyPrice(originalPrice - price, currency)}
+                    - {formatCurrencyPrice(originalPrice - price, effectiveCurrency)}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-neutral-400">
@@ -595,19 +599,19 @@ export const EnrollmentView: React.FC<EnrollmentViewProps> = ({
                 <div className="border-t border-neutral-800 pt-2 flex items-center justify-between font-bold text-white text-sm">
                   <span className="text-amber-300 font-mono uppercase tracking-wider">{cur.promotionalPrice}</span>
                   <span className="text-amber-400 text-lg font-display font-extrabold">
-                    {formatCurrencyPrice(price, currency)}
+                    {formatCurrencyPrice(price, effectiveCurrency)}
                   </span>
                 </div>
 
-                {(currency !== 'BRL' || language !== 'pt') && (
+                {(effectiveCurrency !== 'BRL' || language !== 'pt') && (
                   <div className="mt-2 text-[10.5px] text-neutral-400 font-mono bg-neutral-950/70 p-2.5 rounded-lg border border-neutral-800 space-y-1">
                     <p className="text-amber-400 font-bold">
-                      {currency === 'EUR' ? '💶 Tarification Internationale (Euros €)' : currency === 'USD' ? '💵 Tarificación Internacional (USD $)' : '🇧🇷 Cobrança Nacional (Reais R$)'}
+                      {effectiveCurrency === 'EUR' ? '💶 Tarification Internationale (Euros €)' : effectiveCurrency === 'USD' ? '💵 Tarificación Internacional (USD $)' : '🇧🇷 Cobrança Nacional (Reais R$)'}
                     </p>
                     <p className="text-neutral-300 leading-relaxed font-sans text-[11px]">
-                      {currency === 'EUR' && `Tarif affiché en Euros (~${formatCurrencyPrice(price, 'EUR')}). Votre carte bancaire internationale (Visa / Mastercard) effectue la conversion en toute sécurité.`}
-                      {currency === 'USD' && `Tarifa estimada en USD (~${formatCurrencyPrice(price, 'USD')}). Tu tarjeta internacional (Visa / Mastercard) realiza la conversión automática sin complicaciones.`}
-                      {currency === 'BRL' && `Cobrança oficial em Reais Brasileiros (${formatCurrencyPrice(price, 'BRL')}). Processamento via PIX ou Cartão.`}
+                      {effectiveCurrency === 'EUR' && `Tarif affiché en Euros (~${formatCurrencyPrice(price, 'EUR')}). Votre carte bancaire internationale (Visa / Mastercard) effectue la conversion en toute sécurité.`}
+                      {effectiveCurrency === 'USD' && `Tarifa estimada en USD (~${formatCurrencyPrice(price, 'USD')}). Tu tarjeta internacional (Visa / Mastercard) realiza la conversión automática sin complicaciones.`}
+                      {effectiveCurrency === 'BRL' && `Cobrança oficial em Reais Brasileiros (${formatCurrencyPrice(price, 'BRL')}). Processamento via PIX ou Cartão.`}
                     </p>
                   </div>
                 )}
@@ -756,7 +760,7 @@ export const EnrollmentView: React.FC<EnrollmentViewProps> = ({
                       className="w-full px-3 py-2 bg-neutral-950 border border-neutral-700 rounded-lg text-white text-xs focus:outline-none focus:border-amber-500"
                     >
                       {Array.from({ length: maxInstallments }, (_, i) => i + 1).map((n) => {
-                        const formattedSingle = formatCurrencyPrice(price / n, currency);
+                        const formattedSingle = formatCurrencyPrice(price / n, effectiveCurrency);
                         return (
                           <option key={n} value={n}>
                             {n === 1

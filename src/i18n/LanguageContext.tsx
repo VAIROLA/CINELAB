@@ -44,15 +44,30 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return 'pt';
   });
 
+  // Helper que mapeia cada idioma para a moeda correspondente
+  const getCurrencyForLanguage = (lang: Language): CurrencyCode => {
+    if (lang === 'fr') return 'EUR';
+    if (lang === 'en' || lang === 'es') return 'USD';
+    return 'BRL';
+  };
+
   const [currency, setCurrencyState] = useState<CurrencyCode>(() => {
     try {
-      const saved = localStorage.getItem('cinelab_currency') as CurrencyCode;
-      if (saved && ['BRL', 'USD', 'EUR'].includes(saved)) {
-        return saved;
+      const savedLang = localStorage.getItem('cinelab_language') as Language;
+      const savedCurrency = localStorage.getItem('cinelab_currency') as CurrencyCode;
+
+      // Se houver moeda salva válida:
+      if (savedCurrency && ['BRL', 'USD', 'EUR'].includes(savedCurrency)) {
+        // Se a língua salva for estrangeira mas a moeda estiver presa em BRL (resquício anterior),
+        // força a conversão correta para o idioma salvo!
+        if (savedLang === 'fr' && savedCurrency === 'BRL') return 'EUR';
+        if ((savedLang === 'en' || savedLang === 'es') && savedCurrency === 'BRL') return 'USD';
+        return savedCurrency;
       }
-      const savedLang = localStorage.getItem('cinelab_language');
-      if (savedLang === 'fr') return 'EUR';
-      if (savedLang === 'en' || savedLang === 'es') return 'USD';
+
+      if (savedLang && ['pt', 'en', 'es', 'fr'].includes(savedLang)) {
+        return getCurrencyForLanguage(savedLang);
+      }
     } catch (e) {
       // ignore
     }
@@ -63,7 +78,6 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setCurrencyState(c);
     try {
       localStorage.setItem('cinelab_currency', c);
-      localStorage.setItem('cinelab_currency_manual', 'true');
     } catch (e) {
       // ignore
     }
@@ -71,18 +85,16 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
+
+    // MUDOU O IDIOMA -> CONVERTE AUTOMATICAMENTE PARA A MOEDA DO PAÍS!
+    const targetCurrency = getCurrencyForLanguage(lang);
+    setCurrencyState(targetCurrency);
+
     try {
       localStorage.setItem('cinelab_language', lang);
+      localStorage.setItem('cinelab_currency', targetCurrency);
+      localStorage.removeItem('cinelab_currency_manual');
       document.documentElement.lang = lang;
-
-      const manual = localStorage.getItem('cinelab_currency_manual');
-      if (!manual) {
-        let newCurr: CurrencyCode = 'BRL';
-        if (lang === 'fr') newCurr = 'EUR';
-        else if (lang === 'en' || lang === 'es') newCurr = 'USD';
-        setCurrencyState(newCurr);
-        localStorage.setItem('cinelab_currency', newCurr);
-      }
     } catch (e) {
       // ignore
     }

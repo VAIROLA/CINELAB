@@ -47,6 +47,10 @@ export const HomeView: React.FC<HomeViewProps> = ({
   isLoggedIn = false,
 }) => {
   const { t, getModuleTranslation, language, currency } = useLanguage();
+  const effectiveCurrency =
+    (language === 'fr' && currency === 'BRL') ? 'EUR' :
+    ((language === 'en' || language === 'es') && currency === 'BRL') ? 'USD' :
+    (currency || (language === 'fr' ? 'EUR' : language === 'en' || language === 'es' ? 'USD' : 'BRL'));
   const [localSettings, setLocalSettings] = useState<CourseSettings | null>(settings || null);
   const [localModules, setLocalModules] = useState<CourseModule[]>(modules || []);
   const [bonusApostilas, setBonusApostilas] = useState<any[]>([]);
@@ -872,19 +876,19 @@ export const HomeView: React.FC<HomeViewProps> = ({
 
             <div className="text-center pb-6 border-b border-neutral-800">
               <span className="text-xs text-red-400 font-mono line-through font-bold">
-                {language === 'pt' && currency === 'BRL'
+                {language === 'pt' && effectiveCurrency === 'BRL'
                   ? `De R$ ${originalPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (Valor de Mercado)`
-                  : `${t('home.pricingMarketLabel', 'Market Value:')} ${formatCurrencyPrice(originalPrice, currency)}`}
+                  : `${t('home.pricingMarketLabel', 'Market Value:')} ${formatCurrencyPrice(originalPrice, effectiveCurrency)}`}
               </span>
               <div className="flex items-baseline justify-center gap-1.5 mt-1 flex-wrap">
                 <span className="text-xs font-black uppercase tracking-wider text-amber-400 font-mono">{t('home.pricingBy')}</span>
                 <span className="text-3xl sm:text-5xl font-display font-extrabold text-amber-400 break-words">
-                  {formatCurrencyPrice(price, currency)}
+                  {formatCurrencyPrice(price, effectiveCurrency)}
                 </span>
                 <span className="text-xs text-neutral-400">{t('home.pricingCash')}</span>
               </div>
               <p className="text-xs text-amber-300 font-mono mt-1.5 font-bold">
-                {formatInstallmentOption(price, 12, currency, language)}
+                {formatInstallmentOption(price, 12, effectiveCurrency, language)}
               </p>
               <div className="mt-2 inline-block px-2.5 py-0.5 rounded bg-red-950/80 border border-red-800 text-red-300 text-[10px] font-mono font-bold uppercase">
                 {t('home.pricingPromoTag')}
