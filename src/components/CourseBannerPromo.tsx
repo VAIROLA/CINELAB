@@ -38,6 +38,8 @@ export const CourseBannerPromo: React.FC<CourseBannerPromoProps> = ({
   const price = settings?.coursePrice || 1000.00;
   const originalPrice = settings?.coursePriceOriginal || 2000.00;
   const maxInstallments = settings?.maxInstallments || 12;
+  const installmentValue = (price / maxInstallments).toFixed(2);
+  const diffSavings = (originalPrice - price).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const priceParts = getPriceDisplayParts(price, language);
   const originalPriceFormatted = formatCurrencyPrice(originalPrice, language);
   const installmentsText = formatInstallmentOption(price, maxInstallments, language);
@@ -60,8 +62,8 @@ export const CourseBannerPromo: React.FC<CourseBannerPromoProps> = ({
       marketVal: 'VALOR DE MERCADO:',
       byOnly: 'POR APENAS',
       cash: 'à vista',
-      installments: `ou em até ${maxInstallments}x de R$ ${installmentValue.replace('.', ',')} no cartão`,
-      savings: `Economia real de R$ ${diffSavings} na sua formação profissional!`,
+      installments: installmentsText,
+      savings: savingsText,
       check1: 'Acesso completo à plataforma de ensino por 3 meses',
       check2: '10 Apostilas exclusivas para leitura online + 4 bônus',
       check3: 'Avaliações formativas por etapa e feedback pedagógico',
@@ -98,8 +100,8 @@ export const CourseBannerPromo: React.FC<CourseBannerPromoProps> = ({
       marketVal: 'MARKET VALUE:',
       byOnly: 'FOR ONLY',
       cash: 'single payment',
-      installments: `or in up to ${maxInstallments}x card installments`,
-      savings: `Real savings of $${Math.round(originalPrice - price)} on your professional training!`,
+      installments: installmentsText,
+      savings: savingsText,
       check1: 'Full 3-month access to the learning platform',
       check2: '10 Exclusive handouts for online reading + 4 bonuses',
       check3: 'Step-by-step evaluations and pedagogical feedback',
@@ -136,8 +138,8 @@ export const CourseBannerPromo: React.FC<CourseBannerPromoProps> = ({
       marketVal: 'VALOR DE MERCADO:',
       byOnly: 'POR TAN SOLO',
       cash: 'de contado',
-      installments: `o hasta en ${maxInstallments} cuotas con tarjeta`,
-      savings: `¡Ahorro real de ${(originalPrice - price).toLocaleString('es-ES', { minimumFractionDigits: 2 })} en tu formación profesional!`,
+      installments: installmentsText,
+      savings: savingsText,
       check1: 'Acceso completo a la plataforma educativa por 3 meses',
       check2: '10 Manuales exclusivos para lectura online + 4 bonos',
       check3: 'Evaluaciones progresivas y retroalimentación docente',
@@ -174,8 +176,8 @@ export const CourseBannerPromo: React.FC<CourseBannerPromoProps> = ({
       marketVal: 'VALEUR MARCHANDE :',
       byOnly: 'POUR SEULEMENT',
       cash: 'au comptant',
-      installments: `ou jusqu'à ${maxInstallments} mensualités par carte`,
-      savings: `Économie réelle de ${(originalPrice - price).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} € sur votre formation !`,
+      installments: installmentsText,
+      savings: savingsText,
       check1: 'Accès complet à la plateforme d\'apprentissage pour 3 mois',
       check2: '10 Fascicules exclusifs en lecture en ligne + 4 bonus',
       check3: 'Évaluations formatives et retours pédagogiques',

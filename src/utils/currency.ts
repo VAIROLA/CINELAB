@@ -101,13 +101,18 @@ export async function initLiveCurrencyRates(): Promise<void> {
  * Converts a base BRL price to the target language currency.
  */
 export function getConvertedValue(priceInBrl: number, lang: string): number {
-  const safeLang = (lang as SupportedLanguage) in CURRENCY_CONFIGS ? (lang as SupportedLanguage) : 'pt';
-  const cfg = CURRENCY_CONFIGS[safeLang];
-  if (cfg.code === 'BRL') return priceInBrl;
+  try {
+    const safePrice = typeof priceInBrl === 'number' && !isNaN(priceInBrl) ? priceInBrl : 1000.00;
+    const safeLang = (lang as SupportedLanguage) in CURRENCY_CONFIGS ? (lang as SupportedLanguage) : 'pt';
+    const cfg = CURRENCY_CONFIGS[safeLang];
+    if (cfg.code === 'BRL') return safePrice;
 
-  const rate = activeRates[cfg.code] || cfg.defaultRate;
-  const rawConverted = priceInBrl * rate;
-  return Math.round(rawConverted * 100) / 100;
+    const rate = activeRates[cfg.code] || cfg.defaultRate;
+    const rawConverted = safePrice * rate;
+    return Math.round(rawConverted * 100) / 100;
+  } catch (e) {
+    return Number(priceInBrl || 1000.00);
+  }
 }
 
 /**
@@ -115,23 +120,28 @@ export function getConvertedValue(priceInBrl: number, lang: string): number {
  * Example:
  * pt -> "R$ 1.000,00"
  * fr -> "165,00 €"
- * en -> "$180.00"
- * es -> "$180,00"
+ * en -> "$ 180.00"
+ * es -> "$ 180,00"
  */
 export function formatCurrencyPrice(priceInBrl: number, lang: string): string {
-  const safeLang = (lang as SupportedLanguage) in CURRENCY_CONFIGS ? (lang as SupportedLanguage) : 'pt';
-  const cfg = CURRENCY_CONFIGS[safeLang];
-  const val = getConvertedValue(priceInBrl, lang);
+  try {
+    const safePrice = typeof priceInBrl === 'number' && !isNaN(priceInBrl) ? priceInBrl : 1000.00;
+    const safeLang = (lang as SupportedLanguage) in CURRENCY_CONFIGS ? (lang as SupportedLanguage) : 'pt';
+    const cfg = CURRENCY_CONFIGS[safeLang];
+    const val = getConvertedValue(safePrice, lang);
 
-  const formattedNum = val.toLocaleString(cfg.locale, {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
+    const formattedNum = val.toLocaleString(cfg.locale, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
 
-  if (cfg.symbolPosition === 'after') {
-    return `${formattedNum} ${cfg.symbol}`;
+    if (cfg.symbolPosition === 'after') {
+      return `${formattedNum} ${cfg.symbol}`;
+    }
+    return `${cfg.symbol} ${formattedNum}`;
+  } catch (e) {
+    return `R$ ${Number(priceInBrl || 1000).toFixed(2)}`;
   }
-  return `${cfg.symbol} ${formattedNum}`;
 }
 
 export interface PriceParts {
@@ -148,34 +158,47 @@ export interface PriceParts {
  * Returns structured price parts for custom typography / heroic pricing cards.
  */
 export function getPriceDisplayParts(priceInBrl: number, lang: string): PriceParts {
-  const safeLang = (lang as SupportedLanguage) in CURRENCY_CONFIGS ? (lang as SupportedLanguage) : 'pt';
-  const cfg = CURRENCY_CONFIGS[safeLang];
-  const val = getConvertedValue(priceInBrl, lang);
+  try {
+    const safePrice = typeof priceInBrl === 'number' && !isNaN(priceInBrl) ? priceInBrl : 1000.00;
+    const safeLang = (lang as SupportedLanguage) in CURRENCY_CONFIGS ? (lang as SupportedLanguage) : 'pt';
+    const cfg = CURRENCY_CONFIGS[safeLang];
+    const val = getConvertedValue(safePrice, lang);
 
-  const formattedNum = val.toLocaleString(cfg.locale, {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
+    const formattedNum = val.toLocaleString(cfg.locale, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
 
-  const sep = cfg.decimalSep;
-  const parts = formattedNum.split(sep);
-  const integerPart = parts[0] || '0';
-  const decimalPart = parts[1] || '00';
+    const match = formattedNum.match(/^(.*)[,.](\d{2})$/);
+    const integerPart = match ? match[1] : Math.floor(val).toString();
+    const decimalPart = match ? match[2] : '00';
+    const decimalSep = cfg.decimalSep || ',';
 
-  const fullFormatted =
-    cfg.symbolPosition === 'after'
-      ? `${formattedNum} ${cfg.symbol}`
-      : `${cfg.symbol} ${formattedNum}`;
+    const fullFormatted =
+      cfg.symbolPosition === 'after'
+        ? `${formattedNum} ${cfg.symbol}`
+        : `${cfg.symbol} ${formattedNum}`;
 
-  return {
-    symbol: cfg.symbol,
-    symbolPosition: cfg.symbolPosition,
-    integerPart,
-    decimalPart,
-    decimalSep: sep,
-    fullFormatted,
-    currencyCode: cfg.code,
-  };
+    return {
+      symbol: cfg.symbol,
+      symbolPosition: cfg.symbolPosition,
+      integerPart,
+      decimalPart,
+      decimalSep,
+      fullFormatted,
+      currencyCode: cfg.code,
+    };
+  } catch (e) {
+    return {
+      symbol: 'R$',
+      symbolPosition: 'before',
+      integerPart: '1.000',
+      decimalPart: '00',
+      decimalSep: ',',
+      fullFormatted: 'R$ 1.000,00',
+      currencyCode: 'BRL',
+    };
+  }
 }
 
 /**
@@ -186,31 +209,37 @@ export function formatInstallmentOption(
   installmentsCount: number,
   lang: string
 ): string {
-  const safeLang = (lang as SupportedLanguage) in CURRENCY_CONFIGS ? (lang as SupportedLanguage) : 'pt';
-  const cfg = CURRENCY_CONFIGS[safeLang];
-  const totalVal = getConvertedValue(priceInBrl, lang);
-  const singleVal = Math.round((totalVal / installmentsCount) * 100) / 100;
+  try {
+    const safeCount = Math.max(1, Number(installmentsCount) || 12);
+    const safePrice = typeof priceInBrl === 'number' && !isNaN(priceInBrl) ? priceInBrl : 1000.00;
+    const safeLang = (lang as SupportedLanguage) in CURRENCY_CONFIGS ? (lang as SupportedLanguage) : 'pt';
+    const cfg = CURRENCY_CONFIGS[safeLang];
+    const totalVal = getConvertedValue(safePrice, lang);
+    const singleVal = Math.round((totalVal / safeCount) * 100) / 100;
 
-  const formattedVal = singleVal.toLocaleString(cfg.locale, {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
+    const formattedVal = singleVal.toLocaleString(cfg.locale, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
 
-  const currencyStr =
-    cfg.symbolPosition === 'after'
-      ? `${formattedVal} ${cfg.symbol}`
-      : `${cfg.symbol} ${formattedVal}`;
+    const currencyStr =
+      cfg.symbolPosition === 'after'
+        ? `${formattedVal} ${cfg.symbol}`
+        : `${cfg.symbol} ${formattedVal}`;
 
-  switch (safeLang) {
-    case 'fr':
-      return `ou jusqu'à ${installmentsCount} mensualités de ${currencyStr} par carte`;
-    case 'en':
-      return `or in up to ${installmentsCount}x card installments of ${currencyStr}`;
-    case 'es':
-      return `o hasta en ${installmentsCount} cuotas de ${currencyStr} con tarjeta`;
-    case 'pt':
-    default:
-      return `ou em até ${installmentsCount}x de ${currencyStr} no cartão`;
+    switch (safeLang) {
+      case 'fr':
+        return `ou jusqu'à ${safeCount} mensualités de ${currencyStr} par carte`;
+      case 'en':
+        return `or in up to ${safeCount}x card installments of ${currencyStr}`;
+      case 'es':
+        return `o hasta en ${safeCount} cuotas de ${currencyStr} con tarjeta`;
+      case 'pt':
+      default:
+        return `ou em até ${safeCount}x de ${currencyStr} no cartão`;
+    }
+  } catch (e) {
+    return `ou em até 12x de R$ 83,33 no cartão`;
   }
 }
 
@@ -222,19 +251,25 @@ export function formatSavingsText(
   promoPriceInBrl: number,
   lang: string
 ): string {
-  const safeLang = (lang as SupportedLanguage) in CURRENCY_CONFIGS ? (lang as SupportedLanguage) : 'pt';
-  const diffBrl = Math.max(0, originalPriceInBrl - promoPriceInBrl);
-  const formattedDiff = formatCurrencyPrice(diffBrl, lang);
+  try {
+    const safeOrig = typeof originalPriceInBrl === 'number' && !isNaN(originalPriceInBrl) ? originalPriceInBrl : 2000.00;
+    const safePromo = typeof promoPriceInBrl === 'number' && !isNaN(promoPriceInBrl) ? promoPriceInBrl : 1000.00;
+    const safeLang = (lang as SupportedLanguage) in CURRENCY_CONFIGS ? (lang as SupportedLanguage) : 'pt';
+    const diffBrl = Math.max(0, safeOrig - safePromo);
+    const formattedDiff = formatCurrencyPrice(diffBrl, lang);
 
-  switch (safeLang) {
-    case 'fr':
-      return `Économie réelle de ${formattedDiff} sur votre formation professionnelle !`;
-    case 'en':
-      return `Real savings of ${formattedDiff} on your professional training!`;
-    case 'es':
-      return `¡Ahorro real de ${formattedDiff} en tu formación profesional!`;
-    case 'pt':
-    default:
-      return `Economia real de ${formattedDiff} na sua formação profissional!`;
+    switch (safeLang) {
+      case 'fr':
+        return `Économie réelle de ${formattedDiff} sur votre formation professionnelle !`;
+      case 'en':
+        return `Real savings of ${formattedDiff} on your professional training!`;
+      case 'es':
+        return `¡Ahorro real de ${formattedDiff} en tu formación profesional!`;
+      case 'pt':
+      default:
+        return `Economia real de ${formattedDiff} na sua formação profissional!`;
+    }
+  } catch (e) {
+    return `Economia real de R$ 1.000,00 na sua formação profissional!`;
   }
 }

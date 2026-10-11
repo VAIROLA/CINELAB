@@ -36,6 +36,11 @@ class RootErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState
             <p style={{ fontSize: '14px', color: '#cbd5e1', marginBottom: '20px', lineHeight: '1.5' }}>
               Ocorreu uma pequena instabilidade ao carregar a interface. Clique abaixo para recarregar o portal.
             </p>
+            {this.state.error?.message && (
+              <div style={{ margin: '0 0 20px', padding: '10px 14px', background: 'rgba(239, 68, 68, 0.15)', border: '1px solid rgba(239, 68, 68, 0.4)', borderRadius: '10px', color: '#fca5a5', fontSize: '11px', textAlign: 'left', overflowX: 'auto', fontFamily: 'monospace' }}>
+                Detalhes: {this.state.error.message}
+              </div>
+            )}
             <button
               onClick={() => {
                 try { localStorage.removeItem('cinelab_tutor_chat_guest'); } catch {}
