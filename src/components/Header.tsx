@@ -18,6 +18,7 @@ import {
   Award,
   Clapperboard,
   Globe,
+  Lock,
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -494,9 +495,16 @@ export const Header: React.FC<HeaderProps> = ({
                 {item.icon && <item.icon className="w-3.5 h-3.5 opacity-85 shrink-0" />}
                 <span>{item.label}</span>
                 {item.route === 'tutor-ia' && (
-                  <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-amber-400 text-neutral-950 font-extrabold uppercase shadow-[0_0_8px_rgba(251,191,36,0.6)]">
-                    IA
-                  </span>
+                  user ? (
+                    <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-amber-400 text-neutral-950 font-extrabold uppercase shadow-[0_0_8px_rgba(251,191,36,0.6)]">
+                      IA
+                    </span>
+                  ) : (
+                    <span className="text-[8.5px] font-mono px-1.5 py-0.5 rounded bg-red-950/80 text-amber-300 border border-red-500/40 font-bold uppercase flex items-center gap-1 shadow-sm">
+                      <Lock className="w-2.5 h-2.5 text-amber-400" />
+                      Trancado
+                    </span>
+                  )
                 )}
               </button>
             );
@@ -607,7 +615,10 @@ export const Header: React.FC<HeaderProps> = ({
                   }`}
                 >
                   {item.icon && <item.icon className="w-3.5 h-3.5" />}
-                  <span>{item.label}</span>
+                  <span className="truncate">{item.label}</span>
+                  {item.route === 'tutor-ia' && !user && (
+                    <Lock className="w-3 h-3 text-amber-400 ml-auto shrink-0" />
+                  )}
                 </button>
               );
             })}

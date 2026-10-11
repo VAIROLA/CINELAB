@@ -4273,13 +4273,14 @@ app.get('/api/admin/emails', requireAdmin, (req: Request, res: Response) => {
 // ----------------------------------------------------
 // 5.9. AGENTE DE IA – CINETUTOR IA (Dúvidas dos Alunos)
 // ----------------------------------------------------
-app.post('/api/ai/tutor', async (req: Request, res: Response) => {
+app.post('/api/ai/tutor', requireActiveStudent, async (req: Request, res: Response) => {
   try {
+    const { user } = authenticate(req);
     const {
       message,
       history = [],
       moduleId,
-      studentName = 'Aluno(a)',
+      studentName = user?.name || 'Aluno(a)',
       language = 'pt',
     } = req.body;
 

@@ -10696,13 +10696,14 @@ app.get("/api/admin/emails", requireAdmin, (req, res) => {
   const db2 = getDb();
   res.json(db2.emailLogs);
 });
-app.post("/api/ai/tutor", async (req, res) => {
+app.post("/api/ai/tutor", requireActiveStudent, async (req, res) => {
   try {
+    const { user } = authenticate(req);
     const {
       message,
       history = [],
       moduleId,
-      studentName = "Aluno(a)",
+      studentName = user?.name || "Aluno(a)",
       language = "pt"
     } = req.body;
     if (!message || typeof message !== "string" || !message.trim()) {

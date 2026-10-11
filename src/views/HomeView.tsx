@@ -258,12 +258,17 @@ export const HomeView: React.FC<HomeViewProps> = ({
               </button>
 
               <button
-                onClick={() => onNavigate('tutor-ia')}
+                onClick={() => isLoggedIn ? onNavigate('tutor-ia') : onNavigate('tutor-ia')}
                 className="w-full sm:w-auto px-6 py-4 bg-gradient-to-r from-purple-900/60 to-purple-800/60 hover:from-purple-800/80 hover:to-purple-700/80 text-purple-100 hover:text-white border border-purple-400/50 text-sm font-semibold rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(168,85,247,0.25)]"
                 id="hero-tutor-cta"
+                title={isLoggedIn ? 'Acessar o CineTutor IA' : 'Tutor IA (Exclusivo para Alunos e Admin)'}
               >
-                <Sparkles className="w-4 h-4 text-amber-300 animate-pulse" />
-                <span>Tutor IA (Tire Dúvidas)</span>
+                {isLoggedIn ? (
+                  <Sparkles className="w-4 h-4 text-amber-300 animate-pulse" />
+                ) : (
+                  <Lock className="w-4 h-4 text-amber-300" />
+                )}
+                <span>{isLoggedIn ? 'Tutor IA (Tire Dúvidas)' : 'Tutor IA (Exclusivo Alunos)'}</span>
               </button>
             </div>
 

@@ -25,6 +25,8 @@ import {
   HelpCircle,
   ArrowRight,
   RefreshCw,
+  Lock,
+  Shield,
 } from 'lucide-react';
 
 interface TutorIaViewProps {
@@ -427,6 +429,79 @@ Qual dúvida ou projeto você gostaria de discutir hoje? Escolha uma das sugest�
       return part;
     });
   };
+
+  const isAuthorized = !!user && (user.role === 'admin' || user.role === 'student');
+
+  if (!isAuthorized) {
+    return (
+      <div className="min-h-[80vh] flex items-center justify-center px-4 py-16 bg-[#0c0d12]">
+        <div className="max-w-xl w-full mx-auto p-8 sm:p-10 rounded-3xl bg-[#140b24] border-2 border-purple-500/40 shadow-2xl shadow-purple-950/50 space-y-6 text-center animate-fadeIn relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-purple-600/10 rounded-full blur-3xl pointer-events-none" />
+
+          {/* Red/Amber Lock Icon */}
+          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-red-950 to-purple-950 border border-red-500/50 flex items-center justify-center mx-auto text-red-400 shadow-xl shadow-red-950/40">
+            <Lock className="w-8 h-8 sm:w-10 sm:h-10 text-amber-400" />
+          </div>
+
+          <div className="space-y-2">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-950/70 border border-red-500/40 text-red-300 text-[11px] font-mono font-bold uppercase tracking-wider">
+              <Lock className="w-3.5 h-3.5 text-amber-400" /> Acesso Trancado • Exclusivo Alunos &amp; Coordenação
+            </span>
+            <h1 className="text-2xl sm:text-3xl font-display font-extrabold text-white tracking-tight">
+              CineTutor IA
+            </h1>
+            <p className="text-xs sm:text-sm text-purple-200/80 leading-relaxed max-w-md mx-auto">
+              O <strong>CineTutor IA</strong> é um mentor acadêmico de inteligência artificial reservado exclusivamente para <strong>alunos matriculados</strong> e para a <strong>coordenação acadêmica</strong> do CINELAB.
+            </p>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-neutral-900/80 border border-neutral-800 text-left text-xs text-neutral-300 space-y-2 font-sans">
+            <p className="font-bold text-amber-300 flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
+              O que o CineTutor IA oferece aos alunos:
+            </p>
+            <ul className="space-y-1 text-neutral-300 pl-1 list-disc list-inside">
+              <li>Tira-dúvidas 24h dos 10 módulos pedagógicos</li>
+              <li>Decupagem técnica de roteiro e escalas de enquadramento</li>
+              <li>Cálculos de luz, lentes e regra dos 180° no set</li>
+              <li>Orientação individual para o curta-metragem final</li>
+            </ul>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+            <button
+              type="button"
+              onClick={() => onOpenAuth ? onOpenAuth('login') : onNavigate('minha-area')}
+              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-purple-900/90 hover:bg-purple-800 text-white border border-purple-400/60 text-xs font-bold font-mono transition-all cursor-pointer shadow-lg flex items-center justify-center gap-2"
+            >
+              <UserIcon className="w-4 h-4 text-purple-300" />
+              <span>Entrar com E-mail &amp; Senha</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onNavigate('matricula')}
+              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold text-xs uppercase tracking-wider transition-all cursor-pointer shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2"
+            >
+              <Sparkles className="w-4 h-4" />
+              <span>Fazer Minha Matrícula</span>
+            </button>
+          </div>
+
+          <div>
+            <button
+              type="button"
+              onClick={() => onNavigate('inicio')}
+              className="text-xs text-neutral-400 hover:text-white transition-colors cursor-pointer"
+            >
+              ← Voltar para a Página Inicial
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#0c0d12] text-[#e4e6eb] pb-16">
