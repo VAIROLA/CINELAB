@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Logo } from './Logo.js';
 import { api, setAuthToken } from '../services/api.js';
 import { User, Enrollment } from '../types/index.js';
@@ -38,12 +38,37 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [mode, setMode] = useState<'login' | 'register' | 'forgot'>(initialMode);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [readOnlyEmail, setReadOnlyEmail] = useState(true);
+  const [readOnlyPassword, setReadOnlyPassword] = useState(true);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [document, setDocument] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+
+  useEffect(() => {
+    if (isOpen) {
+      setEmail('');
+      setPassword('');
+      setReadOnlyEmail(true);
+      setReadOnlyPassword(true);
+      setErrorMessage('');
+      setSuccessMessage('');
+      const t1 = setTimeout(() => {
+        setEmail('');
+        setPassword('');
+      }, 60);
+      const t2 = setTimeout(() => {
+        setEmail('');
+        setPassword('');
+      }, 250);
+      return () => {
+        clearTimeout(t1);
+        clearTimeout(t2);
+      };
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -196,14 +221,30 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
         {/* Forms */}
         {mode === 'login' && (
-          <form onSubmit={handleLogin} className="space-y-4 text-xs">
+          <form onSubmit={handleLogin} className="space-y-4 text-xs" autoComplete="off">
+            {/* Hidden honeypots to catch browser credentials managers */}
+            <div style={{ position: 'absolute', opacity: 0, height: 0, width: 0, pointerEvents: 'none', zIndex: -1 }}>
+              <input type="text" name="cinelab_fake_user_trap" tabIndex={-1} autoComplete="username" />
+              <input type="password" name="cinelab_fake_pass_trap" tabIndex={-1} autoComplete="current-password" />
+            </div>
+
             <div>
               <label className="block text-neutral-400 mb-1 font-medium">{t('auth.emailLabel')}</label>
               <div className="relative">
                 <Mail className="w-4 h-4 text-neutral-500 absolute left-3 top-3" />
                 <input
                   type="email"
+                  name="cinelab_login_user_input"
+                  id="cinelab_login_user_input"
                   required
+                  autoComplete="off"
+                  autoCorrect="off"
+                  autoCapitalize="off"
+                  spellCheck={false}
+                  readOnly={readOnlyEmail}
+                  onFocus={() => setReadOnlyEmail(false)}
+                  onClick={() => setReadOnlyEmail(false)}
+                  onTouchStart={() => setReadOnlyEmail(false)}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="exemplo@cinelab.edu.br"
@@ -227,7 +268,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 <Lock className="w-4 h-4 text-neutral-500 absolute left-3 top-3" />
                 <input
                   type="password"
+                  name="cinelab_login_pwd_input"
+                  id="cinelab_login_pwd_input"
                   required
+                  autoComplete="new-password"
+                  readOnly={readOnlyPassword}
+                  onFocus={() => setReadOnlyPassword(false)}
+                  onClick={() => setReadOnlyPassword(false)}
+                  onTouchStart={() => setReadOnlyPassword(false)}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"

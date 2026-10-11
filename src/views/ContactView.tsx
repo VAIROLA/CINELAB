@@ -17,6 +17,7 @@ export const ContactView: React.FC<ContactViewProps> = ({ settings, onNavigate }
   const [sent, setSent] = useState(false);
 
   const contactEmail = settings?.contactEmail || 'tonydeluc@tv-diversidade.com';
+  const contactPhone = settings?.contactPhone || settings?.whatsappNumber || '+55 (21) 98114-1111';
   const localizedSupportHours: Record<string, string> = {
     pt: settings?.supportHours || 'Segunda a Sexta, das 09h às 19h (Atendimento Humanizado)',
     en: 'Monday to Friday, 9am to 7pm (Dedicated Support)',

@@ -90,6 +90,8 @@ export const AdminView: React.FC<AdminViewProps> = ({
   const [authError, setAuthError] = useState<string | null>(null);
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
+  const [readOnlyAdminEmail, setReadOnlyAdminEmail] = useState(true);
+  const [readOnlyAdminPassword, setReadOnlyAdminPassword] = useState(true);
   const [loginLoading, setLoginLoading] = useState(false);
   const [loginMessage, setLoginMessage] = useState('');
 
@@ -1059,16 +1061,29 @@ export const AdminView: React.FC<AdminViewProps> = ({
           )}
 
           {/* Formulário com credenciais */}
-          <form onSubmit={handleFormAdminLogin} className="space-y-3 text-left">
+          <form onSubmit={handleFormAdminLogin} className="space-y-3 text-left" autoComplete="off">
+            <div style={{ position: 'absolute', opacity: 0, height: 0, width: 0, pointerEvents: 'none', zIndex: -1 }}>
+              <input type="text" name="cinelab_fake_admin_user" tabIndex={-1} autoComplete="username" />
+              <input type="password" name="cinelab_fake_admin_pass" tabIndex={-1} autoComplete="current-password" />
+            </div>
             <div>
               <label className="block text-[11px] font-mono text-neutral-400 mb-1">E-mail Administrativo</label>
               <input
                 type="email"
+                name="cinelab_admin_usr_unique"
+                id="cinelab_admin_usr_unique"
                 required
+                readOnly={readOnlyAdminEmail}
+                onFocus={() => setReadOnlyAdminEmail(false)}
+                onClick={() => setReadOnlyAdminEmail(false)}
+                onTouchStart={() => setReadOnlyAdminEmail(false)}
                 value={loginEmail}
                 onChange={(e) => setLoginEmail(e.target.value)}
                 placeholder="Digite seu e-mail administrativo"
                 autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="off"
+                spellCheck={false}
                 className="w-full px-3 py-2 rounded-xl bg-neutral-950 border border-neutral-800 text-white text-xs focus:border-red-500 focus:outline-none"
               />
             </div>
@@ -1076,9 +1091,16 @@ export const AdminView: React.FC<AdminViewProps> = ({
               <label className="block text-[11px] font-mono text-neutral-400 mb-1">Senha de Acesso</label>
               <input
                 type="password"
+                name="cinelab_admin_pwd_unique"
+                id="cinelab_admin_pwd_unique"
                 required
+                readOnly={readOnlyAdminPassword}
+                onFocus={() => setReadOnlyAdminPassword(false)}
+                onClick={() => setReadOnlyAdminPassword(false)}
+                onTouchStart={() => setReadOnlyAdminPassword(false)}
                 value={loginPassword}
                 onChange={(e) => setLoginPassword(e.target.value)}
+                autoComplete="new-password"
                 className="w-full px-3 py-2 rounded-xl bg-neutral-950 border border-neutral-800 text-white text-xs focus:border-red-500 focus:outline-none"
               />
             </div>

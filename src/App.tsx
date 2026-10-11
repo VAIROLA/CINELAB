@@ -481,7 +481,7 @@ export default function App() {
           <FaqView onNavigate={navigateTo} />
         )}
 
-        {currentRoute === 'contato' && (
+        {(currentRoute === 'contato' || currentRoute === 'contatos') && (
           <ContactView settings={courseSettings} onNavigate={navigateTo} />
         )}
       </main>

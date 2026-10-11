@@ -45,6 +45,8 @@ export const EnrollmentView: React.FC<EnrollmentViewProps> = ({
   const [phone, setPhone] = useState(activeStudent?.phone || '');
   const [document, setDocument] = useState(activeStudent?.document || '');
   const [password, setPassword] = useState('');
+  const [readOnlyEnrollEmail, setReadOnlyEnrollEmail] = useState(!isStudentUser);
+  const [readOnlyEnrollPassword, setReadOnlyEnrollPassword] = useState(!isStudentUser);
 
   useEffect(() => {
     if (!isStudentUser) {
@@ -53,6 +55,13 @@ export const EnrollmentView: React.FC<EnrollmentViewProps> = ({
       setPassword('');
       setPhone('');
       setDocument('');
+      setReadOnlyEnrollEmail(true);
+      setReadOnlyEnrollPassword(true);
+      const t1 = setTimeout(() => {
+        setEmail('');
+        setPassword('');
+      }, 60);
+      return () => clearTimeout(t1);
     }
   }, [currentUser, user, isStudentUser]);
   const [paymentMethod, setPaymentMethod] = useState<'pix' | 'credit_card' | 'debit_card'>('pix');
@@ -484,6 +493,10 @@ export const EnrollmentView: React.FC<EnrollmentViewProps> = ({
                   autoCorrect="off"
                   autoCapitalize="off"
                   spellCheck={false}
+                  readOnly={readOnlyEnrollEmail}
+                  onFocus={() => setReadOnlyEnrollEmail(false)}
+                  onClick={() => setReadOnlyEnrollEmail(false)}
+                  onTouchStart={() => setReadOnlyEnrollEmail(false)}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={cur.emailPlaceholder}
@@ -532,6 +545,10 @@ export const EnrollmentView: React.FC<EnrollmentViewProps> = ({
                   id="aluno_nova_senha_matricula"
                   required={!currentUser}
                   autoComplete="new-password"
+                  readOnly={readOnlyEnrollPassword}
+                  onFocus={() => setReadOnlyEnrollPassword(false)}
+                  onClick={() => setReadOnlyEnrollPassword(false)}
+                  onTouchStart={() => setReadOnlyEnrollPassword(false)}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder={currentUser ? cur.passwordPlaceholderDefined : cur.passwordPlaceholderCreate}
