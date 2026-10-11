@@ -1,13 +1,14 @@
 /**
  * Multi-Currency Conversion & Formatting Service for CINELAB
  * Supports Brazilian Real (BRL / R$), Euro (EUR / €), US Dollar (USD / $)
- * Handles accurate locale formatting, installment division and live rates.
+ * Handles accurate locale formatting, installment division, manual currency switching and live rates.
  */
 
 export type SupportedLanguage = 'pt' | 'en' | 'es' | 'fr';
+export type CurrencyCode = 'BRL' | 'USD' | 'EUR';
 
 export interface CurrencyConfig {
-  code: 'BRL' | 'USD' | 'EUR';
+  code: CurrencyCode;
   symbol: string;
   name: string;
   country: string;
@@ -18,8 +19,22 @@ export interface CurrencyConfig {
   defaultRate: number; // 1 BRL = X foreign currency
 }
 
-export const CURRENCY_CONFIGS: Record<SupportedLanguage, CurrencyConfig> = {
-  pt: {
+export interface CurrencyOption {
+  code: CurrencyCode;
+  symbol: string;
+  flag: string;
+  name: string;
+  label: string;
+}
+
+export const AVAILABLE_CURRENCIES: CurrencyOption[] = [
+  { code: 'BRL', symbol: 'R$', flag: '🇧🇷', name: 'Real', label: 'R$ Real' },
+  { code: 'USD', symbol: '$', flag: '🇺🇸', name: 'Dólar', label: '$ Dólar' },
+  { code: 'EUR', symbol: '€', flag: '🇪🇺', name: 'Euro', label: '€ Euro' },
+];
+
+export const CURRENCY_CONFIGS_BY_CODE: Record<CurrencyCode, CurrencyConfig> = {
+  BRL: {
     code: 'BRL',
     symbol: 'R$',
     name: 'Real Brasileiro',
@@ -30,43 +45,39 @@ export const CURRENCY_CONFIGS: Record<SupportedLanguage, CurrencyConfig> = {
     locale: 'pt-BR',
     defaultRate: 1.0,
   },
-  fr: {
-    code: 'EUR',
-    symbol: '€',
-    name: 'Euro',
-    country: 'France / Europe',
-    symbolPosition: 'after',
-    decimalSep: ',',
-    thousandSep: ' ',
-    locale: 'fr-FR',
-    defaultRate: 0.165, // R$ 1.000 ≈ 165 € (1 EUR ≈ 6.06 BRL)
-  },
-  en: {
+  USD: {
     code: 'USD',
     symbol: '$',
     name: 'US Dollar',
-    country: 'United States / Global',
+    country: 'EUA / Global / América Latina',
     symbolPosition: 'before',
     decimalSep: '.',
     thousandSep: ',',
     locale: 'en-US',
     defaultRate: 0.18, // R$ 1.000 ≈ $180 USD (1 USD ≈ 5.55 BRL)
   },
-  es: {
-    code: 'USD',
-    symbol: '$',
-    name: 'Dólar Estadounidense',
-    country: 'Internacional / Hispanoamérica',
-    symbolPosition: 'before',
+  EUR: {
+    code: 'EUR',
+    symbol: '€',
+    name: 'Euro',
+    country: 'Europa / França / Espanha',
+    symbolPosition: 'after',
     decimalSep: ',',
-    thousandSep: '.',
-    locale: 'es-ES',
-    defaultRate: 0.18, // R$ 1.000 ≈ $180 USD
+    thousandSep: ' ',
+    locale: 'fr-FR',
+    defaultRate: 0.165, // R$ 1.000 ≈ 165 € (1 EUR ≈ 6.06 BRL)
   },
 };
 
+export const CURRENCY_CONFIGS: Record<SupportedLanguage, CurrencyConfig> = {
+  pt: CURRENCY_CONFIGS_BY_CODE.BRL,
+  en: CURRENCY_CONFIGS_BY_CODE.USD,
+  es: CURRENCY_CONFIGS_BY_CODE.USD,
+  fr: CURRENCY_CONFIGS_BY_CODE.EUR,
+};
+
 // In-memory rates with robust fallback defaults
-const activeRates: Record<string, number> = {
+const activeRates: Record<CurrencyCode, number> = {
   BRL: 1.0,
   USD: 0.18,
   EUR: 0.165,
@@ -98,13 +109,25 @@ export async function initLiveCurrencyRates(): Promise<void> {
 }
 
 /**
- * Converts a base BRL price to the target language currency.
+ * Resolves a currency config either from a currency code ('BRL', 'USD', 'EUR')
+ * or from a language code ('pt', 'en', 'es', 'fr').
  */
-export function getConvertedValue(priceInBrl: number, lang: string): number {
+export function resolveCurrencyConfig(currencyOrLang?: string): CurrencyConfig {
+  if (currencyOrLang === 'BRL') return CURRENCY_CONFIGS_BY_CODE.BRL;
+  if (currencyOrLang === 'USD') return CURRENCY_CONFIGS_BY_CODE.USD;
+  if (currencyOrLang === 'EUR') return CURRENCY_CONFIGS_BY_CODE.EUR;
+  if (currencyOrLang === 'fr') return CURRENCY_CONFIGS_BY_CODE.EUR;
+  if (currencyOrLang === 'en' || currencyOrLang === 'es') return CURRENCY_CONFIGS_BY_CODE.USD;
+  return CURRENCY_CONFIGS_BY_CODE.BRL;
+}
+
+/**
+ * Converts a base BRL price to the target currency or language.
+ */
+export function getConvertedValue(priceInBrl: number, currencyOrLang?: string): number {
   try {
     const safePrice = typeof priceInBrl === 'number' && !isNaN(priceInBrl) ? priceInBrl : 1000.00;
-    const safeLang = (lang as SupportedLanguage) in CURRENCY_CONFIGS ? (lang as SupportedLanguage) : 'pt';
-    const cfg = CURRENCY_CONFIGS[safeLang];
+    const cfg = resolveCurrencyConfig(currencyOrLang);
     if (cfg.code === 'BRL') return safePrice;
 
     const rate = activeRates[cfg.code] || cfg.defaultRate;
@@ -118,17 +141,15 @@ export function getConvertedValue(priceInBrl: number, lang: string): number {
 /**
  * Formats a BRL price into a localized currency string.
  * Example:
- * pt -> "R$ 1.000,00"
- * fr -> "165,00 €"
- * en -> "$ 180.00"
- * es -> "$ 180,00"
+ * BRL / pt -> "R$ 1.000,00"
+ * EUR / fr -> "165,00 €"
+ * USD / en -> "$ 180.00"
  */
-export function formatCurrencyPrice(priceInBrl: number, lang: string): string {
+export function formatCurrencyPrice(priceInBrl: number, currencyOrLang?: string): string {
   try {
     const safePrice = typeof priceInBrl === 'number' && !isNaN(priceInBrl) ? priceInBrl : 1000.00;
-    const safeLang = (lang as SupportedLanguage) in CURRENCY_CONFIGS ? (lang as SupportedLanguage) : 'pt';
-    const cfg = CURRENCY_CONFIGS[safeLang];
-    const val = getConvertedValue(safePrice, lang);
+    const cfg = resolveCurrencyConfig(currencyOrLang);
+    const val = getConvertedValue(safePrice, cfg.code);
 
     const formattedNum = val.toLocaleString(cfg.locale, {
       minimumFractionDigits: 2,
@@ -157,12 +178,11 @@ export interface PriceParts {
 /**
  * Returns structured price parts for custom typography / heroic pricing cards.
  */
-export function getPriceDisplayParts(priceInBrl: number, lang: string): PriceParts {
+export function getPriceDisplayParts(priceInBrl: number, currencyOrLang?: string): PriceParts {
   try {
     const safePrice = typeof priceInBrl === 'number' && !isNaN(priceInBrl) ? priceInBrl : 1000.00;
-    const safeLang = (lang as SupportedLanguage) in CURRENCY_CONFIGS ? (lang as SupportedLanguage) : 'pt';
-    const cfg = CURRENCY_CONFIGS[safeLang];
-    const val = getConvertedValue(safePrice, lang);
+    const cfg = resolveCurrencyConfig(currencyOrLang);
+    const val = getConvertedValue(safePrice, cfg.code);
 
     const formattedNum = val.toLocaleString(cfg.locale, {
       minimumFractionDigits: 2,
@@ -202,19 +222,19 @@ export function getPriceDisplayParts(priceInBrl: number, lang: string): PricePar
 }
 
 /**
- * Formats the installment badge text according to language & currency.
+ * Formats the installment badge text according to currency & language.
  */
 export function formatInstallmentOption(
   priceInBrl: number,
   installmentsCount: number,
-  lang: string
+  currencyOrLang?: string,
+  preferredLang?: string
 ): string {
   try {
     const safeCount = Math.max(1, Number(installmentsCount) || 12);
     const safePrice = typeof priceInBrl === 'number' && !isNaN(priceInBrl) ? priceInBrl : 1000.00;
-    const safeLang = (lang as SupportedLanguage) in CURRENCY_CONFIGS ? (lang as SupportedLanguage) : 'pt';
-    const cfg = CURRENCY_CONFIGS[safeLang];
-    const totalVal = getConvertedValue(safePrice, lang);
+    const cfg = resolveCurrencyConfig(currencyOrLang);
+    const totalVal = getConvertedValue(safePrice, cfg.code);
     const singleVal = Math.round((totalVal / safeCount) * 100) / 100;
 
     const formattedVal = singleVal.toLocaleString(cfg.locale, {
@@ -227,7 +247,9 @@ export function formatInstallmentOption(
         ? `${formattedVal} ${cfg.symbol}`
         : `${cfg.symbol} ${formattedVal}`;
 
-    switch (safeLang) {
+    const textLang = preferredLang || (['pt', 'en', 'es', 'fr'].includes(currencyOrLang || '') ? currencyOrLang : 'pt');
+
+    switch (textLang) {
       case 'fr':
         return `ou jusqu'à ${safeCount} mensualités de ${currencyStr} par carte`;
       case 'en':
@@ -244,21 +266,24 @@ export function formatInstallmentOption(
 }
 
 /**
- * Formats the real savings difference according to language & currency.
+ * Formats the real savings difference according to currency & language.
  */
 export function formatSavingsText(
   originalPriceInBrl: number,
   promoPriceInBrl: number,
-  lang: string
+  currencyOrLang?: string,
+  preferredLang?: string
 ): string {
   try {
     const safeOrig = typeof originalPriceInBrl === 'number' && !isNaN(originalPriceInBrl) ? originalPriceInBrl : 2000.00;
     const safePromo = typeof promoPriceInBrl === 'number' && !isNaN(promoPriceInBrl) ? promoPriceInBrl : 1000.00;
-    const safeLang = (lang as SupportedLanguage) in CURRENCY_CONFIGS ? (lang as SupportedLanguage) : 'pt';
+    const cfg = resolveCurrencyConfig(currencyOrLang);
     const diffBrl = Math.max(0, safeOrig - safePromo);
-    const formattedDiff = formatCurrencyPrice(diffBrl, lang);
+    const formattedDiff = formatCurrencyPrice(diffBrl, cfg.code);
 
-    switch (safeLang) {
+    const textLang = preferredLang || (['pt', 'en', 'es', 'fr'].includes(currencyOrLang || '') ? currencyOrLang : 'pt');
+
+    switch (textLang) {
       case 'fr':
         return `Économie réelle de ${formattedDiff} sur votre formation professionnelle !`;
       case 'en':

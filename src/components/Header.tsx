@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Logo } from './Logo.js';
 import { User, Enrollment } from '../types/index.js';
 import { LanguageSelector, HeaderCountryTranslator } from './LanguageSelector.js';
+import { HeaderCurrencySelector } from './CurrencySelector.js';
 import { useLanguage } from '../i18n/LanguageContext.js';
 import {
   Menu,
@@ -255,14 +256,20 @@ export const Header: React.FC<HeaderProps> = ({
             ) : null}
           </div>
 
-          {/* Tradutor no topo do lado direito: no desktop exibe todas as bandeiras; no mobile exibe botão compacto para abrir menu */}
-          <div className="hidden md:flex items-center">
+          {/* Seletor visual de moedas e tradutor no topo do lado direito */}
+          <div className="hidden lg:flex items-center gap-2">
+            <HeaderCurrencySelector variant="neon" />
             <HeaderCountryTranslator variant="neon" />
           </div>
-          <div className="md:hidden flex items-center shrink-0">
+          <div className="hidden sm:flex lg:hidden items-center gap-1.5">
+            <HeaderCurrencySelector variant="neon" compact showIcon={false} />
+            <HeaderCountryTranslator variant="neon" />
+          </div>
+          <div className="sm:hidden flex items-center gap-1 shrink-0">
+            <HeaderCurrencySelector variant="neon" compact showIcon={false} />
             <button
               onClick={() => setMobileMenuOpen(true)}
-              className="px-2 py-1 rounded-lg bg-[#270d4a]/95 hover:bg-[#3d1374] text-white border border-purple-400/50 flex items-center gap-1.5 text-xs font-sans font-bold shadow-sm cursor-pointer"
+              className="px-2 py-1 rounded-lg bg-[#270d4a]/95 hover:bg-[#3d1374] text-white border border-purple-400/50 flex items-center gap-1 text-xs font-sans font-bold shadow-sm cursor-pointer"
               title="Mudar idioma do sistema"
             >
               <span className="text-sm">{language === 'pt' ? '🇧🇷' : language === 'en' ? '🇺🇸' : language === 'es' ? '🇪🇸' : '🇫🇷'}</span>
@@ -515,6 +522,14 @@ export const Header: React.FC<HeaderProps> = ({
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
         <div className="lg:hidden bg-[#180430]/98 border-b-2 border-fuchsia-500/80 px-4 py-4 space-y-4 animate-fadeIn shadow-2xl">
+          {/* Mobile Currency Selector */}
+          <div className="p-3 bg-purple-950/60 rounded-2xl border border-purple-400/40 space-y-2 shadow-inner">
+            <span className="text-xs font-sans text-purple-200 block text-center font-bold">
+              {language === 'en' ? 'Display Currency • Select Currency:' : language === 'es' ? 'Moneda de Visualización • Seleccione Moneda:' : language === 'fr' ? 'Devise d\'Affichage • Choisissez la Devise :' : 'Moeda de Exibição • Selecione a Moeda:'}
+            </span>
+            <HeaderCurrencySelector stacked variant="neon" className="w-full justify-center" />
+          </div>
+
           {/* Mobile Country Translator */}
           <div className="p-3 bg-purple-950/60 rounded-2xl border border-purple-400/40 space-y-2 shadow-inner">
             <span className="text-xs font-sans text-purple-200 block text-center font-bold">

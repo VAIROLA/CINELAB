@@ -9,11 +9,13 @@ import {
   FilmTranslation,
   ReadingTranslation,
 } from './translations.js';
-import { initLiveCurrencyRates } from '../utils/currency.js';
+import { CurrencyCode, initLiveCurrencyRates } from '../utils/currency.js';
 
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
+  currency: CurrencyCode;
+  setCurrency: (curr: CurrencyCode) => void;
   t: (key: string, fallback?: string) => string;
   getModuleTranslation: (moduleId: number) => {
     title: string;
@@ -42,11 +44,45 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return 'pt';
   });
 
+  const [currency, setCurrencyState] = useState<CurrencyCode>(() => {
+    try {
+      const saved = localStorage.getItem('cinelab_currency') as CurrencyCode;
+      if (saved && ['BRL', 'USD', 'EUR'].includes(saved)) {
+        return saved;
+      }
+      const savedLang = localStorage.getItem('cinelab_language');
+      if (savedLang === 'fr') return 'EUR';
+      if (savedLang === 'en' || savedLang === 'es') return 'USD';
+    } catch (e) {
+      // ignore
+    }
+    return 'BRL';
+  });
+
+  const setCurrency = (c: CurrencyCode) => {
+    setCurrencyState(c);
+    try {
+      localStorage.setItem('cinelab_currency', c);
+      localStorage.setItem('cinelab_currency_manual', 'true');
+    } catch (e) {
+      // ignore
+    }
+  };
+
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
     try {
       localStorage.setItem('cinelab_language', lang);
       document.documentElement.lang = lang;
+
+      const manual = localStorage.getItem('cinelab_currency_manual');
+      if (!manual) {
+        let newCurr: CurrencyCode = 'BRL';
+        if (lang === 'fr') newCurr = 'EUR';
+        else if (lang === 'en' || lang === 'es') newCurr = 'USD';
+        setCurrencyState(newCurr);
+        localStorage.setItem('cinelab_currency', newCurr);
+      }
     } catch (e) {
       // ignore
     }
@@ -101,6 +137,8 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       value={{
         language,
         setLanguage,
+        currency,
+        setCurrency,
         t,
         getModuleTranslation,
         getFilmTranslation,
