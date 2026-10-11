@@ -433,6 +433,88 @@ Qual dúvida ou projeto você gostaria de discutir hoje? Escolha uma das sugest�
   const isAuthorized = !!user && (user.role === 'admin' || user.role === 'student');
 
   if (!isAuthorized) {
+    const lockedI18n: Record<string, {
+      badge: string;
+      title: string;
+      description: React.ReactNode;
+      featuresTitle: string;
+      features: string[];
+      loginBtn: string;
+      enrollBtn: string;
+      backBtn: string;
+    }> = {
+      pt: {
+        badge: 'Acesso Trancado • Exclusivo Alunos & Coordenação',
+        title: 'CineTutor IA',
+        description: (
+          <>O <strong>CineTutor IA</strong> é um mentor acadêmico de inteligência artificial reservado exclusivamente para <strong>alunos matriculados</strong> e para a <strong>coordenação acadêmica</strong> do CINELAB.</>
+        ),
+        featuresTitle: 'O que o CineTutor IA oferece aos alunos:',
+        features: [
+          'Tira-dúvidas 24h dos 10 módulos pedagógicos',
+          'Decupagem técnica de roteiro e escalas de enquadramento',
+          'Cálculos de luz, lentes e regra dos 180° no set',
+          'Orientação individual para o curta-metragem final',
+        ],
+        loginBtn: 'Já sou Aluno • Entrar com E-mail & Senha',
+        enrollBtn: 'Fazer Minha Matrícula',
+        backBtn: '← Voltar para a Página Inicial',
+      },
+      en: {
+        badge: 'Locked Access • Exclusive to Students & Faculty',
+        title: 'CineTutor AI',
+        description: (
+          <><strong>CineTutor AI</strong> is an AI academic mentor reserved exclusively for <strong>enrolled students</strong> and <strong>academic faculty</strong> at CINELAB.</>
+        ),
+        featuresTitle: 'What CineTutor AI provides for students:',
+        features: [
+          '24/7 Q&A across all 10 pedagogical modules',
+          'Technical script breakdown & framing scales',
+          'Lighting calculations, focal lengths & the 180° rule on set',
+          'Individual guidance for the final graduation short film',
+        ],
+        loginBtn: 'Student Login • Email & Password',
+        enrollBtn: 'Enroll in the Course',
+        backBtn: '← Back to Home',
+      },
+      es: {
+        badge: 'Acceso Bloqueado • Exclusivo Alumnos y Coordinación',
+        title: 'CineTutor IA',
+        description: (
+          <>El <strong>CineTutor IA</strong> es un mentor académico de inteligencia artificial reservado exclusivamente para <strong>alumnos matriculados</strong> y para la <strong>coordinación académica</strong> de CINELAB.</>
+        ),
+        featuresTitle: 'Lo que ofrece el CineTutor IA a los alumnos:',
+        features: [
+          'Resolución de dudas 24/7 sobre los 10 módulos pedagógicos',
+          'Guion técnico, desglose y escalas de encuadre',
+          'Cálculos de luz, óptica y regla de los 180° en rodaje',
+          'Orientación personalizada para el cortometraje final',
+        ],
+        loginBtn: 'Ya soy Alumno • Iniciar Sesión',
+        enrollBtn: 'Completar Mi Matrícula',
+        backBtn: '← Volver al Inicio',
+      },
+      fr: {
+        badge: 'Accès Verrouillé • Réservé aux Étudiants & Direction',
+        title: 'CineTuteur IA',
+        description: (
+          <>Le <strong>CineTuteur IA</strong> est un mentor pédagogique d\'intelligence artificielle réservé exclusivement aux <strong>étudiants inscrits</strong> et à la <strong>direction pédagogique</strong> de CINELAB.</>
+        ),
+        featuresTitle: 'Ce que le CineTuteur IA apporte aux étudiants :',
+        features: [
+          'Assistance 24h/24 sur les 10 modules pédagogiques',
+          'Découpage technique et échelles de plans',
+          'Calculs d\'éclairage, choix d\'objectifs et règle des 180°',
+          'Accompagnement individualisé pour le court-métrage de fin d\'études',
+        ],
+        loginBtn: 'Espace Étudiant • Connexion',
+        enrollBtn: 'M\'inscrire à la Formation',
+        backBtn: '← Retour à l\'Accueil',
+      },
+    };
+
+    const lk = lockedI18n[language] || lockedI18n.pt;
+
     return (
       <div className="min-h-[80vh] flex items-center justify-center px-4 py-16 bg-[#0c0d12]">
         <div className="max-w-xl w-full mx-auto p-8 sm:p-10 rounded-3xl bg-[#140b24] border-2 border-purple-500/40 shadow-2xl shadow-purple-950/50 space-y-6 text-center animate-fadeIn relative overflow-hidden">
@@ -446,26 +528,25 @@ Qual dúvida ou projeto você gostaria de discutir hoje? Escolha uma das sugest�
 
           <div className="space-y-2">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-950/70 border border-red-500/40 text-red-300 text-[11px] font-mono font-bold uppercase tracking-wider">
-              <Lock className="w-3.5 h-3.5 text-amber-400" /> Acesso Trancado • Exclusivo Alunos &amp; Coordenação
+              <Lock className="w-3.5 h-3.5 text-amber-400" /> {lk.badge}
             </span>
             <h1 className="text-2xl sm:text-3xl font-display font-extrabold text-white tracking-tight">
-              CineTutor IA
+              {lk.title}
             </h1>
             <p className="text-xs sm:text-sm text-purple-200/80 leading-relaxed max-w-md mx-auto">
-              O <strong>CineTutor IA</strong> é um mentor acadêmico de inteligência artificial reservado exclusivamente para <strong>alunos matriculados</strong> e para a <strong>coordenação acadêmica</strong> do CINELAB.
+              {lk.description}
             </p>
           </div>
 
           <div className="p-4 rounded-2xl bg-neutral-900/80 border border-neutral-800 text-left text-xs text-neutral-300 space-y-2 font-sans">
             <p className="font-bold text-amber-300 flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
-              O que o CineTutor IA oferece aos alunos:
+              {lk.featuresTitle}
             </p>
             <ul className="space-y-1 text-neutral-300 pl-1 list-disc list-inside">
-              <li>Tira-dúvidas 24h dos 10 módulos pedagógicos</li>
-              <li>Decupagem técnica de roteiro e escalas de enquadramento</li>
-              <li>Cálculos de luz, lentes e regra dos 180° no set</li>
-              <li>Orientação individual para o curta-metragem final</li>
+              {lk.features.map((feat, idx) => (
+                <li key={idx}>{feat}</li>
+              ))}
             </ul>
           </div>
 
@@ -476,7 +557,7 @@ Qual dúvida ou projeto você gostaria de discutir hoje? Escolha uma das sugest�
               className="w-full sm:w-auto px-6 py-3 rounded-xl bg-purple-900/90 hover:bg-purple-800 text-white border border-purple-400/60 text-xs font-bold font-mono transition-all cursor-pointer shadow-lg flex items-center justify-center gap-2"
             >
               <UserIcon className="w-4 h-4 text-purple-300" />
-              <span>Entrar com E-mail &amp; Senha</span>
+              <span>{lk.loginBtn}</span>
             </button>
 
             <button
@@ -485,7 +566,7 @@ Qual dúvida ou projeto você gostaria de discutir hoje? Escolha uma das sugest�
               className="w-full sm:w-auto px-6 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold text-xs uppercase tracking-wider transition-all cursor-pointer shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2"
             >
               <Sparkles className="w-4 h-4" />
-              <span>Fazer Minha Matrícula</span>
+              <span>{lk.enrollBtn}</span>
             </button>
           </div>
 
@@ -495,7 +576,7 @@ Qual dúvida ou projeto você gostaria de discutir hoje? Escolha uma das sugest�
               onClick={() => onNavigate('inicio')}
               className="text-xs text-neutral-400 hover:text-white transition-colors cursor-pointer"
             >
-              ← Voltar para a Página Inicial
+              {lk.backBtn}
             </button>
           </div>
         </div>

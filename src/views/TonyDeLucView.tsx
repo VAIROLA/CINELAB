@@ -364,33 +364,37 @@ export const TonyDeLucView: React.FC<TonyDeLucViewProps> = ({
     localSaved?.tonyName || settings?.tonyName || settings?.directorName || 'Professor Cineasta Tony de Luc'
   );
   const [directorRole, setDirectorRole] = useState<string>(
-    localSaved?.tonyRole || settings?.tonyRole || settings?.directorRole || cur.role
+    language !== 'pt' ? cur.role : (localSaved?.tonyRole || settings?.tonyRole || settings?.directorRole || cur.role)
   );
   const [photoUrlState, setPhotoUrlState] = useState<string>(
     localSaved?.tonyPhotoUrl || settings?.tonyPhotoUrl || '/images/tony-de-luc.jpg'
   );
   const [tagline, setTagline] = useState<string>(
-    localSaved?.tonyTagline || settings?.tonyTagline || cur.tagline
+    language !== 'pt' ? cur.tagline : (localSaved?.tonyTagline || settings?.tonyTagline || cur.tagline)
   );
   const [bioShort, setBioShort] = useState<string>(
-    localSaved?.tonyBioShort || settings?.tonyBioShort || cur.bioShort
+    language !== 'pt' ? cur.bioShort : (localSaved?.tonyBioShort || settings?.tonyBioShort || cur.bioShort)
   );
   const [bioFull, setBioFull] = useState<string>(
-    localSaved?.tonyBioFull || settings?.tonyBioFull || cur.bioFull
+    language !== 'pt' ? cur.bioFull : (localSaved?.tonyBioFull || settings?.tonyBioFull || cur.bioFull)
   );
   const [feitosList, setFeitosList] = useState<string[]>(
-    localSaved?.tonyFeitos && localSaved.tonyFeitos.length > 0
-      ? localSaved.tonyFeitos
-      : settings?.tonyFeitos && settings.tonyFeitos.length > 0
-      ? settings.tonyFeitos
-      : cur.feitos
+    language !== 'pt'
+      ? cur.feitos
+      : (localSaved?.tonyFeitos && localSaved.tonyFeitos.length > 0
+          ? localSaved.tonyFeitos
+          : settings?.tonyFeitos && settings.tonyFeitos.length > 0
+          ? settings.tonyFeitos
+          : cur.feitos)
   );
   const [curriculoList, setCurriculoList] = useState<string[]>(
-    localSaved?.tonyCurriculo && localSaved.tonyCurriculo.length > 0
-      ? localSaved.tonyCurriculo
-      : settings?.tonyCurriculo && settings.tonyCurriculo.length > 0
-      ? settings.tonyCurriculo
-      : cur.curriculo
+    language !== 'pt'
+      ? cur.curriculo
+      : (localSaved?.tonyCurriculo && localSaved.tonyCurriculo.length > 0
+          ? localSaved.tonyCurriculo
+          : settings?.tonyCurriculo && settings.tonyCurriculo.length > 0
+          ? settings.tonyCurriculo
+          : cur.curriculo)
   );
   const [socialInstagram, setSocialInstagram] = useState<string>(
     localSaved?.tonySocialInstagram || settings?.tonySocialInstagram || 'https://instagram.com/tonydeluc'
@@ -431,17 +435,34 @@ export const TonyDeLucView: React.FC<TonyDeLucViewProps> = ({
     }
   }, []);
 
-  // When language changes, update defaults if not customized
+  // When language changes, update defaults to localized version
   useEffect(() => {
-    if (!localSaved?.tonyRole && !settings?.tonyRole) setDirectorRole(cur.role);
-    if (!localSaved?.tonyTagline && !settings?.tonyTagline) setTagline(cur.tagline);
-    if (!localSaved?.tonyBioShort && !settings?.tonyBioShort) setBioShort(cur.bioShort);
-    if (!localSaved?.tonyBioFull && !settings?.tonyBioFull) setBioFull(cur.bioFull);
-    if ((!localSaved?.tonyFeitos || localSaved.tonyFeitos.length === 0) && (!settings?.tonyFeitos || settings.tonyFeitos.length === 0)) {
+    if (language !== 'pt') {
+      setDirectorRole(cur.role);
+      setTagline(cur.tagline);
+      setBioShort(cur.bioShort);
+      setBioFull(cur.bioFull);
       setFeitosList(cur.feitos);
-    }
-    if ((!localSaved?.tonyCurriculo || localSaved.tonyCurriculo.length === 0) && (!settings?.tonyCurriculo || settings.tonyCurriculo.length === 0)) {
       setCurriculoList(cur.curriculo);
+    } else {
+      setDirectorRole(localSaved?.tonyRole || settings?.tonyRole || cur.role);
+      setTagline(localSaved?.tonyTagline || settings?.tonyTagline || cur.tagline);
+      setBioShort(localSaved?.tonyBioShort || settings?.tonyBioShort || cur.bioShort);
+      setBioFull(localSaved?.tonyBioFull || settings?.tonyBioFull || cur.bioFull);
+      setFeitosList(
+        localSaved?.tonyFeitos && localSaved.tonyFeitos.length > 0
+          ? localSaved.tonyFeitos
+          : settings?.tonyFeitos && settings.tonyFeitos.length > 0
+          ? settings.tonyFeitos
+          : cur.feitos
+      );
+      setCurriculoList(
+        localSaved?.tonyCurriculo && localSaved.tonyCurriculo.length > 0
+          ? localSaved.tonyCurriculo
+          : settings?.tonyCurriculo && settings.tonyCurriculo.length > 0
+          ? settings.tonyCurriculo
+          : cur.curriculo
+      );
     }
   }, [language]);
 

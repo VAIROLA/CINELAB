@@ -45,6 +45,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, settings }) => {
       handoutsNav: 'As 10 Apostilas + 4 Bônus',
       evalNav: 'Sistema de Avaliações',
       certNav: 'Validar Certificado',
+      tutorNav: 'CineTutor IA (Tire Dúvidas)',
       areaTitle: 'Área do Aluno & Acesso',
       studentPanel: 'Painel do Aluno (Minha Área)',
       enrollNow: 'Faça sua Matrícula (Turma Aberta)',
@@ -67,6 +68,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, settings }) => {
       handoutsNav: 'The 10 Handouts + 4 Bonuses',
       evalNav: 'Evaluation System',
       certNav: 'Validate Certificate',
+      tutorNav: 'CineTutor AI (Q&A / Mentor)',
       areaTitle: 'Student Area & Access',
       studentPanel: 'Student Portal (My Area)',
       enrollNow: 'Enroll Now (Enrollment Open)',
@@ -89,6 +91,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, settings }) => {
       handoutsNav: 'Los 10 Manuales + 4 Bonos',
       evalNav: 'Sistema de Evaluaciones',
       certNav: 'Validar Certificado',
+      tutorNav: 'CineTutor IA (Consultas)',
       areaTitle: 'Área del Alumno y Acceso',
       studentPanel: 'Portal del Alumno (Mi Área)',
       enrollNow: 'Inscríbete Ahora (Matrícula Abierta)',
@@ -111,6 +114,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, settings }) => {
       handoutsNav: 'Les 10 Fascicules + 4 Bonus',
       evalNav: 'Système d\'Évaluation',
       certNav: 'Vérifier un Certificat',
+      tutorNav: 'CineTutor IA (Questions & Réponses)',
       areaTitle: 'Espace Étudiant & Accès',
       studentPanel: 'Espace Étudiant (Mon Compte)',
       enrollNow: 'Inscrivez-vous (Inscriptions Ouvertes)',
@@ -130,9 +134,10 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, settings }) => {
     courseNav: 'O Curso de Cinema',
     tonyNav: 'Professor Tony de Luc (Bio & Filmografia)',
     methodNav: 'Cronograma por Dias Contados',
-    handoutsNav: 'As 10 Apostilas + 3 Bônus',
+    handoutsNav: 'As 10 Apostilas + 4 Bônus',
     evalNav: 'Sistema de Avaliações',
     certNav: 'Validar Certificado',
+    tutorNav: 'CineTutor IA (Tire Dúvidas)',
     areaTitle: 'Área do Aluno & Acesso',
     studentPanel: 'Painel do Aluno (Minha Área)',
     enrollNow: 'Faça sua Matrícula (Turma Aberta)',
@@ -144,6 +149,27 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, settings }) => {
     directorRole: 'Diretor Acadêmico & Cineasta',
     copyright: `© ${currentYear} CINELAB – Cinema & Audiovisual. Todos os direitos reservados.`,
     disclaimer: 'Regras pedagógicas validadas por cronograma • Certificação Profissional',
+  };
+
+  const localizedSupportHours: Record<string, string> = {
+    pt: settings?.supportHours || 'Segunda a Sexta, das 09h às 17h (Atendimento Direto da Coordenação)',
+    en: 'Monday to Friday, 9am to 5pm (Direct Academic Support)',
+    es: 'Lunes a Viernes, de 09:00 a 17:00 (Atención Directa)',
+    fr: 'Du Lundi au Vendredi, de 9h à 17h (Assistance Pédagogique)',
+  };
+
+  const localizedAddress: Record<string, string> = {
+    pt: settings?.companyAddress || settings?.contactAddress || 'Rio de Janeiro, RJ • Plataforma Digital Nacional',
+    en: 'Rio de Janeiro, Brazil • National & Global Digital Platform',
+    es: 'Río de Janeiro, Brasil • Plataforma Digital Nacional e Internacional',
+    fr: 'Rio de Janeiro, Brésil • Plateforme Numérique Nationale & Internationale',
+  };
+
+  const localizedDirectorRole: Record<string, string> = {
+    pt: settings?.tonyRole || settings?.directorRole || 'Cineasta, Diretor de Fotografia, Produtor, Ator, Jornalista & Fundador do CINELAB',
+    en: 'Filmmaker, Director of Photography, Producer, Actor, Journalist & Founder of CINELAB',
+    es: 'Cineasta, Director de Fotografía, Productor, Actor, Periodista y Fundador de CINELAB',
+    fr: 'Cinéaste, Directeur de la Photographie, Producteur, Acteur, Journaliste & Fondateur de CINELAB',
   };
 
   const defaultAbout = localizedAbout[language] || localizedAbout.pt;
@@ -172,16 +198,16 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, settings }) => {
               />
             </div>
             <p className="text-neutral-400 text-xs leading-relaxed max-w-sm">
-              {settings?.footerAboutText || defaultAbout}
+              {language === 'pt' ? (settings?.footerAboutText || defaultAbout) : defaultAbout}
             </p>
             <div className="flex flex-wrap items-center gap-3 text-neutral-500 pt-2">
               <span className="flex items-center gap-1 text-[11px] font-mono text-amber-400/80">
                 <ShieldCheck className="w-3.5 h-3.5 text-amber-500" />
-                <span>{settings?.footerOfficialBadge || localizedLabels.officialBadge}</span>
+                <span>{language === 'pt' ? (settings?.footerOfficialBadge || localizedLabels.officialBadge) : localizedLabels.officialBadge}</span>
               </span>
               <span>•</span>
               <span className="text-[11px] font-mono text-neutral-400">
-                {settings?.footerWorkloadBadge || localizedLabels.workloadBadge}
+                {language === 'pt' ? (settings?.footerWorkloadBadge || localizedLabels.workloadBadge) : localizedLabels.workloadBadge}
               </span>
             </div>
 
@@ -274,7 +300,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, settings }) => {
                   onClick={() => onNavigate('tutor-ia')}
                   className="hover:text-amber-400 transition-colors flex items-center gap-1.5 cursor-pointer text-amber-300/90 font-medium"
                 >
-                  <Sparkles className="w-3 h-3 text-amber-400" /> CineTutor IA (Tire Dúvidas)
+                  <Sparkles className="w-3 h-3 text-amber-400" /> {localizedLabels.tutorNav}
                 </button>
               </li>
               <li>
@@ -359,18 +385,14 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, settings }) => {
                   <MessageCircle className="w-3 h-3 text-emerald-400" />
                 </a>
               </li>
-              {settings?.supportHours && (
-                <li className="flex items-center gap-2 text-neutral-400 text-[11px]">
-                  <Clock className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                  <span>{settings.supportHours}</span>
-                </li>
-              )}
-              {(settings?.companyAddress || settings?.contactAddress) && (
-                <li className="flex items-center gap-2 text-neutral-400 text-[11px]">
-                  <MapPin className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                  <span>{settings.companyAddress || settings.contactAddress}</span>
-                </li>
-              )}
+              <li className="flex items-center gap-2 text-neutral-400 text-[11px]">
+                <Clock className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                <span>{language === 'pt' ? (settings?.supportHours || localizedSupportHours.pt) : (localizedSupportHours[language] || localizedSupportHours.en)}</span>
+              </li>
+              <li className="flex items-center gap-2 text-neutral-400 text-[11px]">
+                <MapPin className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                <span>{language === 'pt' ? (settings?.companyAddress || settings?.contactAddress || localizedAddress.pt) : (localizedAddress[language] || localizedAddress.en)}</span>
+              </li>
               <li className="pt-2 text-[11px] text-neutral-400 leading-normal border-t border-neutral-900">
                 {localizedLabels.academicCoord}{' '}
                 <button
@@ -379,7 +401,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, settings }) => {
                 >
                   {settings?.tonyName || settings?.directorName || 'Professor Cineasta Tony de Luc'}
                 </button>{' '}
-                ({settings?.tonyRole || settings?.directorRole || localizedLabels.directorRole})
+                ({language === 'pt' ? (settings?.tonyRole || settings?.directorRole || localizedDirectorRole.pt) : (localizedDirectorRole[language] || localizedDirectorRole.en)})
               </li>
             </ul>
           </div>
@@ -388,10 +410,10 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, settings }) => {
         {/* Bottom copyright & disclaimer */}
         <div className="border-t border-neutral-800/80 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-neutral-500">
           <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-center sm:text-left">
-            <p>{settings?.footerCopyright || defaultCopyright}</p>
+            <p>{language === 'pt' ? (settings?.footerCopyright || defaultCopyright) : defaultCopyright}</p>
           </div>
           <div className="flex items-center gap-4 text-center sm:text-right">
-            <span>{settings?.footerDisclaimer || defaultDisclaimer}</span>
+            <span>{language === 'pt' ? (settings?.footerDisclaimer || defaultDisclaimer) : defaultDisclaimer}</span>
           </div>
         </div>
       </div>

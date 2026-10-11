@@ -67,7 +67,7 @@ export const Header: React.FC<HeaderProps> = ({
     { label: t('nav.validate', 'Validar'), route: 'validar-certificado' },
     { label: t('nav.faq', 'FAQ'), route: 'faq' },
     { label: t('nav.contact', 'Contato'), route: 'contato' },
-    ...(user?.role === 'admin' ? [{ label: 'Painel Admin', route: 'admin', icon: Shield, highlight: 'red' as const }] : []),
+    ...(user?.role === 'admin' ? [{ label: language === 'en' ? 'Admin Panel' : language === 'es' ? 'Panel Admin' : language === 'fr' ? 'Panneau Admin' : 'Painel Admin', route: 'admin', icon: Shield, highlight: 'red' as const }] : []),
   ];
 
   const handleNav = (route: string, action?: 'panel' | 'logout') => {
@@ -137,7 +137,7 @@ export const Header: React.FC<HeaderProps> = ({
             title="PÃ¡gina do Professor Cineasta Tony de Luc (Bio, Feitos & Filmografia)"
           >
             <Clapperboard className="w-3 h-3 text-amber-400 shrink-0" />
-            <span className="text-purple-300 font-mono text-[9px]">Professor:</span>
+            <span className="text-purple-300 font-mono text-[9px]">{language === 'en' ? 'Professor:' : language === 'es' ? 'Profesor:' : language === 'fr' ? 'Professeur :' : 'Professor:'}</span>
             <span className="font-extrabold uppercase drop-shadow-[0_0_6px_rgba(255,255,255,0.8)] whitespace-nowrap">Tony</span>
             <span className="font-extrabold uppercase drop-shadow-[0_0_6px_rgba(255,255,255,0.8)] whitespace-nowrap hidden md:inline"> de Luc</span>
           </button>
@@ -353,7 +353,7 @@ export const Header: React.FC<HeaderProps> = ({
                         className="w-full text-left px-3 py-2 text-xs font-semibold text-amber-300 hover:bg-neutral-800 rounded-xl flex items-center gap-2.5 cursor-pointer"
                       >
                         <Clapperboard className="w-4 h-4 text-amber-400 shrink-0" />
-                        PÃ¡gina do Professor Tony de Luc
+                        {language === 'en' ? "Professor Tony de Luc's Page" : language === 'es' ? 'Página del Profesor Tony de Luc' : language === 'fr' ? 'Page du Professeur Tony de Luc' : 'Página do Professor Tony de Luc'}
                       </button>
                     </>
                   ) : (
@@ -396,7 +396,7 @@ export const Header: React.FC<HeaderProps> = ({
                         className="w-full text-left px-3 py-2 text-xs font-semibold text-purple-300 hover:bg-neutral-800 rounded-xl flex items-center gap-2.5 cursor-pointer"
                       >
                         <Clapperboard className="w-4 h-4 text-purple-400 shrink-0" />
-                        Página do Professor Tony de Luc
+                        {language === 'en' ? "Professor Tony de Luc's Page" : language === 'es' ? 'Página del Profesor Tony de Luc' : language === 'fr' ? 'Page du Professeur Tony de Luc' : 'Página do Professor Tony de Luc'}
                       </button>
                     </>
                   )}
@@ -413,10 +413,10 @@ export const Header: React.FC<HeaderProps> = ({
                       >
                         <span className="flex items-center gap-2.5">
                           <GraduationCap className="w-4 h-4 text-emerald-400" />
-                          <span>👁️ Visualizar como Aluno (Teste)</span>
+                          <span>{language === 'en' ? '👁️ View as Student (Demo)' : language === 'es' ? '👁️ Ver como Alumno (Prueba)' : language === 'fr' ? '👁️ Voir comme Étudiant (Test)' : '👁️ Visualizar como Aluno (Teste)'}</span>
                         </span>
                         <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/30 text-emerald-200 font-mono">
-                          Testar
+                          {language === 'en' ? 'Demo' : language === 'es' ? 'Probar' : language === 'fr' ? 'Tester' : 'Testar'}
                         </span>
                       </button>
                     </div>
@@ -502,7 +502,7 @@ export const Header: React.FC<HeaderProps> = ({
                   ) : (
                     <span className="text-[8.5px] font-mono px-1.5 py-0.5 rounded bg-red-950/80 text-amber-300 border border-red-500/40 font-bold uppercase flex items-center gap-1 shadow-sm">
                       <Lock className="w-2.5 h-2.5 text-amber-400" />
-                      Trancado
+                      {language === 'en' ? 'Locked' : language === 'es' ? 'Bloqueado' : language === 'fr' ? 'Verrouillé' : 'Trancado'}
                     </span>
                   )
                 )}
@@ -518,7 +518,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Mobile Country Translator */}
           <div className="p-3 bg-purple-950/60 rounded-2xl border border-purple-400/40 space-y-2 shadow-inner">
             <span className="text-xs font-sans text-purple-200 block text-center font-bold">
-              Tradutor do Sistema • Selecione o Idioma:
+              {language === 'en' ? 'System Translator • Select Language:' : language === 'es' ? 'Traductor del Sistema • Seleccione Idioma:' : language === 'fr' ? 'Traducteur du Système • Choisissez la Langue :' : 'Tradutor do Sistema • Selecione o Idioma:'}
             </span>
             <HeaderCountryTranslator stacked variant="neon" className="w-full justify-center" />
           </div>
@@ -544,7 +544,11 @@ export const Header: React.FC<HeaderProps> = ({
               }`}
             >
               <Shield className="w-4 h-4 text-red-400" />
-              <span>{user?.role === 'admin' ? 'Painel Admin' : 'Admin (Senha)'}</span>
+              <span>
+                {user?.role === 'admin'
+                  ? (language === 'en' ? 'Admin Panel' : language === 'es' ? 'Panel Admin' : language === 'fr' ? 'Panneau Admin' : 'Painel Admin')
+                  : (language === 'en' ? 'Admin (Pass)' : language === 'es' ? 'Admin (Clave)' : language === 'fr' ? 'Admin (Pass)' : 'Admin (Senha)')}
+              </span>
             </button>
           </div>
 
@@ -552,7 +556,7 @@ export const Header: React.FC<HeaderProps> = ({
           {user?.role === 'admin' && onSwitchDemoRole && (
             <div className="p-3 bg-purple-950/70 rounded-2xl border border-purple-500/40 space-y-2">
               <span className="text-xs font-sans text-purple-200 block text-center font-bold">
-                Modo de Teste da Coordenação:
+                {language === 'en' ? 'Coordination Test Mode:' : language === 'es' ? 'Modo de Prueba de Coordinación:' : language === 'fr' ? 'Mode de Test de la Direction :' : 'Modo de Teste da Coordenação:'}
               </span>
               <div className="grid grid-cols-2 gap-2 text-center">
                 <button

@@ -53,13 +53,13 @@ export const WelcomeMessageSection: React.FC<WelcomeMessageSectionProps> = ({
   const { t, language } = useLanguage();
   const directorName = settings?.tonyName || settings?.directorName || 'Professor Cineasta Tony de Luc';
   
-  const defaultRoles = {
+  const defaultRoles: Record<string, string> = {
     pt: 'Diretor Geral & Fundador do CINELAB',
     en: 'General Director & Founder of CINELAB',
     es: 'Director General y Fundador de CINELAB',
     fr: 'Directeur Général & Fondateur de CINELAB',
   };
-  const directorRole = settings?.tonyRole || settings?.directorRole || defaultRoles[language] || defaultRoles.pt;
+  const directorRole = language === 'pt' ? (settings?.tonyRole || settings?.directorRole || defaultRoles.pt) : (defaultRoles[language] || defaultRoles.en);
   
   const photoUrl =
     settings?.tonyPhotoUrl ||

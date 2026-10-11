@@ -17,18 +17,38 @@ export const ContactView: React.FC<ContactViewProps> = ({ settings, onNavigate }
   const [sent, setSent] = useState(false);
 
   const contactEmail = settings?.contactEmail || 'tonydeluc@tv-diversidade.com';
-  const contactPhone = settings?.contactPhone || '+55 (21) 96672-5240';
-  const supportHours = settings?.supportHours || 'Segunda a Sexta, das 09h às 19h (Atendimento Humanizado)';
-  const supportResponse = settings?.supportResponseTime || 'Resposta em até 24 horas úteis';
-  const contactAddress = settings?.contactAddress || settings?.companyAddress || 'Rio de Janeiro, RJ • Plataforma Digital Nacional';
+  const localizedSupportHours: Record<string, string> = {
+    pt: settings?.supportHours || 'Segunda a Sexta, das 09h às 19h (Atendimento Humanizado)',
+    en: 'Monday to Friday, 9am to 7pm (Dedicated Support)',
+    es: 'Lunes a Viernes, de 09:00 a 19:00 (Atención Personalizada)',
+    fr: 'Du Lundi au Vendredi, de 9h à 19h (Assistance Dédiée)',
+  };
+  const supportHours = language === 'pt' ? (settings?.supportHours || localizedSupportHours.pt) : (localizedSupportHours[language] || localizedSupportHours.en);
+
+  const localizedSupportResponse: Record<string, string> = {
+    pt: settings?.supportResponseTime || 'Resposta em até 24 horas úteis',
+    en: 'Response within 24 business hours',
+    es: 'Respuesta en un plazo máximo de 24 horas hábiles',
+    fr: 'Réponse sous 24 heures ouvrées',
+  };
+  const supportResponse = language === 'pt' ? (settings?.supportResponseTime || localizedSupportResponse.pt) : (localizedSupportResponse[language] || localizedSupportResponse.en);
+
+  const localizedContactAddress: Record<string, string> = {
+    pt: settings?.contactAddress || settings?.companyAddress || 'Rio de Janeiro, RJ • Plataforma Digital Nacional',
+    en: 'Rio de Janeiro, Brazil • National & Global Digital Platform',
+    es: 'Río de Janeiro, Brasil • Plataforma Digital Nacional e Internacional',
+    fr: 'Rio de Janeiro, Brésil • Plateforme Numérique Nationale & Internationale',
+  };
+  const contactAddress = language === 'pt' ? (settings?.contactAddress || settings?.companyAddress || localizedContactAddress.pt) : (localizedContactAddress[language] || localizedContactAddress.en);
+
   const directorName = settings?.tonyName || settings?.directorName || 'Professor Cineasta Tony de Luc';
-  const defaultRoles = {
+  const defaultRoles: Record<string, string> = {
     pt: 'Diretor Geral & Coordenador Acadêmico',
     en: 'General Director & Academic Coordinator',
     es: 'Director General y Coordinador Académico',
     fr: 'Directeur Général & Coordinateur Pédagogique',
   };
-  const directorRole = settings?.tonyRole || settings?.directorRole || defaultRoles[language] || defaultRoles.pt;
+  const directorRole = language === 'pt' ? (settings?.tonyRole || settings?.directorRole || defaultRoles.pt) : (defaultRoles[language] || defaultRoles.en);
   const photoUrl =
     settings?.tonyPhotoUrl ||
     'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1000&q=80';
