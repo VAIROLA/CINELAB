@@ -318,8 +318,8 @@ export default function App() {
         {currentRoute === 'matricula' && (
           <EnrollmentView
             onNavigate={navigateTo}
-            currentUser={user}
-            user={user}
+            currentUser={user?.role === 'student' ? user : null}
+            user={user?.role === 'student' ? user : null}
             settings={courseSettings}
             onEnrollmentSuccess={handleAuthSuccess}
           />

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CourseSettings, User, Enrollment } from '../types/index.js';
 import { api, setAuthToken } from '../services/api.js';
 import {
@@ -32,17 +32,29 @@ export const EnrollmentView: React.FC<EnrollmentViewProps> = ({
   user,
 }) => {
   const { language } = useLanguage();
-  const activeUser = currentUser || user || null;
+  // Se o usuário logado for ADMIN, NUNCA pré-preenche com os dados administrativos
+  const isStudentUser = Boolean(currentUser?.role === 'student' || user?.role === 'student');
+  const activeStudent = isStudentUser ? (currentUser || user) : null;
   const price = settings?.coursePrice || 1000.00;
   const originalPrice = settings?.coursePriceOriginal || 2000.00;
   const maxInstallments = settings?.maxInstallments || 12;
 
-  // Form states
-  const [name, setName] = useState(activeUser?.name || '');
-  const [email, setEmail] = useState(activeUser?.email || '');
-  const [phone, setPhone] = useState(activeUser?.phone || '');
-  const [document, setDocument] = useState(activeUser?.document || '');
+  // Form states: Inicializa rigorosamente limpo se não for aluno
+  const [name, setName] = useState(activeStudent?.name || '');
+  const [email, setEmail] = useState(activeStudent?.email || '');
+  const [phone, setPhone] = useState(activeStudent?.phone || '');
+  const [document, setDocument] = useState(activeStudent?.document || '');
   const [password, setPassword] = useState('');
+
+  useEffect(() => {
+    if (!isStudentUser) {
+      setName('');
+      setEmail('');
+      setPassword('');
+      setPhone('');
+      setDocument('');
+    }
+  }, [currentUser, user, isStudentUser]);
   const [paymentMethod, setPaymentMethod] = useState<'pix' | 'credit_card' | 'debit_card'>('pix');
   const [installments, setInstallments] = useState(1);
 
@@ -432,7 +444,11 @@ export const EnrollmentView: React.FC<EnrollmentViewProps> = ({
         </div>
       )}
 
-      <form onSubmit={handleCheckout} className="space-y-8">
+      <form onSubmit={handleCheckout} className="space-y-8" autoComplete="off">
+        {/* Anti-autofill dummy inputs to capture automatic browser password manager filling */}
+        <input type="text" name="fake_admin_username_prevent_autofill" style={{ display: 'none' }} tabIndex={-1} autoComplete="username" />
+        <input type="password" name="fake_admin_password_prevent_autofill" style={{ display: 'none' }} tabIndex={-1} autoComplete="current-password" />
+
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Left: Student Information */}
           <div className="lg:col-span-7 bg-neutral-900/70 border border-neutral-800 rounded-3xl p-6 sm:p-8 space-y-6">
@@ -446,7 +462,10 @@ export const EnrollmentView: React.FC<EnrollmentViewProps> = ({
                 <label className="block text-neutral-400 mb-1 font-medium">{cur.fullName}</label>
                 <input
                   type="text"
+                  name="aluno_nome_completo"
+                  id="aluno_nome_completo"
                   required
+                  autoComplete="off"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder={cur.fullNamePlaceholder}
@@ -458,7 +477,13 @@ export const EnrollmentView: React.FC<EnrollmentViewProps> = ({
                 <label className="block text-neutral-400 mb-1 font-medium">{cur.email}</label>
                 <input
                   type="email"
+                  name="aluno_email_matricula"
+                  id="aluno_email_matricula"
                   required
+                  autoComplete="off"
+                  autoCorrect="off"
+                  autoCapitalize="off"
+                  spellCheck={false}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={cur.emailPlaceholder}
@@ -471,7 +496,10 @@ export const EnrollmentView: React.FC<EnrollmentViewProps> = ({
                   <label className="block text-neutral-400 mb-1 font-medium">{cur.phone}</label>
                   <input
                     type="tel"
+                    name="aluno_telefone_matricula"
+                    id="aluno_telefone_matricula"
                     required
+                    autoComplete="off"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder={cur.phonePlaceholder}
@@ -482,7 +510,10 @@ export const EnrollmentView: React.FC<EnrollmentViewProps> = ({
                   <label className="block text-neutral-400 mb-1 font-medium">{cur.document}</label>
                   <input
                     type="text"
+                    name="aluno_cpf_doc_matricula"
+                    id="aluno_cpf_doc_matricula"
                     required
+                    autoComplete="off"
                     value={document}
                     onChange={(e) => setDocument(e.target.value)}
                     placeholder={cur.documentPlaceholder}
@@ -497,7 +528,10 @@ export const EnrollmentView: React.FC<EnrollmentViewProps> = ({
                 </label>
                 <input
                   type="password"
+                  name="aluno_nova_senha_matricula"
+                  id="aluno_nova_senha_matricula"
                   required={!currentUser}
+                  autoComplete="new-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder={currentUser ? cur.passwordPlaceholderDefined : cur.passwordPlaceholderCreate}
