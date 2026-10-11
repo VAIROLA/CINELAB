@@ -9,6 +9,7 @@ import {
   FilmTranslation,
   ReadingTranslation,
 } from './translations.js';
+import { initLiveCurrencyRates } from '../utils/currency.js';
 
 interface LanguageContextType {
   language: Language;
@@ -53,6 +54,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   useEffect(() => {
     document.documentElement.lang = language;
+    initLiveCurrencyRates();
   }, [language]);
 
   const t = (key: string, fallback?: string): string => {

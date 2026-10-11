@@ -16,6 +16,12 @@ import {
 } from 'lucide-react';
 import { CourseSettings } from '../types/index.js';
 import { useLanguage } from '../i18n/LanguageContext.js';
+import {
+  formatCurrencyPrice,
+  getPriceDisplayParts,
+  formatInstallmentOption,
+  formatSavingsText,
+} from '../utils/currency.js';
 
 interface CourseBannerPromoProps {
   onNavigate: (route: string) => void;
@@ -32,8 +38,10 @@ export const CourseBannerPromo: React.FC<CourseBannerPromoProps> = ({
   const price = settings?.coursePrice || 1000.00;
   const originalPrice = settings?.coursePriceOriginal || 2000.00;
   const maxInstallments = settings?.maxInstallments || 12;
-  const installmentValue = (price / maxInstallments).toFixed(2);
-  const diffSavings = (originalPrice - price).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const priceParts = getPriceDisplayParts(price, language);
+  const originalPriceFormatted = formatCurrencyPrice(originalPrice, language);
+  const installmentsText = formatInstallmentOption(price, maxInstallments, language);
+  const savingsText = formatSavingsText(originalPrice, price, language);
 
   const allTexts = {
     pt: {
@@ -326,7 +334,7 @@ export const CourseBannerPromo: React.FC<CourseBannerPromoProps> = ({
                 <div className="flex items-center justify-center gap-2">
                   <span className="text-[11px] sm:text-xs text-neutral-400 font-mono">{texts.marketVal}</span>
                   <span className="text-sm sm:text-lg text-red-400/90 line-through font-bold font-mono">
-                    R$ {originalPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    {originalPriceFormatted}
                   </span>
                 </div>
 
@@ -337,21 +345,33 @@ export const CourseBannerPromo: React.FC<CourseBannerPromoProps> = ({
 
                 {/* Promotional Price */}
                 <div className="flex items-baseline justify-center gap-1 flex-wrap">
-                  <span className="text-xl sm:text-3xl font-display font-extrabold text-amber-400">R$</span>
+                  {priceParts.symbolPosition === 'before' && (
+                    <span className="text-xl sm:text-3xl font-display font-extrabold text-amber-400">
+                      {priceParts.symbol}
+                    </span>
+                  )}
                   <span className="text-4xl sm:text-6xl font-display font-black text-white tracking-tight drop-shadow-[0_2px_12px_rgba(255,255,255,0.2)]">
-                    {Math.floor(price).toLocaleString('pt-BR')}<span className="text-2xl sm:text-4xl text-amber-300">,{(price % 1).toFixed(2).slice(2) || '00'}</span>
+                    {priceParts.integerPart}
+                    <span className="text-2xl sm:text-4xl text-amber-300">
+                      {priceParts.decimalSep}{priceParts.decimalPart}
+                    </span>
                   </span>
-                  <span className="text-xs text-neutral-400 font-mono ml-1">{texts.cash}</span>
+                  {priceParts.symbolPosition === 'after' && (
+                    <span className="text-2xl sm:text-4xl font-display font-extrabold text-amber-400 ml-1">
+                      {priceParts.symbol}
+                    </span>
+                  )}
+                  <span className="text-xs text-neutral-400 font-mono ml-1.5">{texts.cash}</span>
                 </div>
 
                 {/* Installment Badge */}
                 <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 font-mono text-[11px] sm:text-xs font-bold max-w-full text-center">
                   <CreditCard className="w-3.5 h-3.5 shrink-0" />
-                  <span className="break-words">{texts.installments}</span>
+                  <span className="break-words">{installmentsText}</span>
                 </div>
 
                 <p className="text-[11px] text-neutral-400 pt-1">
-                  {texts.savings}
+                  {savingsText}
                 </p>
               </div>
 

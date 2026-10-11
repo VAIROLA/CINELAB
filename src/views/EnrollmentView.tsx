@@ -14,6 +14,7 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext.js';
+import { formatCurrencyPrice, getConvertedValue } from '../utils/currency.js';
 
 interface EnrollmentViewProps {
   settings?: CourseSettings | null;
@@ -574,13 +575,13 @@ export const EnrollmentView: React.FC<EnrollmentViewProps> = ({
                 <div className="flex items-center justify-between text-neutral-400">
                   <span>{cur.marketValue}</span>
                   <span className="text-neutral-500 line-through font-mono">
-                    R$ {originalPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    {formatCurrencyPrice(originalPrice, language)}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-emerald-400 font-medium">
                   <span>{cur.specialDiscount}</span>
                   <span className="font-mono font-bold">
-                    - R$ {(originalPrice - price).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    - {formatCurrencyPrice(originalPrice - price, language)}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-neutral-400">
@@ -594,9 +595,24 @@ export const EnrollmentView: React.FC<EnrollmentViewProps> = ({
                 <div className="border-t border-neutral-800 pt-2 flex items-center justify-between font-bold text-white text-sm">
                   <span className="text-amber-300 font-mono uppercase tracking-wider">{cur.promotionalPrice}</span>
                   <span className="text-amber-400 text-lg font-display font-extrabold">
-                    R$ {price.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    {formatCurrencyPrice(price, language)}
                   </span>
                 </div>
+
+                {language !== 'pt' && (
+                  <div className="mt-2 text-[10.5px] text-neutral-400 font-mono bg-neutral-950/70 p-2.5 rounded-lg border border-neutral-800 space-y-1">
+                    <p className="text-amber-400 font-bold">
+                      {language === 'fr' && '🌍 Tarification Internationale (France / Europe)'}
+                      {language === 'en' && '🌍 International Pricing (US & Global)'}
+                      {language === 'es' && '🌍 Tarificación Internacional'}
+                    </p>
+                    <p className="text-neutral-300 leading-relaxed font-sans text-[11px]">
+                      {language === 'fr' && `Tarif affiché en Euros (~${formatCurrencyPrice(price, 'fr')}). Votre carte bancaire internationale (Visa / Mastercard) effectue la conversion en toute sécurité.`}
+                      {language === 'en' && `Estimated in USD (~${formatCurrencyPrice(price, 'en')}). Secure payment with your international credit card (Visa / Mastercard) is automatically converted by your bank.`}
+                      {language === 'es' && `Tarifa estimada en USD (~${formatCurrencyPrice(price, 'es')}). Tu tarjeta internacional (Visa / Mastercard) realiza la conversión automática sin complicaciones.`}
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Payment selector tabs */}
@@ -742,12 +758,12 @@ export const EnrollmentView: React.FC<EnrollmentViewProps> = ({
                       className="w-full px-3 py-2 bg-neutral-950 border border-neutral-700 rounded-lg text-white text-xs focus:outline-none focus:border-amber-500"
                     >
                       {Array.from({ length: maxInstallments }, (_, i) => i + 1).map((n) => {
-                        const val = (price / n).toFixed(2).replace('.', ',');
+                        const formattedSingle = formatCurrencyPrice(price / n, language);
                         return (
                           <option key={n} value={n}>
                             {n === 1
-                              ? `1x de R$ ${val} (${cur.inCash})`
-                              : `${n}x de R$ ${val} (${cur.installmentOption})`}
+                              ? `1x ${formattedSingle} (${cur.inCash})`
+                              : `${n}x ${formattedSingle} (${cur.installmentOption})`}
                           </option>
                         );
                       })}

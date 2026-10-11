@@ -893,9 +893,15 @@ export const UI_TRANSLATIONS: Translations = {
   },
   'home.pricingFrom': {
     pt: 'De R$ 2.000,00 (Valor de Mercado)',
-    en: 'From $2,000 (Market Value)',
-    es: 'De 2.000,00 $ (Valor de Mercado)',
-    fr: 'Au lieu de 2 000 € (Valeur Marchande)',
+    en: 'From $360.00 (Market Value)',
+    es: 'De $360,00 (Valor de Mercado)',
+    fr: 'Au lieu de 330,00 € (Valeur Marchande)',
+  },
+  'home.pricingMarketLabel': {
+    pt: 'Valor de Mercado:',
+    en: 'Market Value:',
+    es: 'Valor de Mercado:',
+    fr: 'Valeur Marchande :',
   },
   'home.pricingBy': {
     pt: 'POR APENAS',
