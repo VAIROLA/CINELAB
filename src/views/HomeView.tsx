@@ -43,6 +43,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
   settings,
   modules = [],
   isAdmin = false,
+  isLoggedIn = false,
 }) => {
   const { t, getModuleTranslation, language } = useLanguage();
   const [localSettings, setLocalSettings] = useState<CourseSettings | null>(settings || null);
