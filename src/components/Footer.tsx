@@ -277,7 +277,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, settings }) => {
               </span>
               <span>•</span>
               <span className="text-[11px] font-mono text-neutral-400">
-                {language === 'pt' ? '180h Carga Horária' : (localizedLabels[language]?.workloadBadge || localizedLabels.en.workloadBadge)}
+                {language === 'pt' ? '180h Carga Horária' : (localizedLabels?.workloadBadge || '180h Workload')}
               </span>
             </div>
 
