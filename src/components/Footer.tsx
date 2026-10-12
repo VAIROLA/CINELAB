@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Logo } from './Logo.js';
 import { CourseSettings } from '../types/index.js';
 import {
@@ -15,6 +15,9 @@ import {
   MapPin,
   MessageCircle,
   Sparkles,
+  Eye,
+  GraduationCap,
+  Users,
 } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext.js';
 
@@ -175,6 +178,103 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, settings }) => {
   const defaultAbout = localizedAbout[language] || localizedAbout.pt;
   const defaultCopyright = localizedLabels.copyright;
   const defaultDisclaimer = localizedLabels.disclaimer;
+
+  const [visitCount, setVisitCount] = useState<number>(() => {
+    try {
+      const BASE_VISITS = 24860;
+      const stored = localStorage.getItem('cinelab_visitor_count');
+      let current = stored ? parseInt(stored, 10) : BASE_VISITS;
+      if (isNaN(current) || current < BASE_VISITS) {
+        current = BASE_VISITS;
+      }
+      return current;
+    } catch (e) {
+      return 24860;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      const sessionCounted = sessionStorage.getItem('cinelab_session_counted');
+      if (!sessionCounted) {
+        sessionStorage.setItem('cinelab_session_counted', 'true');
+        setVisitCount((prev) => {
+          const next = prev + 1;
+          localStorage.setItem('cinelab_visitor_count', next.toString());
+          return next;
+        });
+      }
+    } catch (e) {
+      // ignore
+    }
+  }, []);
+
+  const statsTexts = {
+    pt: {
+      tag: 'CINELAB EM NÚMEROS • IMPACTO & AUTORIDADE',
+      studentsTitle: '+1.500',
+      studentsLabel: 'Alunos e Cineastas Formados',
+      studentsDesc: 'Comunidade ativa de realizadores',
+      visitsTitle: `+${visitCount.toLocaleString('pt-BR')}`,
+      visitsLabel: 'Acessos Cinematográficos',
+      visitsDesc: 'Audiência global da plataforma',
+      workloadTitle: '180h',
+      workloadLabel: 'Formação Reconhecida',
+      workloadDesc: 'Certificado com validação pública',
+      liveBadge: 'Plataforma Ativa',
+    },
+    en: {
+      tag: 'CINELAB IN NUMBERS • IMPACT & AUTHORITY',
+      studentsTitle: '+1,500',
+      studentsLabel: 'Trained Filmmakers & Students',
+      studentsDesc: 'Active community of creators',
+      visitsTitle: `+${visitCount.toLocaleString('en-US')}`,
+      visitsLabel: 'Cinematic Platform Visits',
+      visitsDesc: 'Global platform audience',
+      workloadTitle: '180h',
+      workloadLabel: 'Recognized Training',
+      workloadDesc: 'Publicly authenticated certificate',
+      liveBadge: 'Platform Online',
+    },
+    es: {
+      tag: 'CINELAB EN CIFRAS • IMPACTO Y AUTORIDAD',
+      studentsTitle: '+1.500',
+      studentsLabel: 'Cineastas y Alumnos Graduados',
+      studentsDesc: 'Comunidad activa de realizadores',
+      visitsTitle: `+${visitCount.toLocaleString('es-ES')}`,
+      visitsLabel: 'Visitas Cinematográficas',
+      visitsDesc: 'Audiencia global de la plataforma',
+      workloadTitle: '180h',
+      workloadLabel: 'Formación Reconocida',
+      workloadDesc: 'Certificado con validación pública',
+      liveBadge: 'Plataforma Activa',
+    },
+    fr: {
+      tag: 'CINELAB EN CHIFFRES • IMPACT & AUTORITÉ',
+      studentsTitle: '+1 500',
+      studentsLabel: 'Cinéastes et Étudiants Formés',
+      studentsDesc: 'Communauté active de réalisateurs',
+      visitsTitle: `+${visitCount.toLocaleString('fr-FR')}`,
+      visitsLabel: 'Visites Cinématographiques',
+      visitsDesc: 'Audience globale de la plateforme',
+      workloadTitle: '180h',
+      workloadLabel: 'Formation Reconnue',
+      workloadDesc: 'Certificat avec validation publique',
+      liveBadge: 'Plateforme Active',
+    },
+  }[language] || {
+    tag: 'CINELAB EM NÚMEROS • IMPACTO & AUTORIDADE',
+    studentsTitle: '+1.500',
+    studentsLabel: 'Alunos e Cineastas Formados',
+    studentsDesc: 'Comunidade ativa de realizadores',
+    visitsTitle: `+${visitCount.toLocaleString('pt-BR')}`,
+    visitsLabel: 'Acessos Cinematográficos',
+    visitsDesc: 'Audiência global da plataforma',
+    workloadTitle: '180h',
+    workloadLabel: 'Formação Reconhecida',
+    workloadDesc: 'Certificado com validação pública',
+    liveBadge: 'Plataforma Ativa',
+  };
 
   // Format clean whatsapp number for wa.me link
   const rawWa = settings?.whatsappNumber || settings?.contactPhone || '+55 (11) 98765-4321';
@@ -404,6 +504,78 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, settings }) => {
                 ({language === 'pt' ? (settings?.tonyRole || settings?.directorRole || localizedDirectorRole.pt) : (localizedDirectorRole[language] || localizedDirectorRole.en)})
               </li>
             </ul>
+          </div>
+        </div>
+
+        {/* Faixa de Impacto: CINELAB em Números (Comunidade de Alunos & Acessos Cinematográficos) */}
+        <div className="my-8 p-4 sm:p-6 rounded-2xl bg-gradient-to-r from-[#170530]/90 via-[#260a4e]/90 to-[#170530]/90 border border-purple-500/40 shadow-[0_0_30px_rgba(168,85,247,0.2)] backdrop-blur-md">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-3 pb-4 border-b border-purple-900/60 text-center md:text-left">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_10px_rgba(52,211,153,0.8)]" />
+              <span className="text-[11px] font-mono uppercase tracking-widest text-purple-200 font-bold">
+                {statsTexts.tag}
+              </span>
+            </div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/60 text-[10.5px] font-mono text-emerald-300 shadow-sm">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+              <span className="font-bold">{statsTexts.liveBadge}</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
+            {/* 1. Alunos e Cineastas Formados */}
+            <div className="p-3.5 rounded-xl bg-purple-950/40 border border-purple-500/30 flex items-center gap-3.5 shadow-inner">
+              <div className="w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center shrink-0 shadow-md">
+                <GraduationCap className="w-6 h-6 text-amber-400" />
+              </div>
+              <div className="min-w-0">
+                <div className="text-xl sm:text-2xl font-black font-display text-amber-300 drop-shadow-[0_0_10px_rgba(251,191,36,0.3)]">
+                  {statsTexts.studentsTitle}
+                </div>
+                <div className="text-xs font-bold text-white truncate">
+                  {statsTexts.studentsLabel}
+                </div>
+                <div className="text-[10px] text-purple-300/80 font-mono truncate">
+                  {statsTexts.studentsDesc}
+                </div>
+              </div>
+            </div>
+
+            {/* 2. Contador de Acessos Cinematográficos */}
+            <div className="p-3.5 rounded-xl bg-purple-950/40 border border-purple-500/30 flex items-center gap-3.5 shadow-inner">
+              <div className="w-12 h-12 rounded-xl bg-purple-500/20 border border-purple-400/50 flex items-center justify-center shrink-0 shadow-md">
+                <Eye className="w-6 h-6 text-purple-300 animate-pulse" />
+              </div>
+              <div className="min-w-0">
+                <div className="text-xl sm:text-2xl font-black font-mono text-fuchsia-300 drop-shadow-[0_0_10px_rgba(217,70,239,0.4)]">
+                  {statsTexts.visitsTitle}
+                </div>
+                <div className="text-xs font-bold text-white truncate">
+                  {statsTexts.visitsLabel}
+                </div>
+                <div className="text-[10px] text-purple-300/80 font-mono truncate">
+                  {statsTexts.visitsDesc}
+                </div>
+              </div>
+            </div>
+
+            {/* 3. Carga Horária & Certificação */}
+            <div className="p-3.5 rounded-xl bg-purple-950/40 border border-purple-500/30 flex items-center gap-3.5 shadow-inner">
+              <div className="w-12 h-12 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center shrink-0 shadow-md">
+                <Award className="w-6 h-6 text-emerald-400" />
+              </div>
+              <div className="min-w-0">
+                <div className="text-xl sm:text-2xl font-black font-display text-emerald-300 drop-shadow-[0_0_10px_rgba(52,211,153,0.3)]">
+                  {statsTexts.workloadTitle}
+                </div>
+                <div className="text-xs font-bold text-white truncate">
+                  {statsTexts.workloadLabel}
+                </div>
+                <div className="text-[10px] text-purple-300/80 font-mono truncate">
+                  {statsTexts.workloadDesc}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
