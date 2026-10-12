@@ -177,6 +177,11 @@ export interface Apostila {
   durationLabel?: string;
   evalLeadDays?: number;
   extraVideos?: ApostilaExtraVideo[];
+  extraPdfUrl?: string;
+  extraTitle?: string;
+  extraPagesCount?: number;
+  extraFileSizeMb?: number;
+  extraCoverUrl?: string;
 }
 
 export interface FilmVideoOption {

@@ -272,9 +272,9 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
       fullItem.title = modTrans.title || fullItem.title;
       fullItem.subtitle = modTrans.subtitle || fullItem.subtitle;
       fullItem.summary = modTrans.summary || fullItem.summary;
-      fullItem.pdfUrl = canonicalBonusPdf;
-      fullItem.totalPages = realBonusPages;
-      fullItem.pagesCount = realBonusPages;
+      fullItem.pdfUrl = fullItem.pdfUrl || canonicalBonusPdf;
+      fullItem.totalPages = fullItem.totalPages || realBonusPages;
+      fullItem.pagesCount = fullItem.pagesCount || realBonusPages;
       fullItem.isUnlocked = true;
     }
 
@@ -288,6 +288,34 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
 
     setSelectedApostila(fullItem as Apostila);
     setModalTab(defaultTab);
+  };
+
+  const handleOpenExtraApostila = (item: Apostila) => {
+    if (!isPaidStudent) {
+      setAccessModalOpen(true);
+      return;
+    }
+    const startMs = item.startDate ? new Date(item.startDate).getTime() : 0;
+    const isLocked = (!item.isUnlocked || (startMs > 0 && effectiveNow < startMs)) && !isAdmin;
+    if (isLocked) {
+      alert(`Esta apostila complementar será liberada junto com a etapa em ${formatDateTime(item.startDate)}.`);
+      return;
+    }
+
+    const modNum = item.moduleId || item.number || 1;
+    const extraApos: Apostila = {
+      ...item,
+      title: item.extraTitle || `Apostila Extra 0${modNum} (Material Complementar)`,
+      subtitle: `Material Didático Complementar - Etapa 0${modNum}`,
+      summary: `Apostila extra de aprofundamento técnico e exercícios práticos da Etapa 0${modNum}.`,
+      pdfUrl: item.extraPdfUrl,
+      pagesCount: item.extraPagesCount || 30,
+      totalPages: item.extraPagesCount || 30,
+      fileSizeMb: item.extraFileSizeMb || item.fileSizeMb,
+      sections: [],
+    };
+    setSelectedApostila(extraApos);
+    setModalTab('pdf');
   };
 
   const handleOpenTraining = (item: Apostila | BonusApostila, modNum: number) => {
@@ -1382,6 +1410,32 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                           )}
                         </button>
                       </div>
+
+                      {/* Botão de Leitura da Apostila Extra (se disponível) */}
+                      {item.extraPdfUrl && (
+                        <div className="pt-2">
+                          <button
+                            disabled={isLocked}
+                            onClick={() => handleOpenExtraApostila(item)}
+                            className={`w-full py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-between transition-all border shadow-sm active:scale-98 ${
+                              isLocked
+                                ? 'bg-neutral-800 text-neutral-500 opacity-60 cursor-not-allowed border-neutral-700/50'
+                                : 'bg-gradient-to-r from-cyan-950/40 to-blue-950/40 hover:from-cyan-900/50 hover:to-blue-900/50 text-cyan-300 border-cyan-500/40 hover:border-cyan-400 cursor-pointer shadow-cyan-500/10'
+                            }`}
+                            title={isLocked ? `Liberada em ${formatDateTime(item.startDate)}` : "Ler Apostila Extra / Material Complementar em PDF"}
+                          >
+                            <div className="flex items-center gap-2 truncate">
+                              <FileText className="w-4 h-4 text-cyan-400 shrink-0" />
+                              <span className="truncate">
+                                {item.extraTitle || `Apostila Extra 0${modNum} (Material Complementar)`}
+                              </span>
+                            </div>
+                            <span className="text-[10px] font-mono text-cyan-400 shrink-0 ml-2 flex items-center gap-1">
+                              {item.extraPagesCount ? `${item.extraPagesCount} págs • ` : ''}Ler PDF Extra ↗
+                            </span>
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -1970,7 +2024,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-white leading-tight">
-                    {getModuleTranslation(selectedApostila.moduleId || selectedApostila.number).title || selectedApostila.title}
+                    {selectedApostila.title?.includes('Extra') ? selectedApostila.title : (getModuleTranslation(selectedApostila.moduleId || selectedApostila.number).title || selectedApostila.title)}
                   </h3>
                   <span className="text-[11px] font-mono text-neutral-400">
                     {cur.readerIntegratedTitle}

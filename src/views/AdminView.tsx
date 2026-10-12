@@ -158,7 +158,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
   const [uploadingModuleApostila, setUploadingModuleApostila] = useState<number | null>(null);
   const [quickUploadApostilaProgress, setQuickUploadApostilaProgress] = useState(0);
   const [apostilaRenameModalOpen, setApostilaRenameModalOpen] = useState(false);
-  const [apostilaToRename, setApostilaToRename] = useState<{ id: string; moduleId?: number; title: string; isBonus?: boolean } | null>(null);
+  const [apostilaToRename, setApostilaToRename] = useState<{ id: string; moduleId?: number; title: string; isBonus?: boolean; isExtra?: boolean } | null>(null);
   const [renameTitleInput, setRenameTitleInput] = useState('');
   const [savingRename, setSavingRename] = useState(false);
   const [quickUploadThumbnailModuleId, setQuickUploadThumbnailModuleId] = useState<number>(1);
@@ -514,19 +514,21 @@ export const AdminView: React.FC<AdminViewProps> = ({
       return;
     }
 
-    const isBonus = moduleId > 990;
+    const isExtra = moduleId > 100 && moduleId <= 110;
+    const isBonus = !isExtra && moduleId > 990;
     const bonusNum = isBonus ? moduleId - 990 : undefined;
+    const actualModuleId = isExtra ? moduleId - 100 : moduleId;
 
     try {
       setUploadingModuleApostila(moduleId);
       setQuickUploadApostilaProgress(0);
 
-      const targetMod = !isBonus ? modules.find((m) => m.id === moduleId) : undefined;
-      const existingApos = !isBonus ? apostilas.find((a) => a.moduleId === moduleId) : undefined;
+      const targetMod = !isBonus ? modules.find((m) => m.id === actualModuleId) : undefined;
+      const existingApos = !isBonus ? apostilas.find((a) => a.moduleId === actualModuleId) : undefined;
       const targetBonus = isBonus ? bonusApostilas.find((b) => b.number === bonusNum) : undefined;
 
       const isCurrentSelectedModule = quickUploadApostilaModuleId === moduleId;
-      const isDuplicatedMod1Title = !isBonus && moduleId !== 1 && (
+      const isDuplicatedMod1Title = !isBonus && !isExtra && actualModuleId !== 1 && (
         existingApos?.title === 'Introdução ao Cinema e à Linguagem Audiovisual' ||
         (isCurrentSelectedModule && quickUploadApostilaTitle.trim() === 'Introdução ao Cinema e à Linguagem Audiovisual')
       );
@@ -534,22 +536,26 @@ export const AdminView: React.FC<AdminViewProps> = ({
       const chosenTitle =
         (isCurrentSelectedModule && quickUploadApostilaTitle.trim() && !isDuplicatedMod1Title)
           ? quickUploadApostilaTitle.trim()
-          : (targetMod?.title || (existingApos && !isDuplicatedMod1Title ? existingApos.title : undefined) || targetBonus?.title || (isBonus ? `Apostila Bônus 0${bonusNum}` : `Apostila 0${moduleId}`));
+          : (isExtra
+              ? (existingApos?.extraTitle || `Apostila Extra 0${actualModuleId} (Material Complementar)`)
+              : (targetMod?.title || (existingApos && !isDuplicatedMod1Title ? existingApos.title : undefined) || targetBonus?.title || (isBonus ? `Apostila Bônus 0${bonusNum}` : `Apostila 0${actualModuleId}`)));
 
       const res = await api.uploadApostilaPdfFile(file, {
-        moduleId: isBonus ? undefined : moduleId,
+        moduleId: isBonus ? undefined : actualModuleId,
         isBonus,
         bonusNumber: bonusNum,
+        isExtra,
         title: chosenTitle,
         description: targetMod?.summary || targetBonus?.description,
         onProgress: (p) => setQuickUploadApostilaProgress(p),
       });
 
-      const finalPages = res.pagesCount || res.apostila?.pagesCount || targetMod?.pagesCount || targetBonus?.pagesCount || 30;
+      const finalPages = res.pagesCount || res.apostila?.pagesCount || res.apostila?.extraPagesCount || targetMod?.pagesCount || targetBonus?.pagesCount || 30;
 
       try {
-        await saveApostilaToVault(isBonus ? bonusNum! : moduleId, file, {
+        await saveApostilaToVault(isBonus ? bonusNum! : actualModuleId, file, {
           isBonus,
+          isExtra,
           bonusNumber: bonusNum,
           fileName: file.name,
           title: chosenTitle,
@@ -564,7 +570,9 @@ export const AdminView: React.FC<AdminViewProps> = ({
       notify(
         isBonus
           ? `Apostila Bônus 0${bonusNum} ("${chosenTitle}") salva com sucesso! (${finalPages} páginas)`
-          : `Apostila em PDF da Etapa 0${moduleId} salva com sucesso! Título: "${chosenTitle}" (${finalPages} páginas)`
+          : (isExtra
+              ? `Apostila Extra da Etapa 0${actualModuleId} ("${chosenTitle}") salva com sucesso! (${finalPages} páginas)`
+              : `Apostila em PDF da Etapa 0${actualModuleId} salva com sucesso! Título: "${chosenTitle}" (${finalPages} páginas)`)
       );
       await loadAllAdminData();
     } catch (err: any) {
@@ -581,6 +589,10 @@ export const AdminView: React.FC<AdminViewProps> = ({
       const bNum = quickUploadApostilaModuleId - 990;
       const foundBonus = bonusApostilas.find((b) => b.number === bNum);
       setQuickUploadApostilaTitle(foundBonus?.title || `Apostila Bônus 0${bNum}`);
+    } else if (quickUploadApostilaModuleId > 100 && quickUploadApostilaModuleId <= 110) {
+      const mNum = quickUploadApostilaModuleId - 100;
+      const foundApos = apostilas.find((a) => a.moduleId === mNum);
+      setQuickUploadApostilaTitle(foundApos?.extraTitle || `Apostila Extra 0${mNum} (Material Complementar)`);
     } else {
       const foundApos = apostilas.find((a) => a.moduleId === quickUploadApostilaModuleId);
       const foundMod = modules.find((m) => m.id === quickUploadApostilaModuleId);
@@ -603,6 +615,19 @@ export const AdminView: React.FC<AdminViewProps> = ({
           });
           notify(`Nome da Apostila Bônus 0${bNum} atualizado para "${quickUploadApostilaTitle.trim()}"!`);
         }
+      } else if (quickUploadApostilaModuleId > 100 && quickUploadApostilaModuleId <= 110) {
+        const mNum = quickUploadApostilaModuleId - 100;
+        const foundApos = apostilas.find((a) => a.moduleId === mNum);
+        const targetId = foundApos?.id || `apostila-${mNum}`;
+        await api.updateAdminApostila(targetId, {
+          extraTitle: quickUploadApostilaTitle.trim(),
+          isExtra: true,
+        });
+        await updateVaultMetadata(`mod-${mNum}-extra`, {
+          title: quickUploadApostilaTitle.trim(),
+          isExtra: true,
+        });
+        notify(`Nome da Apostila Extra 0${mNum} salvo com sucesso para "${quickUploadApostilaTitle.trim()}"!`);
       } else {
         const foundApos = apostilas.find((a) => a.moduleId === quickUploadApostilaModuleId);
         const targetId = foundApos?.id || `apostila-${quickUploadApostilaModuleId}`;
@@ -619,7 +644,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
     }
   };
 
-  const handleOpenRenameApostila = (apos: { id: string; moduleId?: number; title: string; isBonus?: boolean }) => {
+  const handleOpenRenameApostila = (apos: { id: string; moduleId?: number; title: string; isBonus?: boolean; isExtra?: boolean }) => {
     setApostilaToRename(apos);
     setRenameTitleInput(apos.title || '');
     setApostilaRenameModalOpen(true);
@@ -629,10 +654,26 @@ export const AdminView: React.FC<AdminViewProps> = ({
     if (!apostilaToRename || !renameTitleInput.trim()) return;
     try {
       setSavingRename(true);
-      await api.updateAdminApostila(apostilaToRename.id, {
-        title: renameTitleInput.trim(),
-      });
-      notify(`Nome da apostila atualizado para "${renameTitleInput.trim()}" com sucesso!`);
+      const isExtra = apostilaToRename.isExtra || (apostilaToRename.moduleId && apostilaToRename.moduleId > 100 && apostilaToRename.moduleId <= 110);
+      if (isExtra) {
+        const mNum = (apostilaToRename.moduleId && apostilaToRename.moduleId > 100) ? apostilaToRename.moduleId - 100 : apostilaToRename.moduleId;
+        await api.updateAdminApostila(apostilaToRename.id, {
+          extraTitle: renameTitleInput.trim(),
+          isExtra: true,
+        });
+        if (mNum) {
+          await updateVaultMetadata(`mod-${mNum}-extra`, {
+            title: renameTitleInput.trim(),
+            isExtra: true,
+          });
+        }
+        notify(`Nome da Apostila Extra atualizado para "${renameTitleInput.trim()}" com sucesso!`);
+      } else {
+        await api.updateAdminApostila(apostilaToRename.id, {
+          title: renameTitleInput.trim(),
+        });
+        notify(`Nome da apostila atualizado para "${renameTitleInput.trim()}" com sucesso!`);
+      }
       setApostilaRenameModalOpen(false);
       setApostilaToRename(null);
       await loadAllAdminData();
@@ -1888,12 +1929,22 @@ export const AdminView: React.FC<AdminViewProps> = ({
                       onChange={(e) => setQuickUploadApostilaModuleId(Number(e.target.value))}
                       className="w-full px-3.5 py-2.5 bg-neutral-900 border border-neutral-700 rounded-xl text-white text-xs focus:border-amber-500 focus:outline-none font-sans"
                     >
-                      <optgroup label="Módulos Regulares (01 a 10)">
+                      <optgroup label="Apostilas Principais dos Módulos (01 a 10)">
                         {modules.map((m) => {
                           const curApos = apostilas.find((a) => a.moduleId === m.id);
                           return (
                             <option key={m.id} value={m.id}>
                               Apostila 0{m.id}: {curApos?.title || m.title}
+                            </option>
+                          );
+                        })}
+                      </optgroup>
+                      <optgroup label="Apostilas Extras dos Módulos (01 a 10) [Material Complementar]">
+                        {modules.map((m) => {
+                          const curApos = apostilas.find((a) => a.moduleId === m.id);
+                          return (
+                            <option key={`extra-${m.id}`} value={100 + m.id}>
+                              Apostila Extra 0{m.id}: {curApos?.extraTitle || 'Material Complementar'} {curApos?.extraPdfUrl ? '✓' : '(Livre)'}
                             </option>
                           );
                         })}
@@ -2262,6 +2313,11 @@ export const AdminView: React.FC<AdminViewProps> = ({
                                 <CheckCircle2 className="w-3 h-3" /> Apostila PDF Ativa
                               </span>
                             )}
+                            {matchingApostila?.extraPdfUrl && (
+                              <span className="px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-mono text-[10px] flex items-center gap-1">
+                                <CheckCircle2 className="w-3 h-3" /> Apostila Extra Ativa ({matchingApostila.extraPagesCount || '?'} p)
+                              </span>
+                            )}
                             {matchingApostila?.coverUrl && (
                               <span className="px-2 py-0.5 rounded bg-purple-500/10 border border-purple-500/30 text-purple-300 font-mono text-[10px] flex items-center gap-1">
                                 <ImageIcon className="w-3 h-3 text-purple-400" /> Capa Apostila Ativa
@@ -2297,6 +2353,21 @@ export const AdminView: React.FC<AdminViewProps> = ({
                                 <span>Ver PDF Atual</span>
                                 <ExternalLink className="w-2.5 h-2.5" />
                               </a>
+                            )}
+                            {matchingApostila?.extraPdfUrl && (
+                              <span className="flex items-center gap-1 text-cyan-300">
+                                <BookOpen className="w-3 h-3 text-cyan-400" />
+                                Extra: {matchingApostila.extraTitle || 'Material Complementar'} ({matchingApostila.extraPagesCount || 0} págs)
+                                <a
+                                  href={matchingApostila.extraPdfUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-cyan-400 hover:text-cyan-300 underline ml-1 text-[10px] flex items-center gap-0.5"
+                                >
+                                  <span>Ver PDF Extra</span>
+                                  <ExternalLink className="w-2.5 h-2.5" />
+                                </a>
+                              </span>
                             )}
                           </div>
                         </div>
@@ -2396,6 +2467,54 @@ export const AdminView: React.FC<AdminViewProps> = ({
                         >
                           <Edit2 className="w-3.5 h-3.5 text-blue-400" />
                           <span>Renomear Apostila</span>
+                        </button>
+
+                        {/* Botão Rápido de Subir Apostila Extra (PDF) */}
+                        <label className={`px-3 py-2 rounded-xl text-xs transition-colors cursor-pointer flex items-center gap-1.5 font-sans border ${
+                          matchingApostila?.extraPdfUrl
+                            ? 'bg-cyan-950/40 hover:bg-cyan-900/50 text-cyan-300 border-cyan-500/40 shadow-sm'
+                            : 'bg-neutral-800 hover:bg-neutral-700 text-neutral-300 border-dashed border-neutral-700 hover:border-cyan-500/50'
+                        }`}>
+                          {uploadingModuleApostila === (100 + mod.id) ? (
+                            <>
+                              <Loader2 className="w-3.5 h-3.5 animate-spin text-cyan-400" />
+                              <span>Subindo Extra {quickUploadApostilaProgress}%...</span>
+                            </>
+                          ) : (
+                            <>
+                              <FileText className="w-3.5 h-3.5 text-cyan-400" />
+                              <span>{matchingApostila?.extraPdfUrl ? 'Substituir Extra' : '+ Subir Extra'}</span>
+                            </>
+                          )}
+                          <input
+                            type="file"
+                            accept="application/pdf,.pdf"
+                            disabled={uploadingModuleApostila !== null}
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) handleQuickApostilaUpload(100 + mod.id, file);
+                            }}
+                            className="hidden"
+                          />
+                        </label>
+
+                        {/* Botão para Renomear Apostila Extra */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            handleOpenRenameApostila({
+                              id: matchingApostila?.id || `apostila-${mod.id}`,
+                              moduleId: 100 + mod.id,
+                              title: matchingApostila?.extraTitle || `Apostila Extra 0${mod.id} (Material Complementar)`,
+                              isBonus: false,
+                              isExtra: true,
+                            });
+                          }}
+                          className="px-3 py-2 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 hover:text-white border border-cyan-500/30 rounded-xl text-xs transition-colors cursor-pointer flex items-center gap-1.5 font-sans"
+                          title="Mudar o nome/título oficial da Apostila Extra deste módulo"
+                        >
+                          <Edit2 className="w-3.5 h-3.5 text-cyan-400" />
+                          <span>Nome Extra</span>
                         </button>
 
                         {/* Botão para Gerenciar os 2 Vídeos Extras de Estudo da Apostila */}

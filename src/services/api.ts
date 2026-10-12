@@ -565,6 +565,7 @@ export const api = {
       moduleId?: number;
       isBonus?: boolean;
       bonusNumber?: number;
+      isExtra?: boolean;
       title?: string;
       description?: string;
       pagesCount?: number;
@@ -574,6 +575,7 @@ export const api = {
     success: boolean;
     isBonus?: boolean;
     bonusNumber?: number;
+    isExtra?: boolean;
     fileUrl: string;
     fileName: string;
     originalName: string;
@@ -587,6 +589,7 @@ export const api = {
       if (options?.moduleId) formData.append('moduleId', String(options.moduleId));
       if (options?.isBonus) formData.append('isBonus', 'true');
       if (options?.bonusNumber) formData.append('bonusNumber', String(options.bonusNumber));
+      if (options?.isExtra) formData.append('isExtra', 'true');
       if (options?.title) formData.append('title', options.title);
       if (options?.description) formData.append('description', options.description);
       if (options?.pagesCount) formData.append('pagesCount', String(options.pagesCount));

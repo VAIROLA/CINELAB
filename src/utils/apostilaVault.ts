@@ -8,9 +8,10 @@ const DB_VERSION = 2;
 const STORAGE_KEY = 'cinelab_persistent_apostilas_v3';
 
 export interface VaultApostilaItem {
-  id: string; // e.g. "mod-1", "bonus-1"
+  id: string; // e.g. "mod-1", "bonus-1", "mod-1-extra"
   moduleId?: number;
   isBonus?: boolean;
+  isExtra?: boolean;
   bonusNumber?: number;
   fileName: string;
   title: string;
@@ -19,6 +20,11 @@ export interface VaultApostilaItem {
   pdfBlob?: Blob;
   pdfUrl?: string;
   coverUrl?: string;
+  extraPdfUrl?: string;
+  extraTitle?: string;
+  extraPagesCount?: number;
+  extraFileSizeMb?: number;
+  extraCoverUrl?: string;
   updatedAt: string;
 }
 
@@ -192,6 +198,7 @@ export async function saveApostilaToVault(
   file: File | Blob,
   meta: {
     isBonus?: boolean;
+    isExtra?: boolean;
     bonusNumber?: number;
     fileName?: string;
     title?: string;
@@ -200,9 +207,10 @@ export async function saveApostilaToVault(
     pdfUrl?: string;
   }
 ): Promise<void> {
-  const isBonus = Boolean(meta.isBonus || (typeof targetIdOrModuleId === 'number' && targetIdOrModuleId > 990) || (typeof targetIdOrModuleId === 'string' && targetIdOrModuleId.includes('bonus')));
+  const isExtra = Boolean(meta.isExtra || (typeof targetIdOrModuleId === 'string' && targetIdOrModuleId.includes('extra')) || (typeof targetIdOrModuleId === 'number' && targetIdOrModuleId > 100 && targetIdOrModuleId <= 110));
+  const isBonus = !isExtra && Boolean(meta.isBonus || (typeof targetIdOrModuleId === 'number' && targetIdOrModuleId > 990) || (typeof targetIdOrModuleId === 'string' && targetIdOrModuleId.includes('bonus')));
   let bonusNumber = meta.bonusNumber;
-  if (!bonusNumber) {
+  if (isBonus && !bonusNumber) {
     if (typeof targetIdOrModuleId === 'number' && targetIdOrModuleId > 990) {
       bonusNumber = targetIdOrModuleId - 990;
     } else if (typeof targetIdOrModuleId === 'string' && targetIdOrModuleId.includes('bonus')) {
@@ -214,11 +222,18 @@ export async function saveApostilaToVault(
       bonusNumber = 1;
     }
   }
-  if (bonusNumber > 990) {
+  if (bonusNumber && bonusNumber > 990) {
     bonusNumber = bonusNumber - 990;
   }
-  const moduleId = !isBonus && typeof targetIdOrModuleId === 'number' && targetIdOrModuleId <= 990 ? targetIdOrModuleId : undefined;
-  const id = isBonus ? `bonus-${bonusNumber}` : `mod-${moduleId || targetIdOrModuleId}`;
+
+  const rawModuleNum = typeof targetIdOrModuleId === 'number'
+    ? (targetIdOrModuleId > 100 && targetIdOrModuleId <= 110 ? targetIdOrModuleId - 100 : (targetIdOrModuleId <= 990 ? targetIdOrModuleId : undefined))
+    : Number(String(targetIdOrModuleId).replace(/\D/g, ''));
+
+  const moduleId = !isBonus ? rawModuleNum : undefined;
+  const id = isBonus
+    ? `bonus-${bonusNumber}`
+    : (isExtra ? `mod-${moduleId || targetIdOrModuleId}-extra` : `mod-${moduleId || targetIdOrModuleId}`);
 
   const fileName = meta.fileName || (file instanceof File ? file.name : `${id}.pdf`);
   const sizeMb = meta.fileSizeMb || Number((file.size / (1024 * 1024)).toFixed(2));
@@ -226,8 +241,8 @@ export async function saveApostilaToVault(
 
   // 1. Grava no LocalStorage síncrono para render imediato
   const currentIndex = getPersistentVaultIndex();
-  let titleToPersist = meta.title || (isBonus ? `Apostila Bônus 0${bonusNumber}` : `Apostila 0${moduleId}`);
-  if (!isBonus && moduleId === 2 && titleToPersist === 'Introdução ao Cinema e à Linguagem Audiovisual') {
+  let titleToPersist = meta.title || (isBonus ? `Apostila Bônus 0${bonusNumber}` : (isExtra ? `Apostila Extra 0${moduleId} (Material Complementar)` : `Apostila 0${moduleId}`));
+  if (!isBonus && !isExtra && moduleId === 2 && titleToPersist === 'Introdução ao Cinema e à Linguagem Audiovisual') {
     titleToPersist = 'História do Cinema';
   }
 
@@ -235,6 +250,7 @@ export async function saveApostilaToVault(
     id,
     moduleId,
     isBonus,
+    isExtra,
     bonusNumber: isBonus ? bonusNumber : undefined,
     fileName,
     title: titleToPersist,
@@ -243,6 +259,21 @@ export async function saveApostilaToVault(
     pdfUrl: meta.pdfUrl,
     updatedAt,
   };
+
+  // Se for extra, atualiza também a entrada do módulo principal se existir
+  if (isExtra && moduleId) {
+    const parentKey = `mod-${moduleId}`;
+    if (currentIndex[parentKey]) {
+      currentIndex[parentKey] = {
+        ...currentIndex[parentKey],
+        extraPdfUrl: meta.pdfUrl,
+        extraTitle: titleToPersist,
+        extraPagesCount: Number(meta.pagesCount),
+        extraFileSizeMb: sizeMb,
+      };
+    }
+  }
+
   savePersistentVaultIndex(currentIndex);
 
   // 2. Grava no IndexedDB com o binário Blob
@@ -445,12 +476,19 @@ export function getMergedApostilasWithVault(serverApostilas: Apostila[]): Aposti
     if (!local) {
       const canonicalCover = `/images/covers/apostila-${pad}.jpg`;
       const isOutdatedOrBrokenCover = !apos.coverUrl || apos.coverUrl.includes('unsplash.com') || (apos.coverUrl.startsWith('/uploads/') && !apos.coverUrl.includes('base64'));
+      const extraKey = `mod-${modNum}-extra`;
+      const extraLocal = vault[extraKey];
       return {
         ...apos,
         coverUrl: !isOutdatedOrBrokenCover ? apos.coverUrl : canonicalCover,
-        pagesCount: apos.pagesCount && apos.pagesCount === canonicalPages ? apos.pagesCount : canonicalPages,
-        totalPages: apos.totalPages && apos.totalPages === canonicalPages ? apos.totalPages : canonicalPages,
+        pagesCount: apos.pagesCount && apos.pagesCount > 0 ? apos.pagesCount : canonicalPages,
+        totalPages: apos.totalPages && apos.totalPages > 0 ? apos.totalPages : canonicalPages,
         pdfUrl: apos.pdfUrl && !apos.pdfUrl.includes('1790444') && !apos.pdfUrl.includes('1790684') && !apos.pdfUrl.includes('1790652') ? apos.pdfUrl : canonicalPdf,
+        extraPdfUrl: apos.extraPdfUrl || extraLocal?.pdfUrl,
+        extraTitle: apos.extraTitle || extraLocal?.title,
+        extraPagesCount: apos.extraPagesCount || extraLocal?.pagesCount,
+        extraFileSizeMb: apos.extraFileSizeMb || extraLocal?.fileSizeMb,
+        extraCoverUrl: apos.extraCoverUrl || extraLocal?.coverUrl,
       };
     }
 
@@ -466,24 +504,31 @@ export function getMergedApostilasWithVault(serverApostilas: Apostila[]): Aposti
       local.pdfUrl.includes('1790684') ||
       local.pdfUrl.includes('1790652');
 
-    const isWrongPages = !local.pagesCount || local.pagesCount === 4 || local.pagesCount !== canonicalPages;
+    const isWrongPages = !local.pagesCount || local.pagesCount <= 0;
 
     if ((isCorruptedTitle || isCorruptedFile || isWrongPages) && vault[key]) {
       vault[key] = {
         ...vault[key],
         title: effectiveTitle,
-        pdfUrl: canonicalPdf,
-        pagesCount: canonicalPages,
+        pdfUrl: isCorruptedFile ? canonicalPdf : vault[key].pdfUrl,
+        pagesCount: isWrongPages ? canonicalPages : vault[key].pagesCount,
       };
       vaultNeedsSave = true;
     }
 
-    const pages = (!isWrongPages && local.pagesCount && local.pagesCount > 0 && !isCorruptedFile) ? local.pagesCount : canonicalPages;
+    const pages = (!isWrongPages && local.pagesCount && local.pagesCount > 0 && !isCorruptedFile) ? local.pagesCount : (apos.pagesCount && apos.pagesCount > 0 ? apos.pagesCount : canonicalPages);
     const effectivePdf = isCorruptedFile ? canonicalPdf : (local.pdfUrl || apos.pdfUrl || canonicalPdf);
 
     const canonicalCover = `/images/covers/apostila-${modNum < 10 ? '0' + modNum : modNum}.jpg`;
     const isOutdatedOrBrokenCover = !local.coverUrl || local.coverUrl.includes('unsplash.com') || (local.coverUrl.startsWith('/uploads/') && !local.coverUrl.includes('base64'));
     const effectiveCover = !isOutdatedOrBrokenCover ? local.coverUrl : ((apos.coverUrl && !apos.coverUrl.includes('unsplash.com')) ? apos.coverUrl : canonicalCover);
+
+    const extraKey = `mod-${modNum}-extra`;
+    const extraLocal = vault[extraKey];
+    const effectiveExtraPdf = apos.extraPdfUrl || local.extraPdfUrl || extraLocal?.pdfUrl;
+    const effectiveExtraTitle = apos.extraTitle || local.extraTitle || extraLocal?.title;
+    const effectiveExtraPages = apos.extraPagesCount || local.extraPagesCount || extraLocal?.pagesCount;
+    const effectiveExtraSize = apos.extraFileSizeMb || local.extraFileSizeMb || extraLocal?.fileSizeMb;
 
     return {
       ...apos,
@@ -493,6 +538,11 @@ export function getMergedApostilasWithVault(serverApostilas: Apostila[]): Aposti
       pdfUrl: effectivePdf,
       coverUrl: effectiveCover,
       fileSizeMb: local.fileSizeMb || apos.fileSizeMb,
+      extraPdfUrl: effectiveExtraPdf,
+      extraTitle: effectiveExtraTitle,
+      extraPagesCount: effectiveExtraPages,
+      extraFileSizeMb: effectiveExtraSize,
+      extraCoverUrl: apos.extraCoverUrl || local.extraCoverUrl || extraLocal?.coverUrl,
     };
   });
 
@@ -653,42 +703,41 @@ export function getMergedBonusWithVault(serverBonus: BonusApostila[]): BonusApos
       ? '/materiais/cinelab-bonus-01-glossario-planos.pdf'
       : (b.number === 3 ? '/materiais/cinelab-bonus-03-analise-filmica.pdf' : '/materiais/cinelab-bonus-02-glossario-roteiro.pdf');
 
-    const isOutdatedLocal =
+    const isCorruptedFile =
+      !local?.pdfUrl ||
+      local.pdfUrl.includes('1791222') ||
+      local.pdfUrl.includes('1790684');
+
+    const isOutdatedTitle =
       local &&
       (
         !local.title ||
-        local.pagesCount !== defaultPages ||
         (b.number === 1 && !local.title.includes('Planos')) ||
         (b.number === 3 && !local.title.includes('6 Camadas')) ||
         (b.number === 3 && local.title.includes('Roteiro')) ||
         local.title.includes('Pitching') ||
         local.title.includes('Guerrilha') ||
         local.title.includes('Bíblia de Série') ||
-        local.title.includes('Nova Apostila') ||
-        local.pagesCount === 4 ||
-        local.pagesCount === 24 ||
-        local.pagesCount === 35 ||
-        local.pagesCount === 40 ||
-        local.pagesCount === 96 ||
-        local.pagesCount === 104 ||
-        (local.pdfUrl && (local.pdfUrl.includes('1791222') || local.pdfUrl.includes('uploads/apostilas') || local.pdfUrl.includes('1790684')))
+        local.title.includes('Nova Apostila')
       );
 
-    if (isOutdatedLocal && vault[key]) {
+    if ((isOutdatedTitle || isCorruptedFile) && vault[key]) {
       vault[key] = {
         ...vault[key],
-        title: canonicalTitle,
-        pagesCount: defaultPages,
-        pdfUrl: canonicalPdf,
+        title: isOutdatedTitle ? canonicalTitle : vault[key].title,
+        pagesCount: (!vault[key].pagesCount || vault[key].pagesCount <= 0) ? defaultPages : vault[key].pagesCount,
+        pdfUrl: isCorruptedFile ? canonicalPdf : vault[key].pdfUrl,
       };
       vaultNeedsSave = true;
     }
 
-    const title = (!isOutdatedLocal && local?.title) ? local.title : canonicalTitle;
-    const summary = (!isOutdatedLocal && (local as any)?.summary) ? (local as any).summary : canonicalSummary;
-    const pages = (!isOutdatedLocal && local?.pagesCount && local.pagesCount > 0 && local.pagesCount !== 4 && local.pagesCount !== 24 && local.pagesCount !== 96 && local.pagesCount !== 104)
+    const title = (!isOutdatedTitle && local?.title) ? local.title : canonicalTitle;
+    const summary = ((local as any)?.summary && !(local as any).summary.includes('Pitching')) ? (local as any).summary : canonicalSummary;
+    const pages = (local?.pagesCount && local.pagesCount > 0 && !isCorruptedFile)
       ? local.pagesCount
-      : defaultPages;
+      : (b.pagesCount && b.pagesCount > 0 ? b.pagesCount : defaultPages);
+
+    const safePdf = isCorruptedFile ? canonicalPdf : (local?.pdfUrl || b.pdfUrl || canonicalPdf);
 
     return {
       ...b,
@@ -698,7 +747,7 @@ export function getMergedBonusWithVault(serverBonus: BonusApostila[]): BonusApos
       description: summary,
       pagesCount: pages,
       totalPages: pages,
-      pdfUrl: (!isOutdatedLocal && local?.pdfUrl) ? local.pdfUrl : (b.pdfUrl || canonicalPdf),
+      pdfUrl: safePdf,
       coverUrl: local?.coverUrl || b.coverUrl,
       fileSizeMb: local?.fileSizeMb || b.fileSizeMb || (b.number === 1 ? 0.35 : b.number === 2 ? 0.38 : 0.42),
     };

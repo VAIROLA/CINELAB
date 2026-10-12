@@ -550,7 +550,7 @@ app.get('/api/course/public-info', (req: Request, res: Response) => {
       const isCorrupted = !a.pdfUrl || a.pdfUrl.includes('1790444') || a.pdfUrl.includes('1790684') || a.pdfUrl.includes('1790652');
       const safePdf = isCorrupted ? canonicalPdf : a.pdfUrl;
       const realPages: Record<number, number> = { 1: 8, 2: 52, 3: 7, 4: 6, 5: 6, 6: 6, 7: 6, 8: 6, 9: 6, 10: 6 };
-      const pages = realPages[mod] || a.pagesCount || a.totalPages || 4;
+      const pages = (a.pagesCount && a.pagesCount > 0) ? a.pagesCount : (realPages[mod] || a.totalPages || 4);
       const canonicalCover = `/images/covers/apostila-${pad}.jpg`;
       const isOutdatedCover = !a.coverUrl || a.coverUrl.includes('unsplash.com') || (a.coverUrl.startsWith('/uploads/') && !a.coverUrl.includes('base64'));
       const resolvedCover = !isOutdatedCover ? a.coverUrl : canonicalCover;
@@ -569,6 +569,11 @@ app.get('/api/course/public-info', (req: Request, res: Response) => {
         isUnlocked: true,
         status: "available",
         extraVideos: a.extraVideos && a.extraVideos.length > 0 ? a.extraVideos : initExtraVideosForApostila(a, a.title),
+        extraPdfUrl: a.extraPdfUrl,
+        extraTitle: a.extraTitle,
+        extraPagesCount: a.extraPagesCount,
+        extraFileSizeMb: a.extraFileSizeMb,
+        extraCoverUrl: a.extraCoverUrl,
       };
     }),
     bonusApostilas: db.bonusApostilas.filter((b) => b && typeof b.number === 'number' && b.number <= 20 && !String(b.id).includes('99') && !String(b.number).includes('99')).map((b) => {
@@ -1285,7 +1290,7 @@ app.get('/api/student/apostilas', requireActiveStudent, (req: Request, res: Resp
     const safePdf = isCorrupted ? canonicalPdf : a.pdfUrl;
     const timeline = calculateModuleTimeline(a.moduleId, enrollment);
     const isUnlocked = timeline.status !== 'locked' || isAdmin;
-    const pages = realPages[mod] || a.pagesCount || a.totalPages || 4;
+    const pages = (a.pagesCount && a.pagesCount > 0) ? a.pagesCount : (realPages[mod] || a.totalPages || 4);
 
     return {
       ...a,
@@ -1293,6 +1298,11 @@ app.get('/api/student/apostilas', requireActiveStudent, (req: Request, res: Resp
       totalPages: pages,
       isUnlocked,
       pdfUrl: isUnlocked ? safePdf : '',
+      extraPdfUrl: isUnlocked ? (a.extraPdfUrl || '') : '',
+      extraTitle: a.extraTitle || '',
+      extraPagesCount: a.extraPagesCount,
+      extraFileSizeMb: a.extraFileSizeMb,
+      extraCoverUrl: a.extraCoverUrl,
       unlockDate: timeline.startDate.toISOString(),
       startDate: timeline.startDate.toISOString(),
       endDate: timeline.endDate.toISOString(),
@@ -1332,7 +1342,7 @@ app.get('/api/student/bonus-apostilas', requireActiveStudent, (req: Request, res
     const canonicalTitle = b.number === 1
       ? 'Glossário Completo de Planos'
       : (b.number === 3 ? 'Método de Análise Fílmica em 6 Camadas' : 'Glossário Completo de Roteiro');
-    const safePdf = (!b.pdfUrl || b.pdfUrl.includes('1791222') || b.pdfUrl.includes('uploads/apostilas') || b.pdfUrl.includes('1790684'))
+    const safePdf = (!b.pdfUrl || b.pdfUrl.includes('1791222') || b.pdfUrl.includes('1790684'))
       ? canonicalPdf
       : b.pdfUrl;
     const safePages = (b.pagesCount && b.pagesCount !== 4 && b.pagesCount !== 24 && b.pagesCount !== 96 && b.pagesCount !== 104) ? b.pagesCount : defaultPages;
@@ -2564,14 +2574,53 @@ app.get('/api/admin/bonus-apostilas', requireAdmin, (req: Request, res: Response
   res.json(db.bonusApostilas || []);
 });
 
+app.delete('/api/admin/apostilas/:id/extra', requireAdmin, (req: Request, res: Response) => {
+  const db = getDb();
+  const rawId = req.params.id;
+  const modNum = Number(rawId.replace(/\D/g, ''));
+  const idx = db.apostilas.findIndex((a) => a.id === rawId || a.moduleId === modNum);
+  if (idx !== -1) {
+    db.apostilas[idx].extraPdfUrl = undefined;
+    db.apostilas[idx].extraTitle = undefined;
+    db.apostilas[idx].extraPagesCount = undefined;
+    db.apostilas[idx].extraFileSizeMb = undefined;
+    saveDatabase();
+    return res.json({ success: true, apostila: db.apostilas[idx] });
+  }
+  res.status(404).json({ error: 'Apostila não encontrada' });
+});
+
 app.put('/api/admin/apostilas/:id', requireAdmin, (req: Request, res: Response) => {
   const apostilaId = req.params.id;
-  const { title, subtitle, description, pdfUrl, coverUrl, pagesCount } = req.body;
+  const {
+    title, subtitle, description, pdfUrl, coverUrl, pagesCount,
+    extraTitle, extraPdfUrl, extraPagesCount, extraFileSizeMb, extraCoverUrl, isExtra
+  } = req.body;
   const db = getDb();
 
+  const isExtraTarget = isExtra || apostilaId.startsWith('extra-') || apostilaId.includes('-extra') || apostilaId.startsWith('apostila-extra-');
+  const targetModuleNum = Number(apostilaId.replace(/\D/g, ''));
+
   // 1. Check in regular module apostilas
-  const index = db.apostilas.findIndex((a) => a.id === apostilaId);
+  const index = db.apostilas.findIndex((a) =>
+    a.id === apostilaId ||
+    (isExtraTarget && targetModuleNum && a.moduleId === targetModuleNum) ||
+    (!isExtraTarget && (!isNaN(Number(apostilaId)) && a.moduleId === Number(apostilaId)))
+  );
   if (index !== -1) {
+    if (isExtraTarget) {
+      db.apostilas[index] = {
+        ...db.apostilas[index],
+        extraTitle: extraTitle !== undefined ? extraTitle : (title || db.apostilas[index].extraTitle),
+        extraPdfUrl: extraPdfUrl !== undefined ? extraPdfUrl : (pdfUrl || db.apostilas[index].extraPdfUrl),
+        extraPagesCount: extraPagesCount !== undefined ? Number(extraPagesCount) : (pagesCount ? Number(pagesCount) : db.apostilas[index].extraPagesCount),
+        extraFileSizeMb: extraFileSizeMb !== undefined ? Number(extraFileSizeMb) : db.apostilas[index].extraFileSizeMb,
+        extraCoverUrl: extraCoverUrl !== undefined ? extraCoverUrl : (coverUrl || db.apostilas[index].extraCoverUrl),
+      };
+      saveDatabase();
+      return res.json({ success: true, apostila: db.apostilas[index], isBonus: false, isExtra: true });
+    }
+
     const newPages = pagesCount !== undefined && Number(pagesCount) > 0
       ? Number(pagesCount)
       : (db.apostilas[index].pagesCount || db.apostilas[index].totalPages || 30);
@@ -2584,6 +2633,11 @@ app.put('/api/admin/apostilas/:id', requireAdmin, (req: Request, res: Response) 
       coverUrl: coverUrl || db.apostilas[index].coverUrl,
       pagesCount: newPages,
       totalPages: newPages,
+      extraTitle: extraTitle !== undefined ? extraTitle : db.apostilas[index].extraTitle,
+      extraPdfUrl: extraPdfUrl !== undefined ? extraPdfUrl : db.apostilas[index].extraPdfUrl,
+      extraPagesCount: extraPagesCount !== undefined ? Number(extraPagesCount) : db.apostilas[index].extraPagesCount,
+      extraFileSizeMb: extraFileSizeMb !== undefined ? Number(extraFileSizeMb) : db.apostilas[index].extraFileSizeMb,
+      extraCoverUrl: extraCoverUrl !== undefined ? extraCoverUrl : db.apostilas[index].extraCoverUrl,
     };
 
     if (title && db.apostilas[index].moduleId) {
@@ -3217,13 +3271,24 @@ app.post('/api/admin/apostilas/sync-vault', (req: Request, res: Response) => {
       const mId = Number(item.moduleId);
       const aIdx = db.apostilas.findIndex((a) => a.moduleId === mId);
       if (aIdx !== -1) {
-        if (item.title) db.apostilas[aIdx].title = item.title;
-        if (item.pagesCount && Number(item.pagesCount) > 0) {
-          db.apostilas[aIdx].pagesCount = Number(item.pagesCount);
-          db.apostilas[aIdx].totalPages = Number(item.pagesCount);
+        if (item.isExtra || item.id?.includes('-extra')) {
+          if (item.title) db.apostilas[aIdx].extraTitle = item.title;
+          if (item.pdfUrl) db.apostilas[aIdx].extraPdfUrl = item.pdfUrl;
+          if (item.pagesCount && Number(item.pagesCount) > 0) db.apostilas[aIdx].extraPagesCount = Number(item.pagesCount);
+          if (item.fileSizeMb) db.apostilas[aIdx].extraFileSizeMb = Number(item.fileSizeMb);
+        } else {
+          if (item.title) db.apostilas[aIdx].title = item.title;
+          if (item.pagesCount && Number(item.pagesCount) > 0) {
+            db.apostilas[aIdx].pagesCount = Number(item.pagesCount);
+            db.apostilas[aIdx].totalPages = Number(item.pagesCount);
+          }
+          if (item.pdfUrl) db.apostilas[aIdx].pdfUrl = item.pdfUrl;
+          if (item.fileSizeMb) db.apostilas[aIdx].fileSizeMb = Number(item.fileSizeMb);
+          if (item.extraPdfUrl) db.apostilas[aIdx].extraPdfUrl = item.extraPdfUrl;
+          if (item.extraTitle) db.apostilas[aIdx].extraTitle = item.extraTitle;
+          if (item.extraPagesCount) db.apostilas[aIdx].extraPagesCount = Number(item.extraPagesCount);
+          if (item.extraFileSizeMb) db.apostilas[aIdx].extraFileSizeMb = Number(item.extraFileSizeMb);
         }
-        if (item.pdfUrl) db.apostilas[aIdx].pdfUrl = item.pdfUrl;
-        if (item.fileSizeMb) db.apostilas[aIdx].fileSizeMb = Number(item.fileSizeMb);
         updatedCount++;
       }
     }
@@ -3698,6 +3763,15 @@ app.post('/api/admin/apostilas/upload', requireAdmin, (req: Request, res: Respon
         : (rawModuleId === 991 || rawModuleId === '991' ? 1 : rawModuleId === 992 || rawModuleId === '992' ? 2 : rawModuleId === 993 || rawModuleId === '993' ? 3 : 1);
 
       const moduleId = !isBonus && rawModuleId ? Number(rawModuleId) : undefined;
+      const isExtra =
+        req.body.isExtra === 'true' ||
+        req.body.isExtra === true ||
+        (rawModuleId !== undefined && Number(rawModuleId) > 100 && Number(rawModuleId) <= 110);
+
+      const resolvedModuleId = (isExtra && rawModuleId && Number(rawModuleId) > 100)
+        ? Number(rawModuleId) - 100
+        : (moduleId || (rawModuleId ? Number(rawModuleId) : undefined));
+
       const title = req.body.title;
       const description = req.body.description;
       const manualPagesCount = req.body.pagesCount ? Number(req.body.pagesCount) : undefined;
@@ -3725,6 +3799,11 @@ app.post('/api/admin/apostilas/upload', requireAdmin, (req: Request, res: Respon
               ? 'cinelab-bonus-02-glossario-roteiro.pdf'
               : 'cinelab-bonus-03-analise-filmica.pdf';
           fs.copyFileSync(req.file.path, path.join(materiaisDir, canonicalBonusName));
+        } else if (isExtra && resolvedModuleId) {
+          fs.copyFileSync(req.file.path, path.join(backupApostilasDir, `apostila-extra-modulo-0${resolvedModuleId}.pdf`));
+          try {
+            fs.copyFileSync(req.file.path, path.join(materiaisDir, `cinelab-apostila-extra-0${resolvedModuleId}.pdf`));
+          } catch {}
         } else if (moduleId) {
           fs.copyFileSync(req.file.path, path.join(backupApostilasDir, `apostila-modulo-0${moduleId}.pdf`));
           fs.copyFileSync(req.file.path, path.join(materiaisDir, `cinelab-apostila-0${moduleId}.pdf`));
@@ -3769,6 +3848,39 @@ app.post('/api/admin/apostilas/upload', requireAdmin, (req: Request, res: Respon
           };
           db.bonusApostilas.push(newBonus as any);
           updatedApostila = newBonus;
+        }
+        saveDatabase();
+      } else if (isExtra && resolvedModuleId) {
+        const idx = db.apostilas.findIndex((a) => a.moduleId === resolvedModuleId);
+        const resolvedExtraTitle = (title && title.trim())
+          ? title.trim()
+          : (idx !== -1 && db.apostilas[idx].extraTitle ? db.apostilas[idx].extraTitle : `Apostila Extra 0${resolvedModuleId} (Material Complementar)`);
+
+        if (idx !== -1) {
+          db.apostilas[idx] = {
+            ...db.apostilas[idx],
+            extraPdfUrl: fileUrl,
+            extraTitle: resolvedExtraTitle,
+            extraPagesCount: finalPages,
+            extraFileSizeMb: fileSizeMb,
+          };
+          updatedApostila = db.apostilas[idx];
+        } else {
+          const newApos = {
+            id: `apos-${resolvedModuleId}`,
+            moduleId: resolvedModuleId,
+            title: `Módulo 0${resolvedModuleId}`,
+            description: `Guia de estudos do Módulo 0${resolvedModuleId}`,
+            pdfUrl: `/materiais/cinelab-apostila-0${resolvedModuleId}.pdf`,
+            extraPdfUrl: fileUrl,
+            extraTitle: resolvedExtraTitle,
+            extraPagesCount: finalPages,
+            extraFileSizeMb: fileSizeMb,
+            pagesCount: 30,
+            totalPages: 30,
+          };
+          db.apostilas.push(newApos as any);
+          updatedApostila = newApos;
         }
         saveDatabase();
       } else if (moduleId) {
@@ -3825,10 +3937,12 @@ app.post('/api/admin/apostilas/upload', requireAdmin, (req: Request, res: Respon
               ? 'cinelab-bonus-02-glossario-roteiro.pdf'
               : 'cinelab-bonus-03-analise-filmica.pdf';
           syncFileToGitHub(`public/materiais/${canonicalBonusName}`, `chore(upload): atualizar ${canonicalBonusName}`, fileBuf).catch(() => {});
+        } else if (isExtra && resolvedModuleId) {
+          syncFileToGitHub(`public/materiais/cinelab-apostila-extra-0${resolvedModuleId}.pdf`, `chore(upload): atualizar apostila extra modulo ${resolvedModuleId}`, fileBuf).catch(() => {});
         } else if (moduleId) {
           syncFileToGitHub(`public/materiais/cinelab-apostila-0${moduleId}.pdf`, `chore(upload): atualizar apostila modulo ${moduleId}`, fileBuf).catch(() => {});
         }
-        syncFileToGitHub('data/cinelab-db.json', `chore(upload): atualizar registro da apostila ${isBonus ? 'bonus 0' + bonusNumber : 'modulo 0' + moduleId}`).catch(() => {});
+        syncFileToGitHub('data/cinelab-db.json', `chore(upload): atualizar registro da apostila ${isBonus ? 'bonus 0' + bonusNumber : (isExtra ? 'extra modulo 0' + resolvedModuleId : 'modulo 0' + moduleId)}`).catch(() => {});
       } catch (syncErr) {
         console.warn('Notice reading file buffer for GitHub sync:', syncErr);
       }
@@ -3837,6 +3951,8 @@ app.post('/api/admin/apostilas/upload', requireAdmin, (req: Request, res: Respon
         success: true,
         isBonus,
         bonusNumber: isBonus ? bonusNumber : undefined,
+        isExtra: Boolean(isExtra),
+        moduleId: isExtra ? resolvedModuleId : moduleId,
         fileUrl,
         fileName: req.file.filename,
         originalName: req.file.originalname,
