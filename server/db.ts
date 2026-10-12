@@ -379,6 +379,13 @@ function sanitizeDatabaseState(targetDb: any): void {
     b4.totalPages = 36;
     b4.fileSizeMb = 2.17;
   }
+
+  if (targetDb.settings) {
+    targetDb.settings.footerWorkloadBadge = '180h Carga Horária';
+    if (!targetDb.settings.facebookUrl) {
+      targetDb.settings.facebookUrl = 'https://www.facebook.com';
+    }
+  }
 }
 export function loadDatabase(): void {
   try {

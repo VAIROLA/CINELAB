@@ -66,7 +66,10 @@ export const InstitutionalTab: React.FC<InstitutionalTabProps> = ({
     settings.footerAboutText ||
       'Escola e laboratório de formação profissional em Cinema e Realização Audiovisual. Metodologia de imersão de 3 meses (90 dias), 10 apostilas didáticas com cronograma progressivo, masterclasses exclusivas, avaliações contínuas e certificação reconhecida pelo mercado.'
   );
-  const [footerWorkloadBadge, setFooterWorkloadBadge] = useState(settings.footerWorkloadBadge || '180h Carga Horária');
+  const [footerWorkloadBadge, setFooterWorkloadBadge] = useState(
+    (settings.footerWorkloadBadge || '180h Carga Horária').replace(/Hor[^\w\s]*ria/gi, 'Horária').replace(/\?+/g, '')
+  );
+  const [facebookUrl, setFacebookUrl] = useState(settings.facebookUrl || 'https://www.facebook.com');
   const [footerOfficialBadge, setFooterOfficialBadge] = useState(settings.footerOfficialBadge || 'Plataforma EAD Oficial');
   const [footerCopyright, setFooterCopyright] = useState(
     settings.footerCopyright || '© 2026 CINELAB – Cinema & Audiovisual. Todos os direitos reservados.'
@@ -215,12 +218,13 @@ export const InstitutionalTab: React.FC<InstitutionalTabProps> = ({
   useEffect(() => {
     if (!settings || Object.keys(settings).length === 0) return;
     if (settings.footerAboutText) setFooterAboutText(settings.footerAboutText);
-    if (settings.footerWorkloadBadge) setFooterWorkloadBadge(settings.footerWorkloadBadge);
+    if (settings.footerWorkloadBadge) setFooterWorkloadBadge(settings.footerWorkloadBadge.replace(/Hor[^\w\s]*ria/gi, 'Horária').replace(/\?+/g, ''));
     if (settings.footerOfficialBadge) setFooterOfficialBadge(settings.footerOfficialBadge);
     if (settings.footerCopyright) setFooterCopyright(settings.footerCopyright);
     if (settings.footerDisclaimer) setFooterDisclaimer(settings.footerDisclaimer);
     if (settings.companyCnpj) setCompanyCnpj(settings.companyCnpj);
     if (settings.companyAddress) setCompanyAddress(settings.companyAddress);
+    if (settings.facebookUrl) setFacebookUrl(settings.facebookUrl);
     if (settings.instagramUrl) setInstagramUrl(settings.instagramUrl);
     if (settings.youtubeUrl) setYoutubeUrl(settings.youtubeUrl);
     if (settings.vimeoUrl) setVimeoUrl(settings.vimeoUrl);
@@ -547,6 +551,7 @@ export const InstitutionalTab: React.FC<InstitutionalTabProps> = ({
         footerDisclaimer,
         companyCnpj,
         companyAddress,
+        facebookUrl,
         instagramUrl,
         youtubeUrl,
         vimeoUrl,
@@ -1913,7 +1918,18 @@ export const InstitutionalTab: React.FC<InstitutionalTabProps> = ({
               <span className="text-xs font-bold text-neutral-200 font-mono block">
                 Canais & Redes Sociais do CINELAB (Links no Rodapé):
               </span>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div>
+                  <label className="text-[10px] text-neutral-400 font-mono block mb-1">Facebook Oficial</label>
+                  <input
+                    type="text"
+                    value={facebookUrl}
+                    onChange={(e) => setFacebookUrl(e.target.value)}
+                    placeholder="https://facebook.com/cinelab.cinema"
+                    className="w-full px-3 py-2 bg-neutral-950 border border-neutral-700 rounded-xl text-white font-mono text-xs focus:border-amber-500 focus:outline-none"
+                  />
+                </div>
+
                 <div>
                   <label className="text-[10px] text-neutral-400 font-mono block mb-1">Instagram Oficial</label>
                   <input

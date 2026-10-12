@@ -1,4 +1,4 @@
-﻿import {
+import {
   CourseModule,
   VideoLesson,
   Apostila,
@@ -49,6 +49,7 @@ export const initialCourseSettings: CourseSettings = {
   companyCnpj: '',
   companyAddress: 'Rio de Janeiro, RJ • Plataforma Digital Nacional',
   instagramUrl: 'https://instagram.com/cinelab.cinema',
+  facebookUrl: 'https://www.facebook.com',
   youtubeUrl: 'https://www.youtube.com/@TVDIVERSIDADE',
   vimeoUrl: 'https://vimeo.com/cinelab',
   whatsappNumber: '+55 (21) 96672-5240',

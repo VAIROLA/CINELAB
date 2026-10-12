@@ -277,7 +277,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, settings }) => {
               </span>
               <span>•</span>
               <span className="text-[11px] font-mono text-neutral-400">
-                {language === 'pt' ? (settings?.footerWorkloadBadge ? settings.footerWorkloadBadge.replace(/Hor[^\w\s]*ria/i, 'Horária') : localizedLabels.workloadBadge) : localizedLabels.workloadBadge}
+                {language === 'pt' ? '180h Carga Horária' : (localizedLabels[language]?.workloadBadge || localizedLabels.en.workloadBadge)}
               </span>
             </div>
 
