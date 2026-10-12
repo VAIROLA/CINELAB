@@ -729,13 +729,15 @@ export const AdminView: React.FC<AdminViewProps> = ({
       return;
     }
 
-    const isBonus = typeof targetIdOrModuleId === 'number'
+    const isExtra = typeof targetIdOrModuleId === 'number' && targetIdOrModuleId > 100 && targetIdOrModuleId <= 110;
+    const extraModId = isExtra ? (targetIdOrModuleId as number) - 100 : undefined;
+    const isBonus = !isExtra && (typeof targetIdOrModuleId === 'number'
       ? targetIdOrModuleId > 990
-      : (typeof targetIdOrModuleId === 'string' && targetIdOrModuleId.startsWith('bonus'));
+      : (typeof targetIdOrModuleId === 'string' && targetIdOrModuleId.startsWith('bonus')));
     const bonusNum = isBonus
       ? (typeof targetIdOrModuleId === 'number' ? targetIdOrModuleId - 990 : Number(String(targetIdOrModuleId).replace(/\D/g, '') || 1))
       : undefined;
-    const moduleId = !isBonus ? (typeof targetIdOrModuleId === 'number' ? targetIdOrModuleId : Number(String(targetIdOrModuleId).replace(/\D/g, '') || 1)) : undefined;
+    const moduleId = (!isBonus && !isExtra) ? (typeof targetIdOrModuleId === 'number' ? targetIdOrModuleId : Number(String(targetIdOrModuleId).replace(/\D/g, '') || 1)) : undefined;
 
     try {
       setUploadingApostilaCover(targetIdOrModuleId);
@@ -761,7 +763,19 @@ export const AdminView: React.FC<AdminViewProps> = ({
 
       const coverToSave = localDataUrl || serverFileUrl;
 
-      if (isBonus) {
+      if (isExtra && extraModId) {
+        const aposId = `apostila-${extraModId}`;
+        try {
+          await api.updateAdminApostila(aposId, { extraCoverUrl: coverToSave, isExtra: true });
+        } catch (e) {
+          console.warn('updateAdminApostila error:', e);
+        }
+        await updateVaultMetadata(extraModId, {
+          isExtra: true,
+          extraCoverUrl: coverToSave,
+        });
+        notify(`Capa da Apostila Extra 0${extraModId} (${file.name}) atualizada com sucesso!`);
+      } else if (isBonus) {
         const targetBonus = bonusApostilas.find((b) => b.number === bonusNum);
         const bonusId = targetBonus?.id || `bonus-${bonusNum}`;
         try {
@@ -774,6 +788,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
           bonusNumber: bonusNum,
           coverUrl: coverToSave,
         });
+        notify(`Capa da Apostila Bônus 0${bonusNum} (${file.name}) atualizada com sucesso!`);
       } else {
         const existingApos = apostilas.find((a) => a.moduleId === moduleId);
         const aposId = existingApos?.id || `apostila-${moduleId}`;
@@ -785,9 +800,8 @@ export const AdminView: React.FC<AdminViewProps> = ({
         await updateVaultMetadata(targetIdOrModuleId, {
           coverUrl: coverToSave,
         });
+        notify(`Capa da Apostila 0${moduleId} (${file.name}) atualizada com sucesso!`);
       }
-
-      notify(`Capa da Apostila ${isBonus ? `Bônus 0${bonusNum}` : `0${moduleId}`} (${file.name}) atualizada com sucesso!`);
       await loadAllAdminData();
     } catch (err: any) {
       console.error(err);
@@ -2025,22 +2039,33 @@ export const AdminView: React.FC<AdminViewProps> = ({
                     <label className="block text-amber-400 font-bold text-xs mb-1 font-mono flex items-center justify-between">
                       <span>Capa da Apostila:</span>
                       {(() => {
-                        const cur = quickUploadApostilaModuleId > 990
-                          ? bonusApostilas.find((b) => b.number === quickUploadApostilaModuleId - 990)
-                          : apostilas.find((a) => a.moduleId === quickUploadApostilaModuleId);
-                        return cur?.coverUrl ? <span className="text-[10px] text-emerald-400 font-normal">Capa Ativa</span> : null;
+                        const isExtra = quickUploadApostilaModuleId > 100 && quickUploadApostilaModuleId <= 110;
+                        const extraModId = isExtra ? quickUploadApostilaModuleId - 100 : undefined;
+                        const cur = isExtra
+                          ? apostilas.find((a) => a.moduleId === extraModId)
+                          : (quickUploadApostilaModuleId > 990
+                            ? bonusApostilas.find((b) => b.number === quickUploadApostilaModuleId - 990)
+                            : apostilas.find((a) => a.moduleId === quickUploadApostilaModuleId));
+                        const hasCover = isExtra ? cur?.extraCoverUrl : cur?.coverUrl;
+                        return hasCover ? <span className="text-[10px] text-emerald-400 font-normal">Capa Ativa</span> : null;
                       })()}
                     </label>
                     <div className="flex items-center gap-2">
                       <div className="w-10 h-11 rounded-lg bg-neutral-900 border border-neutral-700 overflow-hidden shrink-0 flex items-center justify-center shadow-inner">
                         {(() => {
-                          const fallbackUrl = quickUploadApostilaModuleId > 990
+                          const isExtra = quickUploadApostilaModuleId > 100 && quickUploadApostilaModuleId <= 110;
+                          const extraModId = isExtra ? quickUploadApostilaModuleId - 100 : undefined;
+                          const fallbackUrl = (quickUploadApostilaModuleId > 990 || isExtra)
                             ? undefined
                             : `/images/covers/apostila-${quickUploadApostilaModuleId < 10 ? '0' + quickUploadApostilaModuleId : quickUploadApostilaModuleId}.jpg`;
-                          const cur = quickUploadApostilaModuleId > 990
-                            ? bonusApostilas.find((b) => b.number === quickUploadApostilaModuleId - 990)
-                            : apostilas.find((a) => a.moduleId === quickUploadApostilaModuleId);
-                          const effectiveCover = (cur?.coverUrl && !cur.coverUrl.includes('unsplash.com')) ? cur.coverUrl : fallbackUrl;
+                          const cur = isExtra
+                            ? apostilas.find((a) => a.moduleId === extraModId)
+                            : (quickUploadApostilaModuleId > 990
+                              ? bonusApostilas.find((b) => b.number === quickUploadApostilaModuleId - 990)
+                              : apostilas.find((a) => a.moduleId === quickUploadApostilaModuleId));
+                          const effectiveCover = isExtra
+                            ? cur?.extraCoverUrl
+                            : ((cur?.coverUrl && !cur.coverUrl.includes('unsplash.com')) ? cur.coverUrl : fallbackUrl);
                           return effectiveCover ? (
                             <img
                               src={effectiveCover}
@@ -2053,7 +2078,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
                               }}
                             />
                           ) : (
-                            <ImageIcon className="w-4 h-4 text-neutral-600" />
+                            <ImageIcon className="w-4 h-4 text-cyan-400" />
                           );
                         })()}
                       </div>
@@ -2394,6 +2419,31 @@ export const AdminView: React.FC<AdminViewProps> = ({
                             onChange={(e) => {
                               const file = e.target.files?.[0];
                               if (file) handleQuickApostilaCoverUpload(mod.id, file);
+                            }}
+                            className="hidden"
+                          />
+                        </label>
+
+                        {/* Botão Rápido de Subir Capa Extra da Apostila */}
+                        <label className="px-3 py-2 bg-neutral-800 hover:bg-neutral-700 text-cyan-300 hover:text-white border border-cyan-500/30 hover:border-cyan-500/60 rounded-xl text-xs transition-colors cursor-pointer flex items-center gap-1.5 font-sans shadow-sm">
+                          {uploadingApostilaCover === 100 + mod.id ? (
+                            <>
+                              <Loader2 className="w-3.5 h-3.5 animate-spin text-cyan-400" />
+                              <span>Subindo Capa Extra {quickUploadApostilaCoverProgress}%...</span>
+                            </>
+                          ) : (
+                            <>
+                              <ImageIcon className="w-3.5 h-3.5 text-cyan-400" />
+                              <span>Subir Capa Extra</span>
+                            </>
+                          )}
+                          <input
+                            type="file"
+                            accept="image/jpeg,image/png,image/webp,image/avif"
+                            disabled={uploadingApostilaCover !== null}
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) handleQuickApostilaCoverUpload(100 + mod.id, file);
                             }}
                             className="hidden"
                           />

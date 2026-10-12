@@ -346,6 +346,11 @@ export const api = {
       method: 'DELETE',
     }),
 
+  deleteExtraApostila: (moduleId: string | number) =>
+    request<{ success: boolean; message?: string }>(`/api/admin/apostilas/${moduleId}/extra`, {
+      method: 'DELETE',
+    }),
+
   syncVaultItems: (vaultItems: any[]) =>
     request<{ success: boolean; updatedCount: number; apostilas: Apostila[]; bonusApostilas: BonusApostila[] }>(
       '/api/admin/apostilas/sync-vault',

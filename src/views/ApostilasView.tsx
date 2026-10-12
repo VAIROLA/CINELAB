@@ -49,6 +49,8 @@ import {
   Folder,
   ChevronLeft,
   ChevronRight,
+  Edit3,
+  Trash2,
 } from 'lucide-react';
 
 interface ApostilasViewProps {
@@ -173,7 +175,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
   // Estado e função para upload da capa de cada apostila diretamente da tela
   const [uploadingCoverId, setUploadingCoverId] = useState<string | number | null>(null);
 
-  const handleUploadCover = async (item: Apostila | BonusApostila, file: File) => {
+  const handleUploadCover = async (item: Apostila | BonusApostila, file: File, isExtra: boolean = false) => {
     if (!isAdmin || !file) return;
     const isImage = file.type.startsWith('image/') || /\.(jpe?g|png|webp|svg|gif|avif|bmp)$/i.test(file.name);
     if (!isImage) {
@@ -185,9 +187,10 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
     const itemId = item.id;
     const rawNum = item.number || ((item as any).moduleId && (item as any).moduleId > 990 ? (item as any).moduleId - 990 : (item as any).moduleId) || 1;
     const modOrBonusNumber = isBonus && rawNum > 990 ? rawNum - 990 : rawNum;
+    const uploadKey = isExtra ? `${itemId}-extra` : itemId;
 
     try {
-      setUploadingCoverId(itemId);
+      setUploadingCoverId(uploadKey);
 
       // Leitura imediata como DataURL para exibição instantânea sem falhas de rede ou servidor
       const localDataUrl = await new Promise<string>((resolve) => {
@@ -209,33 +212,174 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
 
       const coverToSave = localDataUrl || finalCoverUrl;
 
-      try {
-        await api.updateAdminApostila(itemId, { coverUrl: coverToSave });
-      } catch (apiErr) {
-        console.warn('updateAdminApostila error:', apiErr);
-      }
+      if (isExtra) {
+        try {
+          await api.updateAdminApostila(itemId, { extraCoverUrl: coverToSave, isExtra: true });
+        } catch (apiErr) {
+          console.warn('updateAdminApostila error:', apiErr);
+        }
 
-      await updateVaultMetadata(isBonus ? `bonus-${modOrBonusNumber}` : modOrBonusNumber, {
-        isBonus,
-        bonusNumber: isBonus ? modOrBonusNumber : undefined,
-        coverUrl: coverToSave,
-      });
+        await updateVaultMetadata(modOrBonusNumber, {
+          isExtra: true,
+          extraCoverUrl: coverToSave,
+        });
 
-      if (isBonus) {
-        setBonusApostilas((prev) =>
-          prev.map((b) => (b.id === itemId || b.number === modOrBonusNumber ? { ...b, coverUrl: coverToSave } : b))
-        );
-      } else {
         setApostilas((prev) =>
-          prev.map((a) => (a.id === itemId || a.moduleId === modOrBonusNumber ? { ...a, coverUrl: coverToSave } : a))
+          prev.map((a) => (a.id === itemId || a.moduleId === modOrBonusNumber ? { ...a, extraCoverUrl: coverToSave } : a))
         );
+        alert('Capa da Apostila Extra atualizada com sucesso!');
+      } else {
+        try {
+          await api.updateAdminApostila(itemId, { coverUrl: coverToSave });
+        } catch (apiErr) {
+          console.warn('updateAdminApostila error:', apiErr);
+        }
+
+        await updateVaultMetadata(isBonus ? `bonus-${modOrBonusNumber}` : modOrBonusNumber, {
+          isBonus,
+          bonusNumber: isBonus ? modOrBonusNumber : undefined,
+          coverUrl: coverToSave,
+        });
+
+        if (isBonus) {
+          setBonusApostilas((prev) =>
+            prev.map((b) => (b.id === itemId || b.number === modOrBonusNumber ? { ...b, coverUrl: coverToSave } : b))
+          );
+        } else {
+          setApostilas((prev) =>
+            prev.map((a) => (a.id === itemId || a.moduleId === modOrBonusNumber ? { ...a, coverUrl: coverToSave } : a))
+          );
+        }
+        alert('Capa atualizada com sucesso!');
       }
-      alert('Capa atualizada com sucesso!');
     } catch (err: any) {
       console.error(err);
-      alert(`Erro ao subir capa da apostila: ${err.message || 'Falha no upload'}`);
+      alert(`Erro ao subir capa: ${err.message || 'Falha no upload'}`);
     } finally {
       setUploadingCoverId(null);
+    }
+  };
+
+  // Estado e métodos para upload de Apostila Extra (PDF) diretamente pelo card
+  const [uploadingExtraPdfModId, setUploadingExtraPdfModId] = useState<number | null>(null);
+  const [uploadingExtraPdfProgress, setUploadingExtraPdfProgress] = useState<number>(0);
+
+  const handleUploadExtraPdf = async (modNum: number, file: File) => {
+    if (!isAdmin || !file) return;
+    const isPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
+    if (!isPdf) {
+      alert('Por favor, selecione um arquivo de documento PDF (.pdf).');
+      return;
+    }
+
+    try {
+      setUploadingExtraPdfModId(modNum);
+      setUploadingExtraPdfProgress(0);
+
+      const matchingApos = apostilas.find((a) => a.moduleId === modNum);
+      const defaultTitle = matchingApos?.extraTitle || `Apostila Extra 0${modNum} (Material Complementar)`;
+
+      const customTitlePrompt = window.prompt(
+        `Digite o título para a Apostila Extra do Módulo 0${modNum}:`,
+        defaultTitle
+      );
+      if (customTitlePrompt === null) {
+        setUploadingExtraPdfModId(null);
+        return;
+      }
+      const finalTitle = customTitlePrompt.trim() || defaultTitle;
+
+      const res = await api.uploadApostilaPdfFile(file, {
+        isExtra: true,
+        moduleId: modNum,
+        title: finalTitle,
+        onProgress: (percent) => setUploadingExtraPdfProgress(percent),
+      });
+
+      // Salva no Vault local
+      try {
+        await saveApostilaToVault(modNum, file, {
+          isExtra: true,
+          fileName: file.name,
+          title: finalTitle,
+          pagesCount: res.pagesCount || 20,
+          fileSizeMb: res.fileSizeMb || Number((file.size / (1024 * 1024)).toFixed(2)),
+          pdfUrl: res.fileUrl,
+        });
+      } catch (vaultErr) {
+        console.warn('Vault error ao salvar extra:', vaultErr);
+      }
+
+      // Atualiza estado local das apostilas
+      setApostilas((prev) =>
+        prev.map((a) => {
+          if (a.moduleId === modNum) {
+            return {
+              ...a,
+              extraPdfUrl: res.fileUrl,
+              extraTitle: finalTitle,
+              extraPagesCount: res.pagesCount || 20,
+              extraFileSizeMb: res.fileSizeMb || Number((file.size / (1024 * 1024)).toFixed(2)),
+            };
+          }
+          return a;
+        })
+      );
+
+      alert(`Apostila Extra do Módulo 0${modNum} ("${finalTitle}") enviada e blindada com sucesso!`);
+    } catch (err: any) {
+      console.error(err);
+      alert(`Erro ao subir Apostila Extra: ${err.message || 'Falha no upload'}`);
+    } finally {
+      setUploadingExtraPdfModId(null);
+      setUploadingExtraPdfProgress(0);
+    }
+  };
+
+  const handleRenameExtraPdf = async (modNum: number) => {
+    const matchingApos = apostilas.find((a) => a.moduleId === modNum);
+    const currentTitle = matchingApos?.extraTitle || `Apostila Extra 0${modNum} (Material Complementar)`;
+    const newTitle = window.prompt(`Novo título para a Apostila Extra do Módulo 0${modNum}:`, currentTitle);
+    if (!newTitle || !newTitle.trim() || newTitle === currentTitle) return;
+
+    try {
+      await api.updateAdminApostila(`mod-${modNum}`, {
+        isExtra: true,
+        extraTitle: newTitle.trim(),
+      });
+      await updateVaultMetadata(modNum, {
+        isExtra: true,
+        extraTitle: newTitle.trim(),
+      });
+      setApostilas((prev) =>
+        prev.map((a) => (a.moduleId === modNum ? { ...a, extraTitle: newTitle.trim() } : a))
+      );
+      alert('Título da Apostila Extra atualizado com sucesso!');
+    } catch (err: any) {
+      alert(`Erro ao renomear: ${err.message || 'Erro desconhecido'}`);
+    }
+  };
+
+  const handleDeleteExtraPdf = async (modNum: number) => {
+    if (!window.confirm(`Deseja realmente remover a Apostila Extra do Módulo 0${modNum}?`)) return;
+    try {
+      await api.deleteExtraApostila(modNum);
+      setApostilas((prev) =>
+        prev.map((a) => {
+          if (a.moduleId === modNum) {
+            const copy = { ...a };
+            delete copy.extraPdfUrl;
+            delete copy.extraTitle;
+            delete copy.extraPagesCount;
+            delete copy.extraFileSizeMb;
+            return copy;
+          }
+          return a;
+        })
+      );
+      alert('Apostila Extra removida com sucesso!');
+    } catch (err: any) {
+      alert(`Erro ao remover: ${err.message || 'Erro desconhecido'}`);
     }
   };
 
@@ -1251,44 +1395,67 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                 }`}
               >
                 <div className="flex flex-col sm:flex-row gap-5 items-start">
-                  {/* Capa da Apostila (Cover Slot) com Botão de Subir para Admin */}
-                  <div className="w-full sm:w-36 md:w-44 shrink-0 flex flex-col items-center">
-                    <div className="relative w-full aspect-[1/1.4] rounded-xl overflow-hidden border border-neutral-700/80 bg-neutral-950 shadow-xl group/cover flex items-center justify-center">
-                      {(() => {
-                        const fallbackUrl = `/images/covers/apostila-${modNum < 10 ? '0' + modNum : modNum}.jpg`;
-                        const effectiveCover = (item.coverUrl && !item.coverUrl.includes('unsplash.com')) ? item.coverUrl : fallbackUrl;
-                        return (
-                          <img
-                            src={effectiveCover}
-                            alt={`Capa da ${cur.handoutPrefix}${modNum}`}
-                            className="w-full h-full object-cover group-hover/cover:scale-105 transition-transform duration-300"
-                            loading="lazy"
-                            onError={(e) => {
-                              if (e.currentTarget.src !== fallbackUrl && !e.currentTarget.src.endsWith(fallbackUrl)) {
-                                e.currentTarget.src = fallbackUrl;
-                              }
-                            }}
-                          />
-                        );
-                      })()}
+                  {/* Espaço das DUAS CAPAS (Capa Oficial & Capa Extra) */}
+                  <div className="w-full sm:w-60 md:w-68 shrink-0 grid grid-cols-2 gap-2.5 items-start">
+                    {/* 1. Capa Oficial */}
+                    <div className="flex flex-col items-center">
+                      <div className="text-[9px] font-mono font-bold text-amber-400 text-center uppercase tracking-wider mb-1">
+                        Apostila {modNum}
+                      </div>
+                      <div className="relative w-full aspect-[1/1.4] rounded-xl overflow-hidden border border-neutral-700/80 bg-neutral-950 shadow-xl group/cover flex items-center justify-center">
+                        {(() => {
+                          const fallbackUrl = `/images/covers/apostila-${modNum < 10 ? '0' + modNum : modNum}.jpg`;
+                          const effectiveCover = (item.coverUrl && !item.coverUrl.includes('unsplash.com')) ? item.coverUrl : fallbackUrl;
+                          return (
+                            <img
+                              src={effectiveCover}
+                              alt={`Capa da ${cur.handoutPrefix}${modNum}`}
+                              className="w-full h-full object-cover group-hover/cover:scale-105 transition-transform duration-300"
+                              loading="lazy"
+                              onError={(e) => {
+                                if (e.currentTarget.src !== fallbackUrl && !e.currentTarget.src.endsWith(fallbackUrl)) {
+                                  e.currentTarget.src = fallbackUrl;
+                                }
+                              }}
+                            />
+                          );
+                        })()}
 
-                      {/* Botão Hover de Subir Capa (Admin) */}
+                        {/* Botão Hover de Subir Capa (Admin) */}
+                        {isAdmin && (
+                          <label className="absolute inset-0 bg-black/85 opacity-0 group-hover/cover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1.5 cursor-pointer p-1 text-center text-white">
+                            {uploadingCoverId === item.id ? (
+                              <>
+                                <Loader2 className="w-4 h-4 animate-spin text-amber-400" />
+                                <span className="text-[9px] font-bold text-amber-300">Subindo...</span>
+                              </>
+                            ) : (
+                              <>
+                                <Upload className="w-4 h-4 text-amber-400" />
+                                <span className="text-[9px] font-bold font-mono text-amber-300">
+                                  {item.coverUrl ? 'Alterar' : 'Subir'}
+                                </span>
+                                <span className="text-[8px] text-neutral-400">JPG, PNG</span>
+                              </>
+                            )}
+                            <input
+                              type="file"
+                              accept="image/*"
+                              disabled={uploadingCoverId !== null}
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) handleUploadCover(item, file, false);
+                              }}
+                            />
+                          </label>
+                        )}
+                      </div>
+
                       {isAdmin && (
-                        <label className="absolute inset-0 bg-black/85 opacity-0 group-hover/cover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1.5 cursor-pointer p-2 text-center text-white">
-                          {uploadingCoverId === item.id ? (
-                            <>
-                              <Loader2 className="w-5 h-5 animate-spin text-amber-400" />
-                              <span className="text-[10px] font-bold text-amber-300">Subindo...</span>
-                            </>
-                          ) : (
-                            <>
-                              <Upload className="w-5 h-5 text-amber-400" />
-                              <span className="text-[10px] font-bold font-mono text-amber-300">
-                                {item.coverUrl ? 'Alterar Capa' : 'Subir Capa'}
-                              </span>
-                              <span className="text-[9px] text-neutral-400">JPG, PNG</span>
-                            </>
-                          )}
+                        <label className="mt-1.5 w-full py-1 px-1 rounded-lg bg-neutral-800/90 hover:bg-neutral-700 border border-amber-500/30 text-amber-300 hover:text-white text-[9px] font-mono font-semibold flex items-center justify-center gap-1 cursor-pointer transition">
+                          <Upload className="w-2.5 h-2.5 text-amber-400" />
+                          <span className="truncate">Subir Capa</span>
                           <input
                             type="file"
                             accept="image/*"
@@ -1296,29 +1463,85 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                             className="hidden"
                             onChange={(e) => {
                               const file = e.target.files?.[0];
-                              if (file) handleUploadCover(item, file);
+                              if (file) handleUploadCover(item, file, false);
                             }}
                           />
                         </label>
                       )}
                     </div>
 
-                    {isAdmin && (
-                      <label className="mt-2 w-full py-1.5 px-2 rounded-lg bg-neutral-800/90 hover:bg-neutral-700 border border-amber-500/30 text-amber-300 hover:text-white text-[10px] font-mono font-semibold flex items-center justify-center gap-1 cursor-pointer transition">
-                        <Upload className="w-3 h-3 text-amber-400" />
-                        <span>Subir Capa</span>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          disabled={uploadingCoverId !== null}
-                          className="hidden"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) handleUploadCover(item, file);
-                          }}
-                        />
-                      </label>
-                    )}
+                    {/* 2. Capa Extra (Material Complementar) */}
+                    <div className="flex flex-col items-center">
+                      <div className="text-[9px] font-mono font-bold text-cyan-400 text-center uppercase tracking-wider mb-1">
+                        Capa Extra
+                      </div>
+                      <div className="relative w-full aspect-[1/1.4] rounded-xl overflow-hidden border border-cyan-500/40 bg-neutral-950 shadow-xl group/cover flex items-center justify-center">
+                        {item.extraCoverUrl ? (
+                          <img
+                            src={item.extraCoverUrl}
+                            alt={`Capa Extra da ${cur.handoutPrefix}${modNum}`}
+                            className="w-full h-full object-cover group-hover/cover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gradient-to-b from-neutral-900 via-cyan-950/40 to-neutral-950 p-1.5 flex flex-col items-center justify-center text-center border border-cyan-500/20">
+                            <BookOpen className="w-5 h-5 text-cyan-400 mb-1 opacity-80" />
+                            <span className="text-[8px] font-bold text-cyan-300 uppercase tracking-tight">Capa Extra</span>
+                            <span className="text-[8px] font-mono text-cyan-400 mt-0.5">Mod. 0{modNum}</span>
+                            <span className="text-[7px] text-neutral-400 mt-0.5 leading-tight line-clamp-2">
+                              {item.extraTitle || 'Complementar'}
+                            </span>
+                          </div>
+                        )}
+
+                        {/* Botão Hover de Subir Capa Extra (Admin) */}
+                        {isAdmin && (
+                          <label className="absolute inset-0 bg-black/85 opacity-0 group-hover/cover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1.5 cursor-pointer p-1 text-center text-white">
+                            {uploadingCoverId === `${item.id}-extra` ? (
+                              <>
+                                <Loader2 className="w-4 h-4 animate-spin text-cyan-400" />
+                                <span className="text-[9px] font-bold text-cyan-300">Subindo...</span>
+                              </>
+                            ) : (
+                              <>
+                                <Upload className="w-4 h-4 text-cyan-400" />
+                                <span className="text-[9px] font-bold font-mono text-cyan-300">
+                                  {item.extraCoverUrl ? 'Alterar' : 'Subir Extra'}
+                                </span>
+                                <span className="text-[8px] text-neutral-400">JPG, PNG</span>
+                              </>
+                            )}
+                            <input
+                              type="file"
+                              accept="image/*"
+                              disabled={uploadingCoverId !== null}
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) handleUploadCover(item, file, true);
+                              }}
+                            />
+                          </label>
+                        )}
+                      </div>
+
+                      {isAdmin && (
+                        <label className="mt-1.5 w-full py-1 px-1 rounded-lg bg-neutral-800/90 hover:bg-neutral-700 border border-cyan-500/30 text-cyan-300 hover:text-white text-[9px] font-mono font-semibold flex items-center justify-center gap-1 cursor-pointer transition">
+                          <Upload className="w-2.5 h-2.5 text-cyan-400" />
+                          <span className="truncate">Subir Capa Extra</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            disabled={uploadingCoverId !== null}
+                            className="hidden"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) handleUploadCover(item, file, true);
+                            }}
+                          />
+                        </label>
+                      )}
+                    </div>
                   </div>
 
                   {/* Lado Direito: Informações da Apostila */}
@@ -1411,31 +1634,124 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                         </button>
                       </div>
 
-                      {/* Botão de Leitura da Apostila Extra (se disponível) */}
-                      {item.extraPdfUrl && (
-                        <div className="pt-2">
-                          <button
-                            disabled={isLocked}
-                            onClick={() => handleOpenExtraApostila(item)}
-                            className={`w-full py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-between transition-all border shadow-sm active:scale-98 ${
-                              isLocked
-                                ? 'bg-neutral-800 text-neutral-500 opacity-60 cursor-not-allowed border-neutral-700/50'
-                                : 'bg-gradient-to-r from-cyan-950/40 to-blue-950/40 hover:from-cyan-900/50 hover:to-blue-900/50 text-cyan-300 border-cyan-500/40 hover:border-cyan-400 cursor-pointer shadow-cyan-500/10'
-                            }`}
-                            title={isLocked ? `Liberada em ${formatDateTime(item.startDate)}` : "Ler Apostila Extra / Material Complementar em PDF"}
-                          >
-                            <div className="flex items-center gap-2 truncate">
-                              <FileText className="w-4 h-4 text-cyan-400 shrink-0" />
-                              <span className="truncate">
-                                {item.extraTitle || `Apostila Extra 0${modNum} (Material Complementar)`}
-                              </span>
+                      {/* Bloco Dedicado de Apostila Extra (Material Complementar) */}
+                      <div className="pt-2">
+                        <div className="p-3 rounded-xl border border-cyan-500/30 bg-gradient-to-r from-cyan-950/30 via-neutral-900/90 to-blue-950/20 space-y-2.5">
+                          <div className="flex items-center justify-between text-xs">
+                            <div className="flex items-center gap-1.5 font-bold text-cyan-300">
+                              <BookOpen className="w-3.5 h-3.5 text-cyan-400" />
+                              <span>Apostila Extra 0{modNum} (Material Complementar)</span>
                             </div>
-                            <span className="text-[10px] font-mono text-cyan-400 shrink-0 ml-2 flex items-center gap-1">
-                              {item.extraPagesCount ? `${item.extraPagesCount} págs • ` : ''}Ler PDF Extra ↗
-                            </span>
-                          </button>
+                            {item.extraPdfUrl ? (
+                              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold">
+                                ✓ Ativa ({item.extraPagesCount || 0} págs)
+                              </span>
+                            ) : (
+                              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-neutral-800 text-neutral-400 border border-neutral-700">
+                                Apostila Extra Pendente
+                              </span>
+                            )}
+                          </div>
+
+                          {item.extraPdfUrl ? (
+                            <div className="space-y-2">
+                              <div className="flex items-center justify-between text-xs text-neutral-300">
+                                <span className="font-semibold text-white truncate max-w-[240px]">
+                                  {item.extraTitle || `Material Complementar 0${modNum}`}
+                                </span>
+                                <span className="text-neutral-400 font-mono text-[10px]">
+                                  {item.extraFileSizeMb ? `${item.extraFileSizeMb} MB` : ''}
+                                </span>
+                              </div>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <button
+                                  disabled={isLocked}
+                                  onClick={() => handleOpenExtraApostila(item)}
+                                  className={`w-full py-2.5 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition shadow active:scale-98 ${
+                                    isLocked
+                                      ? 'bg-neutral-800 text-neutral-500 cursor-not-allowed opacity-60'
+                                      : 'bg-cyan-500 hover:bg-cyan-400 text-neutral-950 cursor-pointer shadow-cyan-500/20'
+                                  }`}
+                                >
+                                  <FileText className="w-3.5 h-3.5" />
+                                  <span>Ler Apostila Extra</span>
+                                </button>
+                                {isAdmin && (
+                                  <div className="flex items-center gap-1.5">
+                                    <button
+                                      type="button"
+                                      onClick={() => handleRenameExtraPdf(modNum)}
+                                      className="flex-1 py-2 px-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 border border-cyan-500/30 text-cyan-300 hover:text-white font-mono text-[10px] flex items-center justify-center gap-1 cursor-pointer"
+                                      title="Renomear Título da Apostila Extra"
+                                    >
+                                      <Edit3 className="w-3 h-3" />
+                                      <span>Nome</span>
+                                    </button>
+                                    <label className="flex-1 py-2 px-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 border border-cyan-500/30 text-cyan-300 hover:text-white font-mono text-[10px] flex items-center justify-center gap-1 cursor-pointer">
+                                      <Upload className="w-3 h-3" />
+                                      <span>Trocar PDF</span>
+                                      <input
+                                        type="file"
+                                        accept="application/pdf,.pdf"
+                                        className="hidden"
+                                        onChange={(e) => {
+                                          const f = e.target.files?.[0];
+                                          if (f) handleUploadExtraPdf(modNum, f);
+                                        }}
+                                      />
+                                    </label>
+                                    <button
+                                      type="button"
+                                      onClick={() => handleDeleteExtraPdf(modNum)}
+                                      className="py-2 px-2 rounded-lg bg-neutral-800 hover:bg-red-950/60 border border-red-500/30 text-red-400 hover:text-red-300 font-mono text-[10px] flex items-center justify-center cursor-pointer"
+                                      title="Remover Apostila Extra"
+                                    >
+                                      <Trash2 className="w-3 h-3" />
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="pt-0.5">
+                              {isAdmin ? (
+                                <div className="space-y-1.5">
+                                  <label className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-cyan-600/30 hover:from-cyan-600/50 to-blue-600/30 hover:to-blue-600/50 border border-cyan-500/50 hover:border-cyan-400 text-cyan-200 hover:text-white text-xs font-bold font-mono flex items-center justify-center gap-2 cursor-pointer transition shadow-md">
+                                    {uploadingExtraPdfModId === modNum ? (
+                                      <>
+                                        <Loader2 className="w-4 h-4 animate-spin text-cyan-300" />
+                                        <span>Subindo Apostila Extra {uploadingExtraPdfProgress}%...</span>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Upload className="w-4 h-4 text-cyan-400" />
+                                        <span>+ Subir Apostila Extra deste Módulo (PDF)</span>
+                                      </>
+                                    )}
+                                    <input
+                                      type="file"
+                                      accept="application/pdf,.pdf"
+                                      disabled={uploadingExtraPdfModId !== null}
+                                      className="hidden"
+                                      onChange={(e) => {
+                                        const f = e.target.files?.[0];
+                                        if (f) handleUploadExtraPdf(modNum, f);
+                                      }}
+                                    />
+                                  </label>
+                                  <p className="text-[10px] text-neutral-400 text-center font-mono">
+                                    Clique no botão acima para selecionar o arquivo PDF da apostila complementar do Módulo 0{modNum}.
+                                  </p>
+                                </div>
+                              ) : (
+                                <p className="text-[11px] text-neutral-400 italic">
+                                  Material complementar em preparação pelo professor.
+                                </p>
+                              )}
+                            </div>
+                          )}
                         </div>
-                      )}
+                      </div>
                     </div>
                   </div>
                 </div>
