@@ -187,7 +187,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, settings }) => {
       studentsDesc: 'Turmas e oficinas pelo RJ, SP, MG, BA e AM',
       expTitle: '+20 Anos',
       expLabel: 'Trajetória no Cinema & Magistério',
-      expDesc: 'Direção, roteiro e produção audiovisual com Tony de Luc',
+      expDesc: 'Direção, roteiro e produção audiovisual',
       workloadTitle: '180h',
       workloadLabel: 'Formação Reconhecida',
       workloadDesc: 'Certificado com autenticação pública',
@@ -200,7 +200,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, settings }) => {
       studentsDesc: 'Workshops & film courses across Brazil (RJ, SP, MG, BA, AM)',
       expTitle: '+20 Years',
       expLabel: 'Filmmaking & Teaching Career',
-      expDesc: 'Directing, screenwriting & production with Tony de Luc',
+      expDesc: 'Directing, screenwriting & film production',
       workloadTitle: '180h',
       workloadLabel: 'Recognized Workload',
       workloadDesc: 'Publicly authenticated certificate',
@@ -213,9 +213,9 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, settings }) => {
       studentsDesc: 'Talleres y cursos por diversos estados de Brasil',
       expTitle: '+20 Años',
       expLabel: 'Trayectoria en Cine y Docencia',
-      expDesc: 'Dirección, guion y producción con Tony de Luc',
+      expDesc: 'Dirección, guion y producción audiovisual',
       workloadTitle: '180h',
-      workloadLabel: 'Formación Reconocida',
+      workloadLabel: 'Formación Reconhecida',
       workloadDesc: 'Certificado con validación pública',
       liveBadge: 'Inscripciones Abiertas',
     },
@@ -226,7 +226,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, settings }) => {
       studentsDesc: 'Ateliers et cours dans plusieurs régions du Brésil',
       expTitle: '+20 Ans',
       expLabel: 'Carrière Cinématographique & Enseignement',
-      expDesc: 'Réalisation, scénario et production avec Tony de Luc',
+      expDesc: 'Réalisation, scénario et production audiovisuelle',
       workloadTitle: '180h',
       workloadLabel: 'Formation Reconnue',
       workloadDesc: 'Certificat avec validation publique',
@@ -239,7 +239,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, settings }) => {
     studentsDesc: 'Turmas e oficinas pelo RJ, SP, MG, BA e AM',
     expTitle: '+20 Anos',
     expLabel: 'Trajetória no Cinema & Magistério',
-    expDesc: 'Direção, roteiro e produção audiovisual com Tony de Luc',
+    expDesc: 'Direção, roteiro e produção audiovisual',
     workloadTitle: '180h',
     workloadLabel: 'Formação Reconhecida',
     workloadDesc: 'Certificado com validação pública',
@@ -516,7 +516,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, settings }) => {
                 <div className="text-xs font-bold text-white truncate">
                   {statsTexts.studentsLabel}
                 </div>
-                <div className="text-[10px] text-purple-300/80 font-mono truncate">
+                <div className="text-[10px] text-purple-300/80 font-mono leading-tight line-clamp-2">
                   {statsTexts.studentsDesc}
                 </div>
               </div>
@@ -534,7 +534,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, settings }) => {
                 <div className="text-xs font-bold text-white truncate">
                   {statsTexts.expLabel}
                 </div>
-                <div className="text-[10px] text-purple-300/80 font-mono truncate">
+                <div className="text-[10px] text-purple-300/80 font-mono leading-tight line-clamp-2">
                   {statsTexts.expDesc}
                 </div>
               </div>
@@ -552,7 +552,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, settings }) => {
                 <div className="text-xs font-bold text-white truncate">
                   {statsTexts.workloadLabel}
                 </div>
-                <div className="text-[10px] text-purple-300/80 font-mono truncate">
+                <div className="text-[10px] text-purple-300/80 font-mono leading-tight line-clamp-2">
                   {statsTexts.workloadDesc}
                 </div>
               </div>
