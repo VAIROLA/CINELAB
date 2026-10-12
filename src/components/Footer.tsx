@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Logo } from './Logo.js';
 import { CourseSettings } from '../types/index.js';
 import {
@@ -15,9 +15,9 @@ import {
   MapPin,
   MessageCircle,
   Sparkles,
-  Eye,
   GraduationCap,
-  Users,
+  Clapperboard,
+  Facebook,
 } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext.js';
 
@@ -179,101 +179,71 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, settings }) => {
   const defaultCopyright = localizedLabels.copyright;
   const defaultDisclaimer = localizedLabels.disclaimer;
 
-  const [visitCount, setVisitCount] = useState<number>(() => {
-    try {
-      const BASE_VISITS = 24860;
-      const stored = localStorage.getItem('cinelab_visitor_count');
-      let current = stored ? parseInt(stored, 10) : BASE_VISITS;
-      if (isNaN(current) || current < BASE_VISITS) {
-        current = BASE_VISITS;
-      }
-      return current;
-    } catch (e) {
-      return 24860;
-    }
-  });
-
-  useEffect(() => {
-    try {
-      const sessionCounted = sessionStorage.getItem('cinelab_session_counted');
-      if (!sessionCounted) {
-        sessionStorage.setItem('cinelab_session_counted', 'true');
-        setVisitCount((prev) => {
-          const next = prev + 1;
-          localStorage.setItem('cinelab_visitor_count', next.toString());
-          return next;
-        });
-      }
-    } catch (e) {
-      // ignore
-    }
-  }, []);
-
   const statsTexts = {
     pt: {
-      tag: 'CINELAB EM NÚMEROS • IMPACTO & AUTORIDADE',
-      studentsTitle: '+1.500',
+      tag: 'CINELAB • AUTORIDADE, HISTÓRIA & FORMAÇÃO',
+      studentsTitle: '+800',
       studentsLabel: 'Alunos e Cineastas Formados',
-      studentsDesc: 'Comunidade ativa de realizadores',
-      visitsTitle: `+${visitCount.toLocaleString('pt-BR')}`,
-      visitsLabel: 'Acessos Cinematográficos',
-      visitsDesc: 'Audiência global da plataforma',
+      studentsDesc: 'Turmas e oficinas pelo RJ, SP, MG, BA e AM',
+      expTitle: '+20 Anos',
+      expLabel: 'Trajetória no Cinema & Magistério',
+      expDesc: 'Direção, roteiro e produção audiovisual com Tony de Luc',
       workloadTitle: '180h',
       workloadLabel: 'Formação Reconhecida',
-      workloadDesc: 'Certificado com validação pública',
-      liveBadge: 'Plataforma Ativa',
+      workloadDesc: 'Certificado com autenticação pública',
+      liveBadge: 'Matrículas Abertas',
     },
     en: {
-      tag: 'CINELAB IN NUMBERS • IMPACT & AUTHORITY',
-      studentsTitle: '+1,500',
+      tag: 'CINELAB • AUTHORITY, HISTORY & EDUCATION',
+      studentsTitle: '+800',
       studentsLabel: 'Trained Filmmakers & Students',
-      studentsDesc: 'Active community of creators',
-      visitsTitle: `+${visitCount.toLocaleString('en-US')}`,
-      visitsLabel: 'Cinematic Platform Visits',
-      visitsDesc: 'Global platform audience',
+      studentsDesc: 'Workshops & film courses across Brazil (RJ, SP, MG, BA, AM)',
+      expTitle: '+20 Years',
+      expLabel: 'Filmmaking & Teaching Career',
+      expDesc: 'Directing, screenwriting & production with Tony de Luc',
       workloadTitle: '180h',
-      workloadLabel: 'Recognized Training',
+      workloadLabel: 'Recognized Workload',
       workloadDesc: 'Publicly authenticated certificate',
-      liveBadge: 'Platform Online',
+      liveBadge: 'Enrollment Open',
     },
     es: {
-      tag: 'CINELAB EN CIFRAS • IMPACTO Y AUTORIDAD',
-      studentsTitle: '+1.500',
+      tag: 'CINELAB • AUTORIDAD, HISTORIA Y FORMACIÓN',
+      studentsTitle: '+800',
       studentsLabel: 'Cineastas y Alumnos Graduados',
-      studentsDesc: 'Comunidad activa de realizadores',
-      visitsTitle: `+${visitCount.toLocaleString('es-ES')}`,
-      visitsLabel: 'Visitas Cinematográficas',
-      visitsDesc: 'Audiencia global de la plataforma',
+      studentsDesc: 'Talleres y cursos por diversos estados de Brasil',
+      expTitle: '+20 Años',
+      expLabel: 'Trayectoria en Cine y Docencia',
+      expDesc: 'Dirección, guion y producción con Tony de Luc',
       workloadTitle: '180h',
       workloadLabel: 'Formación Reconocida',
       workloadDesc: 'Certificado con validación pública',
-      liveBadge: 'Plataforma Activa',
+      liveBadge: 'Inscripciones Abiertas',
     },
     fr: {
-      tag: 'CINELAB EN CHIFFRES • IMPACT & AUTORITÉ',
-      studentsTitle: '+1 500',
+      tag: 'CINELAB • AUTORITÉ, HISTOIRE & FORMATION',
+      studentsTitle: '+800',
       studentsLabel: 'Cinéastes et Étudiants Formés',
-      studentsDesc: 'Communauté active de réalisateurs',
-      visitsTitle: `+${visitCount.toLocaleString('fr-FR')}`,
-      visitsLabel: 'Visites Cinématographiques',
-      visitsDesc: 'Audience globale de la plateforme',
+      studentsDesc: 'Ateliers et cours dans plusieurs régions du Brésil',
+      expTitle: '+20 Ans',
+      expLabel: 'Carrière Cinématographique & Enseignement',
+      expDesc: 'Réalisation, scénario et production avec Tony de Luc',
       workloadTitle: '180h',
       workloadLabel: 'Formation Reconnue',
       workloadDesc: 'Certificat avec validation publique',
-      liveBadge: 'Plateforme Active',
+      liveBadge: 'Inscriptions Ouvertes',
     },
   }[language] || {
-    tag: 'CINELAB EM NÚMEROS • IMPACTO & AUTORIDADE',
-    studentsTitle: '+1.500',
+    tag: 'CINELAB • AUTORIDADE, HISTÓRIA & FORMAÇÃO',
+    studentsTitle: '+800',
     studentsLabel: 'Alunos e Cineastas Formados',
-    studentsDesc: 'Comunidade ativa de realizadores',
-    visitsTitle: `+${visitCount.toLocaleString('pt-BR')}`,
-    visitsLabel: 'Acessos Cinematográficos',
-    visitsDesc: 'Audiência global da plataforma',
+    studentsDesc: 'Turmas e oficinas pelo RJ, SP, MG, BA e AM',
+    expTitle: '+20 Anos',
+    expLabel: 'Trajetória no Cinema & Magistério',
+    expDesc: 'Direção, roteiro e produção audiovisual com Tony de Luc',
     workloadTitle: '180h',
     workloadLabel: 'Formação Reconhecida',
     workloadDesc: 'Certificado com validação pública',
-    liveBadge: 'Plataforma Ativa',
+    liveBadge: 'Matrículas Abertas',
   };
 
   // Format clean whatsapp number for wa.me link
@@ -311,14 +281,25 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, settings }) => {
               </span>
             </div>
 
-            {/* Social media channels if provided */}
-            <div className="flex items-center gap-3 pt-2">
+            {/* Social media channels */}
+            <div className="flex flex-wrap items-center gap-2 pt-2">
+              <a
+                href={settings?.facebookUrl || 'https://www.facebook.com'}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-300 hover:text-blue-400 hover:border-blue-500/50 transition-colors flex items-center gap-1.5 shadow-sm"
+                title="Facebook Oficial CINELAB"
+              >
+                <Facebook className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+                <span className="text-[11px] font-mono font-medium">Facebook</span>
+              </a>
+
               {settings?.instagramUrl && (
                 <a
                   href={settings.instagramUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-400 hover:text-amber-400 transition-colors"
+                  className="p-2 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-400 hover:text-pink-400 hover:border-pink-500/50 transition-colors flex items-center gap-1.5"
                   title="Instagram Oficial"
                 >
                   <span className="text-[11px] font-mono font-medium">Instagram</span>
@@ -329,7 +310,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, settings }) => {
                   href={settings.youtubeUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-400 hover:text-red-400 transition-colors"
+                  className="p-2 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-400 hover:text-red-400 hover:border-red-500/50 transition-colors flex items-center gap-1.5"
                   title="Canal YouTube"
                 >
                   <span className="text-[11px] font-mono font-medium">YouTube</span>
@@ -340,7 +321,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, settings }) => {
                   href={settings.vimeoUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-400 hover:text-blue-400 transition-colors"
+                  className="p-2 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-400 hover:text-blue-400 hover:border-blue-500/50 transition-colors flex items-center gap-1.5"
                   title="Vimeo"
                 >
                   <span className="text-[11px] font-mono font-medium">Vimeo</span>
@@ -541,20 +522,20 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, settings }) => {
               </div>
             </div>
 
-            {/* 2. Contador de Acessos Cinematográficos */}
+            {/* 2. Trajetória no Cinema & Magistério (+20 Anos) */}
             <div className="p-3.5 rounded-xl bg-purple-950/40 border border-purple-500/30 flex items-center gap-3.5 shadow-inner">
               <div className="w-12 h-12 rounded-xl bg-purple-500/20 border border-purple-400/50 flex items-center justify-center shrink-0 shadow-md">
-                <Eye className="w-6 h-6 text-purple-300 animate-pulse" />
+                <Clapperboard className="w-6 h-6 text-purple-300" />
               </div>
               <div className="min-w-0">
-                <div className="text-xl sm:text-2xl font-black font-mono text-fuchsia-300 drop-shadow-[0_0_10px_rgba(217,70,239,0.4)]">
-                  {statsTexts.visitsTitle}
+                <div className="text-xl sm:text-2xl font-black font-display text-fuchsia-300 drop-shadow-[0_0_10px_rgba(217,70,239,0.4)]">
+                  {statsTexts.expTitle}
                 </div>
                 <div className="text-xs font-bold text-white truncate">
-                  {statsTexts.visitsLabel}
+                  {statsTexts.expLabel}
                 </div>
                 <div className="text-[10px] text-purple-300/80 font-mono truncate">
-                  {statsTexts.visitsDesc}
+                  {statsTexts.expDesc}
                 </div>
               </div>
             </div>

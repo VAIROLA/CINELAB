@@ -405,6 +405,7 @@ export interface CourseSettings {
   companyCnpj?: string;
   companyAddress?: string;
   instagramUrl?: string;
+  facebookUrl?: string;
   youtubeUrl?: string;
   vimeoUrl?: string;
   whatsappNumber?: string;
