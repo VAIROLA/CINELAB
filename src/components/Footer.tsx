@@ -277,7 +277,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, settings }) => {
               </span>
               <span>•</span>
               <span className="text-[11px] font-mono text-neutral-400">
-                {language === 'pt' ? (settings?.footerWorkloadBadge || localizedLabels.workloadBadge) : localizedLabels.workloadBadge}
+                {language === 'pt' ? (settings?.footerWorkloadBadge ? settings.footerWorkloadBadge.replace(/Hor[^\w\s]*ria/i, 'Horária') : localizedLabels.workloadBadge) : localizedLabels.workloadBadge}
               </span>
             </div>
 
@@ -488,7 +488,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, settings }) => {
           </div>
         </div>
 
-        {/* Faixa de Impacto: CINELAB em Números (Comunidade de Alunos & Acessos Cinematográficos) */}
+        {/* Faixa de Impacto: CINELAB • Autoridade, História & Formação */}
         <div className="my-8 p-4 sm:p-6 rounded-2xl bg-gradient-to-r from-[#170530]/90 via-[#260a4e]/90 to-[#170530]/90 border border-purple-500/40 shadow-[0_0_30px_rgba(168,85,247,0.2)] backdrop-blur-md">
           <div className="flex flex-col md:flex-row items-center justify-between gap-3 pb-4 border-b border-purple-900/60 text-center md:text-left">
             <div className="flex items-center gap-2">
