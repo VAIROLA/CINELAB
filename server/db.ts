@@ -369,8 +369,27 @@ function sanitizeDatabaseState(targetDb: any): void {
     }
   }
 
-  const b4 = (targetDb.bonusApostilas || []).find((b: any) => b.number === 4 || b.id === 'bonus-04');
-  if (b4) {
+  let b4 = (targetDb.bonusApostilas || []).find((b: any) => b.number === 4 || b.id === 'bonus-04');
+  if (!b4) {
+    b4 = {
+      id: 'bonus-04',
+      number: 4,
+      title: 'Apostila História do Cinema Dos Primórdios a Era Digital',
+      subtitle: 'Da Criação das Imagens em Movimento ao Cinema Digital Contemporâneo',
+      description: 'Panorama histórico completo sobre a evolução da sétima arte, movimentos estéticos fundamentais, vanguardas internacionais e a revolução tecnológica digital.',
+      summary: 'Panorama histórico completo sobre a evolução da sétima arte, movimentos estéticos fundamentais, vanguardas internacionais e a revolução tecnológica digital.',
+      pagesCount: 36,
+      totalPages: 36,
+      fileSizeMb: 2.17,
+      pdfUrl: '/materiais/cinelab-bonus-04-historia-do-cinema-complemento.pdf',
+      coverUrl: '/images/covers/apostila-04.jpg',
+      unlockedByDefault: false,
+      requiredModule: 8,
+      notes: 'Apostila Bônus 04 - História do Cinema',
+    };
+    if (!targetDb.bonusApostilas) targetDb.bonusApostilas = [];
+    targetDb.bonusApostilas.push(b4);
+  } else {
     b4.pdfUrl = '/materiais/cinelab-bonus-04-historia-do-cinema-complemento.pdf';
     if (!b4.coverUrl || b4.coverUrl.includes('unsplash.com') || b4.coverUrl.startsWith('/uploads/')) {
       b4.coverUrl = '/images/covers/apostila-04.jpg';

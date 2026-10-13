@@ -2338,348 +2338,463 @@ export const AdminView: React.FC<AdminViewProps> = ({
                   return (
                     <div
                       key={mod.id}
-                      className="p-5 rounded-2xl bg-neutral-900 border border-neutral-800 hover:border-neutral-700 transition-all flex flex-col lg:flex-row lg:items-center justify-between gap-4 shadow-md"
+                      className="p-5 sm:p-6 rounded-2xl bg-neutral-900 border border-neutral-800 hover:border-neutral-700/80 transition-all shadow-lg space-y-5"
                     >
-                      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 max-w-2xl">
-                        {/* Miniatura da Capa da Apostila com Upload ao Clicar */}
-                        <div className="relative group w-16 sm:w-20 aspect-[1/1.4] rounded-lg overflow-hidden border border-neutral-700 bg-neutral-950 shrink-0 shadow-md">
-                          {(() => {
-                            const fallbackUrl = `/images/covers/apostila-${mod.id < 10 ? '0' + mod.id : mod.id}.jpg`;
-                            const effectiveCover = (matchingApostila?.coverUrl && !matchingApostila.coverUrl.includes('unsplash.com')) ? matchingApostila.coverUrl : fallbackUrl;
-                            return (
-                              <img
-                                src={effectiveCover}
-                                alt={`Capa Apostila ${mod.id}`}
-                                className="w-full h-full object-cover"
-                                onError={(e) => {
-                                  if (e.currentTarget.src !== fallbackUrl && !e.currentTarget.src.endsWith(fallbackUrl)) {
-                                    e.currentTarget.src = fallbackUrl;
-                                  }
-                                }}
-                              />
-                            );
-                          })()}
-                          <label className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center cursor-pointer p-1 text-center">
-                            <ImageIcon className="w-3.5 h-3.5 text-purple-300 mb-0.5" />
-                            <span className="text-[8px] font-sans font-medium text-purple-200 leading-tight">Subir Capa</span>
-                            <input
-                              type="file"
-                              accept="image/jpeg,image/png,image/webp,image/avif"
-                              disabled={uploadingApostilaCover !== null}
-                              onChange={(e) => {
-                                const file = e.target.files?.[0];
-                                if (file) handleQuickApostilaCoverUpload(mod.id, file);
-                              }}
-                              className="hidden"
-                            />
-                          </label>
-                        </div>
-
-                        <div className="space-y-1.5 flex-1 min-w-0">
+                      {/* Top Header: Etapa info and Edit button */}
+                      <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
+                        <div className="space-y-2 max-w-3xl">
                           <div className="flex flex-wrap items-center gap-2">
-                            <span className="px-2 py-0.5 rounded bg-amber-500/20 border border-amber-500/40 text-amber-300 font-mono text-[10px] font-bold">
+                            <span className="px-2.5 py-1 rounded-md bg-amber-500/20 border border-amber-500/40 text-amber-300 font-mono text-xs font-bold tracking-wider">
                               ETAPA 0{mod.id}
                             </span>
-                            <span className="text-[11px] font-mono text-neutral-400">
+                            <span className="text-xs font-mono text-neutral-400">
                               {mod.subtitle}
                             </span>
                             {matchingVideo?.videoUrl?.startsWith('/uploads/') && (
                               <span className="px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono text-[10px] flex items-center gap-1">
-                                <CheckCircle2 className="w-3 h-3" /> Vídeo no Servidor
+                                <CheckCircle2 className="w-3 h-3" /> Vídeo Ativo
                               </span>
                             )}
                             {matchingApostila?.pdfUrl && (
                               <span className="px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-400 font-mono text-[10px] flex items-center gap-1">
-                                <CheckCircle2 className="w-3 h-3" /> Apostila PDF Ativa
+                                <CheckCircle2 className="w-3 h-3" /> PDF Ativo ({matchingApostila.pagesCount || 30} p)
                               </span>
                             )}
                             {matchingApostila?.extraPdfUrl && (
                               <span className="px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-mono text-[10px] flex items-center gap-1">
-                                <CheckCircle2 className="w-3 h-3" /> Apostila Extra Ativa ({matchingApostila.extraPagesCount || '?'} p)
-                              </span>
-                            )}
-                            {matchingApostila?.coverUrl && (
-                              <span className="px-2 py-0.5 rounded bg-purple-500/10 border border-purple-500/30 text-purple-300 font-mono text-[10px] flex items-center gap-1">
-                                <ImageIcon className="w-3 h-3 text-purple-400" /> Capa Apostila Ativa
-                              </span>
-                            )}
-                            {matchingVideo?.thumbnailUrl && (
-                              <span className="px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/30 text-amber-300 font-mono text-[10px] flex items-center gap-1">
-                                <ImageIcon className="w-3 h-3 text-amber-400" /> Capa Aula Ativa
+                                <CheckCircle2 className="w-3 h-3" /> Extra Ativo ({matchingApostila.extraPagesCount || '?'} p)
                               </span>
                             )}
                           </div>
-                          <h4 className="text-sm font-bold text-white font-sans">{mod.title}</h4>
+                          <h4 className="text-base font-bold text-white font-sans">{mod.title}</h4>
                           <p className="text-xs text-neutral-400 font-sans line-clamp-2 leading-relaxed">
                             {mod.summary}
                           </p>
-                          <div className="flex flex-wrap items-center gap-3 pt-1 text-[11px] font-mono text-neutral-400">
-                            <span className="flex items-center gap-1 text-neutral-300">
-                              <Film className="w-3 h-3 text-amber-400" />
-                              Aula: {matchingVideo?.duration || `${matchingVideo?.durationMinutes || 45} min`}
-                            </span>
-                            <span className="flex items-center gap-1 text-neutral-300">
-                              <BookOpen className="w-3 h-3 text-blue-400" />
-                              PDF: {matchingApostila?.pagesCount || 30} páginas
-                              {matchingApostila?.fileSizeMb ? ` (${matchingApostila.fileSizeMb} MB)` : ''}
-                            </span>
-                            {matchingApostila?.pdfUrl && (
-                              <a
-                                href={matchingApostila.pdfUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-amber-400 hover:text-amber-300 underline text-[10px] flex items-center gap-1"
-                              >
-                                <span>Ver PDF Atual</span>
-                                <ExternalLink className="w-2.5 h-2.5" />
-                              </a>
-                            )}
-                            {matchingApostila?.extraPdfUrl && (
-                              <span className="flex items-center gap-1 text-cyan-300">
-                                <BookOpen className="w-3 h-3 text-cyan-400" />
-                                Extra: {matchingApostila.extraTitle || 'Material Complementar'} ({matchingApostila.extraPagesCount || 0} págs)
-                                <a
-                                  href={matchingApostila.extraPdfUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-cyan-400 hover:text-cyan-300 underline ml-1 text-[10px] flex items-center gap-0.5"
-                                >
-                                  <span>Ver PDF Extra</span>
-                                  <ExternalLink className="w-2.5 h-2.5" />
-                                </a>
-                              </span>
-                            )}
-                          </div>
+                        </div>
+
+                        {/* Botão de Editar Módulo */}
+                        <div className="shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setModuleToEdit(mod);
+                              setModuleModalOpen(true);
+                            }}
+                            className="w-full lg:w-auto px-4 py-2 bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 hover:border-amber-500/50 text-neutral-200 hover:text-white rounded-xl text-xs font-sans transition-all flex items-center justify-center gap-2 shadow-sm"
+                          >
+                            <Edit2 className="w-3.5 h-3.5 text-amber-400" />
+                            <span>Editar Textos da Etapa</span>
+                          </button>
                         </div>
                       </div>
 
-                      <div className="flex flex-wrap items-center gap-2 shrink-0">
-                        {/* Botão Rápido de Subir Capa da Apostila */}
-                        <label className="px-3 py-2 bg-neutral-800 hover:bg-neutral-700 text-purple-300 hover:text-white border border-purple-500/30 hover:border-purple-500/60 rounded-xl text-xs transition-colors cursor-pointer flex items-center gap-1.5 font-sans shadow-sm">
-                          {uploadingApostilaCover === mod.id ? (
-                            <>
-                              <Loader2 className="w-3.5 h-3.5 animate-spin text-purple-400" />
-                              <span>Subindo Capa {quickUploadApostilaCoverProgress}%...</span>
-                            </>
-                          ) : (
-                            <>
-                              <ImageIcon className="w-3.5 h-3.5 text-purple-400" />
-                              <span>Subir Capa Apostila</span>
-                            </>
-                          )}
-                          <input
-                            type="file"
-                            accept="image/jpeg,image/png,image/webp,image/avif"
-                            disabled={uploadingApostilaCover !== null}
-                            onChange={(e) => {
-                              const file = e.target.files?.[0];
-                              if (file) handleQuickApostilaCoverUpload(mod.id, file);
-                            }}
-                            className="hidden"
-                          />
-                        </label>
+                      {/* 3 Structured Columns: Apostila Principal, Apostila Extra, Videoaula & Vídeos Extras */}
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2 border-t border-neutral-800">
+                        {/* COLUNA 1: APOSTILA PRINCIPAL */}
+                        <div className="p-4 rounded-xl bg-neutral-950/80 border border-neutral-800/80 flex flex-col justify-between gap-3">
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between gap-2 border-b border-neutral-800/60 pb-2">
+                              <span className="text-xs font-bold text-blue-300 flex items-center gap-1.5 font-sans">
+                                <BookOpen className="w-3.5 h-3.5 text-blue-400" /> Apostila Principal
+                              </span>
+                              <span className="text-[10px] font-mono text-neutral-400">
+                                {matchingApostila?.pagesCount || 30} págs
+                              </span>
+                            </div>
 
-                        {/* Botão Rápido de Subir Capa Extra da Apostila */}
-                        <label className="px-3 py-2 bg-neutral-800 hover:bg-neutral-700 text-cyan-300 hover:text-white border border-cyan-500/30 hover:border-cyan-500/60 rounded-xl text-xs transition-colors cursor-pointer flex items-center gap-1.5 font-sans shadow-sm">
-                          {uploadingApostilaCover === 100 + mod.id ? (
-                            <>
-                              <Loader2 className="w-3.5 h-3.5 animate-spin text-cyan-400" />
-                              <span>Subindo Capa Extra {quickUploadApostilaCoverProgress}%...</span>
-                            </>
-                          ) : (
-                            <>
-                              <ImageIcon className="w-3.5 h-3.5 text-cyan-400" />
-                              <span>Subir Capa Extra</span>
-                            </>
-                          )}
-                          <input
-                            type="file"
-                            accept="image/jpeg,image/png,image/webp,image/avif"
-                            disabled={uploadingApostilaCover !== null}
-                            onChange={(e) => {
-                              const file = e.target.files?.[0];
-                              if (file) handleQuickApostilaCoverUpload(100 + mod.id, file);
-                            }}
-                            className="hidden"
-                          />
-                        </label>
+                            <div className="flex items-center gap-3">
+                              {/* Capa com hover de upload */}
+                              <div className="relative group w-12 aspect-[1/1.4] rounded overflow-hidden border border-neutral-700 bg-neutral-900 shrink-0 shadow">
+                                {(() => {
+                                  const fallbackUrl = `/images/covers/apostila-${mod.id < 10 ? '0' + mod.id : mod.id}.jpg`;
+                                  const effectiveCover = (matchingApostila?.coverUrl && !matchingApostila.coverUrl.includes('unsplash.com')) ? matchingApostila.coverUrl : fallbackUrl;
+                                  return (
+                                    <img
+                                      src={effectiveCover}
+                                      alt={`Capa Apostila ${mod.id}`}
+                                      className="w-full h-full object-cover"
+                                      onError={(e) => {
+                                        if (e.currentTarget.src !== fallbackUrl && !e.currentTarget.src.endsWith(fallbackUrl)) {
+                                          e.currentTarget.src = fallbackUrl;
+                                        }
+                                      }}
+                                    />
+                                  );
+                                })()}
+                                <label className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center cursor-pointer p-0.5 text-center">
+                                  <ImageIcon className="w-3 h-3 text-purple-300" />
+                                  <input
+                                    type="file"
+                                    accept="image/jpeg,image/png,image/webp,image/avif"
+                                    disabled={uploadingApostilaCover !== null}
+                                    onChange={(e) => {
+                                      const file = e.target.files?.[0];
+                                      if (file) handleQuickApostilaCoverUpload(mod.id, file);
+                                    }}
+                                    className="hidden"
+                                  />
+                                </label>
+                              </div>
 
-                        {/* Botão Rápido de Subir Vídeo Direto */}
-                        <label className="px-3 py-2 bg-neutral-800 hover:bg-neutral-700 text-neutral-200 hover:text-white border border-neutral-700 rounded-xl text-xs transition-colors cursor-pointer flex items-center gap-1.5 font-sans">
-                          {uploadingModuleVideo === mod.id ? (
-                            <>
-                              <Loader2 className="w-3.5 h-3.5 animate-spin text-amber-400" />
-                              <span>Subindo {quickUploadProgress}%...</span>
-                            </>
-                          ) : (
-                            <>
-                              <Upload className="w-3.5 h-3.5 text-amber-400" />
-                              <span>Subir Vídeo</span>
-                            </>
-                          )}
-                          <input
-                            type="file"
-                            accept="video/mp4,video/webm,video/quicktime,video/x-matroska,video/*"
-                            disabled={uploadingModuleVideo !== null}
-                            onChange={(e) => {
-                              const file = e.target.files?.[0];
-                              if (file) handleQuickVideoUpload(mod.id, file);
-                            }}
-                            className="hidden"
-                          />
-                        </label>
+                              <div className="min-w-0 flex-1">
+                                <div className="text-[11px] font-medium text-white truncate" title={matchingApostila?.title || mod.title}>
+                                  {matchingApostila?.title || mod.title}
+                                </div>
+                                {matchingApostila?.pdfUrl ? (
+                                  <a
+                                    href={matchingApostila.pdfUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-[10px] text-amber-400 hover:text-amber-300 underline flex items-center gap-1 mt-0.5"
+                                  >
+                                    <span>Ver PDF</span>
+                                    <ExternalLink className="w-2.5 h-2.5" />
+                                  </a>
+                                ) : (
+                                  <span className="text-[10px] text-neutral-500">Sem PDF cadastrado</span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
 
-                        {/* Botão Rápido de Subir Apostila PDF Direto */}
-                        <label className="px-3 py-2 bg-neutral-800 hover:bg-neutral-700 text-neutral-200 hover:text-white border border-neutral-700 rounded-xl text-xs transition-colors cursor-pointer flex items-center gap-1.5 font-sans">
-                          {uploadingModuleApostila === mod.id ? (
-                            <>
-                              <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-400" />
-                              <span>Subindo {quickUploadApostilaProgress}%...</span>
-                            </>
-                          ) : (
-                            <>
-                              <FileText className="w-3.5 h-3.5 text-blue-400" />
-                              <span>Subir Apostila (PDF)</span>
-                            </>
-                          )}
-                          <input
-                            type="file"
-                            accept="application/pdf,.pdf"
-                            disabled={uploadingModuleApostila !== null}
-                            onChange={(e) => {
-                              const file = e.target.files?.[0];
-                              if (file) handleQuickApostilaUpload(mod.id, file);
-                            }}
-                            className="hidden"
-                          />
-                        </label>
+                          {/* Ações da Apostila Principal */}
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 pt-2 border-t border-neutral-800/40">
+                            {/* Subir PDF */}
+                            <label className="px-2.5 py-1.5 bg-neutral-900 hover:bg-neutral-800 text-blue-300 hover:text-white border border-blue-500/30 rounded-lg text-[11px] transition-colors cursor-pointer flex items-center justify-center gap-1 font-sans">
+                              {uploadingModuleApostila === mod.id ? (
+                                <>
+                                  <Loader2 className="w-3 h-3 animate-spin text-blue-400" />
+                                  <span>{quickUploadApostilaProgress}%</span>
+                                </>
+                              ) : (
+                                <>
+                                  <FileText className="w-3 h-3 text-blue-400" />
+                                  <span>Subir PDF</span>
+                                </>
+                              )}
+                              <input
+                                type="file"
+                                accept="application/pdf,.pdf"
+                                disabled={uploadingModuleApostila !== null}
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) handleQuickApostilaUpload(mod.id, file);
+                                }}
+                                className="hidden"
+                              />
+                            </label>
 
-                        {/* Botão Direto para Renomear Apostila */}
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const isDuplicatedMod1Title = mod.id !== 1 && matchingApostila?.title === 'Introdução ao Cinema e à Linguagem Audiovisual';
-                            const effectiveTitle = (isDuplicatedMod1Title ? mod.title : (matchingApostila?.title || mod.title)) || mod.title;
-                            handleOpenRenameApostila({
-                              id: matchingApostila?.id || `apostila-${mod.id}`,
-                              moduleId: mod.id,
-                              title: effectiveTitle,
-                              isBonus: false,
-                            });
-                          }}
-                          className="px-3 py-2 bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 hover:text-white border border-blue-500/30 rounded-xl text-xs transition-colors cursor-pointer flex items-center gap-1.5 font-sans"
-                          title="Mudar o nome/título oficial desta apostila"
-                        >
-                          <Edit2 className="w-3.5 h-3.5 text-blue-400" />
-                          <span>Renomear Apostila</span>
-                        </button>
+                            {/* Renomear */}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const isDuplicatedMod1Title = mod.id !== 1 && matchingApostila?.title === 'Introdução ao Cinema e à Linguagem Audiovisual';
+                                const effectiveTitle = (isDuplicatedMod1Title ? mod.title : (matchingApostila?.title || mod.title)) || mod.title;
+                                handleOpenRenameApostila({
+                                  id: matchingApostila?.id || `apostila-${mod.id}`,
+                                  moduleId: mod.id,
+                                  title: effectiveTitle,
+                                  isBonus: false,
+                                });
+                              }}
+                              className="px-2.5 py-1.5 bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700 rounded-lg text-[11px] transition-colors cursor-pointer flex items-center justify-center gap-1 font-sans"
+                              title="Renomear esta apostila"
+                            >
+                              <Edit2 className="w-3 h-3 text-neutral-400" />
+                              <span>Nome</span>
+                            </button>
 
-                        {/* Botão Rápido de Subir Apostila Extra (PDF) */}
-                        <label className={`px-3 py-2 rounded-xl text-xs transition-colors cursor-pointer flex items-center gap-1.5 font-sans border ${
-                          matchingApostila?.extraPdfUrl
-                            ? 'bg-cyan-950/40 hover:bg-cyan-900/50 text-cyan-300 border-cyan-500/40 shadow-sm'
-                            : 'bg-neutral-800 hover:bg-neutral-700 text-neutral-300 border-dashed border-neutral-700 hover:border-cyan-500/50'
-                        }`}>
-                          {uploadingModuleApostila === (100 + mod.id) ? (
-                            <>
-                              <Loader2 className="w-3.5 h-3.5 animate-spin text-cyan-400" />
-                              <span>Subindo Extra {quickUploadApostilaProgress}%...</span>
-                            </>
-                          ) : (
-                            <>
-                              <FileText className="w-3.5 h-3.5 text-cyan-400" />
-                              <span>{matchingApostila?.extraPdfUrl ? 'Substituir Extra' : '+ Subir Extra'}</span>
-                            </>
-                          )}
-                          <input
-                            type="file"
-                            accept="application/pdf,.pdf"
-                            disabled={uploadingModuleApostila !== null}
-                            onChange={(e) => {
-                              const file = e.target.files?.[0];
-                              if (file) handleQuickApostilaUpload(100 + mod.id, file);
-                            }}
-                            className="hidden"
-                          />
-                        </label>
+                            {/* Capa */}
+                            <label className="px-2.5 py-1.5 bg-neutral-900 hover:bg-neutral-800 text-purple-300 hover:text-white border border-purple-500/30 rounded-lg text-[11px] transition-colors cursor-pointer flex items-center justify-center gap-1 font-sans">
+                              {uploadingApostilaCover === mod.id ? (
+                                <>
+                                  <Loader2 className="w-3 h-3 animate-spin text-purple-400" />
+                                  <span>{quickUploadApostilaCoverProgress}%</span>
+                                </>
+                              ) : (
+                                <>
+                                  <ImageIcon className="w-3 h-3 text-purple-400" />
+                                  <span>Capa</span>
+                                </>
+                              )}
+                              <input
+                                type="file"
+                                accept="image/jpeg,image/png,image/webp,image/avif"
+                                disabled={uploadingApostilaCover !== null}
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) handleQuickApostilaCoverUpload(mod.id, file);
+                                }}
+                                className="hidden"
+                              />
+                            </label>
+                          </div>
+                        </div>
 
-                        {/* Botão para Renomear Apostila Extra */}
-                        <button
-                          type="button"
-                          onClick={() => {
-                            handleOpenRenameApostila({
-                              id: matchingApostila?.id || `apostila-${mod.id}`,
-                              moduleId: 100 + mod.id,
-                              title: matchingApostila?.extraTitle || `Apostila Extra 0${mod.id} (Material Complementar)`,
-                              isBonus: false,
-                              isExtra: true,
-                            });
-                          }}
-                          className="px-3 py-2 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 hover:text-white border border-cyan-500/30 rounded-xl text-xs transition-colors cursor-pointer flex items-center gap-1.5 font-sans"
-                          title="Mudar o nome/título oficial da Apostila Extra deste módulo"
-                        >
-                          <Edit2 className="w-3.5 h-3.5 text-cyan-400" />
-                          <span>Nome Extra</span>
-                        </button>
+                        {/* COLUNA 2: APOSTILA EXTRA (MATERIAL COMPLEMENTAR) */}
+                        <div className="p-4 rounded-xl bg-neutral-950/80 border border-neutral-800/80 flex flex-col justify-between gap-3">
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between gap-2 border-b border-neutral-800/60 pb-2">
+                              <span className="text-xs font-bold text-cyan-300 flex items-center gap-1.5 font-sans">
+                                <BookOpen className="w-3.5 h-3.5 text-cyan-400" /> Apostila Extra
+                              </span>
+                              {matchingApostila?.extraPdfUrl ? (
+                                <span className="text-[10px] font-mono text-cyan-400">
+                                  {matchingApostila.extraPagesCount || 0} págs
+                                </span>
+                              ) : (
+                                <span className="text-[10px] font-mono text-neutral-500">Opcional</span>
+                              )}
+                            </div>
 
-                        {/* Botão para Gerenciar os 2 Vídeos Extras de Estudo da Apostila */}
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const isDuplicatedMod1Title = mod.id !== 1 && matchingApostila?.title === 'Introdução ao Cinema e à Linguagem Audiovisual';
-                            const effectiveTitle = (isDuplicatedMod1Title ? mod.title : (matchingApostila?.title || mod.title)) || mod.title;
-                            const curApos = matchingApostila ? { ...matchingApostila, title: effectiveTitle } : {
-                              id: `apostila-${mod.id}`,
-                              moduleId: mod.id,
-                              number: mod.id,
-                              title: effectiveTitle,
-                            } as any;
-                            setExtraVideosModalApostila(curApos);
-                          }}
-                          className="px-3 py-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 hover:text-white border border-amber-500/30 rounded-xl text-xs transition-colors cursor-pointer flex items-center gap-1.5 font-sans shadow-sm"
-                          title="Gerenciar e subir os 2 vídeos extras para estudo desta apostila (MP4 ou YouTube)"
-                        >
-                          <Film className="w-3.5 h-3.5 text-amber-400" />
-                          <span>2 Vídeos Extras (MP4 / YouTube)</span>
-                        </button>
+                            <div className="flex items-center gap-3">
+                              {/* Capa Extra */}
+                              <div className="relative group w-12 aspect-[1/1.4] rounded overflow-hidden border border-neutral-700 bg-neutral-900 shrink-0 shadow">
+                                {(() => {
+                                  const fallbackExtra = matchingApostila?.coverUrl || `/images/covers/apostila-${mod.id < 10 ? '0' + mod.id : mod.id}.jpg`;
+                                  const effectiveExtraCover = (matchingApostila?.extraCoverUrl && !matchingApostila.extraCoverUrl.includes('unsplash.com')) ? matchingApostila.extraCoverUrl : fallbackExtra;
+                                  return (
+                                    <img
+                                      src={effectiveExtraCover}
+                                      alt={`Capa Extra ${mod.id}`}
+                                      className="w-full h-full object-cover"
+                                    />
+                                  );
+                                })()}
+                                <label className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center cursor-pointer p-0.5 text-center">
+                                  <ImageIcon className="w-3 h-3 text-cyan-300" />
+                                  <input
+                                    type="file"
+                                    accept="image/jpeg,image/png,image/webp,image/avif"
+                                    disabled={uploadingApostilaCover !== null}
+                                    onChange={(e) => {
+                                      const file = e.target.files?.[0];
+                                      if (file) handleQuickApostilaCoverUpload(100 + mod.id, file);
+                                    }}
+                                    className="hidden"
+                                  />
+                                </label>
+                              </div>
 
-                        {/* Botão Rápido de Subir Capa da Aula Direto */}
-                        <label className="px-3 py-2 bg-neutral-800 hover:bg-neutral-700 text-neutral-200 hover:text-white border border-neutral-700 rounded-xl text-xs transition-colors cursor-pointer flex items-center gap-1.5 font-sans">
-                          {uploadingModuleThumbnail === mod.id ? (
-                            <>
-                              <Loader2 className="w-3.5 h-3.5 animate-spin text-amber-400" />
-                              <span>Subindo {quickUploadThumbnailProgress}%...</span>
-                            </>
-                          ) : (
-                            <>
-                              <ImageIcon className="w-3.5 h-3.5 text-amber-400" />
-                              <span>Subir Capa</span>
-                            </>
-                          )}
-                          <input
-                            type="file"
-                            accept="image/jpeg,image/png,image/webp,image/avif,image/gif"
-                            disabled={uploadingModuleThumbnail !== null}
-                            onChange={(e) => {
-                              const file = e.target.files?.[0];
-                              if (file) handleQuickThumbnailUpload(mod.id, file);
-                            }}
-                            className="hidden"
-                          />
-                        </label>
+                              <div className="min-w-0 flex-1">
+                                <div className="text-[11px] font-medium text-white truncate" title={matchingApostila?.extraTitle || `Apostila Extra 0${mod.id}`}>
+                                  {matchingApostila?.extraTitle || (matchingApostila?.extraPdfUrl ? `Apostila Extra 0${mod.id}` : 'Sem material extra')}
+                                </div>
+                                {matchingApostila?.extraPdfUrl ? (
+                                  <a
+                                    href={matchingApostila.extraPdfUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-[10px] text-cyan-400 hover:text-cyan-300 underline flex items-center gap-1 mt-0.5"
+                                  >
+                                    <span>Ver PDF Extra</span>
+                                    <ExternalLink className="w-2.5 h-2.5" />
+                                  </a>
+                                ) : (
+                                  <span className="text-[10px] text-neutral-500">Pronto para envio</span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
 
-                        {/* Botão de Editar Módulo */}
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setModuleToEdit(mod);
-                            setModuleModalOpen(true);
-                          }}
-                          className="px-4 py-2 bg-amber-500/20 hover:bg-amber-500 border border-amber-500/40 hover:border-amber-400 text-amber-300 hover:text-neutral-950 font-bold rounded-xl text-xs transition-all cursor-pointer flex items-center gap-1.5 font-sans"
-                        >
-                          <Edit2 className="w-3.5 h-3.5" />
-                          <span>Editar Módulo, Vídeo & PDF</span>
-                        </button>
+                          {/* Ações da Apostila Extra */}
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 pt-2 border-t border-neutral-800/40">
+                            {/* Subir Extra */}
+                            <label className="px-2.5 py-1.5 bg-neutral-900 hover:bg-neutral-800 text-cyan-300 hover:text-white border border-cyan-500/30 rounded-lg text-[11px] transition-colors cursor-pointer flex items-center justify-center gap-1 font-sans">
+                              {uploadingModuleApostila === (100 + mod.id) ? (
+                                <>
+                                  <Loader2 className="w-3 h-3 animate-spin text-cyan-400" />
+                                  <span>{quickUploadApostilaProgress}%</span>
+                                </>
+                              ) : (
+                                <>
+                                  <FileText className="w-3 h-3 text-cyan-400" />
+                                  <span>{matchingApostila?.extraPdfUrl ? 'Trocar' : '+ Subir'}</span>
+                                </>
+                              )}
+                              <input
+                                type="file"
+                                accept="application/pdf,.pdf"
+                                disabled={uploadingModuleApostila !== null}
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) handleQuickApostilaUpload(100 + mod.id, file);
+                                }}
+                                className="hidden"
+                              />
+                            </label>
+
+                            {/* Renomear Extra */}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                handleOpenRenameApostila({
+                                  id: matchingApostila?.id || `apostila-${mod.id}`,
+                                  moduleId: 100 + mod.id,
+                                  title: matchingApostila?.extraTitle || `Apostila Extra 0${mod.id} (Material Complementar)`,
+                                  isBonus: false,
+                                  isExtra: true,
+                                });
+                              }}
+                              className="px-2.5 py-1.5 bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700 rounded-lg text-[11px] transition-colors cursor-pointer flex items-center justify-center gap-1 font-sans"
+                              title="Mudar o nome oficial da Apostila Extra"
+                            >
+                              <Edit2 className="w-3 h-3 text-cyan-400" />
+                              <span>Nome</span>
+                            </button>
+
+                            {/* Capa Extra */}
+                            <label className="px-2.5 py-1.5 bg-neutral-900 hover:bg-neutral-800 text-cyan-300 hover:text-white border border-cyan-500/30 rounded-lg text-[11px] transition-colors cursor-pointer flex items-center justify-center gap-1 font-sans">
+                              {uploadingApostilaCover === 100 + mod.id ? (
+                                <>
+                                  <Loader2 className="w-3 h-3 animate-spin text-cyan-400" />
+                                  <span>{quickUploadApostilaCoverProgress}%</span>
+                                </>
+                              ) : (
+                                <>
+                                  <ImageIcon className="w-3 h-3 text-cyan-400" />
+                                  <span>Capa</span>
+                                </>
+                              )}
+                              <input
+                                type="file"
+                                accept="image/jpeg,image/png,image/webp,image/avif"
+                                disabled={uploadingApostilaCover !== null}
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) handleQuickApostilaCoverUpload(100 + mod.id, file);
+                                }}
+                                className="hidden"
+                              />
+                            </label>
+                          </div>
+                        </div>
+
+                        {/* COLUNA 3: VIDEOAULA & VÍDEOS EXTRAS */}
+                        <div className="p-4 rounded-xl bg-neutral-950/80 border border-neutral-800/80 flex flex-col justify-between gap-3">
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between gap-2 border-b border-neutral-800/60 pb-2">
+                              <span className="text-xs font-bold text-amber-300 flex items-center gap-1.5 font-sans">
+                                <Film className="w-3.5 h-3.5 text-amber-400" /> Videoaula & Extras
+                              </span>
+                              <span className="text-[10px] font-mono text-neutral-400">
+                                {matchingVideo?.duration || `${matchingVideo?.durationMinutes || 45} min`}
+                              </span>
+                            </div>
+
+                            <div className="flex items-center gap-3">
+                              {/* Thumbnail Aula */}
+                              <div className="relative group w-14 aspect-video rounded overflow-hidden border border-neutral-700 bg-neutral-900 shrink-0 shadow">
+                                <img
+                                  src={matchingVideo?.thumbnailUrl || '/images/cinelab-cover.jpg'}
+                                  alt={`Capa Vídeo ${mod.id}`}
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    (e.target as HTMLImageElement).src = '/images/cinelab-cover.jpg';
+                                  }}
+                                />
+                                <label className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center cursor-pointer p-0.5 text-center">
+                                  <ImageIcon className="w-3 h-3 text-amber-300" />
+                                  <input
+                                    type="file"
+                                    accept="image/jpeg,image/png,image/webp,image/avif,image/gif"
+                                    disabled={uploadingModuleThumbnail !== null}
+                                    onChange={(e) => {
+                                      const file = e.target.files?.[0];
+                                      if (file) handleQuickThumbnailUpload(mod.id, file);
+                                    }}
+                                    className="hidden"
+                                  />
+                                </label>
+                              </div>
+
+                              <div className="min-w-0 flex-1">
+                                <div className="text-[11px] font-medium text-white truncate" title={matchingVideo?.title || `Vídeo Etapa 0${mod.id}`}>
+                                  {matchingVideo?.title || `Vídeo Etapa 0${mod.id}`}
+                                </div>
+                                <span className="text-[10px] text-amber-400 font-mono block">
+                                  {matchingVideo?.videoUrl?.startsWith('/uploads/') ? 'MP4 Local Ativo' : 'Vídeo Configurado'}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Ações de Vídeos */}
+                          <div className="flex flex-col gap-1.5 pt-2 border-t border-neutral-800/40">
+                            <div className="grid grid-cols-2 gap-1.5">
+                              {/* Subir Vídeo */}
+                              <label className="px-2.5 py-1.5 bg-neutral-900 hover:bg-neutral-800 text-amber-300 hover:text-white border border-neutral-700 rounded-lg text-[11px] transition-colors cursor-pointer flex items-center justify-center gap-1 font-sans">
+                                {uploadingModuleVideo === mod.id ? (
+                                  <>
+                                    <Loader2 className="w-3 h-3 animate-spin text-amber-400" />
+                                    <span>{quickUploadProgress}%</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Upload className="w-3 h-3 text-amber-400" />
+                                    <span>Subir Vídeo</span>
+                                  </>
+                                )}
+                                <input
+                                  type="file"
+                                  accept="video/mp4,video/webm,video/quicktime,video/x-matroska,video/*"
+                                  disabled={uploadingModuleVideo !== null}
+                                  onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) handleQuickVideoUpload(mod.id, file);
+                                  }}
+                                  className="hidden"
+                                />
+                              </label>
+
+                              {/* Capa Aula */}
+                              <label className="px-2.5 py-1.5 bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700 rounded-lg text-[11px] transition-colors cursor-pointer flex items-center justify-center gap-1 font-sans">
+                                {uploadingModuleThumbnail === mod.id ? (
+                                  <>
+                                    <Loader2 className="w-3 h-3 animate-spin text-amber-400" />
+                                    <span>{quickUploadThumbnailProgress}%</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <ImageIcon className="w-3 h-3 text-amber-400" />
+                                    <span>Capa Aula</span>
+                                  </>
+                                )}
+                                <input
+                                  type="file"
+                                  accept="image/jpeg,image/png,image/webp,image/avif,image/gif"
+                                  disabled={uploadingModuleThumbnail !== null}
+                                  onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) handleQuickThumbnailUpload(mod.id, file);
+                                  }}
+                                  className="hidden"
+                                />
+                              </label>
+                            </div>
+
+                            {/* Gerenciar 2 Vídeos Extras */}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const isDuplicatedMod1Title = mod.id !== 1 && matchingApostila?.title === 'Introdução ao Cinema e à Linguagem Audiovisual';
+                                const effectiveTitle = (isDuplicatedMod1Title ? mod.title : (matchingApostila?.title || mod.title)) || mod.title;
+                                const curApos = matchingApostila ? { ...matchingApostila, title: effectiveTitle } : {
+                                  id: `apostila-${mod.id}`,
+                                  moduleId: mod.id,
+                                  number: mod.id,
+                                  title: effectiveTitle,
+                                } as any;
+                                setExtraVideosModalApostila(curApos);
+                              }}
+                              className="w-full px-2.5 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 hover:text-white border border-amber-500/30 rounded-lg text-[11px] transition-colors cursor-pointer flex items-center justify-center gap-1.5 font-sans font-medium"
+                              title="Gerenciar e subir os 2 vídeos extras para estudo desta apostila"
+                            >
+                              <Film className="w-3 h-3 text-amber-400" />
+                              <span>2 Vídeos Extras (MP4 / YouTube)</span>
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   );

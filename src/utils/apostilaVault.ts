@@ -464,6 +464,13 @@ export function getMergedApostilasWithVault(serverApostilas: Apostila[]): Aposti
 
   const realPagesMap: Record<number, number> = { 1: 8, 2: 52, 3: 7, 4: 6, 5: 6, 6: 6, 7: 6, 8: 6, 9: 6, 10: 6 };
 
+  const getCleanExtraCover = (...candidates: Array<string | undefined>) => {
+    for (const c of candidates) {
+      if (c && typeof c === 'string' && c.trim() !== '' && !c.startsWith('/uploads/images/')) return c;
+    }
+    return undefined;
+  };
+
   const res = serverApostilas.map((apos) => {
     const modNum = apos.moduleId || apos.number || 1;
     const key = `mod-${modNum}`;
@@ -477,12 +484,6 @@ export function getMergedApostilasWithVault(serverApostilas: Apostila[]): Aposti
       const isOutdatedOrBrokenCover = !apos.coverUrl || apos.coverUrl.includes('unsplash.com');
       const extraKey = `mod-${modNum}-extra`;
       const extraLocal = vault[extraKey];
-      const getCleanExtraCover = (...candidates: Array<string | undefined>) => {
-        for (const c of candidates) {
-          if (c && !c.startsWith('/uploads/images/')) return c;
-        }
-        return undefined;
-      };
       return {
         ...apos,
         coverUrl: !isOutdatedOrBrokenCover ? apos.coverUrl : canonicalCover,
@@ -616,6 +617,23 @@ export function getMergedBonusWithVault(serverBonus: BonusApostila[]): BonusApos
       requiredModule: 6,
       isUnlocked: true,
       fileSizeMb: 0.42,
+    } as any,
+    {
+      id: 'bonus-04',
+      number: 4,
+      code: 'BÔNUS 04',
+      title: 'Apostila História do Cinema Dos Primórdios a Era Digital',
+      subtitle: 'Da Criação das Imagens em Movimento ao Cinema Digital Contemporâneo',
+      summary: 'Panorama histórico completo sobre a evolução da sétima arte, movimentos estéticos fundamentais, vanguardas internacionais e a revolução tecnológica digital.',
+      description: 'Panorama histórico completo sobre a evolução da sétima arte, movimentos estéticos fundamentais, vanguardas internacionais e a revolução tecnológica digital.',
+      pagesCount: 36,
+      totalPages: 36,
+      pdfUrl: '/materiais/cinelab-bonus-04-historia-do-cinema-complemento.pdf',
+      coverUrl: '/images/covers/apostila-04.jpg',
+      unlockedByDefault: false,
+      requiredModule: 8,
+      isUnlocked: true,
+      fileSizeMb: 2.17,
     } as any,
   ];
 
