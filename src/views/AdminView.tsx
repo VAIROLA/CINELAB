@@ -3929,6 +3929,9 @@ export const AdminView: React.FC<AdminViewProps> = ({
               />
             </div>
           </div>
+        </div>
+      )}
+
       {/* MODAL LEITOR SEGURO ADMIN COM MARCA D'ÁGUA E TRAVAS ANTI-DOWNLOAD */}
       {adminViewerApostila && (
         <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex flex-col p-2 sm:p-5 animate-in fade-in duration-200">
