@@ -345,7 +345,13 @@ export const ProtectedPdfViewer: React.FC<ProtectedPdfViewerProps> = ({
         // PRIORIDADE 2: Se não carregou do Blob direto, carrega da URL informada
         if (!doc) {
           let effectiveUrl = url;
-          if (!effectiveUrl) {
+          const isOrphanedUpload = Boolean(
+            effectiveUrl && (effectiveUrl.includes('/uploads/') || effectiveUrl.startsWith('uploads/'))
+          );
+
+          // Se a URL for um arquivo de upload efêmero e não temos Blob local, na Vercel ela não existe e retorna HTML do SPA.
+          // Substitui imediatamente pela URL canônica para não travar o carregamento!
+          if (!effectiveUrl || isOrphanedUpload) {
             if (isBonusDoc) {
               const bNum = getBonusNumber();
               effectiveUrl = bNum === 1
@@ -725,7 +731,8 @@ export const ProtectedPdfViewer: React.FC<ProtectedPdfViewerProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const watermarkText = `CINELAB • Aluno: ${studentName || 'Matriculado'} • Leitura Protegida`;
+  const userIdentifier = studentName || studentEmail || 'Acesso Autorizado';
+  const watermarkText = `CINELAB • ${userIdentifier} • LEITURA PROTEGIDA • PROIBIDO DOWNLOAD E CÓPIA`;
 
   return (
     <div
@@ -979,18 +986,22 @@ export const ProtectedPdfViewer: React.FC<ProtectedPdfViewerProps> = ({
 
             {/* DYNAMIC ANTI-COPY WATERMARK OVERLAY */}
             <div
-              className="absolute inset-0 pointer-events-none flex flex-col justify-around overflow-hidden select-none opacity-20"
+              className="absolute inset-0 pointer-events-none flex flex-col justify-around overflow-hidden select-none z-10"
               style={{
-                transform: 'rotate(-25deg) scale(1.15)',
+                transform: 'rotate(-26deg) scale(1.25)',
                 transformOrigin: 'center center',
               }}
             >
-              {[...Array(6)].map((_, i) => (
+              {[...Array(8)].map((_, i) => (
                 <div
                   key={i}
-                  className="text-neutral-900 text-xs sm:text-sm font-black tracking-widest uppercase whitespace-nowrap text-center"
+                  className="text-xs sm:text-sm font-black tracking-widest uppercase whitespace-nowrap text-center font-mono select-none"
+                  style={{
+                    color: 'rgba(217, 119, 6, 0.42)',
+                    textShadow: '0 0 1px rgba(0,0,0,0.95), 0 0 3px rgba(255,255,255,0.4)',
+                  }}
                 >
-                  {watermarkText}
+                  {watermarkText} • {watermarkText}
                 </div>
               ))}
             </div>

@@ -15,6 +15,8 @@ import {
   getMergedApostilasWithVault,
   getMergedBonusWithVault,
   autoRestoreVaultToServer,
+  getVaultBlobUrl,
+  getVaultPdfBlob,
 } from '../utils/apostilaVault.js';
 import {
   Shield,
@@ -65,6 +67,7 @@ import { ModuleEditModal } from '../components/admin/ModuleEditModal.js';
 import { BonusApostilaEditModal } from '../components/admin/BonusApostilaEditModal.js';
 import { ApostilaExtraVideosSection } from '../components/ApostilaExtraVideosSection.js';
 import { InstitutionalTab } from '../components/admin/InstitutionalTab.js';
+import { ProtectedPdfViewer } from '../components/ProtectedPdfViewer.js';
 import { Logo } from '../components/Logo.js';
 
 interface AdminViewProps {
@@ -173,8 +176,42 @@ export const AdminView: React.FC<AdminViewProps> = ({
   const [bonusModalOpen, setBonusModalOpen] = useState(false);
   const [bonusToEdit, setBonusToEdit] = useState<BonusApostila | null>(null);
   const [uploadingBonusNumber, setUploadingBonusNumber] = useState<number | null>(null);
-  const [uploadingBonusProgress, setUploadingBonusProgress] = useState<number>(0);
   const [extraVideosModalApostila, setExtraVideosModalApostila] = useState<Apostila | BonusApostila | null>(null);
+
+  // Secure Admin PDF Viewer State
+  const [adminViewerApostila, setAdminViewerApostila] = useState<{
+    url: string;
+    pdfBlob?: Blob | null;
+    title: string;
+    moduleId?: number;
+  } | null>(null);
+
+  const handleOpenAdminPdfViewer = async (item: {
+    moduleId: number;
+    pdfUrl?: string;
+    title: string;
+    isBonus?: boolean;
+    isExtra?: boolean;
+  }) => {
+    const targetId = item.isBonus ? `bonus-${item.moduleId}` : item.moduleId;
+    let bUrl = item.pdfUrl || '';
+    let blob: Blob | null = null;
+    try {
+      const [vUrl, vBlob] = await Promise.all([
+        getVaultBlobUrl(targetId, item.isBonus, item.isExtra),
+        getVaultPdfBlob(targetId, item.isBonus, item.isExtra),
+      ]);
+      if (vUrl) bUrl = vUrl;
+      if (vBlob) blob = vBlob;
+    } catch {}
+
+    setAdminViewerApostila({
+      url: bUrl || item.pdfUrl || '',
+      pdfBlob: blob,
+      title: item.title,
+      moduleId: item.moduleId,
+    });
+  };
 
   useEffect(() => {
     const savedToken = typeof window !== 'undefined' ? localStorage.getItem('cinelab_auth_token') : null;
@@ -2441,15 +2478,21 @@ export const AdminView: React.FC<AdminViewProps> = ({
                                   {matchingApostila?.title || mod.title}
                                 </div>
                                 {matchingApostila?.pdfUrl ? (
-                                  <a
-                                    href={matchingApostila.pdfUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-[10px] text-amber-400 hover:text-amber-300 underline flex items-center gap-1 mt-0.5"
+                                  <button
+                                    type="button"
+                                    onClick={() => handleOpenAdminPdfViewer({
+                                      moduleId: mod.id,
+                                      pdfUrl: matchingApostila.pdfUrl,
+                                      title: matchingApostila.title || mod.title,
+                                      isBonus: false,
+                                      isExtra: false,
+                                    })}
+                                    className="text-[10px] text-amber-400 hover:text-amber-300 underline flex items-center gap-1 mt-0.5 cursor-pointer bg-transparent border-0 p-0 font-medium"
+                                    title="Abrir no leitor seguro com marca d'água e proteção contra download"
                                   >
-                                    <span>Ver PDF</span>
-                                    <ExternalLink className="w-2.5 h-2.5" />
-                                  </a>
+                                    <Shield className="w-2.5 h-2.5 text-amber-400" />
+                                    <span>Ler PDF Seguro</span>
+                                  </button>
                                 ) : (
                                   <span className="text-[10px] text-neutral-500">Sem PDF cadastrado</span>
                                 )}
@@ -2581,15 +2624,21 @@ export const AdminView: React.FC<AdminViewProps> = ({
                                   {matchingApostila?.extraTitle || (matchingApostila?.extraPdfUrl ? `Apostila Extra 0${mod.id}` : 'Sem material extra')}
                                 </div>
                                 {matchingApostila?.extraPdfUrl ? (
-                                  <a
-                                    href={matchingApostila.extraPdfUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-[10px] text-cyan-400 hover:text-cyan-300 underline flex items-center gap-1 mt-0.5"
+                                  <button
+                                    type="button"
+                                    onClick={() => handleOpenAdminPdfViewer({
+                                      moduleId: mod.id,
+                                      pdfUrl: matchingApostila.extraPdfUrl,
+                                      title: matchingApostila.extraTitle || `Apostila Extra 0${mod.id}`,
+                                      isBonus: false,
+                                      isExtra: true,
+                                    })}
+                                    className="text-[10px] text-cyan-400 hover:text-cyan-300 underline flex items-center gap-1 mt-0.5 cursor-pointer bg-transparent border-0 p-0 font-medium"
+                                    title="Abrir no leitor seguro com marca d'água e proteção contra download"
                                   >
-                                    <span>Ver PDF Extra</span>
-                                    <ExternalLink className="w-2.5 h-2.5" />
-                                  </a>
+                                    <Shield className="w-2.5 h-2.5 text-cyan-400" />
+                                    <span>Ler PDF Extra Seguro</span>
+                                  </button>
                                 ) : (
                                   <span className="text-[10px] text-neutral-500">Pronto para envio</span>
                                 )}
@@ -2953,15 +3002,21 @@ export const AdminView: React.FC<AdminViewProps> = ({
                             </p>
 
                             {b.pdfUrl && (
-                              <a
-                                href={b.pdfUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-amber-400 hover:text-amber-300 underline text-[10px] flex items-center gap-1 pt-1"
+                              <button
+                                type="button"
+                                onClick={() => handleOpenAdminPdfViewer({
+                                  moduleId: b.number,
+                                  pdfUrl: b.pdfUrl,
+                                  title: b.title || `Apostila Bônus 0${b.number}`,
+                                  isBonus: true,
+                                  isExtra: false,
+                                })}
+                                className="text-amber-400 hover:text-amber-300 underline text-[10px] flex items-center gap-1 pt-1 cursor-pointer bg-transparent border-0 p-0 font-medium"
+                                title="Abrir no leitor seguro com marca d'água e proteção contra download"
                               >
-                                <span>Ver PDF Atual da Apostila Bônus</span>
-                                <ExternalLink className="w-2.5 h-2.5" />
-                              </a>
+                                <Shield className="w-2.5 h-2.5 text-amber-400" />
+                                <span>Ler PDF Bônus Seguro</span>
+                              </button>
                             )}
                           </div>
                         </div>
@@ -3839,6 +3894,42 @@ export const AdminView: React.FC<AdminViewProps> = ({
                 }}
               />
             </div>
+          </div>
+      {/* MODAL LEITOR SEGURO ADMIN COM MARCA D'ÁGUA E TRAVAS ANTI-DOWNLOAD */}
+      {adminViewerApostila && (
+        <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex flex-col p-2 sm:p-5 animate-in fade-in duration-200">
+          <div className="flex items-center justify-between pb-3 border-b border-neutral-800 shrink-0">
+            <div className="flex items-center gap-2.5 text-white min-w-0">
+              <div className="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0">
+                <Shield className="w-4 h-4" />
+              </div>
+              <div className="min-w-0">
+                <h3 className="font-bold text-sm sm:text-base text-white truncate">
+                  {adminViewerApostila.title}
+                </h3>
+                <p className="text-[11px] text-amber-400/90 font-mono flex items-center gap-1.5">
+                  <span>Modo Administrador Seguro • Marca d'Água Ativa • Download Bloqueado</span>
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setAdminViewerApostila(null)}
+              className="p-2 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-neutral-300 hover:text-white transition-colors cursor-pointer shrink-0 ml-2"
+              title="Fechar Leitor"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+          <div className="flex-1 w-full mt-3 overflow-hidden rounded-2xl border border-neutral-800 shadow-2xl relative bg-neutral-950">
+            <ProtectedPdfViewer
+              url={adminViewerApostila.url}
+              pdfBlob={adminViewerApostila.pdfBlob}
+              title={adminViewerApostila.title}
+              studentName={localAdminUser?.name || currentUser?.name || 'Administrador CineLab'}
+              studentEmail={localAdminUser?.email || currentUser?.email || 'admin@cinelab.com'}
+              moduleId={adminViewerApostila.moduleId}
+            />
           </div>
         </div>
       )}
