@@ -921,14 +921,14 @@ export const ModuleDetailView: React.FC<ModuleDetailViewProps> = ({
                   <span className="truncate">Apostila: {apostila.pdfUrl.split('/').pop()}</span>
                 </span>
                 <span className="text-amber-400 shrink-0 font-bold">
-                  {apostila.pagesCount || apostila.totalPages || ((apostila.number || apostila.moduleId || moduleId) === 1 ? 8 : ((apostila.number || apostila.moduleId || moduleId) === 5 ? 6 : 4))} páginas didáticas reais (Leitura Online)
+                  {apostila.pagesCount || apostila.totalPages || ((apostila.number || apostila.moduleId || moduleId) === 1 ? 33 : ((apostila.number || apostila.moduleId || moduleId) === 5 ? 6 : 4))} páginas didáticas reais (Leitura Online)
                 </span>
               </div>
 
               {/* PDF Viewer Frame - Protected online reading with real-time translation */}
               <div className="w-full h-[750px] sm:h-[850px] bg-neutral-950 rounded-2xl border border-neutral-700 overflow-hidden relative shadow-2xl">
                 <ProtectedPdfViewer
-                  url={apostilaBlobUrl || apostila.pdfUrl || `/materiais/cinelab-apostila-${(apostila.number || apostila.moduleId || moduleId) < 10 ? '0' + (apostila.number || apostila.moduleId || moduleId) : (apostila.number || apostila.moduleId || moduleId)}.pdf`}
+                  url={apostila.pdfUrl || `/materiais/cinelab-apostila-${(apostila.number || apostila.moduleId || moduleId) < 10 ? '0' + (apostila.number || apostila.moduleId || moduleId) : (apostila.number || apostila.moduleId || moduleId)}.pdf`}
                   pdfBlob={apostilaPdfBlob}
                   title={apostila.title}
                   moduleId={apostila.number || apostila.moduleId || moduleId}
@@ -942,7 +942,7 @@ export const ModuleDetailView: React.FC<ModuleDetailViewProps> = ({
                   <span>Leitura protegida no navegador CineLab. Download desativado por direitos autorais.</span>
                 </span>
                 <span className="text-neutral-500">
-                  Total: {apostila.pagesCount || apostila.totalPages || ((apostila.number || apostila.moduleId || moduleId) === 1 ? 8 : ((apostila.number || apostila.moduleId || moduleId) === 5 ? 6 : 4))} páginas oficiais
+                  Total: {apostila.pagesCount || apostila.totalPages || ((apostila.number || apostila.moduleId || moduleId) === 1 ? 33 : ((apostila.number || apostila.moduleId || moduleId) === 5 ? 6 : 4))} páginas oficiais
                 </span>
               </div>
             </div>

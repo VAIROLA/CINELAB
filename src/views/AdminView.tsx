@@ -206,7 +206,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
     } catch {}
 
     setAdminViewerApostila({
-      url: bUrl || item.pdfUrl || '',
+      url: item.pdfUrl || (item.moduleId ? `/materiais/cinelab-apostila-${item.moduleId < 10 ? '0' + item.moduleId : item.moduleId}.pdf` : ''),
       pdfBlob: blob,
       title: item.title,
       moduleId: item.moduleId,
@@ -828,10 +828,33 @@ export const AdminView: React.FC<AdminViewProps> = ({
       setUploadingApostilaCover(targetIdOrModuleId);
       setQuickUploadApostilaCoverProgress(0);
 
-      // Leitura imediata como DataURL para persistência sem falhas
+      // Compactação automática otimizada (~70KB) para máxima nitidez sem estourar cota do localStorage ou limites do servidor
       const localDataUrl = await new Promise<string>((resolve) => {
         const reader = new FileReader();
-        reader.onload = () => resolve((reader.result as string) || '');
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let width = img.width;
+            let height = img.height;
+            const maxWidth = 640;
+            if (width > maxWidth) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            }
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+              ctx.drawImage(img, 0, 0, width, height);
+              resolve(canvas.toDataURL('image/jpeg', 0.86));
+            } else {
+              resolve((e.target?.result as string) || '');
+            }
+          };
+          img.onerror = () => resolve((e.target?.result as string) || '');
+          img.src = (e.target?.result as string) || '';
+        };
         reader.onerror = () => resolve('');
         reader.readAsDataURL(file);
       });
@@ -857,8 +880,12 @@ export const AdminView: React.FC<AdminViewProps> = ({
         }
         await updateVaultMetadata(extraModId, {
           isExtra: true,
+          coverUrl: coverToSave,
           extraCoverUrl: coverToSave,
         });
+        setApostilas((prev) =>
+          prev.map((a) => (a.moduleId === extraModId ? { ...a, extraCoverUrl: coverToSave } : a))
+        );
         notify(`Capa da Apostila Extra 0${extraModId} (${file.name}) atualizada com sucesso!`);
       } else if (isBonus) {
         const targetBonus = bonusApostilas.find((b) => b.number === bonusNum);
@@ -873,6 +900,9 @@ export const AdminView: React.FC<AdminViewProps> = ({
           bonusNumber: bonusNum,
           coverUrl: coverToSave,
         });
+        setBonusApostilas((prev) =>
+          prev.map((b) => (b.number === bonusNum ? { ...b, coverUrl: coverToSave } : b))
+        );
         notify(`Capa da Apostila Bônus 0${bonusNum} (${file.name}) atualizada com sucesso!`);
       } else {
         const existingApos = apostilas.find((a) => a.moduleId === moduleId);
@@ -885,6 +915,9 @@ export const AdminView: React.FC<AdminViewProps> = ({
         await updateVaultMetadata(targetIdOrModuleId, {
           coverUrl: coverToSave,
         });
+        setApostilas((prev) =>
+          prev.map((a) => (a.moduleId === moduleId ? { ...a, coverUrl: coverToSave } : a))
+        );
         notify(`Capa da Apostila 0${moduleId} (${file.name}) atualizada com sucesso!`);
       }
       await loadAllAdminData();

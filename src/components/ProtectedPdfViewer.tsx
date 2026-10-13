@@ -22,6 +22,7 @@ import {
 import { useLanguage } from '../i18n/LanguageContext.js';
 import { Language } from '../i18n/translations.js';
 import { api } from '../services/api.js';
+import { purgeVaultPdfBlob } from '../utils/apostilaVault.js';
 
 interface ProtectedPdfViewerProps {
   url: string;
@@ -323,56 +324,69 @@ export const ProtectedPdfViewer: React.FC<ProtectedPdfViewerProps> = ({
             new Promise<T>((_, reject) => setTimeout(() => reject(new Error(msg)), ms)),
           ]);
 
+        const isExtraDoc = Boolean(
+          (url && url.toLowerCase().includes('extra')) ||
+          (title && title.toLowerCase().includes('extra'))
+        );
+
+        const getCanonicalUrl = (): string => {
+          if (isBonusDoc) {
+            const bNum = getBonusNumber();
+            return bNum === 1
+              ? '/materiais/cinelab-bonus-01-glossario-planos.pdf'
+              : bNum === 2
+              ? '/materiais/cinelab-bonus-02-glossario-roteiro.pdf'
+              : bNum === 3
+              ? '/materiais/cinelab-bonus-03-analise-filmica.pdf'
+              : '/materiais/cinelab-bonus-04-historia-do-cinema-complemento.pdf';
+          }
+          if (isExtraDoc && moduleId) {
+            return moduleId === 1 ? '/materiais/cinelab-apostila-extra-01.pdf' : `/materiais/cinelab-apostila-${moduleId < 10 ? '0' + moduleId : moduleId}.pdf`;
+          }
+          if (moduleId) {
+            return `/materiais/cinelab-apostila-${moduleId < 10 ? '0' + moduleId : moduleId}.pdf`;
+          }
+          return '';
+        };
+
+        const canonicalUrl = getCanonicalUrl();
         let doc: any = null;
 
-        // PRIORIDADE 1: Se temos o arquivo binário direto em memória (IndexedDB), decodifica sem nenhuma requisição de rede
-        if (pdfBlob && pdfBlob.size > 0) {
+        // PRIORIDADE 1: Se temos o arquivo binário direto em memória (IndexedDB)
+        if (pdfBlob && pdfBlob.size > 1024) {
           try {
-            const arrayBuffer = await pdfBlob.arrayBuffer();
-            if (!isMounted) return;
-            currentLoadingTask = pdfjs.getDocument({
-              data: arrayBuffer,
-              cMapUrl: `${origin}/cmaps/`,
-              cMapPacked: true,
-              standardFontDataUrl: `${origin}/standard_fonts/`,
-            });
-            doc = await withTimeout(currentLoadingTask.promise, 10000, 'Tempo limite ao decodificar PDF da memória');
+            // Verificação rápida de integridade do cabeçalho mágico PDF (%PDF-)
+            const headerCheck = await pdfBlob.slice(0, 5).text();
+            if (!headerCheck.startsWith('%PDF-')) {
+              console.warn('[ProtectedPdfViewer] Arquivo local corrompido (sem cabeçalho %PDF-). Expurgando do cofre.');
+              if (moduleId) {
+                purgeVaultPdfBlob(moduleId, isBonusDoc, isExtraDoc).catch(() => {});
+              }
+            } else {
+              const arrayBuffer = await pdfBlob.arrayBuffer();
+              if (!isMounted) return;
+              currentLoadingTask = pdfjs.getDocument({
+                data: new Uint8Array(arrayBuffer),
+                cMapUrl: `${origin}/cmaps/`,
+                cMapPacked: true,
+                standardFontDataUrl: `${origin}/standard_fonts/`,
+              });
+              doc = await withTimeout(currentLoadingTask.promise, 3500, 'Tempo limite no buffer local');
+            }
           } catch (blobErr) {
-            console.warn('Falha ao decodificar pdfBlob direto, recorrendo à URL:', blobErr);
+            console.warn('Falha ao decodificar pdfBlob direto, recorrendo à URL oficial:', blobErr);
+            if (moduleId) {
+              purgeVaultPdfBlob(moduleId, isBonusDoc, isExtraDoc).catch(() => {});
+            }
           }
         }
 
-        // PRIORIDADE 2: Se não carregou do Blob direto, carrega da URL informada
+        // PRIORIDADE 2: Carrega da URL oficial
         if (!doc) {
           let effectiveUrl = url;
-          const isOrphanedUpload = Boolean(
-            effectiveUrl && (effectiveUrl.includes('/uploads/') || effectiveUrl.startsWith('uploads/'))
-          );
-
-          // Se a URL for um arquivo de upload efêmero e não temos Blob local, na Vercel ela não existe e retorna HTML do SPA.
-          // Substitui imediatamente pela URL canônica para não travar o carregamento!
-          if (!effectiveUrl || isOrphanedUpload) {
-            const isExtraDoc = Boolean(
-              (url && url.toLowerCase().includes('extra')) ||
-              (title && title.toLowerCase().includes('extra'))
-            );
-
-            if (isBonusDoc) {
-              const bNum = getBonusNumber();
-              effectiveUrl = bNum === 1
-                ? '/materiais/cinelab-bonus-01-glossario-planos.pdf'
-                : bNum === 2
-                ? '/materiais/cinelab-bonus-02-glossario-roteiro.pdf'
-                : bNum === 3
-                ? '/materiais/cinelab-bonus-03-analise-filmica.pdf'
-                : '/materiais/cinelab-bonus-04-historia-do-cinema-complemento.pdf';
-            } else if (isExtraDoc && moduleId) {
-              effectiveUrl = moduleId === 1 ? '/materiais/cinelab-apostila-extra-01.pdf' : `/materiais/cinelab-apostila-${moduleId < 10 ? '0' + moduleId : moduleId}.pdf`;
-            } else if (moduleId) {
-              effectiveUrl = `/materiais/cinelab-apostila-${moduleId < 10 ? '0' + moduleId : moduleId}.pdf`;
-            } else {
-              effectiveUrl = '';
-            }
+          // Se effectiveUrl for blob:, vazio, ou upload efêmero, usa diretamente a URL canônica oficial
+          if (!effectiveUrl || effectiveUrl.startsWith('blob:') || effectiveUrl.includes('/uploads/')) {
+            effectiveUrl = canonicalUrl || effectiveUrl;
           }
 
           currentLoadingTask = pdfjs.getDocument({
@@ -383,73 +397,11 @@ export const ProtectedPdfViewer: React.FC<ProtectedPdfViewerProps> = ({
             withCredentials: false,
           });
 
-          doc = await withTimeout(currentLoadingTask.promise, 10000, 'Tempo limite ao carregar PDF');
-        }
-
-        if (!isMounted) return;
-
-        setPdfDoc(doc);
-        setNumPages(doc.numPages);
-        setLoading(false);
-      } catch (err: any) {
-        if (!isMounted) return;
-
-        // Cancelamento esperado durante desmontagem rápida ou troca de página
-        if (err?.name === 'RenderingCancelledException' || err?.name === 'AbortException') {
-          return;
-        }
-
-        console.warn('Alerta ao carregar PDF no canvas:', err?.message || err);
-
-        const withTimeout = <T,>(p: Promise<T>, ms = 8000, msg = 'Tempo limite excedido'): Promise<T> =>
-          Promise.race([
-            p,
-            new Promise<T>((_, reject) => setTimeout(() => reject(new Error(msg)), ms)),
-          ]);
-
-        // Fallback resiliente 1: Se for apostila bônus, tenta o arquivo canônico em /materiais/
-        if (isMounted && isBonusDoc) {
           try {
-            const origin = typeof window !== 'undefined' ? window.location.origin : '';
-            const bonusNum = getBonusNumber();
-            const canonicalBonusUrl =
-              bonusNum === 1
-                ? '/materiais/cinelab-bonus-01-glossario-planos.pdf'
-                : bonusNum === 2
-                ? '/materiais/cinelab-bonus-02-glossario-roteiro.pdf'
-                : bonusNum === 3
-                ? '/materiais/cinelab-bonus-03-analise-filmica.pdf'
-                : '/materiais/cinelab-bonus-04-historia-do-cinema-complemento.pdf';
-
-            if (url !== canonicalBonusUrl) {
-              const pdfjs = await ensurePdfJsLoaded();
-              currentLoadingTask = pdfjs.getDocument({
-                url: canonicalBonusUrl,
-                cMapUrl: `${origin}/cmaps/`,
-                cMapPacked: true,
-                standardFontDataUrl: `${origin}/standard_fonts/`,
-                withCredentials: false,
-              });
-              const fallbackDoc = await withTimeout(currentLoadingTask.promise, 8000, 'Tempo limite no fallback bônus');
-              if (isMounted) {
-                setPdfDoc(fallbackDoc);
-                setNumPages(fallbackDoc.numPages);
-                setLoading(false);
-                return;
-              }
-            }
-          } catch (fallbackBonusErr) {
-            console.warn('Fallback da apostila bônus falhou:', fallbackBonusErr);
-          }
-        }
-
-        // Fallback resiliente 2: Se for módulo regular, tenta o arquivo canônico em /materiais/
-        if (isMounted && !isBonusDoc && moduleId) {
-          try {
-            const origin = typeof window !== 'undefined' ? window.location.origin : '';
-            const canonicalUrl = `/materiais/cinelab-apostila-${moduleId < 10 ? '0' + moduleId : moduleId}.pdf`;
-            if (url !== canonicalUrl) {
-              const pdfjs = await ensurePdfJsLoaded();
+            doc = await withTimeout(currentLoadingTask.promise, 5000, 'Tempo limite ao carregar PDF');
+          } catch (urlErr) {
+            console.warn('Falha na URL principal, tentando URL canônica oficial:', urlErr);
+            if (effectiveUrl !== canonicalUrl && canonicalUrl) {
               currentLoadingTask = pdfjs.getDocument({
                 url: canonicalUrl,
                 cMapUrl: `${origin}/cmaps/`,
@@ -457,18 +409,31 @@ export const ProtectedPdfViewer: React.FC<ProtectedPdfViewerProps> = ({
                 standardFontDataUrl: `${origin}/standard_fonts/`,
                 withCredentials: false,
               });
-              const fallbackDoc = await withTimeout(currentLoadingTask.promise, 8000, 'Tempo limite no fallback módulo');
-              if (isMounted) {
-                setPdfDoc(fallbackDoc);
-                setNumPages(fallbackDoc.numPages);
-                setLoading(false);
-                return;
-              }
+              doc = await withTimeout(currentLoadingTask.promise, 5000, 'Tempo limite na URL canônica');
+            } else {
+              throw urlErr;
             }
-          } catch (fallbackErr) {
-            console.warn('Fallback do módulo falhou:', fallbackErr);
           }
         }
+
+        if (!isMounted) return;
+
+        if (doc) {
+          setPdfDoc(doc);
+          setNumPages(doc.numPages);
+          setLoading(false);
+        } else {
+          setLoading(false);
+          setErrorMessage('Não foi possível carregar o documento PDF.');
+        }
+      } catch (err: any) {
+        if (!isMounted) return;
+
+        if (err?.name === 'RenderingCancelledException' || err?.name === 'AbortException') {
+          return;
+        }
+
+        console.warn('Alerta ao carregar PDF no canvas:', err?.message || err);
 
         if (isMounted) {
           setLoading(false);

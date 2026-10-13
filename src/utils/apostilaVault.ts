@@ -374,6 +374,20 @@ export async function updateVaultMetadata(
     fileSizeMb: meta.fileSizeMb !== undefined ? meta.fileSizeMb : existing.fileSizeMb,
     updatedAt: new Date().toISOString(),
   };
+
+  // Se for extra, atualiza também a entrada do módulo principal se existir
+  if (isExtra && rawMod) {
+    const parentKey = `mod-${rawMod}`;
+    if (currentIndex[parentKey]) {
+      currentIndex[parentKey] = {
+        ...currentIndex[parentKey],
+        extraCoverUrl: meta.extraCoverUrl !== undefined ? meta.extraCoverUrl : (meta.coverUrl !== undefined ? meta.coverUrl : (currentIndex[parentKey] as any).extraCoverUrl),
+        extraTitle: meta.extraTitle !== undefined ? meta.extraTitle : (currentIndex[parentKey] as any).extraTitle,
+        extraPdfUrl: meta.extraPdfUrl !== undefined ? meta.extraPdfUrl : (currentIndex[parentKey] as any).extraPdfUrl,
+      };
+    }
+  }
+
   savePersistentVaultIndex(currentIndex);
 
   try {
@@ -468,6 +482,28 @@ export async function getVaultPdfBlob(targetIdOrModuleId: number | string, isBon
 }
 
 /**
+ * Remove com segurança um Blob de PDF inválido ou corrompido do IndexedDB
+ */
+export async function purgeVaultPdfBlob(targetIdOrModuleId: number | string, isBonus?: boolean, isExtra?: boolean): Promise<void> {
+  const id = getVaultItemId(targetIdOrModuleId, isBonus, isExtra);
+  try {
+    const db = await openVaultDb();
+    const tx = db.transaction(STORE_NAME, 'readwrite');
+    const store = tx.objectStore(STORE_NAME);
+    const req = store.get(id);
+    req.onsuccess = () => {
+      const item = req.result;
+      if (item) {
+        delete item.pdfBlob;
+        store.put(item);
+      }
+    };
+  } catch (err) {
+    console.warn('Erro ao expurgar pdfBlob corrompido do cofre:', err);
+  }
+}
+
+/**
  * Mescla a lista de apostilas do servidor com os dados persistentes locais do usuário
  * Garante que títulos editados, páginas e uploads NUNCA sejam revertidos na UI
  */
@@ -512,10 +548,13 @@ export function getMergedApostilasWithVault(serverApostilas: Apostila[]): Aposti
       };
     }
 
-    // Auto-heal duplicate module 1 title on module 2 or other modules in client vault
-    const isCorruptedTitle = modNum !== 1 && local.title === 'Introdução ao Cinema e à Linguagem Audiovisual';
+    // Auto-heal duplicate module 1 title or broken encoding artifacts (e.g. Câmera -> Cmera)
+    const hasEncodingArtifacts = Boolean(
+      local.title && (local.title.includes('\uFFFD') || local.title.includes('?mera') || local.title.includes('Ilumina?') || local.title.includes('Cmera') || local.title.includes('Iluminao'))
+    );
+    const isCorruptedTitle = (modNum !== 1 && local.title === 'Introdução ao Cinema e à Linguagem Audiovisual') || hasEncodingArtifacts;
     const effectiveTitle = isCorruptedTitle
-      ? (modNum === 2 ? 'História do Cinema' : apos.title)
+      ? (modNum === 2 ? 'História do Cinema' : (apos.title || `Apostila 0${modNum}`))
       : (local.title || apos.title);
 
     const isCorruptedFile =

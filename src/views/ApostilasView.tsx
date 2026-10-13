@@ -2514,7 +2514,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                   </div>
                   <div className="w-full h-[78vh] min-h-[580px] rounded-2xl border border-neutral-800 overflow-hidden relative shadow-2xl bg-neutral-950">
                     <ProtectedPdfViewer
-                      url={vaultBlobUrl || selectedApostila.pdfUrl}
+                      url={selectedApostila.pdfUrl || `/materiais/cinelab-apostila-${(selectedApostila.moduleId || 1) < 10 ? '0' + (selectedApostila.moduleId || 1) : (selectedApostila.moduleId || 1)}.pdf`}
                       pdfBlob={vaultPdfBlob}
                       title={selectedApostila.title}
                       studentName={user?.name || enrollment?.studentName}
