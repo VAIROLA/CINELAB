@@ -46,6 +46,7 @@ import {
   Loader2,
   Download,
   RotateCcw,
+  RefreshCw,
   LayoutGrid,
   Folder,
   ChevronLeft,
