@@ -12,6 +12,7 @@ import { getTrainingQuestionsForModule } from '../i18n/evaluationTranslations.js
 import {
   formatPdfViewerUrl,
   getVaultBlobUrl,
+  getVaultPdfBlob,
   saveApostilaToVault,
   updateVaultMetadata,
   getMergedApostilasWithVault,
@@ -153,6 +154,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
   const [selectedApostila, setSelectedApostila] = useState<Apostila | null>(null);
   const [modalTab, setModalTab] = useState<'pdf' | 'text' | 'quiz' | 'extra-videos'>('pdf');
   const [vaultBlobUrl, setVaultBlobUrl] = useState<string | null>(null);
+  const [vaultPdfBlob, setVaultPdfBlob] = useState<Blob | null>(null);
 
   // Training Evaluation & Access Restriction state
   const [trainingModalOpen, setTrainingModalOpen] = useState(false);
@@ -410,7 +412,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
     } catch {}
   }, [trainingModalOpen]);
 
-  const handleOpenApostila = (item: Apostila, defaultTab: "pdf" | "text" | "quiz" | "extra-videos" = "pdf") => {
+  const handleOpenApostila = async (item: Apostila, defaultTab: "pdf" | "text" | "quiz" | "extra-videos" = "pdf") => {
     if (!isPaidStudent) {
       setAccessModalOpen(true);
       return;
@@ -427,8 +429,8 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
       const bNum = fullItem.number || item.number || 1;
       const canonicalBonusPdf = bNum === 1
         ? '/materiais/cinelab-bonus-01-glossario-planos.pdf'
-        : (bNum === 3 ? '/materiais/cinelab-bonus-03-analise-filmica.pdf' : '/materiais/cinelab-bonus-02-glossario-roteiro.pdf');
-      const realBonusPages = bNum === 1 ? 30 : (bNum === 3 ? 27 : 29);
+        : (bNum === 2 ? '/materiais/cinelab-bonus-02-glossario-roteiro.pdf' : (bNum === 3 ? '/materiais/cinelab-bonus-03-analise-filmica.pdf' : '/materiais/cinelab-bonus-04-historia-do-cinema-complemento.pdf'));
+      const realBonusPages = bNum === 1 ? 30 : (bNum === 2 ? 29 : (bNum === 3 ? 27 : 33));
       const modTrans = getModuleTranslation(990 + bNum);
       fullItem.moduleId = 990 + bNum;
       fullItem.title = modTrans.title || fullItem.title;
@@ -448,11 +450,25 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
       return;
     }
 
+    const isExtra = Boolean((fullItem as any).isExtra || (fullItem as any).id?.includes('extra'));
+    const bNum = fullItem.number || (fullItem.moduleId ? fullItem.moduleId - 990 : 1);
+    const targetId = isBonusItem ? `bonus-${bNum}` : (fullItem.moduleId || fullItem.number);
+    try {
+      const [bUrl, blob] = await Promise.all([
+        getVaultBlobUrl(targetId, isBonusItem, isExtra),
+        getVaultPdfBlob(targetId, isBonusItem, isExtra),
+      ]);
+      setVaultBlobUrl(bUrl || null);
+      setVaultPdfBlob(blob || null);
+    } catch {
+      // Falhas silenciosas tratadas no leitor
+    }
+
     setSelectedApostila(fullItem as Apostila);
     setModalTab(defaultTab);
   };
 
-  const handleOpenExtraApostila = (item: Apostila) => {
+  const handleOpenExtraApostila = async (item: Apostila) => {
     if (!isPaidStudent) {
       setAccessModalOpen(true);
       return;
@@ -478,6 +494,16 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
       fileSizeMb: item.extraFileSizeMb || item.fileSizeMb,
       sections: [],
     };
+
+    try {
+      const [bUrl, blob] = await Promise.all([
+        getVaultBlobUrl(modNum, false, true),
+        getVaultPdfBlob(modNum, false, true),
+      ]);
+      setVaultBlobUrl(bUrl || null);
+      setVaultPdfBlob(blob || null);
+    } catch {}
+
     setSelectedApostila(extraApos);
     setModalTab('pdf');
   };
@@ -617,7 +643,6 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
 
   useEffect(() => {
     let active = true;
-    setVaultBlobUrl(null);
     if (selectedApostila) {
       const isBonus = (selectedApostila as any).id?.startsWith('bonus') ||
                       (selectedApostila as any).code?.includes('BÔNUS') ||
@@ -625,11 +650,18 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
       const isExtra = Boolean((selectedApostila as any).isExtra || (selectedApostila as any).id?.includes('extra'));
       const bNum = selectedApostila.number || (selectedApostila.moduleId ? selectedApostila.moduleId - 990 : 1);
       const targetId = isBonus ? `bonus-${bNum}` : (selectedApostila.moduleId || selectedApostila.number);
-      getVaultBlobUrl(targetId, isBonus, isExtra).then((bUrl) => {
+      Promise.all([
+        getVaultBlobUrl(targetId, isBonus, isExtra),
+        getVaultPdfBlob(targetId, isBonus, isExtra),
+      ]).then(([bUrl, blob]) => {
         if (active) {
-          setVaultBlobUrl(bUrl || null);
+          if (bUrl) setVaultBlobUrl(bUrl);
+          if (blob) setVaultPdfBlob(blob);
         }
       });
+    } else {
+      setVaultBlobUrl(null);
+      setVaultPdfBlob(null);
     }
     return () => {
       active = false;
@@ -2483,6 +2515,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                   <div className="w-full h-[78vh] min-h-[580px] rounded-2xl border border-neutral-800 overflow-hidden relative shadow-2xl bg-neutral-950">
                     <ProtectedPdfViewer
                       url={vaultBlobUrl || selectedApostila.pdfUrl}
+                      pdfBlob={vaultPdfBlob}
                       title={selectedApostila.title}
                       studentName={user?.name || enrollment?.studentName}
                       studentEmail={user?.email || enrollment?.studentEmail}

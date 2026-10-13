@@ -25,6 +25,7 @@ import { api } from '../services/api.js';
 
 interface ProtectedPdfViewerProps {
   url: string;
+  pdfBlob?: Blob | null;
   title: string;
   studentName?: string;
   studentEmail?: string;
@@ -43,6 +44,7 @@ declare global {
 
 export const ProtectedPdfViewer: React.FC<ProtectedPdfViewerProps> = ({
   url,
+  pdfBlob,
   title,
   studentName,
   studentEmail,
@@ -291,55 +293,86 @@ export const ProtectedPdfViewer: React.FC<ProtectedPdfViewerProps> = ({
             title.toLowerCase().includes('glossário') ||
             title.toLowerCase().includes('glossario') ||
             title.toLowerCase().includes('análise fílmica') ||
-            title.toLowerCase().includes('analise filmica')
+            title.toLowerCase().includes('analise filmica') ||
+            title.toLowerCase().includes('história') ||
+            title.toLowerCase().includes('historia')
           )) ||
           (moduleId && moduleId > 990)
         );
 
         const getBonusNumber = () => {
+          if (url && (url.includes('bonus-04') || url.includes('bonus-4') || url.includes('historia-do-cinema'))) return 4;
           if (url && (url.includes('bonus-03') || url.includes('bonus-3') || url.includes('analise-filmica'))) return 3;
           if (url && (url.includes('bonus-02') || url.includes('bonus-2') || url.includes('glossario-roteiro'))) return 2;
           if (url && (url.includes('bonus-01') || url.includes('bonus-1') || url.includes('glossario-planos'))) return 1;
+          if (title && (title.includes('04') || title.includes('4') || title.toLowerCase().includes('história') || title.toLowerCase().includes('historia'))) return 4;
           if (title && (title.includes('03') || title.includes('3') || title.toLowerCase().includes('camadas') || title.toLowerCase().includes('análise'))) return 3;
           if (title && (title.includes('02') || title.includes('2') || title.toLowerCase().includes('roteiro'))) return 2;
           if (title && (title.includes('01') || title.includes('1') || title.toLowerCase().includes('planos'))) return 1;
+          if (moduleId === 994 || moduleId === 4) return 4;
           if (moduleId === 993 || moduleId === 3) return 3;
           if (moduleId === 992 || moduleId === 2) return 2;
           return 1;
         };
 
         const origin = typeof window !== 'undefined' ? window.location.origin : '';
-        let effectiveUrl = url;
-        if (!effectiveUrl) {
-          if (isBonusDoc) {
-            const bNum = getBonusNumber();
-            effectiveUrl = bNum === 1
-              ? '/materiais/cinelab-bonus-01-glossario-planos.pdf'
-              : bNum === 2
-              ? '/materiais/cinelab-bonus-02-glossario-roteiro.pdf'
-              : '/materiais/cinelab-bonus-03-analise-filmica.pdf';
-          } else if (moduleId) {
-            effectiveUrl = `/materiais/cinelab-apostila-${moduleId < 10 ? '0' + moduleId : moduleId}.pdf`;
-          } else {
-            effectiveUrl = '';
-          }
-        }
 
-        const withTimeout = <T,>(p: Promise<T>, ms = 8000, msg = 'Tempo limite excedido'): Promise<T> =>
+        const withTimeout = <T,>(p: Promise<T>, ms = 10000, msg = 'Tempo limite excedido'): Promise<T> =>
           Promise.race([
             p,
             new Promise<T>((_, reject) => setTimeout(() => reject(new Error(msg)), ms)),
           ]);
 
-        currentLoadingTask = pdfjs.getDocument({
-          url: effectiveUrl,
-          cMapUrl: `${origin}/cmaps/`,
-          cMapPacked: true,
-          standardFontDataUrl: `${origin}/standard_fonts/`,
-          withCredentials: false,
-        });
+        let doc: any = null;
 
-        const doc = await withTimeout(currentLoadingTask.promise, 8000, 'Tempo limite ao carregar PDF');
+        // PRIORIDADE 1: Se temos o arquivo binário direto em memória (IndexedDB), decodifica sem nenhuma requisição de rede
+        if (pdfBlob && pdfBlob.size > 0) {
+          try {
+            const arrayBuffer = await pdfBlob.arrayBuffer();
+            if (!isMounted) return;
+            currentLoadingTask = pdfjs.getDocument({
+              data: arrayBuffer,
+              cMapUrl: `${origin}/cmaps/`,
+              cMapPacked: true,
+              standardFontDataUrl: `${origin}/standard_fonts/`,
+            });
+            doc = await withTimeout(currentLoadingTask.promise, 10000, 'Tempo limite ao decodificar PDF da memória');
+          } catch (blobErr) {
+            console.warn('Falha ao decodificar pdfBlob direto, recorrendo à URL:', blobErr);
+          }
+        }
+
+        // PRIORIDADE 2: Se não carregou do Blob direto, carrega da URL informada
+        if (!doc) {
+          let effectiveUrl = url;
+          if (!effectiveUrl) {
+            if (isBonusDoc) {
+              const bNum = getBonusNumber();
+              effectiveUrl = bNum === 1
+                ? '/materiais/cinelab-bonus-01-glossario-planos.pdf'
+                : bNum === 2
+                ? '/materiais/cinelab-bonus-02-glossario-roteiro.pdf'
+                : bNum === 3
+                ? '/materiais/cinelab-bonus-03-analise-filmica.pdf'
+                : '/materiais/cinelab-bonus-04-historia-do-cinema-complemento.pdf';
+            } else if (moduleId) {
+              effectiveUrl = `/materiais/cinelab-apostila-${moduleId < 10 ? '0' + moduleId : moduleId}.pdf`;
+            } else {
+              effectiveUrl = '';
+            }
+          }
+
+          currentLoadingTask = pdfjs.getDocument({
+            url: effectiveUrl,
+            cMapUrl: `${origin}/cmaps/`,
+            cMapPacked: true,
+            standardFontDataUrl: `${origin}/standard_fonts/`,
+            withCredentials: false,
+          });
+
+          doc = await withTimeout(currentLoadingTask.promise, 10000, 'Tempo limite ao carregar PDF');
+        }
+
         if (!isMounted) return;
 
         setPdfDoc(doc);
@@ -347,13 +380,9 @@ export const ProtectedPdfViewer: React.FC<ProtectedPdfViewerProps> = ({
         setLoading(false);
       } catch (err: any) {
         if (!isMounted) return;
-        // Ignore expected unmount and rendering cancellation exceptions
-        if (
-          err?.name === 'RenderingCancelledException' ||
-          err?.name === 'AbortException' ||
-          err?.message?.includes('Worker was destroyed') ||
-          err?.message?.includes('worker was destroyed')
-        ) {
+
+        // Cancelamento esperado durante desmontagem rápida ou troca de página
+        if (err?.name === 'RenderingCancelledException' || err?.name === 'AbortException') {
           return;
         }
 
@@ -365,7 +394,7 @@ export const ProtectedPdfViewer: React.FC<ProtectedPdfViewerProps> = ({
             new Promise<T>((_, reject) => setTimeout(() => reject(new Error(msg)), ms)),
           ]);
 
-        // Resilient fallback 1: If bonus document failed, try canonical materiais bonus PDF
+        // Fallback resiliente 1: Se for apostila bônus, tenta o arquivo canônico em /materiais/
         if (isMounted && isBonusDoc) {
           try {
             const origin = typeof window !== 'undefined' ? window.location.origin : '';
@@ -375,7 +404,9 @@ export const ProtectedPdfViewer: React.FC<ProtectedPdfViewerProps> = ({
                 ? '/materiais/cinelab-bonus-01-glossario-planos.pdf'
                 : bonusNum === 2
                 ? '/materiais/cinelab-bonus-02-glossario-roteiro.pdf'
-                : '/materiais/cinelab-bonus-03-analise-filmica.pdf';
+                : bonusNum === 3
+                ? '/materiais/cinelab-bonus-03-analise-filmica.pdf'
+                : '/materiais/cinelab-bonus-04-historia-do-cinema-complemento.pdf';
 
             if (url !== canonicalBonusUrl) {
               const pdfjs = await ensurePdfJsLoaded();
@@ -399,7 +430,7 @@ export const ProtectedPdfViewer: React.FC<ProtectedPdfViewerProps> = ({
           }
         }
 
-        // Resilient fallback 2: If regular module PDF failed, try canonical materiais PDF (ONLY for non-bonus)
+        // Fallback resiliente 2: Se for módulo regular, tenta o arquivo canônico em /materiais/
         if (isMounted && !isBonusDoc && moduleId) {
           try {
             const origin = typeof window !== 'undefined' ? window.location.origin : '';
@@ -445,11 +476,10 @@ export const ProtectedPdfViewer: React.FC<ProtectedPdfViewerProps> = ({
         } catch {}
         renderTaskRef.current = null;
       }
-      if (currentLoadingTask && typeof currentLoadingTask.destroy === 'function') {
-        try { currentLoadingTask.destroy(); } catch {}
-      }
+      // Nota: Nunca chamamos currentLoadingTask.destroy() aqui pois no PDF.js isso
+      // encerra o Web Worker compartilhado globalmente e quebra leituras subsequentes.
     };
-  }, [url, moduleId, ensurePdfJsLoaded]);
+  }, [url, pdfBlob, moduleId, ensurePdfJsLoaded]);
 
   // Render specific page on the secure canvas
   const renderPage = useCallback(

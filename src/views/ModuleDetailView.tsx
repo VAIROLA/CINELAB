@@ -6,7 +6,7 @@ import { ProtectedPdfViewer } from '../components/ProtectedPdfViewer.js';
 import { FilmSubtitleTranscriptViewer } from '../components/FilmSubtitleTranscriptViewer.js';
 import { ReadingReaderModal } from '../components/ReadingReaderModal.js';
 import { getTranslatedApostilaSections } from '../i18n/apostilaContentTranslations.js';
-import { formatPdfViewerUrl, getVaultBlobUrl } from '../utils/apostilaVault.js';
+import { formatPdfViewerUrl, getVaultBlobUrl, getVaultPdfBlob } from '../utils/apostilaVault.js';
 import { parseVideoEmbed } from '../utils/videoUtils.js';
 import {
   CourseModule,
@@ -500,6 +500,7 @@ export const ModuleDetailView: React.FC<ModuleDetailViewProps> = ({
   const [quizSelections, setQuizSelections] = useState<Record<number, number>>({});
   const [pdfViewTab, setPdfViewTab] = useState<'reader' | 'topics'>('reader');
   const [apostilaBlobUrl, setApostilaBlobUrl] = useState<string | null>(null);
+  const [apostilaPdfBlob, setApostilaPdfBlob] = useState<Blob | null>(null);
   const [isReadingModalOpen, setIsReadingModalOpen] = useState(false);
 
   // Film video state
@@ -532,14 +533,20 @@ export const ModuleDetailView: React.FC<ModuleDetailViewProps> = ({
       setLoading(true);
       setErrorMessage('');
       setApostilaBlobUrl(null);
+      setApostilaPdfBlob(null);
       const res = await api.getStudentModuleDetail(moduleId);
       setData(res);
 
       try {
-        const vBlob = await getVaultBlobUrl(moduleId);
+        const [vBlob, vPdfBlob] = await Promise.all([
+          getVaultBlobUrl(moduleId),
+          getVaultPdfBlob(moduleId),
+        ]);
         setApostilaBlobUrl(vBlob || null);
+        setApostilaPdfBlob(vPdfBlob || null);
       } catch {
         setApostilaBlobUrl(null);
+        setApostilaPdfBlob(null);
       }
 
       if (res.evaluation?.id) {
@@ -922,6 +929,7 @@ export const ModuleDetailView: React.FC<ModuleDetailViewProps> = ({
               <div className="w-full h-[750px] sm:h-[850px] bg-neutral-950 rounded-2xl border border-neutral-700 overflow-hidden relative shadow-2xl">
                 <ProtectedPdfViewer
                   url={apostilaBlobUrl || apostila.pdfUrl || `/materiais/cinelab-apostila-${(apostila.number || apostila.moduleId || moduleId) < 10 ? '0' + (apostila.number || apostila.moduleId || moduleId) : (apostila.number || apostila.moduleId || moduleId)}.pdf`}
+                  pdfBlob={apostilaPdfBlob}
                   title={apostila.title}
                   moduleId={apostila.number || apostila.moduleId || moduleId}
                   onFallbackToText={() => setPdfViewTab('topics')}

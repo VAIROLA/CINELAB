@@ -454,6 +454,20 @@ export async function getVaultBlobUrl(targetIdOrModuleId: number | string, isBon
 }
 
 /**
+ * Retorna o arquivo Blob binário real do PDF salvo no cofre IndexedDB
+ */
+export async function getVaultPdfBlob(targetIdOrModuleId: number | string, isBonus?: boolean, isExtra?: boolean): Promise<Blob | null> {
+  try {
+    const item = await getApostilaFromVault(targetIdOrModuleId, isBonus, isExtra);
+    if (!item || !item.pdfBlob) return null;
+    return item.pdfBlob;
+  } catch (err) {
+    console.warn('Erro ao ler pdfBlob do cofre IndexedDB:', err);
+    return null;
+  }
+}
+
+/**
  * Mescla a lista de apostilas do servidor com os dados persistentes locais do usuário
  * Garante que títulos editados, páginas e uploads NUNCA sejam revertidos na UI
  */
