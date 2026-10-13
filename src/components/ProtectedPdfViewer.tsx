@@ -983,24 +983,24 @@ export const ProtectedPdfViewer: React.FC<ProtectedPdfViewerProps> = ({
               className="block rounded-sm pointer-events-auto bg-white"
             />
 
-            {/* DYNAMIC ANTI-COPY WATERMARK OVERLAY */}
+            {/* DYNAMIC ANTI-COPY WATERMARK OVERLAY - SUTIL E ULTRA-TRANSPARENTE PARA NÃO ATRAPALHAR A LEITURA */}
             <div
               className="absolute inset-0 pointer-events-none flex flex-col justify-around overflow-hidden select-none z-10"
               style={{
-                transform: 'rotate(-26deg) scale(1.25)',
+                transform: 'rotate(-25deg) scale(1.15)',
                 transformOrigin: 'center center',
               }}
             >
-              {[...Array(8)].map((_, i) => (
+              {[...Array(5)].map((_, i) => (
                 <div
                   key={i}
-                  className="text-xs sm:text-sm font-black tracking-widest uppercase whitespace-nowrap text-center font-mono select-none"
+                  className="text-[11px] sm:text-xs font-semibold tracking-wider uppercase whitespace-nowrap text-center font-mono select-none"
                   style={{
-                    color: 'rgba(217, 119, 6, 0.42)',
-                    textShadow: '0 0 1px rgba(0,0,0,0.95), 0 0 3px rgba(255,255,255,0.4)',
+                    color: 'rgba(120, 113, 108, 0.12)',
+                    mixBlendMode: 'multiply',
                   }}
                 >
-                  {watermarkText} • {watermarkText}
+                  CINELAB • {userIdentifier} • CÓPIA E DOWNLOAD PROIBIDOS
                 </div>
               ))}
             </div>
