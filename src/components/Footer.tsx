@@ -433,14 +433,6 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, settings }) => {
                   {localizedLabels.faqNav}
                 </button>
               </li>
-              <li>
-                <button
-                  onClick={() => onNavigate('admin')}
-                  className="text-neutral-500 hover:text-red-400 transition-colors flex items-center gap-1 cursor-pointer pt-2"
-                >
-                  <Lock className="w-2.5 h-2.5" /> {localizedLabels.adminNav}
-                </button>
-              </li>
             </ul>
           </div>
 

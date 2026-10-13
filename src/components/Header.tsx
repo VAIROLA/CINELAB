@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Logo } from './Logo.js';
 import { User, Enrollment } from '../types/index.js';
 import { LanguageSelector, HeaderCountryTranslator } from './LanguageSelector.js';
-import { HeaderCurrencySelector } from './CurrencySelector.js';
 import { useLanguage } from '../i18n/LanguageContext.js';
 import {
   Menu,
@@ -109,23 +108,21 @@ export const Header: React.FC<HeaderProps> = ({
           </span>
         </div>
 
-        {/* Acima do lado direito: Professor junto com Admin / Perfil e o Tradutor */}
+        {/* Acima do lado direito: Professor e Tradutor (Admin restrito a /admin ou usuários já autenticados) */}
         <div className="ml-auto flex items-center gap-1 sm:gap-2 shrink-0 relative z-20">
-                    {/* BotÃ£o Acesso Direto: ADMIN (Sempre visÃ­vel para acesso imediato ou alternar perfil) */}
-          <button
-            onClick={() => {
-              handleNav('admin');
-            }}
-            className={`text-[9px] sm:text-[10.5px] px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-lg flex items-center gap-1 font-mono font-bold cursor-pointer transition-all active:scale-95 shrink-0 ${
-              user?.role === 'admin'
-                ? 'bg-red-500 text-white ring-2 ring-red-300 font-extrabold shadow-[0_0_12px_rgba(239,68,68,0.5)]'
-                : 'bg-red-950/90 hover:bg-red-900 text-red-200 border border-red-500/70 hover:text-white shadow-sm'
-            }`}
-            title="Acesso ao Painel Administrativo CINELAB"
-          >
-            <Shield className={`w-3 h-3 ${user?.role === 'admin' ? 'text-white' : 'text-red-400'} shrink-0`} />
-            <span className="uppercase tracking-wider">Admin</span>
-          </button>
+          {/* Botão Acesso: ADMIN (Visível SOMENTE quando o administrador já estiver logado) */}
+          {user?.role === 'admin' && (
+            <button
+              onClick={() => {
+                handleNav('admin');
+              }}
+              className="text-[9px] sm:text-[10.5px] px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-lg flex items-center gap-1 font-mono font-bold cursor-pointer transition-all active:scale-95 shrink-0 bg-red-500 text-white ring-2 ring-red-300 font-extrabold shadow-[0_0_12px_rgba(239,68,68,0.5)]"
+              title="Acesso ao Painel Administrativo CINELAB"
+            >
+              <Shield className="w-3 h-3 text-white shrink-0" />
+              <span className="uppercase tracking-wider">Admin</span>
+            </button>
+          )}
 
           {/* BotÃ£o e Acesso Direto: Professor Tony de Luc - Oculto em telas ultra-pequenas (< sm) para eliminar scroll lateral no mobile */}
           <button
@@ -256,17 +253,11 @@ export const Header: React.FC<HeaderProps> = ({
             ) : null}
           </div>
 
-          {/* Seletor visual de moedas e tradutor no topo do lado direito */}
-          <div className="hidden lg:flex items-center gap-2">
-            <HeaderCurrencySelector variant="neon" />
-            <HeaderCountryTranslator variant="neon" />
-          </div>
-          <div className="hidden sm:flex lg:hidden items-center gap-1.5">
-            <HeaderCurrencySelector variant="neon" compact showIcon={false} />
+          {/* Tradutor de Idiomas no topo do lado direito (a moeda converte automaticamente com o idioma) */}
+          <div className="hidden sm:flex items-center gap-2">
             <HeaderCountryTranslator variant="neon" />
           </div>
           <div className="sm:hidden flex items-center gap-1 shrink-0">
-            <HeaderCurrencySelector variant="neon" compact showIcon={false} />
             <button
               onClick={() => setMobileMenuOpen(true)}
               className="px-2 py-1 rounded-lg bg-[#270d4a]/95 hover:bg-[#3d1374] text-white border border-purple-400/50 flex items-center gap-1 text-xs font-sans font-bold shadow-sm cursor-pointer"
@@ -522,14 +513,6 @@ export const Header: React.FC<HeaderProps> = ({
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
         <div className="lg:hidden bg-[#180430]/98 border-b-2 border-fuchsia-500/80 px-4 py-4 space-y-4 animate-fadeIn shadow-2xl">
-          {/* Mobile Currency Selector */}
-          <div className="p-3 bg-purple-950/60 rounded-2xl border border-purple-400/40 space-y-2 shadow-inner">
-            <span className="text-xs font-sans text-purple-200 block text-center font-bold">
-              {language === 'en' ? 'Display Currency • Select Currency:' : language === 'es' ? 'Moneda de Visualización • Seleccione Moneda:' : language === 'fr' ? 'Devise d\'Affichage • Choisissez la Devise :' : 'Moeda de Exibição • Selecione a Moeda:'}
-            </span>
-            <HeaderCurrencySelector stacked variant="neon" className="w-full justify-center" />
-          </div>
-
           {/* Mobile Country Translator */}
           <div className="p-3 bg-purple-950/60 rounded-2xl border border-purple-400/40 space-y-2 shadow-inner">
             <span className="text-xs font-sans text-purple-200 block text-center font-bold">
@@ -538,33 +521,29 @@ export const Header: React.FC<HeaderProps> = ({
             <HeaderCountryTranslator stacked variant="neon" className="w-full justify-center" />
           </div>
 
-          {/* Quick Access to Professor & Admin in mobile */}
-          <div className="grid grid-cols-2 gap-2">
+          {/* Quick Access to Professor */}
+          <div className="flex flex-col gap-2">
             <button
               onClick={() => handleNav('tony-de-luc')}
-              className="px-3 py-2 rounded-xl bg-amber-500/20 border border-amber-400/50 text-amber-300 flex items-center justify-center gap-2 font-bold text-xs"
+              className="w-full py-2.5 rounded-xl bg-amber-500/20 border border-amber-400/50 text-amber-300 flex items-center justify-center gap-2 font-bold text-xs"
             >
               <Clapperboard className="w-4 h-4 text-amber-400" />
               <span>Prof. Tony de Luc</span>
             </button>
-            <button
-              onClick={() => {
-                handleNav('admin');
-                setMobileMenuOpen(false);
-              }}
-              className={`px-3 py-2 rounded-xl flex items-center justify-center gap-2 font-bold text-xs cursor-pointer transition-all ${
-                user?.role === 'admin'
-                  ? 'bg-red-950/90 border border-red-500/80 text-red-200 hover:text-white shadow-[0_0_12px_rgba(239,68,68,0.4)] ring-1 ring-red-400'
-                  : 'bg-red-950/70 border border-red-500/60 text-red-300 hover:text-white'
-              }`}
-            >
-              <Shield className="w-4 h-4 text-red-400" />
-              <span>
-                {user?.role === 'admin'
-                  ? (language === 'en' ? 'Admin Panel' : language === 'es' ? 'Panel Admin' : language === 'fr' ? 'Panneau Admin' : 'Painel Admin')
-                  : (language === 'en' ? 'Admin (Pass)' : language === 'es' ? 'Admin (Clave)' : language === 'fr' ? 'Admin (Pass)' : 'Admin (Senha)')}
-              </span>
-            </button>
+            {user?.role === 'admin' && (
+              <button
+                onClick={() => {
+                  handleNav('admin');
+                  setMobileMenuOpen(false);
+                }}
+                className="w-full py-2.5 rounded-xl flex items-center justify-center gap-2 font-bold text-xs cursor-pointer transition-all bg-red-950/90 border border-red-500/80 text-red-200 hover:text-white shadow-[0_0_12px_rgba(239,68,68,0.4)] ring-1 ring-red-400"
+              >
+                <Shield className="w-4 h-4 text-red-400" />
+                <span>
+                  {language === 'en' ? 'Admin Panel' : language === 'es' ? 'Panel Admin' : language === 'fr' ? 'Panneau Admin' : 'Painel Admin'}
+                </span>
+              </button>
+            )}
           </div>
 
           {/* Somente Admin pode alternar modo de teste no mobile */}

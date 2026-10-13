@@ -32,8 +32,17 @@ import { FaqView } from './views/FaqView.js';
 import { ContactView } from './views/ContactView.js';
 import { TutorIaView } from './views/TutorIaView.js';
 
-export default function App() {
-  const [currentRoute, setCurrentRoute] = useState<string>('inicio');
+  // Determinar rota inicial baseada na URL atual (slug /admin, /curso, etc)
+  const getInitialRouteFromUrl = (): string => {
+    if (typeof window === 'undefined') return 'inicio';
+    const path = window.location.pathname.replace(/^\/+|\/+$/g, '').toLowerCase();
+    if (!path) return 'inicio';
+    if (path === 'admin') return 'admin';
+    if (path === 'home') return 'inicio';
+    return path;
+  };
+
+  const [currentRoute, setCurrentRoute] = useState<string>(getInitialRouteFromUrl);
   const [routeParams, setRouteParams] = useState<any>({});
   const [user, setUser] = useState<User | null>(null);
   const [enrollment, setEnrollment] = useState<Enrollment | null>(null);
@@ -42,6 +51,16 @@ export default function App() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
   const [loadingInitialAuth, setLoadingInitialAuth] = useState(true);
+
+  // Sincronizar navegação com botões Voltar/Avançar do navegador (popstate)
+  useEffect(() => {
+    const handlePopState = () => {
+      const route = getInitialRouteFromUrl();
+      setCurrentRoute(route);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   // Check persistent session and load course info on mount
   useEffect(() => {
@@ -137,6 +156,12 @@ export default function App() {
     const normalizedRoute = route === 'home' || !route ? 'inicio' : route;
     setCurrentRoute(normalizedRoute);
     setRouteParams(params);
+    if (typeof window !== 'undefined') {
+      const targetPath = normalizedRoute === 'inicio' ? '/' : `/${normalizedRoute}`;
+      if (window.location.pathname !== targetPath) {
+        window.history.pushState({}, '', targetPath);
+      }
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 

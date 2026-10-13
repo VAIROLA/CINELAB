@@ -215,23 +215,12 @@ export const AdminView: React.FC<AdminViewProps> = ({
   };
 
   useEffect(() => {
-    const savedToken = typeof window !== 'undefined' ? localStorage.getItem('cinelab_auth_token') : null;
-    const isSavedAdmin = savedToken === 'user-admin' || savedToken === 'admin' || savedToken === 'studiodeluc@gmail.com';
-
-    if (currentUser?.role === 'admin' || localAdminUser?.role === 'admin' || isSavedAdmin) {
-      if (!localAdminUser && isSavedAdmin) {
-        setLocalAdminUser({
-          id: 'user-admin',
-          name: 'Professor Cineasta Tony de Luc',
-          email: 'studiodeluc@gmail.com',
-          role: 'admin',
-        });
-      }
+    if (currentUser?.role === 'admin' || localAdminUser?.role === 'admin') {
       loadAllAdminData();
     } else {
       setLoading(false);
     }
-  }, [currentUser]);
+  }, [currentUser, localAdminUser]);
 
   useEffect(() => {
     if (currentUser && currentUser.role === 'admin') {
@@ -1045,8 +1034,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
 
   const isAuthedAdmin = Boolean(
     (currentUser && currentUser.role === 'admin') ||
-    (localAdminUser && localAdminUser.role === 'admin') ||
-    (typeof window !== 'undefined' && ['user-admin', 'admin', 'studiodeluc@gmail.com'].includes(localStorage.getItem('cinelab_auth_token') || ''))
+    (localAdminUser && localAdminUser.role === 'admin')
   );
 
   return (
