@@ -176,6 +176,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
   const [bonusModalOpen, setBonusModalOpen] = useState(false);
   const [bonusToEdit, setBonusToEdit] = useState<BonusApostila | null>(null);
   const [uploadingBonusNumber, setUploadingBonusNumber] = useState<number | null>(null);
+  const [uploadingBonusProgress, setUploadingBonusProgress] = useState<number>(0);
   const [extraVideosModalApostila, setExtraVideosModalApostila] = useState<Apostila | BonusApostila | null>(null);
 
   // Secure Admin PDF Viewer State
