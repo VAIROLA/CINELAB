@@ -325,6 +325,12 @@ export const ProtectedPdfViewer: React.FC<ProtectedPdfViewerProps> = ({
           }
         }
 
+        const withTimeout = <T,>(p: Promise<T>, ms = 8000, msg = 'Tempo limite excedido'): Promise<T> =>
+          Promise.race([
+            p,
+            new Promise<T>((_, reject) => setTimeout(() => reject(new Error(msg)), ms)),
+          ]);
+
         currentLoadingTask = pdfjs.getDocument({
           url: effectiveUrl,
           cMapUrl: `${origin}/cmaps/`,
@@ -333,7 +339,7 @@ export const ProtectedPdfViewer: React.FC<ProtectedPdfViewerProps> = ({
           withCredentials: false,
         });
 
-        const doc = await currentLoadingTask.promise;
+        const doc = await withTimeout(currentLoadingTask.promise, 8000, 'Tempo limite ao carregar PDF');
         if (!isMounted) return;
 
         setPdfDoc(doc);
@@ -352,6 +358,12 @@ export const ProtectedPdfViewer: React.FC<ProtectedPdfViewerProps> = ({
         }
 
         console.warn('Alerta ao carregar PDF no canvas:', err?.message || err);
+
+        const withTimeout = <T,>(p: Promise<T>, ms = 8000, msg = 'Tempo limite excedido'): Promise<T> =>
+          Promise.race([
+            p,
+            new Promise<T>((_, reject) => setTimeout(() => reject(new Error(msg)), ms)),
+          ]);
 
         // Resilient fallback 1: If bonus document failed, try canonical materiais bonus PDF
         if (isMounted && isBonusDoc) {
@@ -374,7 +386,7 @@ export const ProtectedPdfViewer: React.FC<ProtectedPdfViewerProps> = ({
                 standardFontDataUrl: `${origin}/standard_fonts/`,
                 withCredentials: false,
               });
-              const fallbackDoc = await currentLoadingTask.promise;
+              const fallbackDoc = await withTimeout(currentLoadingTask.promise, 8000, 'Tempo limite no fallback bônus');
               if (isMounted) {
                 setPdfDoc(fallbackDoc);
                 setNumPages(fallbackDoc.numPages);
@@ -401,7 +413,7 @@ export const ProtectedPdfViewer: React.FC<ProtectedPdfViewerProps> = ({
                 standardFontDataUrl: `${origin}/standard_fonts/`,
                 withCredentials: false,
               });
-              const fallbackDoc = await currentLoadingTask.promise;
+              const fallbackDoc = await withTimeout(currentLoadingTask.promise, 8000, 'Tempo limite no fallback módulo');
               if (isMounted) {
                 setPdfDoc(fallbackDoc);
                 setNumPages(fallbackDoc.numPages);
@@ -417,7 +429,7 @@ export const ProtectedPdfViewer: React.FC<ProtectedPdfViewerProps> = ({
         if (isMounted) {
           setLoading(false);
           setErrorMessage(
-            'Não foi possível abrir o arquivo PDF diretamente. Você pode acessar a leitura completa em modo texto.'
+            'Não foi possível abrir o arquivo PDF diretamente neste leitor. Você pode acessar a leitura completa em modo texto ou tópicos.'
           );
         }
       }

@@ -200,7 +200,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
         reader.readAsDataURL(file);
       });
 
-      let finalCoverUrl = localDataUrl;
+      let finalCoverUrl = '';
       try {
         const res = await api.uploadImageFile(file);
         if (res && res.fileUrl) {
@@ -210,7 +210,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
         console.warn('Upload image to server warning, using local dataUrl:', uploadErr);
       }
 
-      const coverToSave = localDataUrl || finalCoverUrl;
+      const coverToSave = finalCoverUrl || localDataUrl;
 
       if (isExtra) {
         try {
@@ -449,10 +449,12 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
     const modNum = item.moduleId || item.number || 1;
     const extraApos: Apostila = {
       ...item,
+      id: `mod-${modNum}-extra`,
+      isExtra: true,
       title: item.extraTitle || `Apostila Extra 0${modNum} (Material Complementar)`,
       subtitle: `Material Didático Complementar - Etapa 0${modNum}`,
       summary: `Apostila extra de aprofundamento técnico e exercícios práticos da Etapa 0${modNum}.`,
-      pdfUrl: item.extraPdfUrl,
+      pdfUrl: item.extraPdfUrl || item.pdfUrl,
       pagesCount: item.extraPagesCount || 30,
       totalPages: item.extraPagesCount || 30,
       fileSizeMb: item.extraFileSizeMb || item.fileSizeMb,
@@ -602,9 +604,10 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
       const isBonus = (selectedApostila as any).id?.startsWith('bonus') ||
                       (selectedApostila as any).code?.includes('BÔNUS') ||
                       (selectedApostila.moduleId && selectedApostila.moduleId > 990);
+      const isExtra = Boolean((selectedApostila as any).isExtra || (selectedApostila as any).id?.includes('extra'));
       const bNum = selectedApostila.number || (selectedApostila.moduleId ? selectedApostila.moduleId - 990 : 1);
       const targetId = isBonus ? `bonus-${bNum}` : (selectedApostila.moduleId || selectedApostila.number);
-      getVaultBlobUrl(targetId, isBonus).then((bUrl) => {
+      getVaultBlobUrl(targetId, isBonus, isExtra).then((bUrl) => {
         if (active) {
           setVaultBlobUrl(bUrl || null);
         }
@@ -613,7 +616,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
     return () => {
       active = false;
     };
-  }, [selectedApostila?.moduleId, selectedApostila?.number, selectedApostila?.id]);
+  }, [selectedApostila?.moduleId, selectedApostila?.number, selectedApostila?.id, (selectedApostila as any)?.isExtra]);
 
   // Support opening initialModuleId directly from navigation route params
   useEffect(() => {

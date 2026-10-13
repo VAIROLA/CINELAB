@@ -165,8 +165,17 @@ export function savePersistentVaultIndex(index: Record<string, Partial<VaultApos
 /**
  * Normaliza o ID do item no cofre
  */
-export function getVaultItemId(target: number | string, isBonus?: boolean): string {
+export function getVaultItemId(target: number | string, isBonus?: boolean, isExtra?: boolean): string {
+  if (isExtra) {
+    if (typeof target === 'string') {
+      if (target.includes('extra')) return target;
+      const num = Number(target.replace(/\D/g, '') || 1);
+      return `mod-${num}-extra`;
+    }
+    return `mod-${target}-extra`;
+  }
   if (typeof target === 'string') {
+    if (target.includes('extra')) return target;
     if (target.startsWith('mod-')) return target;
     if (target.startsWith('bonus-')) {
       const n = Number(target.replace('bonus-', ''));
@@ -314,17 +323,22 @@ export async function updateVaultMetadata(
   targetIdOrModuleId: number | string,
   meta: {
     isBonus?: boolean;
+    isExtra?: boolean;
     bonusNumber?: number;
     title?: string;
     pagesCount?: number;
     pdfUrl?: string;
     coverUrl?: string;
+    extraCoverUrl?: string;
+    extraTitle?: string;
+    extraPdfUrl?: string;
     fileSizeMb?: number;
   }
 ): Promise<void> {
-  const isBonus = Boolean(meta.isBonus || (typeof targetIdOrModuleId === 'number' && targetIdOrModuleId > 990) || (typeof targetIdOrModuleId === 'string' && targetIdOrModuleId.includes('bonus')));
+  const isExtra = Boolean(meta.isExtra || (typeof targetIdOrModuleId === 'string' && targetIdOrModuleId.includes('extra')) || (typeof targetIdOrModuleId === 'number' && targetIdOrModuleId > 100 && targetIdOrModuleId <= 110));
+  const isBonus = !isExtra && Boolean(meta.isBonus || (typeof targetIdOrModuleId === 'number' && targetIdOrModuleId > 990) || (typeof targetIdOrModuleId === 'string' && targetIdOrModuleId.includes('bonus')));
   let bonusNumber = meta.bonusNumber;
-  if (!bonusNumber) {
+  if (!bonusNumber && isBonus) {
     if (typeof targetIdOrModuleId === 'number' && targetIdOrModuleId > 990) {
       bonusNumber = targetIdOrModuleId - 990;
     } else if (typeof targetIdOrModuleId === 'string' && targetIdOrModuleId.includes('bonus')) {
@@ -336,11 +350,14 @@ export async function updateVaultMetadata(
       bonusNumber = 1;
     }
   }
-  if (bonusNumber > 990) {
+  if (bonusNumber && bonusNumber > 990) {
     bonusNumber = bonusNumber - 990;
   }
-  const moduleId = !isBonus ? (typeof targetIdOrModuleId === 'number' ? (targetIdOrModuleId > 990 ? targetIdOrModuleId - 990 : targetIdOrModuleId) : Number(String(targetIdOrModuleId).replace(/\D/g, '') || 1)) : undefined;
-  const id = isBonus ? `bonus-${bonusNumber}` : getVaultItemId(targetIdOrModuleId, false);
+  const rawMod = typeof targetIdOrModuleId === 'number'
+    ? (targetIdOrModuleId > 100 && targetIdOrModuleId <= 110 ? targetIdOrModuleId - 100 : (targetIdOrModuleId <= 990 ? targetIdOrModuleId : undefined))
+    : Number(String(targetIdOrModuleId).replace(/\D/g, '') || 1);
+  const moduleId = !isBonus ? rawMod : undefined;
+  const id = isBonus ? `bonus-${bonusNumber}` : getVaultItemId(targetIdOrModuleId, false, isExtra);
 
   const currentIndex = getPersistentVaultIndex();
   const existing = currentIndex[id] || { id, moduleId, isBonus, bonusNumber };
@@ -351,6 +368,9 @@ export async function updateVaultMetadata(
     pagesCount: meta.pagesCount !== undefined && Number(meta.pagesCount) > 0 ? Number(meta.pagesCount) : existing.pagesCount,
     pdfUrl: meta.pdfUrl !== undefined ? meta.pdfUrl : existing.pdfUrl,
     coverUrl: meta.coverUrl !== undefined ? meta.coverUrl : existing.coverUrl,
+    extraCoverUrl: meta.extraCoverUrl !== undefined ? meta.extraCoverUrl : (existing as any).extraCoverUrl,
+    extraTitle: meta.extraTitle !== undefined ? meta.extraTitle : (existing as any).extraTitle,
+    extraPdfUrl: meta.extraPdfUrl !== undefined ? meta.extraPdfUrl : (existing as any).extraPdfUrl,
     fileSizeMb: meta.fileSizeMb !== undefined ? meta.fileSizeMb : existing.fileSizeMb,
     updatedAt: new Date().toISOString(),
   };
@@ -368,6 +388,7 @@ export async function updateVaultMetadata(
         if (meta.pagesCount !== undefined && Number(meta.pagesCount) > 0) item.pagesCount = Number(meta.pagesCount);
         if (meta.pdfUrl !== undefined) item.pdfUrl = meta.pdfUrl;
         if (meta.coverUrl !== undefined) item.coverUrl = meta.coverUrl;
+        if (meta.extraCoverUrl !== undefined) (item as any).extraCoverUrl = meta.extraCoverUrl;
         if (meta.fileSizeMb !== undefined) item.fileSizeMb = meta.fileSizeMb;
         item.updatedAt = new Date().toISOString();
         store.put(item);
@@ -381,8 +402,8 @@ export async function updateVaultMetadata(
 /**
  * Obtém uma apostila do cofre permanente
  */
-export async function getApostilaFromVault(targetIdOrModuleId: number | string, isBonus?: boolean): Promise<VaultApostilaItem | null> {
-  const id = getVaultItemId(targetIdOrModuleId, isBonus);
+export async function getApostilaFromVault(targetIdOrModuleId: number | string, isBonus?: boolean, isExtra?: boolean): Promise<VaultApostilaItem | null> {
+  const id = getVaultItemId(targetIdOrModuleId, isBonus, isExtra);
   try {
     const db = await openVaultDb();
     const tx = db.transaction(STORE_NAME, 'readonly');
@@ -420,38 +441,16 @@ export async function getAllVaultApostilas(): Promise<VaultApostilaItem[]> {
 /**
  * Retorna uma URL de objeto (Blob URL) pronta para exibição em iframe
  */
-export async function getVaultBlobUrl(targetIdOrModuleId: number | string, isBonus?: boolean): Promise<string | null> {
-  const item = await getApostilaFromVault(targetIdOrModuleId, isBonus);
+export async function getVaultBlobUrl(targetIdOrModuleId: number | string, isBonus?: boolean, isExtra?: boolean): Promise<string | null> {
+  const item = await getApostilaFromVault(targetIdOrModuleId, isBonus, isExtra);
   if (!item || !item.pdfBlob) return null;
 
-  const id = getVaultItemId(targetIdOrModuleId, isBonus);
-  const isB = isBonus || id.startsWith('bonus-');
-  let canonicalPages = 6;
-  if (isB) {
-    const bNum = item.bonusNumber || (id === 'bonus-1' ? 1 : id === 'bonus-3' ? 3 : 2);
-    canonicalPages = bNum === 1 ? 30 : bNum === 3 ? 27 : 29;
-  } else {
-    const mod = item.moduleId || Number(id.replace('mod-', '')) || 1;
-    const realModPages: Record<number, number> = { 1: 8, 2: 52, 3: 7, 4: 6, 5: 6, 6: 6, 7: 6, 8: 6, 9: 6, 10: 6 };
-    canonicalPages = realModPages[mod] || 6;
-  }
-
-  // Se o item no IndexedDB for de cache anterior ou tiver páginas erradas (ex: 4 páginas de rascunho), expurga
-  if (item.pagesCount !== canonicalPages || item.pagesCount === 4 || item.pagesCount === 24 || item.pagesCount === 96 || item.pagesCount === 104) {
-    try {
-      const db = await openVaultDb();
-      const tx = db.transaction(STORE_NAME, 'readwrite');
-      tx.objectStore(STORE_NAME).delete(id);
-    } catch {}
+  try {
+    return URL.createObjectURL(item.pdfBlob);
+  } catch (err) {
+    console.warn('Erro ao criar Blob URL do cofre:', err);
     return null;
   }
-
-  // Se a URL for a canônica /materiais/, prefere carregar o PDF canônico via HTTP direto
-  if (item.pdfUrl && item.pdfUrl.startsWith('/materiais/')) {
-    return null;
-  }
-
-  return URL.createObjectURL(item.pdfBlob);
 }
 
 /**
@@ -475,7 +474,7 @@ export function getMergedApostilasWithVault(serverApostilas: Apostila[]): Aposti
 
     if (!local) {
       const canonicalCover = `/images/covers/apostila-${pad}.jpg`;
-      const isOutdatedOrBrokenCover = !apos.coverUrl || apos.coverUrl.includes('unsplash.com') || (apos.coverUrl.startsWith('/uploads/') && !apos.coverUrl.includes('base64'));
+      const isOutdatedOrBrokenCover = !apos.coverUrl || apos.coverUrl.includes('unsplash.com');
       const extraKey = `mod-${modNum}-extra`;
       const extraLocal = vault[extraKey];
       return {
@@ -520,7 +519,7 @@ export function getMergedApostilasWithVault(serverApostilas: Apostila[]): Aposti
     const effectivePdf = isCorruptedFile ? canonicalPdf : (local.pdfUrl || apos.pdfUrl || canonicalPdf);
 
     const canonicalCover = `/images/covers/apostila-${modNum < 10 ? '0' + modNum : modNum}.jpg`;
-    const isOutdatedOrBrokenCover = !local.coverUrl || local.coverUrl.includes('unsplash.com') || (local.coverUrl.startsWith('/uploads/') && !local.coverUrl.includes('base64'));
+    const isOutdatedOrBrokenCover = !local.coverUrl || local.coverUrl.includes('unsplash.com');
     const effectiveCover = !isOutdatedOrBrokenCover ? local.coverUrl : ((apos.coverUrl && !apos.coverUrl.includes('unsplash.com')) ? apos.coverUrl : canonicalCover);
 
     const extraKey = `mod-${modNum}-extra`;
