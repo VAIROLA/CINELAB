@@ -32,15 +32,17 @@ import { FaqView } from './views/FaqView.js';
 import { ContactView } from './views/ContactView.js';
 import { TutorIaView } from './views/TutorIaView.js';
 
-  // Determinar rota inicial baseada na URL atual (slug /admin, /curso, etc)
-  const getInitialRouteFromUrl = (): string => {
-    if (typeof window === 'undefined') return 'inicio';
-    const path = window.location.pathname.replace(/^\/+|\/+$/g, '').toLowerCase();
-    if (!path) return 'inicio';
-    if (path === 'admin') return 'admin';
-    if (path === 'home') return 'inicio';
-    return path;
-  };
+// Determinar rota inicial baseada na URL atual (slug /admin, /curso, etc)
+const getInitialRouteFromUrl = (): string => {
+  if (typeof window === 'undefined') return 'inicio';
+  const path = window.location.pathname.replace(/^\/+|\/+$/g, '').toLowerCase();
+  if (!path) return 'inicio';
+  if (path === 'admin') return 'admin';
+  if (path === 'home') return 'inicio';
+  return path;
+};
+
+export default function App() {
 
   const [currentRoute, setCurrentRoute] = useState<string>(getInitialRouteFromUrl);
   const [routeParams, setRouteParams] = useState<any>({});
