@@ -352,36 +352,40 @@ export const ProtectedPdfViewer: React.FC<ProtectedPdfViewerProps> = ({
         const canonicalUrl = getCanonicalUrl();
         let doc: any = null;
 
-        // PRIORIDADE 1: Se temos o arquivo binário direto em memória (IndexedDB)
+        // TENTATIVA 1: Se temos o arquivo binário direto em memória (IndexedDB)
         if (pdfBlob && pdfBlob.size > 1024) {
           try {
-            // Verificação rápida de integridade do cabeçalho mágico PDF (%PDF-)
-            const headerCheck = await pdfBlob.slice(0, 5).text();
-            if (!headerCheck.startsWith('%PDF-')) {
-              console.warn('[ProtectedPdfViewer] Arquivo local corrompido (sem cabeçalho %PDF-). Expurgando do cofre.');
+            // Verificação rápida não-bloqueante de integridade
+            const arrayBuffer = await withTimeout(pdfBlob.arrayBuffer(), 2000, 'Tempo limite no arrayBuffer local');
+            if (!isMounted) return;
+
+            // Validar primeiros 4 bytes (%PDF)
+            const headerBytes = new Uint8Array(arrayBuffer.slice(0, 5));
+            const headerString = String.fromCharCode(...headerBytes);
+
+            if (!headerString.startsWith('%PDF-')) {
+              console.warn('[ProtectedPdfViewer] Arquivo local corrompido ou sem cabeçalho %PDF-. Expurgando do cofre.');
               if (moduleId) {
                 purgeVaultPdfBlob(moduleId, isBonusDoc, isExtraDoc).catch(() => {});
               }
             } else {
-              const arrayBuffer = await pdfBlob.arrayBuffer();
-              if (!isMounted) return;
               currentLoadingTask = pdfjs.getDocument({
                 data: new Uint8Array(arrayBuffer),
                 cMapUrl: `${origin}/cmaps/`,
                 cMapPacked: true,
                 standardFontDataUrl: `${origin}/standard_fonts/`,
               });
-              doc = await withTimeout(currentLoadingTask.promise, 3500, 'Tempo limite no buffer local');
+              doc = await withTimeout(currentLoadingTask.promise, 2500, 'Tempo limite no buffer local');
             }
           } catch (blobErr) {
-            console.warn('Falha ao decodificar pdfBlob direto, recorrendo à URL oficial:', blobErr);
+            console.warn('Falha ou tempo limite no pdfBlob local, recorrendo imediatamente à URL oficial:', blobErr);
             if (moduleId) {
               purgeVaultPdfBlob(moduleId, isBonusDoc, isExtraDoc).catch(() => {});
             }
           }
         }
 
-        // PRIORIDADE 2: Carrega da URL oficial
+        // TENTATIVA 2: Carrega da URL principal ou oficial canônica
         if (!doc) {
           let effectiveUrl = url;
           // Se effectiveUrl for blob:, vazio, ou upload efêmero, usa diretamente a URL canônica oficial
@@ -389,16 +393,15 @@ export const ProtectedPdfViewer: React.FC<ProtectedPdfViewerProps> = ({
             effectiveUrl = canonicalUrl || effectiveUrl;
           }
 
-          currentLoadingTask = pdfjs.getDocument({
-            url: effectiveUrl,
-            cMapUrl: `${origin}/cmaps/`,
-            cMapPacked: true,
-            standardFontDataUrl: `${origin}/standard_fonts/`,
-            withCredentials: false,
-          });
-
           try {
-            doc = await withTimeout(currentLoadingTask.promise, 5000, 'Tempo limite ao carregar PDF');
+            currentLoadingTask = pdfjs.getDocument({
+              url: effectiveUrl,
+              cMapUrl: `${origin}/cmaps/`,
+              cMapPacked: true,
+              standardFontDataUrl: `${origin}/standard_fonts/`,
+              withCredentials: false,
+            });
+            doc = await withTimeout(currentLoadingTask.promise, 4500, 'Tempo limite ao carregar PDF');
           } catch (urlErr) {
             console.warn('Falha na URL principal, tentando URL canônica oficial:', urlErr);
             if (effectiveUrl !== canonicalUrl && canonicalUrl) {
@@ -409,7 +412,7 @@ export const ProtectedPdfViewer: React.FC<ProtectedPdfViewerProps> = ({
                 standardFontDataUrl: `${origin}/standard_fonts/`,
                 withCredentials: false,
               });
-              doc = await withTimeout(currentLoadingTask.promise, 5000, 'Tempo limite na URL canônica');
+              doc = await withTimeout(currentLoadingTask.promise, 4500, 'Tempo limite na URL canônica');
             } else {
               throw urlErr;
             }
@@ -446,16 +449,28 @@ export const ProtectedPdfViewer: React.FC<ProtectedPdfViewerProps> = ({
 
     loadDocument();
 
+    // Trava de segurança: nunca permitir loading infinito na tela (máximo de 6 segundos)
+    const timeoutSafeguard = setTimeout(() => {
+      if (isMounted) {
+        setLoading((prevLoading) => {
+          if (prevLoading) {
+            console.warn('[ProtectedPdfViewer] Trava de segurança: desativando loading após tempo limite.');
+            return false;
+          }
+          return prevLoading;
+        });
+      }
+    }, 6000);
+
     return () => {
       isMounted = false;
+      clearTimeout(timeoutSafeguard);
       if (renderTaskRef.current) {
         try {
           renderTaskRef.current.cancel();
         } catch {}
         renderTaskRef.current = null;
       }
-      // Nota: Nunca chamamos currentLoadingTask.destroy() aqui pois no PDF.js isso
-      // encerra o Web Worker compartilhado globalmente e quebra leituras subsequentes.
     };
   }, [url, pdfBlob, moduleId, ensurePdfJsLoaded]);
 

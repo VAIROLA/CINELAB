@@ -458,10 +458,18 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
         getVaultBlobUrl(targetId, isBonusItem, isExtra),
         getVaultPdfBlob(targetId, isBonusItem, isExtra),
       ]);
-      setVaultBlobUrl(bUrl || null);
-      setVaultPdfBlob(blob || null);
+      // Se for o Módulo 1 e o blob tiver tamanho de upload anterior ou for menor que 50KB, descarta para carregar o oficial de 33 págs
+      if (!isBonusItem && !isExtra && (targetId === 1 || targetId === '1' || targetId === 'mod-1') && blob && (blob.size < 50000 || blob.size > 15000000)) {
+        console.info('[ApostilasView] Ignorando blob local não canônico do Módulo 1 para usar PDF oficial direto de 33 páginas.');
+        setVaultBlobUrl(null);
+        setVaultPdfBlob(null);
+      } else {
+        setVaultBlobUrl(bUrl || null);
+        setVaultPdfBlob(blob || null);
+      }
     } catch {
-      // Falhas silenciosas tratadas no leitor
+      setVaultBlobUrl(null);
+      setVaultPdfBlob(null);
     }
 
     setSelectedApostila(fullItem as Apostila);
@@ -2537,10 +2545,36 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
 
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 bg-neutral-900/60 rounded-xl border border-neutral-800 text-[11px] text-neutral-400 font-mono">
                     <span>{cur.documentLabel} {selectedApostila.pdfUrl.split('/').pop()}</span>
-                    <span className="text-amber-300 flex items-center gap-1.5 font-sans">
-                      <Shield className="w-3.5 h-3.5 text-amber-400" />
-                      <span>{cur.readerDisclaimer}</span>
-                    </span>
+                    <div className="flex items-center gap-3">
+                      {isAdmin && (
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            const modNum = selectedApostila.moduleId || selectedApostila.number || 1;
+                            const isExtra = Boolean((selectedApostila as any).isExtra);
+                            const isBonus = Boolean(selectedApostila.id?.startsWith('bonus') || (selectedApostila.moduleId && selectedApostila.moduleId > 990));
+                            await purgeVaultPdfBlob(modNum, isBonus, isExtra);
+                            setVaultPdfBlob(null);
+                            setVaultBlobUrl(null);
+                            const canonicalUrl = `/materiais/cinelab-apostila-${modNum < 10 ? '0' + modNum : modNum}.pdf`;
+                            setSelectedApostila({
+                              ...selectedApostila,
+                              pdfUrl: canonicalUrl,
+                            });
+                            alert('PDF Oficial Restaurado com Sucesso!');
+                          }}
+                          className="px-2.5 py-1 rounded-md bg-neutral-800 hover:bg-neutral-700 text-amber-300 border border-amber-500/30 text-[10px] font-bold cursor-pointer transition flex items-center gap-1"
+                          title="Restaurar arquivo PDF original oficial da escola"
+                        >
+                          <RefreshCw className="w-3 h-3 text-amber-400" />
+                          <span>Restaurar PDF Oficial</span>
+                        </button>
+                      )}
+                      <span className="text-amber-300 flex items-center gap-1.5 font-sans">
+                        <Shield className="w-3.5 h-3.5 text-amber-400" />
+                        <span>{cur.readerDisclaimer}</span>
+                      </span>
+                    </div>
                   </div>
                 </div>
               )}
