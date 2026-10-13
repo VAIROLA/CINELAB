@@ -352,6 +352,11 @@ export const ProtectedPdfViewer: React.FC<ProtectedPdfViewerProps> = ({
           // Se a URL for um arquivo de upload efêmero e não temos Blob local, na Vercel ela não existe e retorna HTML do SPA.
           // Substitui imediatamente pela URL canônica para não travar o carregamento!
           if (!effectiveUrl || isOrphanedUpload) {
+            const isExtraDoc = Boolean(
+              (url && url.toLowerCase().includes('extra')) ||
+              (title && title.toLowerCase().includes('extra'))
+            );
+
             if (isBonusDoc) {
               const bNum = getBonusNumber();
               effectiveUrl = bNum === 1
@@ -361,6 +366,8 @@ export const ProtectedPdfViewer: React.FC<ProtectedPdfViewerProps> = ({
                 : bNum === 3
                 ? '/materiais/cinelab-bonus-03-analise-filmica.pdf'
                 : '/materiais/cinelab-bonus-04-historia-do-cinema-complemento.pdf';
+            } else if (isExtraDoc && moduleId) {
+              effectiveUrl = moduleId === 1 ? '/materiais/cinelab-apostila-extra-01.pdf' : `/materiais/cinelab-apostila-${moduleId < 10 ? '0' + moduleId : moduleId}.pdf`;
             } else if (moduleId) {
               effectiveUrl = `/materiais/cinelab-apostila-${moduleId < 10 ? '0' + moduleId : moduleId}.pdf`;
             } else {

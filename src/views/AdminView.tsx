@@ -2487,10 +2487,10 @@ export const AdminView: React.FC<AdminViewProps> = ({
                                       isBonus: false,
                                       isExtra: false,
                                     })}
-                                    className="text-[10px] text-amber-400 hover:text-amber-300 underline flex items-center gap-1 mt-0.5 cursor-pointer bg-transparent border-0 p-0 font-medium"
+                                    className="mt-1 px-2.5 py-1 rounded-md bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-mono flex items-center gap-1.5 cursor-pointer transition-all shadow-sm w-fit"
                                     title="Abrir no leitor seguro com marca d'água e proteção contra download"
                                   >
-                                    <Shield className="w-2.5 h-2.5 text-amber-400" />
+                                    <Shield className="w-3 h-3 text-amber-400" />
                                     <span>Ler PDF Seguro</span>
                                   </button>
                                 ) : (
@@ -2633,10 +2633,10 @@ export const AdminView: React.FC<AdminViewProps> = ({
                                       isBonus: false,
                                       isExtra: true,
                                     })}
-                                    className="text-[10px] text-cyan-400 hover:text-cyan-300 underline flex items-center gap-1 mt-0.5 cursor-pointer bg-transparent border-0 p-0 font-medium"
+                                    className="mt-1 px-2.5 py-1 rounded-md bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-[10px] font-mono flex items-center gap-1.5 cursor-pointer transition-all shadow-sm w-fit"
                                     title="Abrir no leitor seguro com marca d'água e proteção contra download"
                                   >
-                                    <Shield className="w-2.5 h-2.5 text-cyan-400" />
+                                    <Shield className="w-3 h-3 text-cyan-400" />
                                     <span>Ler PDF Extra Seguro</span>
                                   </button>
                                 ) : (
@@ -3011,10 +3011,10 @@ export const AdminView: React.FC<AdminViewProps> = ({
                                   isBonus: true,
                                   isExtra: false,
                                 })}
-                                className="text-amber-400 hover:text-amber-300 underline text-[10px] flex items-center gap-1 pt-1 cursor-pointer bg-transparent border-0 p-0 font-medium"
+                                className="mt-1.5 px-3 py-1 rounded-md bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-mono flex items-center gap-1.5 cursor-pointer transition-all shadow-sm w-fit"
                                 title="Abrir no leitor seguro com marca d'água e proteção contra download"
                               >
-                                <Shield className="w-2.5 h-2.5 text-amber-400" />
+                                <Shield className="w-3 h-3 text-amber-400" />
                                 <span>Ler PDF Bônus Seguro</span>
                               </button>
                             )}
