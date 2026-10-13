@@ -477,6 +477,12 @@ export function getMergedApostilasWithVault(serverApostilas: Apostila[]): Aposti
       const isOutdatedOrBrokenCover = !apos.coverUrl || apos.coverUrl.includes('unsplash.com');
       const extraKey = `mod-${modNum}-extra`;
       const extraLocal = vault[extraKey];
+      const getCleanExtraCover = (...candidates: Array<string | undefined>) => {
+        for (const c of candidates) {
+          if (c && !c.startsWith('/uploads/images/')) return c;
+        }
+        return undefined;
+      };
       return {
         ...apos,
         coverUrl: !isOutdatedOrBrokenCover ? apos.coverUrl : canonicalCover,
@@ -487,7 +493,7 @@ export function getMergedApostilasWithVault(serverApostilas: Apostila[]): Aposti
         extraTitle: apos.extraTitle || extraLocal?.title,
         extraPagesCount: apos.extraPagesCount || extraLocal?.pagesCount,
         extraFileSizeMb: apos.extraFileSizeMb || extraLocal?.fileSizeMb,
-        extraCoverUrl: apos.extraCoverUrl || extraLocal?.coverUrl,
+        extraCoverUrl: getCleanExtraCover(apos.extraCoverUrl, extraLocal?.extraCoverUrl, extraLocal?.coverUrl),
       };
     }
 
@@ -541,7 +547,7 @@ export function getMergedApostilasWithVault(serverApostilas: Apostila[]): Aposti
       extraTitle: effectiveExtraTitle,
       extraPagesCount: effectiveExtraPages,
       extraFileSizeMb: effectiveExtraSize,
-      extraCoverUrl: apos.extraCoverUrl || local.extraCoverUrl || extraLocal?.coverUrl,
+      extraCoverUrl: getCleanExtraCover(apos.extraCoverUrl, local.extraCoverUrl, extraLocal?.extraCoverUrl, extraLocal?.coverUrl),
     };
   });
 

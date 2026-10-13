@@ -175,6 +175,37 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
   // Estado e função para upload da capa de cada apostila diretamente da tela
   const [uploadingCoverId, setUploadingCoverId] = useState<string | number | null>(null);
 
+  const compressCoverImage = (file: File, maxWidth = 640, quality = 0.86): Promise<string> => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, width, height);
+            resolve(canvas.toDataURL('image/jpeg', quality));
+          } else {
+            resolve((e.target?.result as string) || '');
+          }
+        };
+        img.onerror = () => resolve((e.target?.result as string) || '');
+        img.src = (e.target?.result as string) || '';
+      };
+      reader.onerror = () => resolve('');
+      reader.readAsDataURL(file);
+    });
+  };
+
   const handleUploadCover = async (item: Apostila | BonusApostila, file: File, isExtra: boolean = false) => {
     if (!isAdmin || !file) return;
     const isImage = file.type.startsWith('image/') || /\.(jpe?g|png|webp|svg|gif|avif|bmp)$/i.test(file.name);
@@ -192,25 +223,11 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
     try {
       setUploadingCoverId(uploadKey);
 
-      // Leitura imediata como DataURL para exibição instantânea sem falhas de rede ou servidor
-      const localDataUrl = await new Promise<string>((resolve) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve((reader.result as string) || '');
-        reader.onerror = () => resolve('');
-        reader.readAsDataURL(file);
-      });
+      // Compactação ultraleve (~60KB) com máxima nitidez visual — nunca expira, nunca dá 404 e abre em qualquer celular
+      const coverToSave = await compressCoverImage(file);
 
-      let finalCoverUrl = '';
-      try {
-        const res = await api.uploadImageFile(file);
-        if (res && res.fileUrl) {
-          finalCoverUrl = res.fileUrl;
-        }
-      } catch (uploadErr) {
-        console.warn('Upload image to server warning, using local dataUrl:', uploadErr);
-      }
-
-      const coverToSave = finalCoverUrl || localDataUrl;
+      // Envia assincronamente ao servidor
+      api.uploadImageFile(file).catch(() => {});
 
       if (isExtra) {
         try {
@@ -221,13 +238,14 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
 
         await updateVaultMetadata(modOrBonusNumber, {
           isExtra: true,
+          coverUrl: coverToSave,
           extraCoverUrl: coverToSave,
         });
 
         setApostilas((prev) =>
           prev.map((a) => (a.id === itemId || a.moduleId === modOrBonusNumber ? { ...a, extraCoverUrl: coverToSave } : a))
         );
-        alert('Capa da Apostila Extra atualizada com sucesso!');
+        alert('Capa da Apostila Extra atualizada e aplicada com sucesso!');
       } else {
         try {
           await api.updateAdminApostila(itemId, { coverUrl: coverToSave });
@@ -250,7 +268,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
             prev.map((a) => (a.id === itemId || a.moduleId === modOrBonusNumber ? { ...a, coverUrl: coverToSave } : a))
           );
         }
-        alert('Capa atualizada com sucesso!');
+        alert('Capa da Apostila atualizada e aplicada com sucesso!');
       }
     } catch (err: any) {
       console.error(err);
@@ -1479,23 +1497,29 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                         Capa Extra
                       </div>
                       <div className="relative w-full aspect-[1/1.4] rounded-xl overflow-hidden border border-cyan-500/40 bg-neutral-950 shadow-xl group/cover flex items-center justify-center">
-                        {item.extraCoverUrl ? (
+                        {item.extraCoverUrl && !item.extraCoverUrl.startsWith('/uploads/images/') ? (
                           <img
                             src={item.extraCoverUrl}
                             alt={`Capa Extra da ${cur.handoutPrefix}${modNum}`}
                             className="w-full h-full object-cover group-hover/cover:scale-105 transition-transform duration-300"
                             loading="lazy"
+                            onError={(e) => {
+                              (e.currentTarget as HTMLImageElement).style.display = 'none';
+                              const fb = e.currentTarget.parentElement?.querySelector('.extra-cover-fallback') as HTMLElement;
+                              if (fb) fb.style.display = 'flex';
+                            }}
                           />
-                        ) : (
-                          <div className="w-full h-full bg-gradient-to-b from-neutral-900 via-cyan-950/40 to-neutral-950 p-1.5 flex flex-col items-center justify-center text-center border border-cyan-500/20">
-                            <BookOpen className="w-5 h-5 text-cyan-400 mb-1 opacity-80" />
-                            <span className="text-[8px] font-bold text-cyan-300 uppercase tracking-tight">Capa Extra</span>
-                            <span className="text-[8px] font-mono text-cyan-400 mt-0.5">Mod. 0{modNum}</span>
-                            <span className="text-[7px] text-neutral-400 mt-0.5 leading-tight line-clamp-2">
-                              {item.extraTitle || 'Complementar'}
-                            </span>
-                          </div>
-                        )}
+                        ) : null}
+                        <div
+                          className={`extra-cover-fallback w-full h-full bg-gradient-to-b from-neutral-900 via-cyan-950/40 to-neutral-950 p-1.5 flex flex-col items-center justify-center text-center border border-cyan-500/20 ${item.extraCoverUrl && !item.extraCoverUrl.startsWith('/uploads/images/') ? 'hidden' : 'flex'}`}
+                        >
+                          <BookOpen className="w-5 h-5 text-cyan-400 mb-1 opacity-80" />
+                          <span className="text-[8px] font-bold text-cyan-300 uppercase tracking-tight">Capa Extra</span>
+                          <span className="text-[8px] font-mono text-cyan-400 mt-0.5">Mod. 0{modNum}</span>
+                          <span className="text-[7px] text-neutral-400 mt-0.5 leading-tight line-clamp-2">
+                            {item.extraTitle || 'Complementar'}
+                          </span>
+                        </div>
 
                         {/* Botão Hover de Subir Capa Extra (Admin) */}
                         {isAdmin && (

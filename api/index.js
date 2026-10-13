@@ -7325,6 +7325,26 @@ app.use("/cmaps", (req, res, next) => {
   res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
   next();
 }, express.static(path2.join(process.cwd(), "public", "cmaps")));
+app.get("/uploads/images/:filename", (req, res) => {
+  const filename = req.params.filename;
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+  res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+  const candidates = [
+    path2.join(imagesUploadDir, filename),
+    path2.join(backupImagesDir, filename),
+    path2.join(os.tmpdir(), "cinelab", "public", "uploads", "images", filename),
+    path2.join(os.tmpdir(), "cinelab", "data", "images_backup", filename),
+    path2.join(process.cwd(), "public", "uploads", "images", filename),
+    path2.join(process.cwd(), "data", "images_backup", filename)
+  ];
+  for (const p of candidates) {
+    if (fs2.existsSync(p)) {
+      return res.sendFile(p);
+    }
+  }
+  res.status(404).send("Imagem não encontrada");
+});
 app.get("/uploads/apostilas/:filename", (req, res, next) => {
   const filename = req.params.filename;
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -9270,9 +9290,23 @@ app.get("/api/admin/bonus-apostilas", requireAdmin, (req, res) => {
 });
 app.put("/api/admin/apostilas/:id", requireAdmin, (req, res) => {
   const apostilaId = req.params.id;
-  const { title, subtitle, description, pdfUrl, coverUrl, pagesCount } = req.body;
+  const {
+    title,
+    subtitle,
+    description,
+    pdfUrl,
+    coverUrl,
+    pagesCount,
+    extraCoverUrl,
+    extraTitle,
+    extraPdfUrl,
+    extraPagesCount,
+    isExtra
+  } = req.body;
   const db2 = getDb();
-  const index = db2.apostilas.findIndex((a) => a.id === apostilaId);
+  const index = db2.apostilas.findIndex(
+    (a) => a.id === apostilaId || a.moduleId === Number(apostilaId) || a.number === Number(apostilaId)
+  );
   if (index !== -1) {
     const newPages = pagesCount !== void 0 && Number(pagesCount) > 0 ? Number(pagesCount) : db2.apostilas[index].pagesCount || db2.apostilas[index].totalPages || 30;
     db2.apostilas[index] = {
@@ -9280,7 +9314,11 @@ app.put("/api/admin/apostilas/:id", requireAdmin, (req, res) => {
       title: title || db2.apostilas[index].title,
       description: description || db2.apostilas[index].description,
       pdfUrl: pdfUrl || db2.apostilas[index].pdfUrl,
-      coverUrl: coverUrl || db2.apostilas[index].coverUrl,
+      coverUrl: coverUrl !== void 0 ? coverUrl : db2.apostilas[index].coverUrl,
+      extraCoverUrl: extraCoverUrl !== void 0 ? extraCoverUrl : db2.apostilas[index].extraCoverUrl,
+      extraTitle: extraTitle || db2.apostilas[index].extraTitle,
+      extraPdfUrl: extraPdfUrl || db2.apostilas[index].extraPdfUrl,
+      extraPagesCount: extraPagesCount !== void 0 ? Number(extraPagesCount) : db2.apostilas[index].extraPagesCount,
       pagesCount: newPages,
       totalPages: newPages
     };
