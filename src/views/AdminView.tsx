@@ -61,12 +61,13 @@ import {
   X,
   EyeOff,
   LogOut,
+  Play,
 } from 'lucide-react';
 import { VisitorsTab } from '../components/admin/VisitorsTab.js';
 import { StudentModal } from '../components/admin/StudentModal.js';
 import { ModuleEditModal } from '../components/admin/ModuleEditModal.js';
 import { BonusApostilaEditModal } from '../components/admin/BonusApostilaEditModal.js';
-import { ApostilaExtraVideosSection } from '../components/ApostilaExtraVideosSection.js';
+import { ApostilaExtraVideosSection, extractYoutubeId } from '../components/ApostilaExtraVideosSection.js';
 import { InstitutionalTab } from '../components/admin/InstitutionalTab.js';
 import { ProtectedPdfViewer } from '../components/ProtectedPdfViewer.js';
 import { Logo } from '../components/Logo.js';
@@ -190,6 +191,18 @@ export const AdminView: React.FC<AdminViewProps> = ({
     moduleId?: number;
   } | null>(null);
 
+  // Admin Video Player State (Assistir qualquer aula ou filme indicado diretamente no painel)
+  const [adminPlayingVideo, setAdminPlayingVideo] = useState<{
+    url: string;
+    title: string;
+    subtitle?: string;
+  } | null>(null);
+
+  // Admin Films State & Edit Modal (Gestão das Obras Indicadas da Cinemateca)
+  const [adminFilms, setAdminFilms] = useState<any[]>([]);
+  const [editingFilmModal, setEditingFilmModal] = useState<any | null>(null);
+  const [savingFilm, setSavingFilm] = useState(false);
+
   const handleOpenAdminPdfViewer = async (item: {
     moduleId: number;
     pdfUrl?: string;
@@ -209,8 +222,16 @@ export const AdminView: React.FC<AdminViewProps> = ({
       if (vBlob) blob = vBlob;
     } catch {}
 
+    const defaultUrl = item.isBonus
+      ? (item.moduleId === 1
+          ? '/materiais/cinelab-bonus-01-glossario-planos.pdf'
+          : item.moduleId === 2
+          ? '/materiais/cinelab-bonus-02-glossario-roteiro.pdf'
+          : '/materiais/cinelab-bonus-03-analise-filmica.pdf')
+      : (item.moduleId ? `/materiais/cinelab-apostila-${item.moduleId < 10 ? '0' + item.moduleId : item.moduleId}.pdf` : '');
+
     setAdminViewerApostila({
-      url: item.pdfUrl || (item.moduleId ? `/materiais/cinelab-apostila-${item.moduleId < 10 ? '0' + item.moduleId : item.moduleId}.pdf` : ''),
+      url: bUrl || item.pdfUrl || defaultUrl,
       pdfBlob: blob,
       title: item.title,
       moduleId: item.moduleId,
@@ -240,7 +261,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
     try {
       setLoading(true);
       setAuthError(null);
-      const [st, vis, stud, modsRes, apos, vids, subs, setts, em, bonusRes] = await Promise.all([
+      const [st, vis, stud, modsRes, apos, vids, subs, setts, em, bonusRes, filmsRes] = await Promise.all([
         api.getAdminStats().catch((err) => {
           console.warn('Dashboard stats fallback:', err);
           return {
@@ -265,6 +286,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
         api.getAdminSettings().catch(() => ({ settings: {} })),
         api.getAdminEmails().catch(() => []),
         api.getStudentBonusApostilas().catch(() => []),
+        api.getAdminFilms().catch(() => []),
       ]);
 
       setStats(st || {
@@ -290,6 +312,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
       setSubmissions(Array.isArray(subs) ? subs : ((subs as any)?.submissions && Array.isArray((subs as any).submissions) ? (subs as any).submissions : []));
       setSettingsData(setts);
       setEmails(Array.isArray(em) ? em : ((em as any)?.emails && Array.isArray((em as any).emails) ? (em as any).emails : []));
+      setAdminFilms(Array.isArray(filmsRes) ? filmsRes : []);
 
       // Auto-sync persistent vault to backend
       autoRestoreVaultToServer(api);
@@ -315,6 +338,39 @@ export const AdminView: React.FC<AdminViewProps> = ({
       console.warn('Carregamento admin parcial (não-fatal):', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSaveFilm = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingFilmModal) return;
+    try {
+      setSavingFilm(true);
+      const modId = editingFilmModal.moduleId;
+      const effectiveUrl = (editingFilmModal.streamingUrl || editingFilmModal.watchUrl || '').trim();
+      const res = await api.updateAdminFilm(modId, {
+        title: editingFilmModal.title,
+        originalTitle: editingFilmModal.originalTitle,
+        director: editingFilmModal.director,
+        year: Number(editingFilmModal.year) || new Date().getFullYear(),
+        country: editingFilmModal.country,
+        durationMinutes: Number(editingFilmModal.durationMinutes) || 90,
+        streamingUrl: effectiveUrl,
+        watchUrl: effectiveUrl,
+        streamingPlatform: editingFilmModal.streamingPlatform || 'YouTube / Online',
+        platform: editingFilmModal.streamingPlatform || 'YouTube / Online',
+        pedagogicalContext: editingFilmModal.pedagogicalContext || editingFilmModal.description,
+        description: editingFilmModal.pedagogicalContext || editingFilmModal.description,
+      });
+      setAdminFilms((prev) =>
+        prev.map((f) => (f.moduleId === modId ? { ...f, ...(res?.film || editingFilmModal), streamingUrl: effectiveUrl, watchUrl: effectiveUrl } : f))
+      );
+      notify(`Filme da Etapa 0${modId} atualizado com sucesso!`);
+      setEditingFilmModal(null);
+    } catch (err: any) {
+      alert('Erro ao atualizar filme: ' + (err.message || 'Erro desconhecido'));
+    } finally {
+      setSavingFilm(false);
     }
   };
 
@@ -2513,33 +2569,29 @@ export const AdminView: React.FC<AdminViewProps> = ({
                                 <div className="text-[11px] font-medium text-white truncate" title={matchingApostila?.title || mod.title}>
                                   {matchingApostila?.title || mod.title}
                                 </div>
-                                {matchingApostila?.pdfUrl ? (
-                                  <button
-                                    type="button"
-                                    onClick={() => handleOpenAdminPdfViewer({
-                                      moduleId: mod.id,
-                                      pdfUrl: matchingApostila.pdfUrl,
-                                      title: matchingApostila.title || mod.title,
-                                      isBonus: false,
-                                      isExtra: false,
-                                    })}
-                                    className="mt-1 px-2.5 py-1 rounded-md bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-mono flex items-center gap-1.5 cursor-pointer transition-all shadow-sm w-fit"
-                                    title="Abrir no leitor seguro com marca d'água e proteção contra download"
-                                  >
-                                    <Shield className="w-3 h-3 text-amber-400" />
-                                    <span>Ler PDF Seguro</span>
-                                  </button>
-                                ) : (
-                                  <span className="text-[10px] text-neutral-500">Sem PDF cadastrado</span>
-                                )}
+                                <button
+                                  type="button"
+                                  onClick={() => handleOpenAdminPdfViewer({
+                                    moduleId: mod.id,
+                                    pdfUrl: matchingApostila?.pdfUrl || `/materiais/cinelab-apostila-${mod.id < 10 ? '0' + mod.id : mod.id}.pdf`,
+                                    title: matchingApostila?.title || mod.title,
+                                    isBonus: false,
+                                    isExtra: false,
+                                  })}
+                                  className="mt-1.5 px-3 py-1.5 rounded-lg bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 border border-blue-500/40 text-xs font-mono font-bold flex items-center gap-1.5 cursor-pointer transition-all shadow-sm w-fit"
+                                  title="Abrir e ler esta apostila completa no leitor de PDF do painel"
+                                >
+                                  <BookOpen className="w-3.5 h-3.5 text-blue-400" />
+                                  <span>📖 Ler Apostila</span>
+                                </button>
                               </div>
                             </div>
                           </div>
 
                           {/* Ações da Apostila Principal */}
                           <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 pt-2 border-t border-neutral-800/40">
-                            {/* Subir PDF */}
-                            <label className="px-2.5 py-1.5 bg-neutral-900 hover:bg-neutral-800 text-blue-300 hover:text-white border border-blue-500/30 rounded-lg text-[11px] transition-colors cursor-pointer flex items-center justify-center gap-1 font-sans">
+                            {/* Substituir PDF */}
+                            <label className="px-2 py-1.5 bg-neutral-900 hover:bg-neutral-800 text-blue-300 hover:text-white border border-blue-500/30 rounded-lg text-[11px] transition-colors cursor-pointer flex items-center justify-center gap-1 font-sans">
                               {uploadingModuleApostila === mod.id ? (
                                 <>
                                   <Loader2 className="w-3 h-3 animate-spin text-blue-400" />
@@ -2547,8 +2599,8 @@ export const AdminView: React.FC<AdminViewProps> = ({
                                 </>
                               ) : (
                                 <>
-                                  <FileText className="w-3 h-3 text-blue-400" />
-                                  <span>Subir PDF</span>
+                                  <Upload className="w-3 h-3 text-blue-400" />
+                                  <span>Substituir PDF</span>
                                 </>
                               )}
                               <input
@@ -2797,9 +2849,29 @@ export const AdminView: React.FC<AdminViewProps> = ({
                                 <div className="text-[11px] font-medium text-white truncate" title={matchingVideo?.title || `Vídeo Etapa 0${mod.id}`}>
                                   {matchingVideo?.title || `Vídeo Etapa 0${mod.id}`}
                                 </div>
-                                <span className="text-[10px] text-amber-400 font-mono block">
-                                  {matchingVideo?.videoUrl?.startsWith('/uploads/') ? 'MP4 Local Ativo' : 'Vídeo Configurado'}
-                                </span>
+                                <div className="flex items-center gap-2 mt-1">
+                                  {(() => {
+                                    const effectiveVideoUrl = matchingVideo?.videoUrl || `/videos/cinelab-modulo-0${mod.id}.mp4`;
+                                    return (
+                                      <button
+                                        type="button"
+                                        onClick={() => setAdminPlayingVideo({
+                                          url: effectiveVideoUrl,
+                                          title: `Etapa 0${mod.id}: ${matchingVideo?.title || mod.title}`,
+                                          subtitle: `Videoaula Oficial • Duração: ${matchingVideo?.duration || '45 min'}`
+                                        })}
+                                        className="px-2.5 py-1 rounded-md bg-amber-500 hover:bg-amber-400 text-neutral-950 text-xs font-mono font-bold flex items-center gap-1 cursor-pointer transition-all shadow-md"
+                                        title="Assistir a videoaula agora no painel do administrador"
+                                      >
+                                        <Play className="w-3 h-3 fill-current" />
+                                        <span>▶ Assistir Aula</span>
+                                      </button>
+                                    );
+                                  })()}
+                                  <span className="text-[10px] text-amber-400 font-mono">
+                                    {matchingVideo?.videoUrl?.startsWith('/uploads/') ? 'MP4 Local Ativo' : 'Vídeo Configurado'}
+                                  </span>
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -2807,8 +2879,8 @@ export const AdminView: React.FC<AdminViewProps> = ({
                           {/* Ações de Vídeos */}
                           <div className="flex flex-col gap-1.5 pt-2 border-t border-neutral-800/40">
                             <div className="grid grid-cols-2 gap-1.5">
-                              {/* Subir Vídeo */}
-                              <label className="px-2.5 py-1.5 bg-neutral-900 hover:bg-neutral-800 text-amber-300 hover:text-white border border-neutral-700 rounded-lg text-[11px] transition-colors cursor-pointer flex items-center justify-center gap-1 font-sans">
+                              {/* Substituir Vídeo */}
+                              <label className="px-2 py-1.5 bg-neutral-900 hover:bg-neutral-800 text-amber-300 hover:text-white border border-neutral-700 rounded-lg text-[11px] transition-colors cursor-pointer flex items-center justify-center gap-1 font-sans">
                                 {uploadingModuleVideo === mod.id ? (
                                   <>
                                     <Loader2 className="w-3 h-3 animate-spin text-amber-400" />
@@ -2817,7 +2889,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
                                 ) : (
                                   <>
                                     <Upload className="w-3 h-3 text-amber-400" />
-                                    <span>Subir Vídeo</span>
+                                    <span>Substituir Vídeo</span>
                                   </>
                                 )}
                                 <input
@@ -2881,6 +2953,87 @@ export const AdminView: React.FC<AdminViewProps> = ({
                           </div>
                         </div>
                       </div>
+
+                      {/* SUB-SEÇÃO: FILME & OBRA INDICADA DA ETAPA (CINEMATECA) */}
+                      {(() => {
+                        const matchingFilm = adminFilms.find((f) => f.moduleId === mod.id);
+                        const filmUrl = matchingFilm?.streamingUrl || matchingFilm?.watchUrl || '';
+                        return (
+                          <div className="pt-3 border-t border-neutral-800/60 bg-neutral-950/70 p-4 rounded-xl border border-neutral-800/80 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-inner">
+                            <div className="flex items-center gap-3 min-w-0">
+                              <div className="w-10 h-10 rounded-xl bg-purple-500/15 border border-purple-500/35 flex items-center justify-center text-purple-400 shrink-0 shadow-sm">
+                                <Film className="w-5 h-5" />
+                              </div>
+                              <div className="min-w-0">
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <span className="text-[10px] font-mono uppercase tracking-wider text-purple-400 font-bold">
+                                    Filme Indicado da Etapa 0{mod.id} (Cinemateca)
+                                  </span>
+                                  {filmUrl ? (
+                                    <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[9px] font-mono font-bold flex items-center gap-1">
+                                      <CheckCircle2 className="w-2.5 h-2.5" /> Link Configurado
+                                    </span>
+                                  ) : (
+                                    <span className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/30 text-[9px] font-mono">
+                                      URL em configuração
+                                    </span>
+                                  )}
+                                  <span className="text-[10px] font-mono text-neutral-400">
+                                    {matchingFilm?.streamingPlatform || matchingFilm?.platform || 'YouTube / Online'}
+                                  </span>
+                                </div>
+                                <h5 className="text-xs sm:text-sm font-bold text-white truncate font-sans">
+                                  {matchingFilm?.title || `Filme da Etapa 0${mod.id}`}
+                                  {matchingFilm?.director ? ` • Dir. ${matchingFilm.director}` : ''}
+                                  {matchingFilm?.year ? ` (${matchingFilm.year})` : ''}
+                                </h5>
+                                <p className="text-[11px] text-neutral-400 truncate max-w-xl">
+                                  {matchingFilm?.pedagogicalContext || matchingFilm?.description || 'Obra cinematográfica para estudo de linguagem e técnica desta etapa.'}
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-2 shrink-0">
+                              {filmUrl && (
+                                <button
+                                  type="button"
+                                  onClick={() => setAdminPlayingVideo({
+                                    url: filmUrl,
+                                    title: `${matchingFilm?.title || 'Filme da Etapa'} • Etapa 0${mod.id}`,
+                                    subtitle: `Direção: ${matchingFilm?.director || 'Autor'} (${matchingFilm?.year || ''}) • Plataforma: ${matchingFilm?.streamingPlatform || 'Online'}`
+                                  })}
+                                  className="px-3 py-1.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-lg text-xs font-mono font-bold flex items-center gap-1.5 transition shadow cursor-pointer"
+                                  title="Assistir ao filme indicado agora no painel"
+                                >
+                                  <Play className="w-3.5 h-3.5 fill-current" />
+                                  <span>Assistir Filme</span>
+                                </button>
+                              )}
+
+                              <button
+                                type="button"
+                                onClick={() => setEditingFilmModal(matchingFilm || {
+                                  moduleId: mod.id,
+                                  title: `Filme da Etapa 0${mod.id}`,
+                                  originalTitle: '',
+                                  director: '',
+                                  year: 2024,
+                                  country: 'Brasil / Internacional',
+                                  durationMinutes: 90,
+                                  streamingUrl: '',
+                                  streamingPlatform: 'YouTube',
+                                  pedagogicalContext: '',
+                                })}
+                                className="px-3 py-1.5 bg-neutral-800 hover:bg-neutral-700 text-purple-300 hover:text-white border border-purple-500/30 hover:border-purple-500/50 rounded-lg text-xs font-mono font-medium flex items-center gap-1.5 transition cursor-pointer shadow-sm"
+                                title="Editar link e informações do filme indicado"
+                              >
+                                <Edit2 className="w-3.5 h-3.5 text-purple-400" />
+                                <span>{filmUrl ? 'Alterar Link do Filme' : 'Configurar Link do Filme'}</span>
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })()}
                     </div>
                   );
                 })}
@@ -3037,23 +3190,21 @@ export const AdminView: React.FC<AdminViewProps> = ({
                               {b.description || b.summary || 'Material pedagógico complementar oficial do CINELAB.'}
                             </p>
 
-                            {b.pdfUrl && (
-                              <button
-                                type="button"
-                                onClick={() => handleOpenAdminPdfViewer({
-                                  moduleId: b.number,
-                                  pdfUrl: b.pdfUrl,
-                                  title: b.title || `Apostila Bônus 0${b.number}`,
-                                  isBonus: true,
-                                  isExtra: false,
-                                })}
-                                className="mt-1.5 px-3 py-1 rounded-md bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-mono flex items-center gap-1.5 cursor-pointer transition-all shadow-sm w-fit"
-                                title="Abrir no leitor seguro com marca d'água e proteção contra download"
-                              >
-                                <Shield className="w-3 h-3 text-amber-400" />
-                                <span>Ler PDF Bônus Seguro</span>
-                              </button>
-                            )}
+                            <button
+                              type="button"
+                              onClick={() => handleOpenAdminPdfViewer({
+                                moduleId: b.number,
+                                pdfUrl: b.pdfUrl,
+                                title: b.title || `Apostila Bônus 0${b.number}`,
+                                isBonus: true,
+                                isExtra: false,
+                              })}
+                              className="mt-1.5 px-3 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-mono font-bold flex items-center gap-1.5 cursor-pointer transition-all shadow-sm w-fit"
+                              title="Abrir no leitor de PDF seguro do painel"
+                            >
+                              <BookOpen className="w-3.5 h-3.5 text-amber-400" />
+                              <span>📖 Ler PDF Bônus</span>
+                            </button>
                           </div>
                         </div>
 
@@ -3083,7 +3234,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
                             />
                           </label>
 
-                          {/* Botão Rápido de Subir Apostila PDF do Bônus */}
+                          {/* Botão Rápido de Substituir Apostila PDF do Bônus */}
                           <label className="flex-1 px-3 py-2 bg-neutral-800 hover:bg-neutral-700 text-neutral-200 hover:text-white border border-neutral-700 rounded-xl text-xs transition-colors cursor-pointer flex items-center justify-center gap-1.5 font-sans">
                             {uploadingBonusNumber === b.number ? (
                               <>
@@ -3093,7 +3244,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
                             ) : (
                               <>
                                 <Upload className="w-3.5 h-3.5 text-amber-400" />
-                                <span>Subir PDF ({b.code || `Bônus 0${b.number}`})</span>
+                                <span>Substituir PDF ({b.code || `Bônus 0${b.number}`})</span>
                               </>
                             )}
                             <input
@@ -3969,6 +4120,253 @@ export const AdminView: React.FC<AdminViewProps> = ({
               studentEmail={localAdminUser?.email || currentUser?.email || 'admin@cinelab.com'}
               moduleId={adminViewerApostila.moduleId}
             />
+          </div>
+        </div>
+      )}
+
+      {/* MODAL REPRODUTOR DE VÍDEO DO ADMIN (AULAS E FILMES) */}
+      {adminPlayingVideo && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/90 backdrop-blur-md animate-fadeIn"
+          onClick={() => setAdminPlayingVideo(null)}
+        >
+          <div
+            className="relative w-full max-w-5xl bg-neutral-950 border border-neutral-800 rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[92vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-3.5 bg-neutral-900/90 border-b border-neutral-800 shrink-0">
+              <div className="flex items-center gap-2.5 min-w-0 pr-4">
+                <div className="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0">
+                  <Film className="w-4 h-4" />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="text-sm sm:text-base font-bold text-white truncate font-display">
+                    {adminPlayingVideo.title}
+                  </h3>
+                  {adminPlayingVideo.subtitle && (
+                    <p className="text-[11px] text-neutral-400 truncate">
+                      {adminPlayingVideo.subtitle}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <a
+                  href={adminPlayingVideo.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-300 hover:text-white transition cursor-pointer"
+                  title="Abrir em Nova Aba"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setAdminPlayingVideo(null)}
+                  className="p-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-300 hover:text-white transition cursor-pointer"
+                  title="Fechar Player"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Video Content */}
+            <div className="relative w-full aspect-video bg-black flex items-center justify-center overflow-hidden">
+              {(() => {
+                const url = adminPlayingVideo.url;
+                const ytId = extractYoutubeId(url);
+                if (ytId) {
+                  return (
+                    <iframe
+                      src={`https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&rel=0`}
+                      title={adminPlayingVideo.title}
+                      className="w-full h-full border-0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  );
+                }
+                const vimeoMatch = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+                if (vimeoMatch) {
+                  return (
+                    <iframe
+                      src={`https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1`}
+                      title={adminPlayingVideo.title}
+                      className="w-full h-full border-0"
+                      allow="autoplay; fullscreen; picture-in-picture"
+                      allowFullScreen
+                    />
+                  );
+                }
+                return (
+                  <video
+                    key={url}
+                    src={url}
+                    controls
+                    autoPlay
+                    playsInline
+                    className="w-full h-full object-contain"
+                  />
+                );
+              })()}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL DE EDIÇÃO DO FILME INDICADO DA ETAPA */}
+      {editingFilmModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
+          <div className="relative w-full max-w-xl bg-neutral-950 border border-purple-500/40 rounded-3xl shadow-2xl flex flex-col overflow-hidden text-neutral-200">
+            <div className="p-5 border-b border-neutral-800 flex items-center justify-between bg-neutral-900/90">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center border border-purple-500/40 shadow-inner">
+                  <Film className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white font-display">
+                    Filme Indicado • Etapa 0{editingFilmModal.moduleId}
+                  </h3>
+                  <span className="text-[11px] font-mono text-purple-300">
+                    Configuração da Obra Cinematográfica Recomendada
+                  </span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setEditingFilmModal(null)}
+                className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-800 transition cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveFilm} className="p-6 space-y-4">
+              <div>
+                <label className="block text-xs font-mono text-neutral-300 mb-1">
+                  Título da Obra no Brasil:
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={editingFilmModal.title || ''}
+                  onChange={(e) => setEditingFilmModal({ ...editingFilmModal, title: e.target.value })}
+                  placeholder="Ex: Acossado (À Bout de Souffle)"
+                  className="w-full px-3.5 py-2.5 bg-neutral-900 border border-neutral-700 rounded-xl text-white text-xs focus:border-purple-500 focus:outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-mono text-neutral-300 mb-1">
+                    Diretor(a):
+                  </label>
+                  <input
+                    type="text"
+                    value={editingFilmModal.director || ''}
+                    onChange={(e) => setEditingFilmModal({ ...editingFilmModal, director: e.target.value })}
+                    placeholder="Ex: Jean-Luc Godard"
+                    className="w-full px-3.5 py-2.5 bg-neutral-900 border border-neutral-700 rounded-xl text-white text-xs focus:border-purple-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-mono text-neutral-300 mb-1">
+                    Ano de Lançamento:
+                  </label>
+                  <input
+                    type="number"
+                    value={editingFilmModal.year || ''}
+                    onChange={(e) => setEditingFilmModal({ ...editingFilmModal, year: Number(e.target.value) })}
+                    placeholder="Ex: 1960"
+                    className="w-full px-3.5 py-2.5 bg-neutral-900 border border-neutral-700 rounded-xl text-white text-xs focus:border-purple-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-mono text-amber-300 mb-1 flex items-center justify-between">
+                  <span>URL do Vídeo (YouTube, Archive.org, Vimeo ou MP4 direto):</span>
+                  <span className="text-[10px] text-neutral-400 font-normal">Link para os alunos assistirem</span>
+                </label>
+                <input
+                  type="url"
+                  required
+                  value={editingFilmModal.streamingUrl || editingFilmModal.watchUrl || ''}
+                  onChange={(e) => setEditingFilmModal({
+                    ...editingFilmModal,
+                    streamingUrl: e.target.value,
+                    watchUrl: e.target.value,
+                  })}
+                  placeholder="https://www.youtube.com/watch?v=... ou https://archive.org/details/..."
+                  className="w-full px-3.5 py-2.5 bg-neutral-900 border border-purple-500/50 rounded-xl text-white text-xs focus:border-purple-400 focus:outline-none font-mono"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-mono text-neutral-300 mb-1">
+                  Plataforma / Onde Assistir (Texto exibido):
+                </label>
+                <input
+                  type="text"
+                  value={editingFilmModal.streamingPlatform || editingFilmModal.platform || ''}
+                  onChange={(e) => setEditingFilmModal({
+                    ...editingFilmModal,
+                    streamingPlatform: e.target.value,
+                    platform: e.target.value,
+                  })}
+                  placeholder="Ex: YouTube (Domínio Público) ou Archive.org"
+                  className="w-full px-3.5 py-2.5 bg-neutral-900 border border-neutral-700 rounded-xl text-white text-xs focus:border-purple-500 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-mono text-neutral-300 mb-1">
+                  Contexto Pedagógico / Por que assistir (Orientação do Professor):
+                </label>
+                <textarea
+                  rows={3}
+                  value={editingFilmModal.pedagogicalContext || editingFilmModal.description || ''}
+                  onChange={(e) => setEditingFilmModal({
+                    ...editingFilmModal,
+                    pedagogicalContext: e.target.value,
+                    description: e.target.value,
+                  })}
+                  placeholder="Explique ao aluno a relevância deste filme para a etapa..."
+                  className="w-full px-3.5 py-2.5 bg-neutral-900 border border-neutral-700 rounded-xl text-white text-xs focus:border-purple-500 focus:outline-none resize-none"
+                />
+              </div>
+
+              <div className="pt-3 border-t border-neutral-800 flex items-center justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setEditingFilmModal(null)}
+                  className="px-4 py-2.5 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-neutral-300 text-xs font-mono font-medium transition cursor-pointer"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingFilm}
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-mono font-bold transition flex items-center gap-1.5 shadow-lg cursor-pointer"
+                >
+                  {savingFilm ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Salvando...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Check className="w-3.5 h-3.5" />
+                      <span>Salvar Filme</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
