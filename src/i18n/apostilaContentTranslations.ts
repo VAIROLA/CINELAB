@@ -852,7 +852,7 @@ export function getFolderHierarchy(lang: Language): CourseFolderCategory[] {
                 : `Fascicule Technique 0${modNum} — CINELAB Officiel.pdf`,
               type: 'pdf',
               sizeOrPages: (() => {
-                const realPages = modNum === 1 ? 8 : (modNum === 2 ? 52 : (modNum === 5 ? 6 : 4));
+                const realPages = modNum === 1 ? 33 : (modNum === 2 ? 52 : (modNum === 5 ? 6 : 4));
                 return isPt ? `${realPages} páginas • Leitor Canvas` : (isEs ? `${realPages} páginas • Lector Canvas` : (isFr ? `${realPages} pages • Lecteur Canvas` : `${realPages} pages • Canvas Reader`));
               })(),
               description: isPt

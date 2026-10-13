@@ -6114,18 +6114,24 @@ async function initSupabaseData() {
             if (cloudState.certificates) db.certificates = cloudState.certificates;
             if (cloudState.settings) db.settings = { ...db.settings, ...cloudState.settings };
             if (cloudState.apostilas && Array.isArray(cloudState.apostilas)) {
-              const realPages = { 1: 8, 2: 52, 3: 4, 4: 4, 5: 6, 6: 4, 7: 4, 8: 4, 9: 4, 10: 4 };
+              const realPages = { 1: 33, 2: 52, 3: 7, 4: 6, 5: 6, 6: 6, 7: 6, 8: 6, 9: 6, 10: 6 };
               db.apostilas = cloudState.apostilas.map((a) => {
                 const mod = a.moduleId || a.number || 1;
                 const pad = mod < 10 ? "0" + mod : "" + mod;
                 const canonicalPdf = `/materiais/cinelab-apostila-${pad}.pdf`;
                 const isCorrupted = !a.pdfUrl || a.pdfUrl.includes("1790444") || a.pdfUrl.includes("1790684") || a.pdfUrl.includes("1790652");
-                const pages = realPages[mod] || a.pagesCount || a.totalPages || 4;
+                const isOldMod1 = mod === 1 && a.pagesCount === 8;
+                const pages = (!isOldMod1 && a.pagesCount && a.pagesCount > 0) ? a.pagesCount : (realPages[mod] || a.totalPages || 4);
                 return {
                   ...a,
                   pdfUrl: isCorrupted ? canonicalPdf : a.pdfUrl,
                   pagesCount: pages,
-                  totalPages: pages
+                  totalPages: pages,
+                  extraPdfUrl: a.extraPdfUrl || (mod === 1 ? "/materiais/cinelab-apostila-extra-01.pdf" : void 0),
+                  extraTitle: a.extraTitle || (mod === 1 ? "Apostila Extra 01 (Material Complementar)" : void 0),
+                  extraPagesCount: a.extraPagesCount || (mod === 1 ? 8 : void 0),
+                  extraFileSizeMb: a.extraFileSizeMb || (mod === 1 ? 0.24 : void 0),
+                  extraCoverUrl: a.extraCoverUrl || (mod === 1 ? "/images/covers/apostila-01.jpg" : void 0)
                 };
               });
             }
@@ -7708,8 +7714,9 @@ app.get("/api/course/public-info", (req, res) => {
       const canonicalPdf = `/materiais/cinelab-apostila-${pad}.pdf`;
       const isCorrupted = !a.pdfUrl || a.pdfUrl.includes("1790444") || a.pdfUrl.includes("1790684") || a.pdfUrl.includes("1790652");
       const safePdf = isCorrupted ? canonicalPdf : a.pdfUrl;
-      const realPages = { 1: 8, 2: 52, 3: 7, 4: 6, 5: 6, 6: 6, 7: 6, 8: 6, 9: 6, 10: 6 };
-      const pages = realPages[mod] || a.pagesCount || a.totalPages || 4;
+      const realPages = { 1: 33, 2: 52, 3: 7, 4: 6, 5: 6, 6: 6, 7: 6, 8: 6, 9: 6, 10: 6 };
+      const isOldMod1 = mod === 1 && a.pagesCount === 8;
+      const pages = (!isOldMod1 && a.pagesCount && a.pagesCount > 0) ? a.pagesCount : (realPages[mod] || a.totalPages || 4);
       const canonicalCover = `/images/covers/apostila-${pad}.jpg`;
       const isOutdatedCover = !a.coverUrl || a.coverUrl.includes("unsplash.com") || a.coverUrl.startsWith("/uploads/") && !a.coverUrl.includes("base64");
       const resolvedCover = !isOutdatedCover ? a.coverUrl : canonicalCover;
@@ -7727,7 +7734,12 @@ app.get("/api/course/public-info", (req, res) => {
         fileSizeMb: a.fileSizeMb,
         isUnlocked: true,
         status: "available",
-        extraVideos: a.extraVideos && a.extraVideos.length > 0 ? a.extraVideos : initExtraVideosForApostila(a, a.title)
+        extraVideos: a.extraVideos && a.extraVideos.length > 0 ? a.extraVideos : initExtraVideosForApostila(a, a.title),
+        extraPdfUrl: a.extraPdfUrl || (mod === 1 ? "/materiais/cinelab-apostila-extra-01.pdf" : void 0),
+        extraTitle: a.extraTitle || (mod === 1 ? "Apostila Extra 01 (Material Complementar)" : void 0),
+        extraPagesCount: a.extraPagesCount || (mod === 1 ? 8 : void 0),
+        extraFileSizeMb: a.extraFileSizeMb || (mod === 1 ? 0.24 : void 0),
+        extraCoverUrl: a.extraCoverUrl || (mod === 1 ? "/images/covers/apostila-01.jpg" : void 0)
       };
     }),
     bonusApostilas: (db2.bonusApostilas || []).filter((b) => b && typeof b.number === 'number' && b.number <= 20 && !String(b.id).includes('99') && !String(b.number).includes('99')).map((b) => {
@@ -8310,7 +8322,7 @@ app.get("/api/student/apostilas", requireActiveStudent, (req, res) => {
   const { enrollment, user } = authenticate(req);
   const db2 = getDb();
   const isAdmin = user?.role === "admin";
-  const realPages = { 1: 8, 2: 52, 3: 7, 4: 6, 5: 6, 6: 6, 7: 6, 8: 6, 9: 6, 10: 6 };
+  const realPages = { 1: 33, 2: 52, 3: 7, 4: 6, 5: 6, 6: 6, 7: 6, 8: 6, 9: 6, 10: 6 };
   const apostilas = db2.apostilas.map((a) => {
     const mod = a.moduleId || a.number || 1;
     const pad = mod < 10 ? "0" + mod : "" + mod;
@@ -8319,13 +8331,19 @@ app.get("/api/student/apostilas", requireActiveStudent, (req, res) => {
     const safePdf = isCorrupted ? canonicalPdf : a.pdfUrl;
     const timeline = calculateModuleTimeline(a.moduleId, enrollment);
     const isUnlocked = timeline.status !== "locked" || isAdmin;
-    const pages = realPages[mod] || a.pagesCount || a.totalPages || 4;
+    const isOldMod1 = mod === 1 && a.pagesCount === 8;
+    const pages = (!isOldMod1 && a.pagesCount && a.pagesCount > 0) ? a.pagesCount : (realPages[mod] || a.totalPages || 4);
     return {
       ...a,
       pagesCount: pages,
       totalPages: pages,
       isUnlocked,
       pdfUrl: isUnlocked ? safePdf : "",
+      extraPdfUrl: isUnlocked ? (a.extraPdfUrl || (mod === 1 ? "/materiais/cinelab-apostila-extra-01.pdf" : "")) : "",
+      extraTitle: a.extraTitle || (mod === 1 ? "Apostila Extra 01 (Material Complementar)" : ""),
+      extraPagesCount: a.extraPagesCount || (mod === 1 ? 8 : void 0),
+      extraFileSizeMb: a.extraFileSizeMb || (mod === 1 ? 0.24 : void 0),
+      extraCoverUrl: a.extraCoverUrl || (mod === 1 ? "/images/covers/apostila-01.jpg" : void 0),
       unlockDate: timeline.startDate.toISOString(),
       startDate: timeline.startDate.toISOString(),
       endDate: timeline.endDate.toISOString(),
