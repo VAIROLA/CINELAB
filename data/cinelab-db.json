@@ -456,8 +456,13 @@
         }
       ],
       "fileSizeMb": 18.5,
-      "pagesCount": 8,
-      "totalPages": 8,
+      "pagesCount": 33,
+      "totalPages": 33,
+      "extraPdfUrl": "/materiais/cinelab-apostila-extra-01.pdf",
+      "extraTitle": "Apostila Extra 01 (Material Complementar)",
+      "extraPagesCount": 8,
+      "extraFileSizeMb": 0.24,
+      "extraCoverUrl": "/images/covers/apostila-01.jpg",
       "description": "Conceitos fundamentais da linguagem cinematográfica, a gramática dos enquadramentos, as fases da produção audiovisual e a interdependência entre som e imagem.",
       "extraVideos": [
         {
