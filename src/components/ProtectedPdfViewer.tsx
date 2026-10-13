@@ -352,23 +352,36 @@ export const ProtectedPdfViewer: React.FC<ProtectedPdfViewerProps> = ({
         const canonicalUrl = getCanonicalUrl();
         let doc: any = null;
 
-        // TENTATIVA 1: Se temos o arquivo binário direto em memória (IndexedDB)
-        if (pdfBlob && pdfBlob.size > 1024) {
+        // Se for o Módulo 1 padrão (não extra e não bônus), SEMPRE use o PDF canônico oficial de 33 páginas diretamente!
+        const isStandardMod1 = (!isBonusDoc && !isExtraDoc && (moduleId === 1 || !moduleId || (url && url.includes('apostila-01'))));
+
+        // TENTATIVA 1: Carrega direto da URL oficial (instantâneo via CDN/Vercel)
+        if (isStandardMod1 || !pdfBlob) {
+          const directUrl = canonicalUrl || url || '/materiais/cinelab-apostila-01.pdf';
           try {
-            // Verificação rápida não-bloqueante de integridade
+            currentLoadingTask = pdfjs.getDocument({
+              url: directUrl,
+              cMapUrl: `${origin}/cmaps/`,
+              cMapPacked: true,
+              standardFontDataUrl: `${origin}/standard_fonts/`,
+              withCredentials: false,
+            });
+            doc = await withTimeout(currentLoadingTask.promise, 4000, 'Tempo limite na URL oficial');
+          } catch (directErr) {
+            console.warn('[ProtectedPdfViewer] Falha no carregamento direto por URL, tentando buffer alternativo:', directErr);
+          }
+        }
+
+        // TENTATIVA 2: Se temos o arquivo binário direto em memória (IndexedDB) para materiais customizados
+        if (!doc && pdfBlob && pdfBlob.size > 1024) {
+          try {
             const arrayBuffer = await withTimeout(pdfBlob.arrayBuffer(), 2000, 'Tempo limite no arrayBuffer local');
             if (!isMounted) return;
 
-            // Validar primeiros 4 bytes (%PDF)
             const headerBytes = new Uint8Array(arrayBuffer.slice(0, 5));
             const headerString = String.fromCharCode(...headerBytes);
 
-            if (!headerString.startsWith('%PDF-')) {
-              console.warn('[ProtectedPdfViewer] Arquivo local corrompido ou sem cabeçalho %PDF-. Expurgando do cofre.');
-              if (moduleId) {
-                purgeVaultPdfBlob(moduleId, isBonusDoc, isExtraDoc).catch(() => {});
-              }
-            } else {
+            if (headerString.startsWith('%PDF-')) {
               currentLoadingTask = pdfjs.getDocument({
                 data: new Uint8Array(arrayBuffer),
                 cMapUrl: `${origin}/cmaps/`,
@@ -376,19 +389,18 @@ export const ProtectedPdfViewer: React.FC<ProtectedPdfViewerProps> = ({
                 standardFontDataUrl: `${origin}/standard_fonts/`,
               });
               doc = await withTimeout(currentLoadingTask.promise, 2500, 'Tempo limite no buffer local');
+            } else {
+              if (moduleId) purgeVaultPdfBlob(moduleId, isBonusDoc, isExtraDoc).catch(() => {});
             }
           } catch (blobErr) {
-            console.warn('Falha ou tempo limite no pdfBlob local, recorrendo imediatamente à URL oficial:', blobErr);
-            if (moduleId) {
-              purgeVaultPdfBlob(moduleId, isBonusDoc, isExtraDoc).catch(() => {});
-            }
+            console.warn('Falha no pdfBlob local:', blobErr);
+            if (moduleId) purgeVaultPdfBlob(moduleId, isBonusDoc, isExtraDoc).catch(() => {});
           }
         }
 
-        // TENTATIVA 2: Carrega da URL principal ou oficial canônica
+        // TENTATIVA 3: Fallback final com URL canônica resiliente
         if (!doc) {
           let effectiveUrl = url;
-          // Se effectiveUrl for blob:, vazio, ou upload efêmero, usa diretamente a URL canônica oficial
           if (!effectiveUrl || effectiveUrl.startsWith('blob:') || effectiveUrl.includes('/uploads/')) {
             effectiveUrl = canonicalUrl || effectiveUrl;
           }

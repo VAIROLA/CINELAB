@@ -96,6 +96,21 @@ export function purgePhantomVaultItems(): void {
             if (kStr.includes('99') || (kStr.startsWith('bonus-') && Number(kStr.replace('bonus-', '')) > 20)) {
               store.delete(key);
             }
+            // Auto-cura do Módulo 1: expurga qualquer pdfBlob local residual salvo anteriormente
+            // para que o navegador carregue sempre o PDF oficial de 33 páginas da escola
+            if (kStr === 'mod-1' || kStr === '1') {
+              const getReq = store.get(key);
+              getReq.onsuccess = () => {
+                const item = getReq.result;
+                if (item && item.pdfBlob) {
+                  delete item.pdfBlob;
+                  item.pagesCount = 33;
+                  item.totalPages = 33;
+                  item.pdfUrl = '/materiais/cinelab-apostila-01.pdf';
+                  store.put(item);
+                }
+              };
+            }
           });
         };
       } catch (_) {}
