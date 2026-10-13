@@ -497,6 +497,14 @@ const apostilaUpload = multer({
 });
 
 // Helper to authenticate user from Authorization header or query param
+interface ActiveSession {
+  token: string;
+  userId: string;
+  role: string;
+  createdAt: string;
+}
+const activeSessions: Map<string, ActiveSession> = new Map();
+
 function authenticate(req: Request): { user: User | null; enrollment: Enrollment | null } {
   const authHeader = req.headers.authorization || '';
   const token =
@@ -509,24 +517,38 @@ function authenticate(req: Request): { user: User | null; enrollment: Enrollment
 
   if (!token) return { user: null, enrollment: null };
 
-  // Master admin token aliases for seamless administration in preview and production
+  // Explicitly reject any insecure bypass strings or emails
   if (
     token === 'admin' ||
     token === 'user-admin' ||
     token === 'quick-admin' ||
     token === 'admin123' ||
     token === 'studiodeluc@gmail.com' ||
-    token === 'admin@cinelab.edu.br'
+    token === 'admin@cinelab.edu.br' ||
+    token === 'cinelab' ||
+    token === 'guest'
   ) {
-    const adminUser = db.users.find((u) => u.role === 'admin' || u.email === 'studiodeluc@gmail.com');
-    if (adminUser) return { user: adminUser, enrollment: null };
+    return { user: null, enrollment: null };
   }
 
-  const user = db.users.find((u) => u.id === token || u.email === token);
-  if (!user) return { user: null, enrollment: null };
+  // 1. Authenticated session check (MANDATORY for admin access)
+  const session = activeSessions.get(token);
+  if (session) {
+    const user = db.users.find((u) => u.id === session.userId) || null;
+    if (user) {
+      const enrollment = db.enrollments.find((e) => e.studentId === user.id) || null;
+      return { user, enrollment };
+    }
+  }
 
-  const enrollment = db.enrollments.find((e) => e.studentId === user.id) || null;
-  return { user, enrollment };
+  // 2. Non-admin student users only (persisted student login by student ID)
+  const studentUser = db.users.find((u) => u.id === token && u.role !== 'admin');
+  if (studentUser) {
+    const enrollment = db.enrollments.find((e) => e.studentId === studentUser.id) || null;
+    return { user: studentUser, enrollment };
+  }
+
+  return { user: null, enrollment: null };
 }
 
 // ----------------------------------------------------
@@ -730,8 +752,16 @@ app.post('/api/auth/login', (req: Request, res: Response) => {
 
   const enrollment = db.enrollments.find((e) => e.studentId === user.id) || null;
 
+  const sessionToken = `cnl_${user.role === 'admin' ? 'adm' : 'usr'}_${Date.now()}_${Math.random().toString(36).substring(2)}${Math.random().toString(36).substring(2)}`;
+  activeSessions.set(sessionToken, {
+    token: sessionToken,
+    userId: user.id,
+    role: user.role,
+    createdAt: new Date().toISOString(),
+  });
+
   res.json({
-    token: user.id,
+    token: sessionToken,
     user: {
       id: user.id,
       name: user.name,
@@ -743,6 +773,16 @@ app.post('/api/auth/login', (req: Request, res: Response) => {
     },
     enrollment,
   });
+});
+
+// Logout & Session Invalidation
+app.post('/api/auth/logout', (req: Request, res: Response) => {
+  const authHeader = req.headers.authorization || '';
+  const token = authHeader.replace('Bearer ', '').trim() || (req.body?.token as string);
+  if (token) {
+    activeSessions.delete(token);
+  }
+  return res.json({ success: true });
 });
 
 // Quick Admin Access disabled in production for security

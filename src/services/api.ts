@@ -79,10 +79,9 @@ export const api = {
       body: JSON.stringify({ email, password }),
     }),
 
-  quickAdminLogin: () =>
-    request<{ token: string; user: User; enrollment: Enrollment | null }>('/api/auth/quick-admin', {
-      method: 'POST',
-    }),
+  quickAdminLogin: () => {
+    throw new Error('Acesso rápido administrativo desativado por segurança. Digite sua senha de acesso.');
+  },
 
   quickStudentLogin: () =>
     request<{ token: string; user: User; enrollment: Enrollment | null }>('/api/auth/quick-student', {
@@ -603,7 +602,7 @@ export const api = {
       const xhr = new XMLHttpRequest();
       xhr.open('POST', '/api/admin/apostilas/upload');
 
-      const token = getAuthToken() || (typeof window !== 'undefined' ? localStorage.getItem('cinelab_auth_token') : null) || 'admin';
+      const token = getAuthToken();
       if (token) {
         xhr.setRequestHeader('Authorization', `Bearer ${token}`);
       }
@@ -692,7 +691,7 @@ export const api = {
       const xhr = new XMLHttpRequest();
       xhr.open('POST', '/api/admin/apostilas/extra-video/upload');
 
-      const token = getAuthToken() || (typeof window !== 'undefined' ? localStorage.getItem('cinelab_auth_token') : null) || 'admin';
+      const token = getAuthToken();
       if (token) {
         xhr.setRequestHeader('Authorization', `Bearer ${token}`);
       }
@@ -742,7 +741,7 @@ export const api = {
         const xhr = new XMLHttpRequest();
         xhr.open('POST', '/api/admin/upload-image');
 
-        const token = getAuthToken() || (typeof window !== 'undefined' ? localStorage.getItem('cinelab_auth_token') : null) || 'admin';
+        const token = getAuthToken();
         if (token) {
           xhr.setRequestHeader('Authorization', `Bearer ${token}`);
         }

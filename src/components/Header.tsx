@@ -67,7 +67,6 @@ export const Header: React.FC<HeaderProps> = ({
     { label: t('nav.validate', 'Validar'), route: 'validar-certificado' },
     { label: t('nav.faq', 'FAQ'), route: 'faq' },
     { label: t('nav.contact', 'Contato'), route: 'contato' },
-    ...(user?.role === 'admin' ? [{ label: language === 'en' ? 'Admin Panel' : language === 'es' ? 'Panel Admin' : language === 'fr' ? 'Panneau Admin' : 'Painel Admin', route: 'admin', icon: Shield, highlight: 'red' as const }] : []),
   ];
 
   const handleNav = (route: string, action?: 'panel' | 'logout') => {
@@ -78,9 +77,7 @@ export const Header: React.FC<HeaderProps> = ({
     }
     if (action === 'panel') {
       setMobileMenuOpen(false);
-      if (user?.role === 'admin') {
-        onNavigate('admin');
-      } else if (user) {
+      if (user) {
         onNavigate('minha-area');
       } else {
         onOpenAuth();
@@ -110,21 +107,7 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Acima do lado direito: Professor e Tradutor (Admin restrito a /admin ou usuários já autenticados) */}
         <div className="ml-auto flex items-center gap-1 sm:gap-2 shrink-0 relative z-20">
-          {/* Botão Acesso: ADMIN (Visível SOMENTE quando o administrador já estiver logado) */}
-          {user?.role === 'admin' && (
-            <button
-              onClick={() => {
-                handleNav('admin');
-              }}
-              className="text-[9px] sm:text-[10.5px] px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-lg flex items-center gap-1 font-mono font-bold cursor-pointer transition-all active:scale-95 shrink-0 bg-red-500 text-white ring-2 ring-red-300 font-extrabold shadow-[0_0_12px_rgba(239,68,68,0.5)]"
-              title="Acesso ao Painel Administrativo CINELAB"
-            >
-              <Shield className="w-3 h-3 text-white shrink-0" />
-              <span className="uppercase tracking-wider">Admin</span>
-            </button>
-          )}
-
-          {/* BotÃ£o e Acesso Direto: Professor Tony de Luc - Oculto em telas ultra-pequenas (< sm) para eliminar scroll lateral no mobile */}
+          {/* Botão e Acesso Direto: Professor Tony de Luc - Oculto em telas ultra-pequenas (< sm) para eliminar scroll lateral no mobile */}
           <button
             onClick={() => handleNav('tony-de-luc')}
             className={`hidden sm:flex text-[9px] sm:text-[10.5px] px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-lg items-center gap-1 font-sans font-bold cursor-pointer transition-all active:scale-95 shadow-[0_0_10px_rgba(245,158,11,0.25)] shrink-0 ${
@@ -132,7 +115,7 @@ export const Header: React.FC<HeaderProps> = ({
                 ? 'bg-amber-400 text-neutral-950 ring-1 ring-amber-300'
                 : 'bg-[#270d4a]/95 hover:bg-[#3b126e] text-amber-300 hover:text-white border border-amber-400/60'
             }`}
-            title="PÃ¡gina do Professor Cineasta Tony de Luc (Bio, Feitos & Filmografia)"
+            title="Página do Professor Cineasta Tony de Luc (Bio, Feitos & Filmografia)"
           >
             <Clapperboard className="w-3 h-3 text-amber-400 shrink-0" />
             <span className="text-purple-300 font-mono text-[9px]">{language === 'en' ? 'Professor:' : language === 'es' ? 'Profesor:' : language === 'fr' ? 'Professeur :' : 'Professor:'}</span>
@@ -140,106 +123,9 @@ export const Header: React.FC<HeaderProps> = ({
             <span className="font-extrabold uppercase drop-shadow-[0_0_6px_rgba(255,255,255,0.8)] whitespace-nowrap hidden md:inline"> de Luc</span>
           </button>
 
-          {/* Perfil & Acessos: Admin Autenticado, Aluno Matriculado ou Visitante */}
-          <div className="relative flex items-center shrink-0">
-            {user?.role === 'admin' ? (
-              /* ADMIN LOGADO: Possui menu exclusivo para coordenar ou testar como Aluno */
-              <>
-                <button
-                  onClick={() => setDemoMenuOpen(!demoMenuOpen)}
-                  className="text-[9.5px] sm:text-[11.5px] px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg sm:rounded-xl bg-red-950/90 hover:bg-red-900/90 text-red-100 flex items-center gap-1 sm:gap-1.5 border border-red-500/80 shadow-[0_0_14px_rgba(239,68,68,0.45)] cursor-pointer font-sans transition-all active:scale-95 whitespace-nowrap shrink-0"
-                  title="Painel do Professor Tony de Luc & Modos de Teste"
-                >
-                  <Shield className="w-3 h-3 text-red-300" />
-                  <span className="font-extrabold uppercase text-white font-mono text-[9.5px] sm:text-[12px] drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]">
-                    Admin
-                  </span>
-                  <ChevronDown className="w-3 h-3 text-red-200 transition-transform duration-200" />
-                </button>
-
-                {demoMenuOpen && (
-                  <>
-                    <div
-                      className="fixed inset-0 z-[99] bg-black/50"
-                      onClick={() => setDemoMenuOpen(false)}
-                    />
-                    <div className="fixed sm:absolute top-12 sm:top-full inset-x-2 sm:inset-auto sm:right-0 mt-1 max-w-sm sm:w-[380px] mx-auto max-h-[85vh] overflow-y-auto bg-[#140428] border-2 border-red-500/80 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.9),0_0_35px_rgba(239,68,68,0.5)] p-3 sm:p-4 z-[100] text-left font-sans backdrop-blur-xl animate-fadeIn custom-scrollbar">
-                      <div className="px-2 py-2 border-b border-red-800/60 mb-2 flex items-center justify-between">
-                        <div>
-                          <span className="text-xs font-mono text-red-200 uppercase tracking-wider font-bold block">
-                            Coordenação Acadêmica
-                          </span>
-                          <span className="text-[11px] text-purple-300/80">Professor Tony de Luc</span>
-                        </div>
-                        <span className="text-[10px] font-mono text-emerald-300 bg-red-950/90 px-2 py-0.5 rounded-full border border-red-500/50">
-                          Autenticado
-                        </span>
-                      </div>
-
-                      <div className="space-y-2 py-1">
-                        {/* OPÇÃO 1: PAINEL ADMIN */}
-                        <button
-                          onClick={() => {
-                            handleNav('admin');
-                            setDemoMenuOpen(false);
-                          }}
-                          className="w-full text-left p-3 rounded-xl flex items-center justify-between cursor-pointer transition-all border bg-red-950/60 border-red-500/80 text-white shadow-[0_0_15px_rgba(239,68,68,0.3)] ring-1 ring-red-400"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="w-9 h-9 rounded-lg bg-red-500/20 border border-red-500/50 flex items-center justify-center shrink-0">
-                              <Shield className="w-5 h-5 text-red-400" />
-                            </div>
-                            <div>
-                              <div className="text-sm font-extrabold text-white">Painel Administrativo</div>
-                              <p className="text-[11px] text-red-300/80">Gestão de alunos, notas, avaliações e vídeos</p>
-                            </div>
-                          </div>
-                          <span className="text-[10px] font-bold px-2 py-1 rounded bg-red-500/30 text-red-200 border border-red-400/50 font-mono">
-                            Abrir →
-                          </span>
-                        </button>
-
-                        {/* OPÇÃO 2: TESTAR COMO ALUNO */}
-                        <button
-                          onClick={() => {
-                            onSwitchDemoRole?.('student');
-                            setDemoMenuOpen(false);
-                          }}
-                          className="w-full text-left p-3 rounded-xl flex items-center justify-between cursor-pointer transition-all border bg-[#220743]/90 hover:bg-purple-900/60 border-purple-500/40 text-purple-100 hover:text-white"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="w-9 h-9 rounded-lg bg-emerald-500/20 border border-emerald-500/50 flex items-center justify-center shrink-0">
-                              <GraduationCap className="w-5 h-5 text-emerald-400" />
-                            </div>
-                            <div>
-                              <div className="text-sm font-extrabold text-white">👁️ Visualizar como Aluno (Teste)</div>
-                              <p className="text-[11px] text-emerald-300/80">Inspecione as aulas, apostilas e notas do aluno</p>
-                            </div>
-                          </div>
-                          <span className="text-[11px] text-emerald-300 font-mono font-semibold">Testar →</span>
-                        </button>
-
-                        {/* OPÇÃO 3: VOLTAR A VISITANTE */}
-                        <button
-                          onClick={() => {
-                            onSwitchDemoRole?.('guest');
-                            setDemoMenuOpen(false);
-                          }}
-                          className="w-full text-left p-2.5 rounded-xl flex items-center justify-between cursor-pointer transition-all bg-neutral-900/80 hover:bg-neutral-800 border border-neutral-700/60 text-neutral-300 hover:text-white text-xs"
-                        >
-                          <span className="flex items-center gap-2">
-                            <UserIcon className="w-4 h-4 text-neutral-400" />
-                            <span>Desconectar e Ver como Visitante</span>
-                          </span>
-                          <span className="text-[10px] text-neutral-500 font-mono">Sair</span>
-                        </button>
-                      </div>
-                    </div>
-                  </>
-                )}
-              </>
-            ) : user ? (
-              /* ALUNO LOGADO */
+          {/* Perfil & Acessos: Aluno Matriculado (Visitante não vê nenhum botão de admin aqui) */}
+          {user && user.role !== 'admin' && (
+            <div className="relative flex items-center shrink-0">
               <button
                 onClick={() => handleNav('minha-area')}
                 className="text-[9.5px] sm:text-[11.5px] px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg sm:rounded-xl bg-emerald-950/90 hover:bg-emerald-900 text-emerald-200 border border-emerald-500/60 flex items-center gap-1 sm:gap-1.5 font-mono shadow-sm cursor-pointer"
@@ -250,8 +136,8 @@ export const Header: React.FC<HeaderProps> = ({
                   {user.name.split(' ')[0]}
                 </span>
               </button>
-            ) : null}
-          </div>
+            </div>
+          )}
 
           {/* Tradutor de Idiomas no topo do lado direito (a moeda converte automaticamente com o idioma) */}
           <div className="hidden sm:flex items-center gap-2">
@@ -308,8 +194,8 @@ export const Header: React.FC<HeaderProps> = ({
                   </div>
                   <div className="text-[10px] font-mono text-amber-400/90 flex items-center gap-1">
                     {user.role === 'admin' ? (
-                      <span className="text-red-400 flex items-center gap-0.5">
-                        <Shield className="w-2.5 h-2.5" /> {t('header.coordination')}
+                      <span className="text-amber-300 font-semibold truncate max-w-[100px]">
+                        {user.name.split(' ')[0]}
                       </span>
                     ) : (
                       <span>{enrollment?.enrollmentNumber || t('header.activeEnrollment')}</span>
@@ -333,16 +219,6 @@ export const Header: React.FC<HeaderProps> = ({
 
                   {user.role === 'admin' ? (
                     <>
-                      <button
-                        onClick={() => {
-                          handleNav('admin');
-                          setUserDropdownOpen(false);
-                        }}
-                        className="w-full text-left px-3 py-2 text-xs font-semibold text-red-300 hover:bg-neutral-800 rounded-xl flex items-center gap-2.5 cursor-pointer"
-                      >
-                        <Shield className="w-4 h-4 text-red-400 shrink-0" />
-                        {t('header.adminPanel')}
-                      </button>
                       <button
                         onClick={() => {
                           handleNav('tony-de-luc');
@@ -397,27 +273,6 @@ export const Header: React.FC<HeaderProps> = ({
                         {language === 'en' ? "Professor Tony de Luc's Page" : language === 'es' ? 'Página del Profesor Tony de Luc' : language === 'fr' ? 'Page du Professeur Tony de Luc' : 'Página do Professor Tony de Luc'}
                       </button>
                     </>
-                  )}
-
-                  {/* Somente Admin pode testar como Aluno */}
-                  {user?.role === 'admin' && onSwitchDemoRole && (
-                    <div className="border-t border-purple-800/60 my-2 pt-2">
-                      <button
-                        onClick={() => {
-                          onSwitchDemoRole('student');
-                          setUserDropdownOpen(false);
-                        }}
-                        className="w-full text-left px-3 py-2 text-xs rounded-xl flex items-center justify-between font-bold cursor-pointer transition-colors bg-emerald-950/60 hover:bg-emerald-900/60 border border-emerald-500/50 text-emerald-200 hover:text-white"
-                      >
-                        <span className="flex items-center gap-2.5">
-                          <GraduationCap className="w-4 h-4 text-emerald-400" />
-                          <span>{language === 'en' ? '👁️ View as Student (Demo)' : language === 'es' ? '👁️ Ver como Alumno (Prueba)' : language === 'fr' ? '👁️ Voir comme Étudiant (Test)' : '👁️ Visualizar como Aluno (Teste)'}</span>
-                        </span>
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/30 text-emerald-200 font-mono">
-                          {language === 'en' ? 'Demo' : language === 'es' ? 'Probar' : language === 'fr' ? 'Tester' : 'Testar'}
-                        </span>
-                      </button>
-                    </div>
                   )}
 
                   <div className="border-t border-neutral-800 my-1 pt-1">
@@ -530,52 +385,7 @@ export const Header: React.FC<HeaderProps> = ({
               <Clapperboard className="w-4 h-4 text-amber-400" />
               <span>Prof. Tony de Luc</span>
             </button>
-            {user?.role === 'admin' && (
-              <button
-                onClick={() => {
-                  handleNav('admin');
-                  setMobileMenuOpen(false);
-                }}
-                className="w-full py-2.5 rounded-xl flex items-center justify-center gap-2 font-bold text-xs cursor-pointer transition-all bg-red-950/90 border border-red-500/80 text-red-200 hover:text-white shadow-[0_0_12px_rgba(239,68,68,0.4)] ring-1 ring-red-400"
-              >
-                <Shield className="w-4 h-4 text-red-400" />
-                <span>
-                  {language === 'en' ? 'Admin Panel' : language === 'es' ? 'Panel Admin' : language === 'fr' ? 'Panneau Admin' : 'Painel Admin'}
-                </span>
-              </button>
-            )}
           </div>
-
-          {/* Somente Admin pode alternar modo de teste no mobile */}
-          {user?.role === 'admin' && onSwitchDemoRole && (
-            <div className="p-3 bg-purple-950/70 rounded-2xl border border-purple-500/40 space-y-2">
-              <span className="text-xs font-sans text-purple-200 block text-center font-bold">
-                {language === 'en' ? 'Coordination Test Mode:' : language === 'es' ? 'Modo de Prueba de Coordinación:' : language === 'fr' ? 'Mode de Test de la Direction :' : 'Modo de Teste da Coordenação:'}
-              </span>
-              <div className="grid grid-cols-2 gap-2 text-center">
-                <button
-                  onClick={() => {
-                    onSwitchDemoRole('admin');
-                    setMobileMenuOpen(false);
-                  }}
-                  className="px-2 py-2 rounded-xl text-xs font-bold border transition-colors bg-red-500/30 text-red-200 border-red-400 shadow-sm flex items-center justify-center gap-1.5"
-                >
-                  <Shield className="w-3.5 h-3.5 text-red-400" />
-                  <span>Admin</span>
-                </button>
-                <button
-                  onClick={() => {
-                    onSwitchDemoRole('student');
-                    setMobileMenuOpen(false);
-                  }}
-                  className="px-2 py-2 rounded-xl text-xs font-bold border transition-colors bg-emerald-500/30 text-emerald-200 border-emerald-400 shadow-sm flex items-center justify-center gap-1.5"
-                >
-                  <GraduationCap className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>Ver como Aluno</span>
-                </button>
-              </div>
-            </div>
-          )}
 
           {user && (
             <div className="p-3 bg-neutral-800/60 rounded-xl mb-3 flex items-center justify-between">
@@ -584,10 +394,10 @@ export const Header: React.FC<HeaderProps> = ({
                 <p className="text-[11px] font-mono text-amber-400">{user.email}</p>
               </div>
               <button
-                onClick={() => handleNav(user.role === 'admin' ? 'admin' : 'minha-area')}
+                onClick={() => handleNav('minha-area')}
                 className="px-2.5 py-1 text-xs bg-amber-500 text-neutral-950 font-bold rounded-lg"
               >
-                {user.role === 'admin' ? t('header.adminRole') : t('header.panel')}
+                {t('header.panel')}
               </button>
             </div>
           )}

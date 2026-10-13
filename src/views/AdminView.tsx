@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { api, setAuthToken } from '../services/api.js';
+import { api, setAuthToken, removeAuthToken } from '../services/api.js';
 import {
   CourseSettings,
   CourseModule,
@@ -60,6 +60,7 @@ import {
   Check,
   X,
   EyeOff,
+  LogOut,
 } from 'lucide-react';
 import { VisitorsTab } from '../components/admin/VisitorsTab.js';
 import { StudentModal } from '../components/admin/StudentModal.js';
@@ -74,6 +75,7 @@ interface AdminViewProps {
   onNavigate: (route: string) => void;
   currentUser?: any;
   onAdminLogin?: (user: any) => void;
+  onAdminLogout?: () => void;
   onSettingsUpdated?: () => void;
   onSwitchToStudentPreview?: () => void;
 }
@@ -82,6 +84,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
   onNavigate,
   currentUser,
   onAdminLogin,
+  onAdminLogout,
   onSettingsUpdated,
   onSwitchToStudentPreview,
 }) => {
@@ -315,20 +318,21 @@ export const AdminView: React.FC<AdminViewProps> = ({
     }
   };
 
-  const handleQuickAdminLogin = async () => {
-    setLoginLoading(true);
-    setLoginMessage('');
+  const handleAdminLogout = async () => {
     try {
-      const res = await api.quickAdminLogin();
-      setAuthToken(res.token);
-      if (onAdminLogin) onAdminLogin(res.user);
-      setAuthError(null);
-      await loadAllAdminData();
-    } catch (err: any) {
-      setLoginMessage(err.message || 'Falha ao autenticar administrador.');
-    } finally {
-      setLoginLoading(false);
+      await api.logout();
+    } catch {}
+    removeAuthToken();
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('cinelab_auth_token');
+      localStorage.removeItem('cinelab_active_role');
+      localStorage.removeItem('cinelab_admin_saved_token');
     }
+    setLocalAdminUser(null);
+    if (onAdminLogout) {
+      onAdminLogout();
+    }
+    notify('Sessão administrativa encerrada.');
   };
 
   const handleFormAdminLogin = async (e: React.FormEvent) => {
@@ -1079,6 +1083,16 @@ export const AdminView: React.FC<AdminViewProps> = ({
               <span>👁️ Entrar como Aluno Teste (Lucas)</span>
             </button>
           )}
+
+          <button
+            type="button"
+            onClick={handleAdminLogout}
+            className="px-3.5 py-2.5 rounded-xl bg-red-950/80 hover:bg-red-900 text-red-200 border border-red-500/50 text-xs font-mono font-bold flex items-center gap-2 transition cursor-pointer shadow-md"
+            title="Encerrar sessão administrativa com segurança"
+          >
+            <LogOut className="w-3.5 h-3.5 text-red-400" />
+            <span>Sair do Painel</span>
+          </button>
 
         {/* Quick Time Travel Status Widget */}
         {settingsData && (

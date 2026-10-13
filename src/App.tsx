@@ -124,7 +124,14 @@ export default function App() {
 
       // Por padrão e por segurança absoluta:
       // Qualquer visitante ou pessoa externa que receba o link entra estritamente como VISITANTE (guest)
-      if (!token) {
+      // Se houver resquício de tokens estáticos como 'user-admin', 'admin', limpa imediatamente
+      if (!token || token === 'admin' || token === 'user-admin' || token === 'quick-admin' || token === 'admin123' || token === 'studiodeluc@gmail.com') {
+        removeAuthToken();
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('cinelab_auth_token');
+          localStorage.removeItem('cinelab_active_role');
+          localStorage.removeItem('cinelab_admin_saved_token');
+        }
         setUser(null);
         setEnrollment(null);
         return;
@@ -499,6 +506,7 @@ export default function App() {
               setUser(adminUser);
               setEnrollment(null);
             }}
+            onAdminLogout={handleLogout}
             onSettingsUpdated={loadCourseInfo}
             onSwitchToStudentPreview={() => handleSwitchDemoRole('student')}
           />

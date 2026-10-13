@@ -7666,19 +7666,38 @@ var apostilaUpload = multer({
     }
   }
 });
+const activeSessions = new Map();
 function authenticate(req) {
   const authHeader = req.headers.authorization || "";
   const token = authHeader.replace("Bearer ", "").trim() || req.query?.token || req.headers?.["x-auth-token"] || req.headers?.["x-admin-token"] || "";
   const db2 = getDb();
   if (!token) return { user: null, enrollment: null };
-  if (token === "admin" || token === "user-admin" || token === "quick-admin" || token === "admin123" || token === "studiodeluc@gmail.com" || token === "admin@cinelab.edu.br") {
-    const adminUser = db2.users.find((u) => u.role === "admin" || u.email === "studiodeluc@gmail.com");
-    if (adminUser) return { user: adminUser, enrollment: null };
+  if (
+    token === "admin" ||
+    token === "user-admin" ||
+    token === "quick-admin" ||
+    token === "admin123" ||
+    token === "studiodeluc@gmail.com" ||
+    token === "admin@cinelab.edu.br" ||
+    token === "cinelab" ||
+    token === "guest"
+  ) {
+    return { user: null, enrollment: null };
   }
-  const user = db2.users.find((u) => u.id === token || u.email === token);
-  if (!user) return { user: null, enrollment: null };
-  const enrollment = db2.enrollments.find((e) => e.studentId === user.id) || null;
-  return { user, enrollment };
+  const session = activeSessions.get(token);
+  if (session) {
+    const user2 = db2.users.find((u) => u.id === session.userId) || null;
+    if (user2) {
+      const enrollment2 = db2.enrollments.find((e) => e.studentId === user2.id) || null;
+      return { user: user2, enrollment: enrollment2 };
+    }
+  }
+  const studentUser = db2.users.find((u) => u.id === token && u.role !== "admin");
+  if (studentUser) {
+    const enrollment2 = db2.enrollments.find((e) => e.studentId === studentUser.id) || null;
+    return { user: studentUser, enrollment: enrollment2 };
+  }
+  return { user: null, enrollment: null };
 }
 app.get("/api/course/public-info", (req, res) => {
   const db2 = getDb();
@@ -7830,8 +7849,15 @@ app.post("/api/auth/login", (req, res) => {
     return res.status(401).json({ error: "Credenciais inválidas. Verifique seu e-mail e senha." });
   }
   const enrollment = db2.enrollments.find((e) => e.studentId === user.id) || null;
+  const sessionToken = `cnl_${user.role === 'admin' ? 'adm' : 'usr'}_${Date.now()}_${Math.random().toString(36).substring(2)}${Math.random().toString(36).substring(2)}`;
+  activeSessions.set(sessionToken, {
+    token: sessionToken,
+    userId: user.id,
+    role: user.role,
+    createdAt: (new Date()).toISOString()
+  });
   res.json({
-    token: user.id,
+    token: sessionToken,
     user: {
       id: user.id,
       name: user.name,
@@ -7843,6 +7869,14 @@ app.post("/api/auth/login", (req, res) => {
     },
     enrollment
   });
+});
+app.post("/api/auth/logout", (req, res) => {
+  const authHeader = req.headers.authorization || "";
+  const token = authHeader.replace("Bearer ", "").trim() || req.body?.token;
+  if (token) {
+    activeSessions.delete(token);
+  }
+  return res.json({ success: true });
 });
 app.post("/api/auth/quick-admin", (req, res) => {
   return res.status(403).json({ error: "Acesso r\xE1pido desativado em produ\xE7\xE3o por seguran\xE7a. Utilize suas credenciais administrativas." });
