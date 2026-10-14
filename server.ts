@@ -992,8 +992,9 @@ app.post('/api/enrollment/checkout', (req: Request, res: Response) => {
   const enrollmentId = `enr-${Date.now()}`;
 
   // Process payment simulation:
-  // Card and PIX can be instant-approved in this professional demo flow
-  const paymentStatus = 'approved';
+  // Em produção oficial, a matrícula inicia como 'pending' aguardando verificação do PIX
+  const paymentStatus = 'pending';
+  const enrollmentStatus = 'pending';
 
   const payment: Payment = {
     id: paymentId,
@@ -1005,11 +1006,10 @@ app.post('/api/enrollment/checkout', (req: Request, res: Response) => {
     installmentValue,
     status: paymentStatus,
     pixKey: db.settings.pixKey,
-    pixQrCode: `00020126580014BR.GOV.BCB.PIX0136${db.settings.pixKey}520400005303986540${amount.toFixed(2)}5802BR5925CINELAB AUDIOVISUAL6009SAO PAULO62070503***6304ABCD`,
+    pixQrCode: db.settings.pixPayload || `00020126580014BR.GOV.BCB.PIX0136${db.settings.pixKey}520400005303986540${amount.toFixed(2)}5802BR5925CINELAB AUDIOVISUAL6009SAO PAULO62070503***6304ABCD`,
     cardBrand: cardData?.number?.startsWith('4') ? 'Visa' : 'Mastercard',
     lastFour: cardData?.number ? cardData.number.slice(-4) : '7789',
     createdAt: new Date().toISOString(),
-    approvedAt: new Date().toISOString(),
   };
 
   const enrollment: Enrollment = {
@@ -1018,22 +1018,21 @@ app.post('/api/enrollment/checkout', (req: Request, res: Response) => {
     studentId: user.id,
     studentName: user.name,
     studentEmail: user.email,
-    status: 'active',
+    status: enrollmentStatus,
     enrolledAt: new Date().toISOString(),
-    activatedAt: new Date().toISOString(),
     paymentId,
   };
 
   db.payments.push(payment);
   db.enrollments.push(enrollment);
 
-  // Send automatic confirmation email
+  // Send automatic registration email (pending confirmation)
   logEmail(
     user.email,
     user.name,
-    'MATRÍCULA CONFIRMADA – CINELAB Cinema & Audiovisual',
-    'payment_approved',
-    `Olá, ${user.name}!\n\nSeja muito bem-vindo ao CINELAB – Cinema & Audiovisual.\n\nSua matrícula foi ativada com sucesso!\nNúmero da Matrícula: ${enrollmentNumber}\nValor: R$ ${amount.toFixed(2)} (${numInstallments}x de R$ ${installmentValue.toFixed(2)})\n\nO primeiro módulo da sua formação já está liberado na Área do Aluno.\nBons estudos!`
+    'SOLICITAÇÃO DE MATRÍCULA RECEBIDA – CINELAB Cinema & Audiovisual',
+    'enrollment_pending',
+    `Olá, ${user.name}!\n\nRecebemos sua solicitação de matrícula no CINELAB – Cinema & Audiovisual.\n\nNúmero da Matrícula: ${enrollmentNumber}\nValor: R$ ${amount.toFixed(2)} (${numInstallments}x de R$ ${installmentValue.toFixed(2)})\n\nPara ativar o seu acesso, realize o pagamento via PIX (PagBank) utilizando o QR Code ou código Copia e Cola gerado na plataforma e envie o comprovante para nosso atendimento via WhatsApp: ${db.settings.whatsappNumber || '+55 (21) 96672-5240'}.\n\nAssim que o pagamento for identificado, seu Módulo 01 será liberado imediatamente!`
   );
 
   saveDatabase();
@@ -1052,7 +1051,7 @@ app.post('/api/enrollment/checkout', (req: Request, res: Response) => {
     },
     enrollment,
     payment,
-    message: 'Matrícula confirmada e acesso liberado com sucesso!',
+    message: 'Solicitação de matrícula registrada com sucesso! Realize o pagamento de R$ 1.000,00 via PIX (PagBank) e envie o comprovante para ativação imediata do seu acesso.',
   });
 });
 
@@ -2532,7 +2531,7 @@ app.delete('/api/admin/students/:id', requireAdmin, (req: Request, res: Response
   res.json({ success: true, message: 'Aluno removido com sucesso.' });
 });
 
-// Admin Update Student Status Quick
+// Admin Update Student Status Quick (com ativação oficial e notificação)
 app.put('/api/admin/students/:id/status', requireAdmin, (req: Request, res: Response) => {
   const studentId = req.params.id;
   const { status } = req.body; // 'active' | 'suspended' | 'pending'
@@ -2543,7 +2542,29 @@ app.put('/api/admin/students/:id/status', requireAdmin, (req: Request, res: Resp
     return res.status(404).json({ error: 'Matrícula não encontrada.' });
   }
 
+  const previousStatus = enrollment.status;
   enrollment.status = status;
+
+  if (status === 'active') {
+    enrollment.activatedAt = new Date().toISOString();
+    const payment = db.payments.find((p) => p.id === enrollment.paymentId);
+    if (payment) {
+      payment.status = 'approved';
+      payment.approvedAt = new Date().toISOString();
+    }
+
+    const user = db.users.find((u) => u.id === studentId);
+    if (user && previousStatus !== 'active') {
+      logEmail(
+        user.email,
+        user.name,
+        'MATRÍCULA CONFIRMADA – CINELAB Cinema & Audiovisual',
+        'payment_approved',
+        `Olá, ${user.name}!\n\nSeu pagamento foi confirmado com sucesso pela Coordenação Acadêmica!\n\nSua matrícula (${enrollment.enrollmentNumber}) está ativa e o primeiro módulo da sua formação já está liberado na Área do Aluno.\n\nBons estudos!`
+      );
+    }
+  }
+
   saveDatabase();
 
   res.json({ success: true, enrollment });

@@ -12,6 +12,8 @@ import {
   Sparkles,
   AlertCircle,
   ExternalLink,
+  Clock,
+  MessageCircle,
 } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext.js';
 import { formatCurrencyPrice, getConvertedValue } from '../utils/currency.js';
@@ -85,6 +87,7 @@ export const EnrollmentView: React.FC<EnrollmentViewProps> = ({
   const [successResult, setSuccessResult] = useState<{
     enrollmentNumber: string;
     message: string;
+    status?: string;
   } | null>(null);
 
   const pixKey = settings?.pixKey || 'financeiro@cinelab.edu.br';
@@ -365,6 +368,7 @@ export const EnrollmentView: React.FC<EnrollmentViewProps> = ({
       setSuccessResult({
         enrollmentNumber: res.enrollment.enrollmentNumber,
         message: res.message,
+        status: res.enrollment.status,
       });
       if (onEnrollmentSuccess) {
         onEnrollmentSuccess(res.user, res.enrollment);
@@ -377,22 +381,45 @@ export const EnrollmentView: React.FC<EnrollmentViewProps> = ({
   };
 
   if (successResult) {
+    const isPending = successResult.status === 'pending';
+    const whatsappLink = `https://wa.me/5521966725240?text=${encodeURIComponent(
+      `Olá Professor Tony! Acabei de realizar a minha matrícula no CINELAB (Matrícula: ${successResult.enrollmentNumber}) e gostaria de enviar o comprovante do PIX de R$ 1.000,00.`
+    )}`;
+
     return (
       <div className="max-w-2xl mx-auto px-4 py-16 text-center animate-fadeIn text-neutral-200">
-        <div className="p-8 sm:p-10 rounded-3xl bg-neutral-900 border-2 border-amber-500/50 shadow-2xl space-y-6">
-          <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center mx-auto">
-            <CheckCircle2 className="w-8 h-8" />
+        <div
+          className={`p-8 sm:p-10 rounded-3xl bg-neutral-900 border-2 ${
+            isPending ? 'border-amber-500/60' : 'border-emerald-500/50'
+          } shadow-2xl space-y-6`}
+        >
+          <div
+            className={`w-16 h-16 rounded-2xl ${
+              isPending
+                ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40'
+                : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
+            } flex items-center justify-center mx-auto`}
+          >
+            {isPending ? <Clock className="w-8 h-8" /> : <CheckCircle2 className="w-8 h-8" />}
           </div>
 
           <div>
-            <span className="text-xs font-mono font-bold uppercase tracking-widest text-emerald-400">
-              {cur.successApproved}
+            <span
+              className={`text-xs font-mono font-bold uppercase tracking-widest ${
+                isPending ? 'text-amber-400' : 'text-emerald-400'
+              }`}
+            >
+              {isPending
+                ? 'SOLICITAÇÃO RECEBIDA • AGUARDANDO CONFIRMAÇÃO DO PIX'
+                : cur.successApproved}
             </span>
             <h1 className="text-2xl sm:text-3xl font-display font-extrabold text-white mt-1">
-              {cur.successTitle}
+              {isPending ? 'MATRÍCULA PRÉ-CADASTRADA COM SUCESSO!' : cur.successTitle}
             </h1>
-            <p className="text-xs sm:text-sm text-neutral-300 mt-2">
-              {cur.successSubtitle}
+            <p className="text-xs sm:text-sm text-neutral-300 mt-2 leading-relaxed">
+              {isPending
+                ? 'Seus dados foram registrados com segurança em nossa base acadêmica. Para liberar seu acesso ao Módulo 01, confirme a transferência de R$ 1.000,00 via PIX (PagBank) e envie seu comprovante pelo WhatsApp.'
+                : cur.successSubtitle}
             </p>
           </div>
 
@@ -406,11 +433,15 @@ export const EnrollmentView: React.FC<EnrollmentViewProps> = ({
             </div>
             <div className="flex items-center justify-between text-xs">
               <span className="text-neutral-400">{cur.statusLabel}</span>
-              <span className="text-emerald-400 font-bold">{cur.statusActive}</span>
+              <span className={isPending ? 'text-amber-400 font-bold' : 'text-emerald-400 font-bold'}>
+                {isPending ? 'AGUARDANDO COMPENSAÇÃO PIX' : cur.statusActive}
+              </span>
             </div>
             <div className="flex items-center justify-between text-xs">
               <span className="text-neutral-400">{cur.module1Label}</span>
-              <span className="text-white font-semibold">{cur.module1Unlocked}</span>
+              <span className={isPending ? 'text-amber-300/80 font-semibold' : 'text-white font-semibold'}>
+                {isPending ? 'LIBERADO APÓS CONFIRMAÇÃO' : cur.module1Unlocked}
+              </span>
             </div>
             <div className="flex items-center justify-between text-xs pt-1 border-t border-neutral-800/80">
               <span className="text-neutral-500 text-[11px]">{cur.emailReceiptLabel}</span>
@@ -418,20 +449,43 @@ export const EnrollmentView: React.FC<EnrollmentViewProps> = ({
             </div>
           </div>
 
-          <p className="text-xs text-neutral-400 leading-relaxed max-w-md mx-auto">
-            {cur.receiptNote}
-          </p>
+          {isPending ? (
+            <div className="space-y-3 pt-1">
+              <a
+                href={whatsappLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-neutral-950 font-bold uppercase tracking-wider text-sm rounded-xl shadow-lg shadow-emerald-500/20 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-98"
+              >
+                <MessageCircle className="w-5 h-5 text-neutral-950 fill-neutral-950" />
+                <span>Enviar Comprovante pelo WhatsApp</span>
+              </a>
 
-          <div className="pt-2">
-            <button
-              onClick={() => onNavigate('minha-area')}
-              className="w-full py-4 bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold uppercase tracking-wider text-sm rounded-xl shadow-lg shadow-amber-500/20 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-98"
-              id="goto-student-area-btn"
-            >
-              <span>{cur.gotoStudentArea}</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
+              <button
+                type="button"
+                onClick={() => onNavigate('inicio')}
+                className="w-full py-3 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 font-medium text-xs rounded-xl transition cursor-pointer"
+              >
+                Voltar à Página Inicial
+              </button>
+            </div>
+          ) : (
+            <>
+              <p className="text-xs text-neutral-400 leading-relaxed max-w-md mx-auto">
+                {cur.receiptNote}
+              </p>
+              <div className="pt-2">
+                <button
+                  onClick={() => onNavigate('minha-area')}
+                  className="w-full py-4 bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold uppercase tracking-wider text-sm rounded-xl shadow-lg shadow-amber-500/20 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-98"
+                  id="goto-student-area-btn"
+                >
+                  <span>{cur.gotoStudentArea}</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     );

@@ -430,6 +430,19 @@ export const AdminView: React.FC<AdminViewProps> = ({
     }
   };
 
+  const handleApproveStudent = async (studentId: string, studentName: string) => {
+    try {
+      await api.updateStudentStatus(studentId, 'active');
+      setStudents((prev) =>
+        (Array.isArray(prev) ? prev : []).map((s) => (s.id === studentId ? { ...s, status: 'active', enrollmentStatus: 'active' } : s))
+      );
+      notify(`Pagamento confirmado! Acesso do aluno "${studentName}" liberado com sucesso.`);
+      await loadAllAdminData();
+    } catch (err: any) {
+      alert('Erro ao aprovar aluno: ' + err.message);
+    }
+  };
+
   const handleDeleteStudent = async (studentId: string, studentName: string) => {
     if (!confirm(`Deseja realmente excluir o aluno "${studentName}" do sistema? Esta ação removerá sua matrícula e histórico.`)) {
       return;
@@ -1682,8 +1695,20 @@ export const AdminView: React.FC<AdminViewProps> = ({
                                   <CreditCard className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                                   <span>{s.paymentMethod || 'PIX à Vista'}</span>
                                 </div>
-                                <span className="text-[10px] text-emerald-400 font-mono block mt-0.5">
-                                  ✓ Pagamento Confirmado
+                                <span
+                                  className={`text-[10px] font-mono block mt-0.5 ${
+                                    status === 'active'
+                                      ? 'text-emerald-400'
+                                      : status === 'pending'
+                                      ? 'text-amber-400 font-bold'
+                                      : 'text-neutral-500'
+                                  }`}
+                                >
+                                  {status === 'active'
+                                    ? '✓ Pagamento Confirmado'
+                                    : status === 'pending'
+                                    ? '⏳ Aguardando PIX'
+                                    : '• Não Confirmado'}
                                 </span>
                               </td>
 
@@ -1746,18 +1771,32 @@ export const AdminView: React.FC<AdminViewProps> = ({
                                 </div>
                                 <span
                                   className={`px-2 py-0.5 rounded text-[10px] font-bold inline-block mt-1 ${
-                                    isActive
+                                    status === 'active'
                                       ? 'bg-emerald-950 text-emerald-400 border border-emerald-800'
+                                      : status === 'pending'
+                                      ? 'bg-amber-950 text-amber-300 border border-amber-800'
                                       : 'bg-red-950 text-red-400 border border-red-800'
                                   }`}
                                 >
-                                  {isActive ? 'MATRÍCULA ATIVA' : 'SUSPENSA'}
+                                  {status === 'active' ? 'MATRÍCULA ATIVA' : status === 'pending' ? 'AGUARDANDO PIX' : 'SUSPENSA'}
                                 </span>
                               </td>
 
                               {/* Ações */}
                               <td className="p-4 text-right whitespace-nowrap">
                                 <div className="inline-flex items-center gap-1.5 font-sans">
+                                  {/* Botão de Aprovar PIX com 1 clique (para pendentes) */}
+                                  {status === 'pending' && (
+                                    <button
+                                      type="button"
+                                      onClick={() => handleApproveStudent(s.id, s.name)}
+                                      className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs cursor-pointer flex items-center gap-1 font-mono font-bold transition shadow-sm"
+                                      title="Confirmar pagamento PIX e liberar acesso do aluno imediatamente"
+                                    >
+                                      <CheckCircle2 className="w-3.5 h-3.5 text-white" />
+                                      <span>Aprovar PIX</span>
+                                    </button>
+                                  )}
                                   {/* Botão de Entrar/Testar como este Aluno */}
                                   {onSwitchToStudentPreview && (
                                     <button

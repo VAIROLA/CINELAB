@@ -916,6 +916,12 @@ export const api = {
       method: 'DELETE',
     }),
 
+  updateStudentStatus: (studentId: string, status: 'active' | 'suspended' | 'pending') =>
+    request<{ success: boolean; enrollment: any }>(`/api/admin/students/${studentId}/status`, {
+      method: 'PUT',
+      body: JSON.stringify({ status }),
+    }),
+
   // Edição de Módulos (Admin)
   updateAdminModule: (
     moduleId: number,
