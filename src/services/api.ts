@@ -107,6 +107,12 @@ export const api = {
       body: JSON.stringify({ email }),
     }),
 
+  resetPassword: (data: { token?: string; email: string; newPassword: string }) =>
+    request<{ success: boolean; message: string }>('/api/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
   // Checkout & Enrollment
   checkout: (data: {
     name: string;

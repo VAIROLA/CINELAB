@@ -376,7 +376,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               {loading ? t('auth.loggingIn') : t('auth.sendResetLink')}
             </button>
 
-            <div className="pt-2 text-center">
+            <div className="pt-2 text-center flex flex-col items-center gap-2">
               <button
                 type="button"
                 onClick={() => setMode('login')}
@@ -384,6 +384,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               >
                 {t('auth.backToLogin')}
               </button>
+
+              <a
+                href="https://wa.me/5521966725240?text=Ol%C3%A1%20Professor%20Tony%2C%20estou%20com%20dificuldades%20para%20recuperar%20minha%20senha%20no%20CINELAB."
+                target="_blank"
+                rel="noreferrer"
+                className="text-[11px] text-amber-400/90 hover:text-amber-300 hover:underline flex items-center gap-1 font-medium mt-1"
+              >
+                <span>Precisa de ajuda? Fale com o Suporte da Coordenação</span>
+              </a>
             </div>
           </form>
         )}

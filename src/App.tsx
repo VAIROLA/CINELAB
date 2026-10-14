@@ -31,6 +31,7 @@ import { AdminView } from './views/AdminView.js';
 import { FaqView } from './views/FaqView.js';
 import { ContactView } from './views/ContactView.js';
 import { TutorIaView } from './views/TutorIaView.js';
+import { ResetPasswordView } from './views/ResetPasswordView.js';
 
 // Determinar rota inicial baseada na URL atual (slug /admin, /curso, etc)
 const getInitialRouteFromUrl = (): string => {
@@ -476,6 +477,13 @@ export default function App() {
           <CertificateValidationView
             initialCode={routeParams.code}
             onNavigate={navigateTo}
+          />
+        )}
+
+        {(currentRoute === 'redefinir-senha' || currentRoute === 'reset-password') && (
+          <ResetPasswordView
+            onNavigate={navigateTo}
+            onOpenAuth={handleOpenAuth}
           />
         )}
 

@@ -16,6 +16,7 @@ import {
   logVisitor,
   initSupabaseData,
 } from './server/db.js';
+import { sendEmailWithResend, getPasswordResetEmailHtml } from './server/emailService.js';
 import {
   User,
   Enrollment,
@@ -882,23 +883,67 @@ app.get('/api/auth/me', (req: Request, res: Response) => {
   });
 });
 
-// Forgot password simulation
-app.post('/api/auth/forgot-password', (req: Request, res: Response) => {
+// Forgot password com suporte a envio real via Resend e link de redefinição
+app.post('/api/auth/forgot-password', async (req: Request, res: Response) => {
   const { email } = req.body;
   const db = getDb();
-  const user = db.users.find((u) => u.email.toLowerCase() === (email || '').toLowerCase());
+  const user = db.users.find((u) => u.email.toLowerCase() === (email || '').trim().toLowerCase());
 
   if (user) {
+    const origin = req.headers.origin || 'https://cinelab-ecole.com';
+    const resetToken = `rec_${Buffer.from(`${user.email}:${Date.now()}:${user.id}`).toString('base64url')}`;
+    const resetUrl = `${origin}/redefinir-senha?token=${resetToken}&email=${encodeURIComponent(user.email)}`;
+
+    // Salva o log interno de e-mail na base de dados
     logEmail(
       user.email,
       user.name,
       'Recuperação de Senha – CINELAB',
       'password_reset',
-      `Olá, ${user.name}. Recebemos uma solicitação de redefinição de senha para sua conta CINELAB. Utilize o link seguro para cadastrar uma nova senha: https://cinelab.edu.br/redefinir-senha?token=cinelab_rec_${Date.now()}`
+      `Olá, ${user.name}. Recebemos uma solicitação de redefinição de senha para sua conta CINELAB. Link seguro: ${resetUrl}`
     );
+
+    // Envia o e-mail real via Resend (se a chave RESEND_API_KEY estiver configurada)
+    const emailHtml = getPasswordResetEmailHtml(user.name, resetUrl, db.settings?.whatsappNumber || '+55 (21) 96672-5240');
+    sendEmailWithResend({
+      to: user.email,
+      subject: 'Recuperação de Acesso – CINELAB Escola de Cinema',
+      html: emailHtml,
+    }).catch((err) => console.warn('[ForgotPassword] Falha assíncrona ao despachar email:', err));
   }
 
-  res.json({ message: 'Se o e-mail estiver cadastrado em nossa base, as instruções foram enviadas.' });
+  // Resposta padrão por segurança (evita enumeração de e-mails de alunos)
+  res.json({
+    message: 'Se o e-mail informado estiver cadastrado em nossa base, as instruções e o link seguro para redefinição foram enviados para sua caixa de entrada.'
+  });
+});
+
+// Redefinição efetiva da senha do aluno
+app.post('/api/auth/reset-password', (req: Request, res: Response) => {
+  const { token, email, newPassword } = req.body;
+  const db = getDb();
+
+  if (!email || !newPassword) {
+    return res.status(400).json({ error: 'E-mail e nova senha são obrigatórios.' });
+  }
+
+  if (newPassword.length < 6) {
+    return res.status(400).json({ error: 'A nova senha deve ter no mínimo 6 caracteres.' });
+  }
+
+  const user = db.users.find((u) => u.email.toLowerCase() === email.trim().toLowerCase());
+  if (!user) {
+    return res.status(404).json({ error: 'Usuário não encontrado.' });
+  }
+
+  // Atualiza a senha no banco de dados
+  user.passwordHash = newPassword;
+  saveDatabase();
+
+  res.json({
+    success: true,
+    message: 'Sua senha foi redefinida com sucesso! Você já pode entrar com sua nova senha.'
+  });
 });
 
 // ----------------------------------------------------
