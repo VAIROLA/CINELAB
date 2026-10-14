@@ -698,7 +698,7 @@ export function getMergedBonusWithVault(serverBonus: BonusApostila[]): BonusApos
       pagesCount: 36,
       totalPages: 36,
       pdfUrl: '/materiais/cinelab-bonus-04-historia-do-cinema-complemento.pdf',
-      coverUrl: '/images/covers/apostila-04.jpg',
+      coverUrl: '',
       unlockedByDefault: false,
       requiredModule: 8,
       isUnlocked: true,
@@ -765,8 +765,7 @@ export function getMergedBonusWithVault(serverBonus: BonusApostila[]): BonusApos
       const summary = (local as any)?.summary || b.summary || b.description || 'Material didático complementar do CINELAB.';
       const pages = local?.pagesCount || b.pagesCount || b.totalPages || 30;
       const pdf = local?.pdfUrl || b.pdfUrl || '';
-      const fallbackCover = `/images/covers/apostila-${b.number < 10 ? '0' + b.number : b.number}.jpg`;
-      const cover = local?.coverUrl || b.coverUrl || fallbackCover;
+      const cover = local?.coverUrl || b.coverUrl || '';
       return {
         ...b,
         title,

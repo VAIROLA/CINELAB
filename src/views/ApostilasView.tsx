@@ -1360,7 +1360,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
               totalPages: pages,
               pagesCount: pages,
               pdfUrl: bFound?.pdfUrl || canonicalPdf,
-              coverUrl: bFound?.coverUrl || `/images/covers/apostila-${bNum < 10 ? '0' + bNum : bNum}.jpg`,
+              coverUrl: bFound?.coverUrl || '',
               contentMarkdown: `# BÔNUS 0${bNum} – ${bFound?.title || canonicalTitle}`,
             }, 'pdf');
           }}
@@ -1384,7 +1384,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
               totalPages: pages,
               pagesCount: pages,
               pdfUrl: bFound?.pdfUrl || canonicalPdf,
-              coverUrl: bFound?.coverUrl || `/images/covers/apostila-${bNum < 10 ? '0' + bNum : bNum}.jpg`,
+              coverUrl: bFound?.coverUrl || '',
               contentMarkdown: `# BÔNUS 0${bNum} – ${bFound?.title || canonicalTitle}`,
             }, 'pdf');
           }}
