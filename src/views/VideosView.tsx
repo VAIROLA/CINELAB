@@ -18,6 +18,7 @@ import {
   Headphones,
   Volume2,
   BookOpen,
+  ArrowRight,
 } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext.js';
 import { parseVideoEmbed } from '../utils/videoUtils.js';
@@ -287,14 +288,23 @@ export const VideosView: React.FC<VideosViewProps> = ({
         </p>
 
         {!isLoggedIn && (
-          <div className="p-3.5 rounded-xl bg-amber-950/30 border border-amber-800/40 text-xs text-amber-200 max-w-lg mx-auto mt-2 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <span>{cur.accessNotice}</span>
-            <button
-              onClick={() => onNavigate('matricula')}
-              className="shrink-0 px-3.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer"
-            >
-              {cur.enrollCta}
-            </button>
+          <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-neutral-900 via-neutral-900 to-amber-950/40 border-2 border-amber-500/70 text-xs text-amber-200 max-w-2xl mx-auto mt-4 shadow-2xl space-y-3">
+            <div className="flex items-center justify-center gap-2 text-amber-400 font-mono font-bold uppercase tracking-wider text-xs">
+              <Lock className="w-4 h-4 text-amber-400" />
+              <span>{cur.visitorLockedTitle} • {cur.accessNotice}</span>
+            </div>
+            <p className="text-xs text-neutral-300 leading-relaxed max-w-xl mx-auto">
+              {cur.visitorLockedDesc}
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 pt-1">
+              <button
+                onClick={() => onNavigate('matricula')}
+                className="px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold uppercase tracking-wider text-xs transition cursor-pointer shadow-lg shadow-amber-500/30 flex items-center justify-center gap-2"
+              >
+                <span>{cur.enrollCta}</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         )}
       </div>

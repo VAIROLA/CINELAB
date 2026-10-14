@@ -47,27 +47,43 @@ export const Header: React.FC<HeaderProps> = ({
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [demoMenuOpen, setDemoMenuOpen] = useState(false);
 
-  // Reordered navigation items: Todas as pÃ¡ginas principais do portal
-  const navItems: Array<{
+  // Reordered navigation items: Visitantes veem páginas institucionais/vendas; alunos autenticados veem suite de estudos completa
+  const publicNavItems: Array<{
     label: string;
     route: string;
     icon?: any;
     action?: 'panel' | 'logout';
     highlight?: 'amber' | 'emerald' | 'red';
   }> = [
-    { label: t('nav.home', 'InÃ­cio'), route: 'inicio' },
+    { label: t('nav.home', 'Início'), route: 'inicio' },
     { label: t('nav.course', 'O Curso'), route: 'curso' },
     { label: t('nav.methodology', 'Metodologia'), route: 'metodologia' },
-    { label: t('nav.apostilas', 'Apostilas'), route: 'apostilas', icon: BookOpen },
-    { label: t('nav.videos', 'VÃ­deos'), route: 'videos', icon: Film },
-    { label: t('nav.cinemateca', 'Cinemateca & Leituras'), route: 'filmes-leituras', icon: BookOpen },
-    { label: t('nav.evaluations', 'AvaliaÃ§Ãµes'), route: 'avaliacoes', icon: FileCheck },
-    { label: t('nav.tutorIa', 'Tutor IA'), route: 'tutor-ia', icon: Sparkles },
     { label: t('nav.certificate', 'Certificado'), route: 'certificado', icon: Award },
     { label: t('nav.validate', 'Validar'), route: 'validar-certificado' },
     { label: t('nav.faq', 'FAQ'), route: 'faq' },
     { label: t('nav.contact', 'Contato'), route: 'contato' },
   ];
+
+  const studentNavItems: Array<{
+    label: string;
+    route: string;
+    icon?: any;
+    action?: 'panel' | 'logout';
+    highlight?: 'amber' | 'emerald' | 'red';
+  }> = [
+    { label: t('nav.home', 'Início'), route: 'inicio' },
+    { label: t('nav.course', 'O Curso'), route: 'curso' },
+    { label: t('nav.apostilas', 'Apostilas'), route: 'apostilas', icon: BookOpen },
+    { label: t('nav.videos', 'Vídeos'), route: 'videos', icon: Film },
+    { label: t('nav.cinemateca', 'Cinemateca & Leituras'), route: 'filmes-leituras', icon: BookOpen },
+    { label: t('nav.evaluations', 'Avaliações'), route: 'avaliacoes', icon: FileCheck },
+    { label: t('nav.tutorIa', 'Tutor IA'), route: 'tutor-ia', icon: Sparkles },
+    { label: t('nav.certificate', 'Certificado'), route: 'certificado', icon: Award },
+    { label: t('nav.faq', 'FAQ'), route: 'faq' },
+    { label: t('nav.contact', 'Contato'), route: 'contato' },
+  ];
+
+  const navItems = user ? studentNavItems : publicNavItems;
 
   const handleNav = (route: string, action?: 'panel' | 'logout') => {
     if (action === 'logout') {

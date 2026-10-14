@@ -1258,16 +1258,41 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
           <BookOpen className="w-3.5 h-3.5" /> {cur.onlineNotice}
         </div>
 
-        {!isLoggedIn && (
-          <div className="p-4 rounded-xl bg-amber-950/30 border border-amber-800/40 text-xs text-amber-200 max-w-lg mx-auto mt-4">
-            <span>{cur.visitorNotice}</span>
-            <div className="pt-2">
-              <button
-                onClick={() => onNavigate('matricula')}
-                className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold uppercase rounded-lg text-xs cursor-pointer"
-              >
-                {cur.enrollBtn}
-              </button>
+        {!isPaidStudent && (
+          <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-neutral-900 via-neutral-900 to-amber-950/40 border-2 border-amber-500/70 text-xs text-amber-200 max-w-2xl mx-auto mt-4 shadow-2xl space-y-3">
+            <div className="flex items-center justify-center gap-2 text-amber-400 font-mono font-bold uppercase tracking-wider text-xs">
+              <Lock className="w-4 h-4 text-amber-400" />
+              <span>Material Didático Protegido • Exclusivo para Alunos Matriculados</span>
+            </div>
+            <p className="text-xs text-neutral-300 leading-relaxed max-w-xl mx-auto">
+              Você está visualizando a ementa pedagógica do curso. O acesso integral ao leitor em alta definição de todas as 10 apostilas em PDF, materiais extras e avaliações práticas é liberado imediatamente após a confirmação da matrícula.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 pt-1">
+              {!isLoggedIn ? (
+                <>
+                  <button
+                    onClick={() => onOpenAuth?.('login')}
+                    className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-white font-bold text-xs cursor-pointer border border-neutral-700 transition"
+                  >
+                    Já sou Aluno • Fazer Login
+                  </button>
+                  <button
+                    onClick={() => onNavigate('matricula')}
+                    className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold uppercase tracking-wider text-xs cursor-pointer shadow-lg shadow-amber-500/30 flex items-center justify-center gap-2 transition"
+                  >
+                    <span>Matricular-se Agora</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={() => onNavigate('matricula')}
+                  className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold uppercase tracking-wider text-xs cursor-pointer shadow-lg shadow-amber-500/30 flex items-center justify-center gap-2 transition"
+                >
+                  <span>Regularizar Matrícula / Pagamento</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              )}
             </div>
           </div>
         )}
@@ -1653,48 +1678,54 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
 
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
                         <button
-                          disabled={isLocked}
+                          disabled={isPaidStudent && isLocked}
                           onClick={() => handleOpenApostila(item, 'pdf')}
                           className={`w-full py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-md active:scale-98 ${
-                            isLocked
+                            !isPaidStudent
+                              ? 'bg-amber-500 hover:bg-amber-400 text-neutral-950 cursor-pointer shadow-amber-500/10'
+                              : isLocked
                               ? 'bg-neutral-800 text-neutral-500 opacity-60 cursor-not-allowed border border-neutral-700/50'
                               : 'bg-amber-500 hover:bg-amber-400 text-neutral-950 cursor-pointer shadow-amber-500/10'
                           }`}
-                          title={isLocked ? `Liberada em ${formatDateTime(item.startDate)}` : "Ler apostila em PDF na plataforma (download protegido)"}
+                          title={!isPaidStudent ? "Conteúdo Exclusivo para Alunos Matriculados" : isLocked ? `Liberada em ${formatDateTime(item.startDate)}` : "Ler apostila em PDF na plataforma (download protegido)"}
                         >
-                          {isLocked ? <Lock className="w-3.5 h-3.5 shrink-0 text-neutral-500" /> : <BookOpen className="w-3.5 h-3.5 shrink-0" />}
-                          <span className="truncate">{isLocked ? 'Bloqueada' : cur.readOnlineBtn}</span>
+                          {!isPaidStudent ? <Lock className="w-3.5 h-3.5 shrink-0" /> : isLocked ? <Lock className="w-3.5 h-3.5 shrink-0 text-neutral-500" /> : <BookOpen className="w-3.5 h-3.5 shrink-0" />}
+                          <span className="truncate">{!isPaidStudent ? '🔒 Desbloquear (Matrícula)' : isLocked ? 'Bloqueada' : cur.readOnlineBtn}</span>
                         </button>
 
                         <button
-                          disabled={isLocked}
+                          disabled={isPaidStudent && isLocked}
                           onClick={() => handleOpenApostila(item, 'extra-videos')}
                           className={`w-full py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-98 ${
-                            isLocked
+                            !isPaidStudent
+                              ? 'bg-neutral-800 hover:bg-neutral-700 text-amber-300 border border-neutral-700 hover:border-amber-500/50 cursor-pointer'
+                              : isLocked
                               ? 'bg-neutral-800 text-neutral-500 opacity-60 cursor-not-allowed border border-neutral-700/50'
                               : 'bg-neutral-800 hover:bg-neutral-700 text-amber-300 border border-neutral-700 hover:border-amber-500/50 cursor-pointer'
                           }`}
-                          title={isLocked ? `Liberados em ${formatDateTime(item.startDate)}` : "Assistir aos 2 vídeos extras para estudo desta apostila"}
+                          title={!isPaidStudent ? "Exclusivo para Alunos Matriculados" : isLocked ? `Liberados em ${formatDateTime(item.startDate)}` : "Assistir aos 2 vídeos extras para estudo desta apostila"}
                         >
-                          {isLocked ? <Lock className="w-3.5 h-3.5 shrink-0 text-neutral-500" /> : <Film className="w-3.5 h-3.5 text-amber-400 shrink-0" />}
-                          <span className="truncate">{isLocked ? cur.locked : cur.extraVideosBtn}</span>
+                          {!isPaidStudent ? <Lock className="w-3.5 h-3.5 text-amber-400 shrink-0" /> : isLocked ? <Lock className="w-3.5 h-3.5 shrink-0 text-neutral-500" /> : <Film className="w-3.5 h-3.5 text-amber-400 shrink-0" />}
+                          <span className="truncate">{!isPaidStudent ? '🔒 Vídeos Extras' : isLocked ? cur.locked : cur.extraVideosBtn}</span>
                         </button>
 
                         <button
-                          disabled={isLocked}
+                          disabled={isPaidStudent && isLocked}
                           onClick={() => handleOpenTraining(item, modNum)}
                           className={`w-full py-2.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all border active:scale-98 ${
-                            isLocked
+                            !isPaidStudent
+                              ? 'bg-neutral-800 hover:bg-neutral-700 text-amber-300 border-amber-500/40 hover:border-amber-400 cursor-pointer'
+                              : isLocked
                               ? 'bg-neutral-800 text-neutral-500 opacity-60 cursor-not-allowed border-neutral-700/50'
                               : completedTrainings[`etapa-${modNum}`]
                               ? 'bg-emerald-950/50 hover:bg-emerald-900/50 text-emerald-300 border-emerald-600/60 shadow-sm cursor-pointer'
                               : 'bg-neutral-800 hover:bg-neutral-700 text-amber-300 border-amber-500/40 hover:border-amber-400 cursor-pointer'
                           }`}
-                          title={isLocked ? `Liberada em ${formatDateTime(item.startDate)}` : "Fazer Avaliação de Treinamento prática da etapa"}
+                          title={!isPaidStudent ? "Exclusivo para Alunos Matriculados" : isLocked ? `Liberada em ${formatDateTime(item.startDate)}` : "Fazer Avaliação de Treinamento prática da etapa"}
                         >
-                          {isLocked ? <Lock className="w-3.5 h-3.5 shrink-0 text-neutral-500" /> : <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />}
-                          <span className="truncate">{isLocked ? cur.locked : cur.trainingEvalBtn}</span>
-                          {completedTrainings[`etapa-${modNum}`] && !isLocked && (
+                          {!isPaidStudent ? <Lock className="w-3.5 h-3.5 text-amber-400 shrink-0" /> : isLocked ? <Lock className="w-3.5 h-3.5 shrink-0 text-neutral-500" /> : <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />}
+                          <span className="truncate">{!isPaidStudent ? '🔒 Treinamento' : isLocked ? cur.locked : cur.trainingEvalBtn}</span>
+                          {completedTrainings[`etapa-${modNum}`] && !isLocked && isPaidStudent && (
                             <span className="text-[10px] font-mono bg-emerald-500/20 text-emerald-300 px-1 py-0.2 rounded shrink-0">
                               {completedTrainings[`etapa-${modNum}`].score}/{completedTrainings[`etapa-${modNum}`].total}
                             </span>
@@ -1733,16 +1764,19 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                               </div>
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                 <button
-                                  disabled={isLocked}
+                                  disabled={isPaidStudent && isLocked}
                                   onClick={() => handleOpenExtraApostila(item)}
                                   className={`w-full py-2.5 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition shadow active:scale-98 ${
-                                    isLocked
+                                    !isPaidStudent
+                                      ? 'bg-cyan-600 hover:bg-cyan-500 text-white cursor-pointer shadow-cyan-500/20'
+                                      : isLocked
                                       ? 'bg-neutral-800 text-neutral-500 cursor-not-allowed opacity-60'
                                       : 'bg-cyan-500 hover:bg-cyan-400 text-neutral-950 cursor-pointer shadow-cyan-500/20'
                                   }`}
+                                  title={!isPaidStudent ? "Exclusivo para Alunos Matriculados" : isLocked ? `Liberada em ${formatDateTime(item.startDate)}` : "Ler apostila extra em PDF"}
                                 >
-                                  <FileText className="w-3.5 h-3.5" />
-                                  <span>Ler Apostila Extra</span>
+                                  {!isPaidStudent ? <Lock className="w-3.5 h-3.5" /> : <FileText className="w-3.5 h-3.5" />}
+                                  <span>{!isPaidStudent ? '🔒 Desbloquear Extra' : 'Ler Apostila Extra'}</span>
                                 </button>
                                 {isAdmin && (
                                   <div className="flex items-center gap-1.5">
@@ -2347,10 +2381,14 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                           contentMarkdown: `# ${b.code || `APOSTILA BÔNUS 0${b.number}`} – ${bDisplayTitle}\n\n${bDisplaySummary}`,
                         }, 'pdf');
                       }}
-                      className="w-full py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer bg-amber-500 hover:bg-amber-400 text-neutral-950 shadow"
+                      className={`w-full py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                        !isPaidStudent
+                          ? 'bg-amber-500 hover:bg-amber-400 text-neutral-950 shadow-amber-500/10'
+                          : 'bg-amber-500 hover:bg-amber-400 text-neutral-950 shadow'
+                      }`}
                     >
-                      <BookOpen className="w-4 h-4" />
-                      <span>{cur.readBonusBtn}</span>
+                      {!isPaidStudent ? <Lock className="w-4 h-4" /> : <BookOpen className="w-4 h-4" />}
+                      <span>{!isPaidStudent ? '🔒 Desbloquear (Matrícula)' : cur.readBonusBtn}</span>
                     </button>
 
                     <button
@@ -2371,8 +2409,8 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                       }}
                       className="w-full py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 bg-neutral-800 hover:bg-neutral-700 text-amber-300 border border-neutral-700 hover:border-amber-500/50 transition-all cursor-pointer"
                     >
-                      <Film className="w-4 h-4 text-amber-400" />
-                      <span>{cur.extraVideosTab}</span>
+                      {!isPaidStudent ? <Lock className="w-4 h-4 text-amber-400" /> : <Film className="w-4 h-4 text-amber-400" />}
+                      <span>{!isPaidStudent ? '🔒 Vídeos Extras' : cur.extraVideosTab}</span>
                     </button>
 
                     {isAdmin && (
