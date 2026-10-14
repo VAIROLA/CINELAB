@@ -281,8 +281,8 @@ export const initialVideos: VideoLesson[] = initialModules.map((mod) => ({
   title: `VÍDEO – ETAPA 0${mod.id}: Apresentação da Apostila 0${mod.id}`,
   description: `Masterclass exclusiva de introdução aos conceitos fundamentais da Etapa ${mod.id}: ${mod.title}. Orientações para a leitura da apostila e execução dos exercícios.`,
   durationMinutes: 45,
-  videoUrl: 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ', // Default video embed, customizable by admin
-  thumbnailUrl: `https://images.unsplash.com/photo-${[
+  videoUrl: mod.id === 1 ? '/uploads/videos/aula-CINELAB_INTRODU__O-1790768528604-650605.mp4' : '',
+  thumbnailUrl: mod.id === 1 ? '/uploads/images/img-LOCO_CINELAB___COLE-1790299254778-824285.png' : `https://images.unsplash.com/photo-${[
     '1485846234645-a62644f84728',
     '1478720568477-152d9b164e26',
     '1536440136628-849c177e76a1',

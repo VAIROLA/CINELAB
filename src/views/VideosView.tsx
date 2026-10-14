@@ -400,6 +400,23 @@ export const VideosView: React.FC<VideosViewProps> = ({
                     />
                   );
                 }
+                if (!activeVideo.videoUrl || !activeVideo.videoUrl.trim()) {
+                  return (
+                    <div className="text-center p-8 space-y-4">
+                      <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mx-auto shadow-inner">
+                        <Film className="w-8 h-8" />
+                      </div>
+                      <div className="space-y-2">
+                        <h3 className="text-lg font-bold text-white font-display">
+                          Masterclass em Gravação & Edição Final
+                        </h3>
+                        <p className="text-xs text-neutral-300 max-w-md mx-auto leading-relaxed">
+                          A vídeo-aula da Etapa 0{activeVideo.moduleId} está em processo de finalização pelo Professor Cineasta Tony de Luc e estará disponível nesta sala de aula em breve.
+                        </p>
+                      </div>
+                    </div>
+                  );
+                }
                 return (
                   <video
                     controls

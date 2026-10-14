@@ -153,8 +153,8 @@ export const pedagogicalVideos: VideoLesson[] = [
     description:
       'Apresentação oficial da Formação CINELAB por Tony de Luc. O que distingue o audiovisual das demais artes, a unidade fundamental do plano e como ler a Apostila 01.',
     durationMinutes: 42,
-    videoUrl: 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ',
-    thumbnailUrl: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=1200&q=80',
+    videoUrl: '/uploads/videos/aula-CINELAB_INTRODU__O-1790768528604-650605.mp4',
+    thumbnailUrl: '/uploads/images/img-LOCO_CINELAB___COLE-1790299254778-824285.png',
     professorName: 'Professor Tony de Luc',
     professorRole: 'Diretor Acadêmico & Cineasta',
     professorNotes:
@@ -167,7 +167,7 @@ export const pedagogicalVideos: VideoLesson[] = [
     description:
       'Tony de Luc percorre os marcos da história cinematográfica e demonstra na prática como analisar uma obra através das seis camadas essenciais.',
     durationMinutes: 48,
-    videoUrl: 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ',
+    videoUrl: '',
     thumbnailUrl: 'https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&w=1200&q=80',
     professorName: 'Professor Tony de Luc',
     professorRole: 'Diretor Acadêmico & Cineasta',
@@ -181,7 +181,7 @@ export const pedagogicalVideos: VideoLesson[] = [
     description:
       'Como transformar uma ideia em uma cena cinematográfica potente. O uso do subtexto, o formato Master Scenes e a apresentação dos Bônus 01 e 02.',
     durationMinutes: 55,
-    videoUrl: 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ',
+    videoUrl: '',
     thumbnailUrl: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1200&q=80',
     professorName: 'Professor Tony de Luc',
     professorRole: 'Diretor Acadêmico & Cineasta',
@@ -195,7 +195,7 @@ export const pedagogicalVideos: VideoLesson[] = [
     description:
       'O trabalho do diretor no ensaio e no set. Como se comunicar com o ator sem impor resultados, decupagem com intenção e respeito à equipe.',
     durationMinutes: 46,
-    videoUrl: 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ',
+    videoUrl: '',
     thumbnailUrl: 'https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?auto=format&fit=crop&w=1200&q=80',
     professorName: 'Professor Tony de Luc',
     professorRole: 'Diretor Acadêmico & Cineasta',
@@ -209,7 +209,7 @@ export const pedagogicalVideos: VideoLesson[] = [
     description:
       'Tony de Luc demonstra os esquemas fundamentais de iluminação: luz frontal, lateral, contraluz e a luz poética de janela.',
     durationMinutes: 52,
-    videoUrl: 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ',
+    videoUrl: '',
     thumbnailUrl: 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=1200&q=80',
     professorName: 'Professor Tony de Luc',
     professorRole: 'Diretor Acadêmico & Cineasta',
@@ -223,7 +223,7 @@ export const pedagogicalVideos: VideoLesson[] = [
     description:
       'A importância capital do som no cinema. Como gravar diálogo limpo com microfone direcional ou lapela, room tone e a dramaturgia do silêncio.',
     durationMinutes: 44,
-    videoUrl: 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ',
+    videoUrl: '',
     thumbnailUrl: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=1200&q=80',
     professorName: 'Professor Tony de Luc',
     professorRole: 'Diretor Acadêmico & Cineasta',
@@ -237,7 +237,7 @@ export const pedagogicalVideos: VideoLesson[] = [
     description:
       'A reescritura do filme na ilha de edição. Montagem métrica, rítmica e de conteúdo. O uso de cortes na ação e a transição emocional entre planos.',
     durationMinutes: 50,
-    videoUrl: 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ',
+    videoUrl: '',
     thumbnailUrl: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=1200&q=80',
     professorName: 'Professor Tony de Luc',
     professorRole: 'Diretor Acadêmico & Cineasta',
@@ -251,7 +251,7 @@ export const pedagogicalVideos: VideoLesson[] = [
     description:
       'Como planejar uma diária de filmagem sem estresse. Elaboração de ordem do dia profissional, plano de contingência e orçamento equilibrado.',
     durationMinutes: 47,
-    videoUrl: 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ',
+    videoUrl: '',
     thumbnailUrl: 'https://images.unsplash.com/photo-1535016120720-40c646be5580?auto=format&fit=crop&w=1200&q=80',
     professorName: 'Professor Tony de Luc',
     professorRole: 'Diretor Acadêmico & Cineasta',
@@ -265,7 +265,7 @@ export const pedagogicalVideos: VideoLesson[] = [
     description:
       'A trajetória do curta após a finalização. Como preparar o kit de divulgação, escrever a sinopse vendedora e traçar a rota de festivais no FilmFreeway.',
     durationMinutes: 45,
-    videoUrl: 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ',
+    videoUrl: '',
     thumbnailUrl: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80',
     professorName: 'Professor Tony de Luc',
     professorRole: 'Diretor Acadêmico & Cineasta',
@@ -279,7 +279,7 @@ export const pedagogicalVideos: VideoLesson[] = [
     description:
       'Orientações finais de Tony de Luc para a entrega do Curta-Metragem de 1 a 5 minutos, celebração da conclusão e diretrizes para o acesso vitalício.',
     durationMinutes: 40,
-    videoUrl: 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ',
+    videoUrl: '',
     thumbnailUrl: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1200&q=80',
     professorName: 'Professor Tony de Luc',
     professorRole: 'Diretor Acadêmico & Cineasta',
