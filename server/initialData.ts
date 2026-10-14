@@ -20,7 +20,7 @@ export const initialCourseSettings: CourseSettings = {
   totalModules: 10,
   moduleDurationDays: 9,
   evalLeadTimeDays: 3,
-  cohortStartDate: '2026-08-25',
+  cohortStartDate: '2026-10-13',
   minPassingGrade: 6.0,
   workloadHours: 180,
   coursePrice: 1000.00,

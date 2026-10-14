@@ -1131,14 +1131,14 @@ export function calculateModuleTimeline(
   const now = getEffectiveNow();
 
   // Data de referência: Inicia na data de matrícula/compra individual de cada aluno (enrolledAt).
-  // Se não houver matrícula (ex: visitante na página inicial), usa a data geral da turma.
+  // Se não houver matrícula (ex: visitante na página inicial), a contagem do curso inicia a partir do dia de hoje (now),
+  // garantindo que a Etapa 1 esteja ativa e as Etapas 2 a 10 mostrem cronômetro regressivo futuro.
   let studentStartDate: Date;
   if (studentEnrollment && studentEnrollment.enrolledAt) {
     studentStartDate = new Date(studentEnrollment.enrolledAt);
-  } else if (settings.cohortStartDate) {
-    studentStartDate = new Date(settings.cohortStartDate);
   } else {
-    studentStartDate = new Date();
+    // Para visitantes ou exibição geral, sempre toma a data de hoje como marco zero da jornada
+    studentStartDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   }
 
   // Calculate cumulative days for previous modules

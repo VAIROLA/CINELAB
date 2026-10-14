@@ -21,7 +21,7 @@ var initialCourseSettings = {
   totalModules: 10,
   moduleDurationDays: 9,
   evalLeadTimeDays: 3,
-  cohortStartDate: "2026-08-25",
+  cohortStartDate: "2026-10-13",
   minPassingGrade: 6,
   workloadHours: 180,
   coursePrice: 1e3,
@@ -6200,10 +6200,8 @@ function calculateModuleTimeline(moduleId, studentEnrollment) {
   let studentStartDate;
   if (studentEnrollment && studentEnrollment.enrolledAt) {
     studentStartDate = new Date(studentEnrollment.enrolledAt);
-  } else if (settings.cohortStartDate) {
-    studentStartDate = new Date(settings.cohortStartDate);
   } else {
-    studentStartDate = /* @__PURE__ */ new Date();
+    studentStartDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   }
   let cumulativeDaysStart = 0;
   for (let i = 1; i < moduleId; i++) {

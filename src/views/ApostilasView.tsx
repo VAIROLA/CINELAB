@@ -1508,53 +1508,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                           );
                         })()}
 
-                        {/* Botão Hover de Subir Capa (Admin) */}
-                        {isAdmin && (
-                          <label className="absolute inset-0 bg-black/85 opacity-0 group-hover/cover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1.5 cursor-pointer p-1 text-center text-white">
-                            {uploadingCoverId === item.id ? (
-                              <>
-                                <Loader2 className="w-4 h-4 animate-spin text-amber-400" />
-                                <span className="text-[9px] font-bold text-amber-300">Subindo...</span>
-                              </>
-                            ) : (
-                              <>
-                                <Upload className="w-4 h-4 text-amber-400" />
-                                <span className="text-[9px] font-bold font-mono text-amber-300">
-                                  {item.coverUrl ? 'Alterar' : 'Subir'}
-                                </span>
-                                <span className="text-[8px] text-neutral-400">JPG, PNG</span>
-                              </>
-                            )}
-                            <input
-                              type="file"
-                              accept="image/*"
-                              disabled={uploadingCoverId !== null}
-                              className="hidden"
-                              onChange={(e) => {
-                                const file = e.target.files?.[0];
-                                if (file) handleUploadCover(item, file, false);
-                              }}
-                            />
-                          </label>
-                        )}
                       </div>
-
-                      {isAdmin && (
-                        <label className="mt-1.5 w-full py-1 px-1 rounded-lg bg-neutral-800/90 hover:bg-neutral-700 border border-amber-500/30 text-amber-300 hover:text-white text-[9px] font-mono font-semibold flex items-center justify-center gap-1 cursor-pointer transition">
-                          <Upload className="w-2.5 h-2.5 text-amber-400" />
-                          <span className="truncate">Subir Capa</span>
-                          <input
-                            type="file"
-                            accept="image/*"
-                            disabled={uploadingCoverId !== null}
-                            className="hidden"
-                            onChange={(e) => {
-                              const file = e.target.files?.[0];
-                              if (file) handleUploadCover(item, file, false);
-                            }}
-                          />
-                        </label>
-                      )}
                     </div>
 
                     {/* 2. Capa Extra (Material Complementar) */}
@@ -1587,53 +1541,8 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                           </span>
                         </div>
 
-                        {/* Botão Hover de Subir Capa Extra (Admin) */}
-                        {isAdmin && (
-                          <label className="absolute inset-0 bg-black/85 opacity-0 group-hover/cover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1.5 cursor-pointer p-1 text-center text-white">
-                            {uploadingCoverId === `${item.id}-extra` ? (
-                              <>
-                                <Loader2 className="w-4 h-4 animate-spin text-cyan-400" />
-                                <span className="text-[9px] font-bold text-cyan-300">Subindo...</span>
-                              </>
-                            ) : (
-                              <>
-                                <Upload className="w-4 h-4 text-cyan-400" />
-                                <span className="text-[9px] font-bold font-mono text-cyan-300">
-                                  {item.extraCoverUrl ? 'Alterar' : 'Subir Extra'}
-                                </span>
-                                <span className="text-[8px] text-neutral-400">JPG, PNG</span>
-                              </>
-                            )}
-                            <input
-                              type="file"
-                              accept="image/*"
-                              disabled={uploadingCoverId !== null}
-                              className="hidden"
-                              onChange={(e) => {
-                                const file = e.target.files?.[0];
-                                if (file) handleUploadCover(item, file, true);
-                              }}
-                            />
-                          </label>
-                        )}
                       </div>
-
-                      {isAdmin && (
-                        <label className="mt-1.5 w-full py-1 px-1 rounded-lg bg-neutral-800/90 hover:bg-neutral-700 border border-cyan-500/30 text-cyan-300 hover:text-white text-[9px] font-mono font-semibold flex items-center justify-center gap-1 cursor-pointer transition">
-                          <Upload className="w-2.5 h-2.5 text-cyan-400" />
-                          <span className="truncate">Subir Capa Extra</span>
-                          <input
-                            type="file"
-                            accept="image/*"
-                            disabled={uploadingCoverId !== null}
-                            className="hidden"
-                            onChange={(e) => {
-                              const file = e.target.files?.[0];
-                              if (file) handleUploadCover(item, file, true);
-                            }}
-                          />
-                        </label>
-                      )}
+                    </div>
                     </div>
                   </div>
 
@@ -1778,78 +1687,13 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                                   {!isPaidStudent ? <Lock className="w-3.5 h-3.5" /> : <FileText className="w-3.5 h-3.5" />}
                                   <span>{!isPaidStudent ? '🔒 Desbloquear Extra' : 'Ler Apostila Extra'}</span>
                                 </button>
-                                {isAdmin && (
-                                  <div className="flex items-center gap-1.5">
-                                    <button
-                                      type="button"
-                                      onClick={() => handleRenameExtraPdf(modNum)}
-                                      className="flex-1 py-2 px-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 border border-cyan-500/30 text-cyan-300 hover:text-white font-mono text-[10px] flex items-center justify-center gap-1 cursor-pointer"
-                                      title="Renomear Título da Apostila Extra"
-                                    >
-                                      <Edit3 className="w-3 h-3" />
-                                      <span>Nome</span>
-                                    </button>
-                                    <label className="flex-1 py-2 px-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 border border-cyan-500/30 text-cyan-300 hover:text-white font-mono text-[10px] flex items-center justify-center gap-1 cursor-pointer">
-                                      <Upload className="w-3 h-3" />
-                                      <span>Trocar PDF</span>
-                                      <input
-                                        type="file"
-                                        accept="application/pdf,.pdf"
-                                        className="hidden"
-                                        onChange={(e) => {
-                                          const f = e.target.files?.[0];
-                                          if (f) handleUploadExtraPdf(modNum, f);
-                                        }}
-                                      />
-                                    </label>
-                                    <button
-                                      type="button"
-                                      onClick={() => handleDeleteExtraPdf(modNum)}
-                                      className="py-2 px-2 rounded-lg bg-neutral-800 hover:bg-red-950/60 border border-red-500/30 text-red-400 hover:text-red-300 font-mono text-[10px] flex items-center justify-center cursor-pointer"
-                                      title="Remover Apostila Extra"
-                                    >
-                                      <Trash2 className="w-3 h-3" />
-                                    </button>
-                                  </div>
-                                )}
                               </div>
                             </div>
                           ) : (
                             <div className="pt-0.5">
-                              {isAdmin ? (
-                                <div className="space-y-1.5">
-                                  <label className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-cyan-600/30 hover:from-cyan-600/50 to-blue-600/30 hover:to-blue-600/50 border border-cyan-500/50 hover:border-cyan-400 text-cyan-200 hover:text-white text-xs font-bold font-mono flex items-center justify-center gap-2 cursor-pointer transition shadow-md">
-                                    {uploadingExtraPdfModId === modNum ? (
-                                      <>
-                                        <Loader2 className="w-4 h-4 animate-spin text-cyan-300" />
-                                        <span>Subindo Apostila Extra {uploadingExtraPdfProgress}%...</span>
-                                      </>
-                                    ) : (
-                                      <>
-                                        <Upload className="w-4 h-4 text-cyan-400" />
-                                        <span>+ Subir Apostila Extra deste Módulo (PDF)</span>
-                                      </>
-                                    )}
-                                    <input
-                                      type="file"
-                                      accept="application/pdf,.pdf"
-                                      disabled={uploadingExtraPdfModId !== null}
-                                      className="hidden"
-                                      onChange={(e) => {
-                                        const f = e.target.files?.[0];
-                                        if (f) handleUploadExtraPdf(modNum, f);
-                                      }}
-                                    />
-                                  </label>
-                                  <p className="text-[10px] text-neutral-400 text-center font-mono">
-                                    Clique no botão acima para selecionar o arquivo PDF da apostila complementar do Módulo 0{modNum}.
-                                  </p>
-                                </div>
-                              ) : (
-                                <p className="text-[11px] text-neutral-400 italic">
-                                  Material complementar em preparação pelo professor.
-                                </p>
-                              )}
+                              <p className="text-[11px] text-neutral-400 italic">
+                                Material complementar em preparação pelo professor.
+                              </p>
                             </div>
                           )}
                         </div>
@@ -1967,249 +1811,10 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
           </div>
           <div className="flex items-center gap-3">
             <span className="text-xs font-mono text-amber-400 font-bold">{cur.bonusSectionDesc}</span>
-            {isAdmin && (
-              <button
-                type="button"
-                onClick={() => setShowBonusUploadForm(!showBonusUploadForm)}
-                className="px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500 border border-amber-500/50 hover:border-amber-400 text-amber-300 hover:text-neutral-950 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-sm"
-                id="btn-toggle-bonus-upload"
-              >
-                <Upload className="w-3.5 h-3.5" />
-                <span>{showBonusUploadForm ? 'Ocultar Painel de Upload' : 'Subir Apostila Bônus (Admin)'}</span>
-              </button>
-            )}
           </div>
         </div>
 
-        {/* LOCAL PARA SUBIR AS APOSTILAS BÔNUS (RESTRITO AO ADMIN) */}
-        {isAdmin && showBonusUploadForm && (
-          <div
-            id="bonus-upload-section"
-            className="p-6 sm:p-7 rounded-3xl bg-[#0e1017] border-2 border-amber-500/40 space-y-5 shadow-2xl animate-fadeIn"
-          >
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-neutral-800 pb-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-amber-500/20 border border-amber-500/40 text-amber-400 flex items-center justify-center shrink-0">
-                  <Upload className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-sm sm:text-base font-bold text-white font-display flex items-center gap-2">
-                    <span>Central de Upload de Apostilas Bônus</span>
-                    <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-amber-500/10 border border-amber-500/30 text-amber-400">
-                      PDF Oficial
-                    </span>
-                  </h3>
-                  <p className="text-xs text-neutral-400 mt-0.5">
-                    Envie o arquivo PDF com o nome da apostila e número de páginas para publicação imediata no sistema.
-                  </p>
-                </div>
-              </div>
 
-              <div className="flex items-center gap-2 flex-wrap">
-                {bonusApostilas.map((b) => (
-                  <button
-                    key={b.id || b.number}
-                    type="button"
-                    onClick={() => selectBonusForUpload(b.number)}
-                    className={`px-2.5 py-1 text-xs rounded-lg font-mono transition-all cursor-pointer ${
-                      bonusUploadTargetNumber === b.number
-                        ? 'bg-amber-500 text-neutral-950 font-bold shadow'
-                        : 'bg-neutral-900 text-neutral-300 hover:text-white border border-neutral-700'
-                    }`}
-                  >
-                    Bônus 0{b.number}
-                  </button>
-                ))}
-                <button
-                  type="button"
-                  onClick={() => selectBonusForUpload((bonusApostilas.length || 4) + 1)}
-                  className={`px-2.5 py-1 text-xs rounded-lg font-mono transition-all cursor-pointer ${
-                    bonusUploadTargetNumber === ((bonusApostilas.length || 4) + 1)
-                      ? 'bg-amber-500 text-neutral-950 font-bold shadow'
-                      : 'bg-neutral-900 text-neutral-300 hover:text-white border border-neutral-700'
-                  }`}
-                >
-                  + Novo Bônus 0{(bonusApostilas.length || 4) + 1}
-                </button>
-              </div>
-            </div>
-
-            {bonusUploadMessage && (
-              <div
-                className={`p-4 rounded-xl text-xs flex items-center justify-between gap-3 ${
-                  bonusUploadMessage.type === 'success'
-                    ? 'bg-emerald-950/70 border border-emerald-700 text-emerald-300'
-                    : 'bg-red-950/70 border border-red-700 text-red-300'
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  {bonusUploadMessage.type === 'success' ? (
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                  ) : (
-                    <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
-                  )}
-                  <span>{bonusUploadMessage.text}</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setBonusUploadMessage(null)}
-                  className="text-neutral-400 hover:text-white cursor-pointer"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-            )}
-
-            <form onSubmit={handleUploadBonusApostila} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-                {/* Selecionar Bônus Alvo */}
-                <div className="md:col-span-3">
-                  <label className="block text-xs font-mono text-neutral-300 mb-1 font-bold">
-                    Identificação do Bônus:
-                  </label>
-                  <select
-                    value={bonusUploadTargetNumber}
-                    onChange={(e) => selectBonusForUpload(Number(e.target.value))}
-                    className="w-full px-3 py-2 bg-neutral-900 border border-neutral-700 rounded-xl text-white text-xs focus:border-amber-500 focus:outline-none font-sans"
-                  >
-                    {bonusApostilas.map((b) => (
-                      <option key={b.id || b.number} value={b.number}>
-                        Apostila Bônus 0{b.number} ({b.title} - {b.pagesCount || b.totalPages || 30} págs)
-                      </option>
-                    ))}
-                    <option value={(bonusApostilas.length || 4) + 1}>
-                      + Nova Apostila Bônus 0{(bonusApostilas.length || 4) + 1}
-                    </option>
-                  </select>
-                </div>
-
-                {/* Nome da Apostila */}
-                <div className="md:col-span-6">
-                  <label className="block text-xs font-mono text-neutral-300 mb-1 font-bold">
-                    Nome da Apostila Bônus: <span className="text-amber-400">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={bonusUploadTitle}
-                    onChange={(e) => setBonusUploadTitle(e.target.value)}
-                    placeholder="Ex: Glossário Completo de Planos"
-                    className="w-full px-3 py-2 bg-neutral-900 border border-neutral-700 rounded-xl text-white text-xs focus:border-amber-500 focus:outline-none font-sans"
-                  />
-                </div>
-
-                {/* Número de Páginas */}
-                <div className="md:col-span-3">
-                  <label className="block text-xs font-mono text-neutral-300 mb-1 font-bold">
-                    Número de Páginas: <span className="text-amber-400">*</span>
-                  </label>
-                  <input
-                    type="number"
-                    min="1"
-                    max="999"
-                    required
-                    value={bonusUploadPages}
-                    onChange={(e) => setBonusUploadPages(Number(e.target.value))}
-                    placeholder="Ex: 30"
-                    className="w-full px-3 py-2 bg-neutral-900 border border-neutral-700 rounded-xl text-white text-xs focus:border-amber-500 focus:outline-none font-mono"
-                  />
-                </div>
-
-                {/* Descrição / Ementa */}
-                <div className="md:col-span-12">
-                  <label className="block text-xs font-mono text-neutral-300 mb-1">
-                    Descrição / Ementa Resumida:
-                  </label>
-                  <textarea
-                    rows={2}
-                    value={bonusUploadDescription}
-                    onChange={(e) => setBonusUploadDescription(e.target.value)}
-                    placeholder="Resumo pedagógico dos temas tratados nesta apostila bônus..."
-                    className="w-full px-3 py-2 bg-neutral-900 border border-neutral-700 rounded-xl text-white text-xs focus:border-amber-500 focus:outline-none font-sans resize-none"
-                  />
-                </div>
-
-                {/* Seletor de Arquivo PDF */}
-                <div className="md:col-span-12">
-                  <label className="block text-xs font-mono text-neutral-300 mb-1 font-bold">
-                    Arquivo PDF da Apostila: <span className="text-amber-400">*</span>
-                  </label>
-                  <div className="flex flex-col sm:flex-row gap-3 items-stretch">
-                    <label className="flex-1 p-4 bg-neutral-900/90 hover:bg-neutral-900 border-2 border-dashed border-neutral-700 hover:border-amber-500/80 rounded-2xl cursor-pointer text-xs font-sans text-neutral-300 flex flex-col sm:flex-row items-center justify-center gap-3 transition-all">
-                      <FileText className="w-6 h-6 text-amber-400 shrink-0" />
-                      <div className="text-center sm:text-left">
-                        {bonusUploadFile ? (
-                          <div>
-                            <span className="font-bold text-white block">{bonusUploadFile.name}</span>
-                            <span className="text-[11px] font-mono text-amber-400">
-                              {(bonusUploadFile.size / (1024 * 1024)).toFixed(2)} MB • Pronto para enviar
-                            </span>
-                          </div>
-                        ) : (
-                          <div>
-                            <span className="font-bold text-white block">
-                              Clique para escolher ou arraste o arquivo PDF da apostila bônus
-                            </span>
-                            <span className="text-[11px] font-mono text-neutral-400">
-                              Aceita documentos .PDF (até 250MB)
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                      <input
-                        type="file"
-                        accept="application/pdf,.pdf"
-                        disabled={isBonusUploading}
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            setBonusUploadFile(file);
-                            setBonusUploadMessage(null);
-                          }
-                        }}
-                        className="hidden"
-                      />
-                    </label>
-
-                    <button
-                      type="submit"
-                      disabled={isBonusUploading || !bonusUploadFile}
-                      className={`px-6 py-3 rounded-2xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
-                        isBonusUploading || !bonusUploadFile
-                          ? 'bg-neutral-800 text-neutral-500 border border-neutral-700 cursor-not-allowed'
-                          : 'bg-amber-500 hover:bg-amber-400 text-neutral-950 shadow-lg shadow-amber-500/20 active:scale-95'
-                      }`}
-                      id="btn-submit-bonus-upload"
-                    >
-                      {isBonusUploading ? (
-                        <>
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                          <span>Subindo {bonusUploadProgress}%...</span>
-                        </>
-                      ) : (
-                        <>
-                          <Upload className="w-4 h-4" />
-                          <span>Subir Apostila Bônus 0{bonusUploadTargetNumber}</span>
-                        </>
-                      )}
-                    </button>
-                  </div>
-
-                  {isBonusUploading && (
-                    <div className="mt-2 space-y-1">
-                      <div className="w-full h-2 bg-neutral-800 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-gradient-to-r from-amber-500 to-yellow-300 transition-all duration-300"
-                          style={{ width: `${bonusUploadProgress}%` }}
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </form>
-          </div>
-        )}
 
         {/* CARDS COM O NOME DAS APOSTILAS E NÚMERO DE PÁGINAS */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -2278,53 +1883,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                         </div>
                       )}
 
-                      {/* Botão Hover de Subir Capa (Admin) */}
-                      {isAdmin && (
-                        <label className="absolute inset-0 bg-black/85 opacity-0 group-hover/cover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1 cursor-pointer p-1.5 text-center text-white">
-                          {uploadingCoverId === b.id ? (
-                            <>
-                              <Loader2 className="w-4 h-4 animate-spin text-amber-400" />
-                              <span className="text-[9px] font-bold text-amber-300">Subindo...</span>
-                            </>
-                          ) : (
-                            <>
-                              <Upload className="w-4 h-4 text-amber-400" />
-                              <span className="text-[9px] font-bold font-mono text-amber-300">
-                                {b.coverUrl ? 'Alterar Capa' : 'Subir Capa'}
-                              </span>
-                              <span className="text-[8px] text-neutral-400">JPG, PNG</span>
-                            </>
-                          )}
-                          <input
-                            type="file"
-                            accept="image/*"
-                            disabled={uploadingCoverId !== null}
-                            className="hidden"
-                            onChange={(e) => {
-                              const file = e.target.files?.[0];
-                              if (file) handleUploadCover(b, file);
-                            }}
-                          />
-                        </label>
-                      )}
                     </div>
-
-                    {isAdmin && (
-                      <label className="mt-2 w-full py-1 px-1.5 rounded-lg bg-neutral-800/90 hover:bg-neutral-700 border border-amber-500/30 text-amber-300 hover:text-white text-[9px] font-mono font-semibold flex items-center justify-center gap-1 cursor-pointer transition">
-                        <Upload className="w-2.5 h-2.5 text-amber-400" />
-                        <span>Subir Capa</span>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          disabled={uploadingCoverId !== null}
-                          className="hidden"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) handleUploadCover(b, file);
-                          }}
-                        />
-                      </label>
-                    )}
                   </div>
 
                   {/* Informações da Apostila Bônus */}
@@ -2412,18 +1971,6 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                       {!isPaidStudent ? <Lock className="w-4 h-4 text-amber-400" /> : <Film className="w-4 h-4 text-amber-400" />}
                       <span>{!isPaidStudent ? '🔒 Vídeos Extras' : cur.extraVideosTab}</span>
                     </button>
-
-                    {isAdmin && (
-                      <button
-                        type="button"
-                        onClick={() => selectBonusForUpload(b.number)}
-                        className="sm:col-span-2 w-full py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 bg-neutral-900 hover:bg-neutral-800 text-neutral-300 border border-neutral-800 hover:border-amber-500/50 transition-all cursor-pointer"
-                        title="Subir ou substituir arquivo PDF desta apostila bônus"
-                      >
-                        <Upload className="w-3.5 h-3.5 text-amber-400" />
-                        <span>{cur.adminUploadBonusBtn}</span>
-                      </button>
-                    )}
                   </div>
                 </div>
               </div>
