@@ -444,7 +444,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, settings }) => {
             <ul className="space-y-2.5">
               <li className="flex items-center gap-2 text-neutral-300">
                 <Mail className="w-4 h-4 text-amber-500 shrink-0" />
-                <span className="font-mono text-[11px]">{settings?.contactEmail || 'contato@cinelab.edu.br'}</span>
+                <span className="font-mono text-[11px]">{settings?.contactEmail || 'tonydeluc@tv-diversidade.com'}</span>
               </li>
               <li className="flex items-center gap-2 text-neutral-300">
                 <Phone className="w-4 h-4 text-amber-500 shrink-0" />
@@ -454,7 +454,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, settings }) => {
                   rel="noopener noreferrer"
                   className="font-mono text-[11px] hover:text-amber-400 transition-colors flex items-center gap-1"
                 >
-                  <span>{settings?.contactPhone || '+55 (11) 98765-4321'}</span>
+                  <span>{settings?.contactPhone || '+55 (21) 96672-5240'}</span>
                   <MessageCircle className="w-3 h-3 text-emerald-400" />
                 </a>
               </li>

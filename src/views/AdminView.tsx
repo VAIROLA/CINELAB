@@ -154,8 +154,8 @@ export const AdminView: React.FC<AdminViewProps> = ({
   const [logoUrl, setLogoUrl] = useState('');
   const [directorName, setDirectorName] = useState('Professor Cineasta Tony de Luc');
   const [directorRole, setDirectorRole] = useState('Diretor Geral & Cineasta');
-  const [contactEmail, setContactEmail] = useState('contato@cinelab.edu.br');
-  const [contactPhone, setContactPhone] = useState('(11) 98765-4321');
+  const [contactEmail, setContactEmail] = useState('tonydeluc@tv-diversidade.com');
+  const [contactPhone, setContactPhone] = useState('+55 (21) 96672-5240');
   const [simOffset, setSimOffset] = useState(0);
   const [quickUploadModuleId, setQuickUploadModuleId] = useState<number>(1);
   const [uploadingModuleVideo, setUploadingModuleVideo] = useState<number | null>(null);
@@ -330,8 +330,8 @@ export const AdminView: React.FC<AdminViewProps> = ({
         setLogoUrl(setts.settings.logoUrl || '');
         setDirectorName(setts.settings.directorName || 'Professor Cineasta Tony de Luc');
         setDirectorRole(setts.settings.directorRole || 'Diretor Geral & Cineasta');
-        setContactEmail(setts.settings.contactEmail || 'contato@cinelab.edu.br');
-        setContactPhone(setts.settings.contactPhone || '(11) 98765-4321');
+        setContactEmail(setts.settings.contactEmail || 'tonydeluc@tv-diversidade.com');
+        setContactPhone(setts.settings.contactPhone || '+55 (21) 96672-5240');
         setSimOffset(setts.simulatedDaysOffset || 0);
       }
     } catch (err: any) {

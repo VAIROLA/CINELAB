@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Phone, MapPin, Send, CheckCircle2, Clock, User, ArrowRight, ExternalLink } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, CheckCircle2, Clock, User, ArrowRight, ExternalLink, MessageCircle, RefreshCw } from 'lucide-react';
 import { CourseSettings } from '../types/index.js';
 import { useLanguage } from '../i18n/LanguageContext.js';
 
@@ -15,9 +15,15 @@ export const ContactView: React.FC<ContactViewProps> = ({ settings, onNavigate }
   const [subject, setSubject] = useState('Dúvida sobre o Curso');
   const [message, setMessage] = useState('');
   const [sent, setSent] = useState(false);
+  const [submittedData, setSubmittedData] = useState<{
+    name: string;
+    email: string;
+    subject: string;
+    message: string;
+  } | null>(null);
 
   const contactEmail = settings?.contactEmail || 'tonydeluc@tv-diversidade.com';
-  const contactPhone = settings?.contactPhone || settings?.whatsappNumber || '+55 (21) 98114-1111';
+  const contactPhone = settings?.contactPhone || settings?.whatsappNumber || '+55 (21) 96672-5240';
   const localizedSupportHours: Record<string, string> = {
     pt: settings?.supportHours || 'Segunda a Sexta, das 09h às 19h (Atendimento Humanizado)',
     en: 'Monday to Friday, 9am to 7pm (Dedicated Support)',
@@ -55,9 +61,9 @@ export const ContactView: React.FC<ContactViewProps> = ({ settings, onNavigate }
     'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1000&q=80';
 
   const rawWa = settings?.whatsappNumber || contactPhone;
-  const cleanWa = rawWa.replace(/\D/g, '');
+  const cleanWa = rawWa.replace(/\D/g, '') || '5521966725240';
   const waMsg = encodeURIComponent(
-    settings?.whatsappDefaultMessage || 'Olá Tony de Luc, gostaria de tirar dúvidas sobre o CINELAB.'
+    settings?.whatsappDefaultMessage || 'Olá Professor Tony de Luc, gostaria de tirar dúvidas sobre o CINELAB.'
   );
 
   const i18n = {
@@ -73,7 +79,15 @@ export const ContactView: React.FC<ContactViewProps> = ({ settings, onNavigate }
       responseTime: 'Prazo de Retorno:',
       tonyQuestion: 'Deseja conhecer a biografia, premiações, feitos, currículo e a filmografia completa do Diretor?',
       tonyBtn: 'Ver Perfil Completo de Tony de Luc',
-      successMsg: 'Mensagem enviada com sucesso! Nossa equipe retornará em até 24h úteis.',
+      successTitle: 'Mensagem pronta para envio duplo!',
+      successDesc: 'Sua mensagem está sendo encaminhada diretamente para o e-mail e para o WhatsApp do Professor Tony de Luc.',
+      dualNotice: 'Você pode confirmar o envio através dos dois canais abaixo:',
+      sendViaWa: 'Enviar pelo WhatsApp (+55 21 96672-5240)',
+      sendViaEmail: 'Enviar pelo E-mail (tonydeluc@tv-diversidade.com)',
+      sendAnother: 'Escrever outra mensagem',
+      senderLabel: 'Remetente:',
+      subjectLabel: 'Assunto:',
+      messageLabel: 'Mensagem:',
       fullName: 'Nome Completo',
       yourEmail: 'Seu E-mail',
       subject: 'Assunto',
@@ -100,7 +114,15 @@ export const ContactView: React.FC<ContactViewProps> = ({ settings, onNavigate }
       responseTime: 'Response Timeline:',
       tonyQuestion: 'Interested in the Director\'s biography, awards, curriculum, and complete filmography?',
       tonyBtn: 'View Full Tony de Luc Profile',
-      successMsg: 'Message sent successfully! Our team will respond within 24 business hours.',
+      successTitle: 'Message ready for dual delivery!',
+      successDesc: 'Your inquiry is being routed directly to Professor Tony de Luc\'s official email and WhatsApp.',
+      dualNotice: 'You can confirm delivery through both channels below:',
+      sendViaWa: 'Send via WhatsApp (+55 21 96672-5240)',
+      sendViaEmail: 'Send via Email (tonydeluc@tv-diversidade.com)',
+      sendAnother: 'Write another message',
+      senderLabel: 'Sender:',
+      subjectLabel: 'Subject:',
+      messageLabel: 'Message:',
       fullName: 'Full Name',
       yourEmail: 'Your E-mail',
       subject: 'Subject',
@@ -127,7 +149,15 @@ export const ContactView: React.FC<ContactViewProps> = ({ settings, onNavigate }
       responseTime: 'Tiempo de Respuesta:',
       tonyQuestion: '¿Deseas conocer la biografía, premios, trayectoria y filmografía completa del Director?',
       tonyBtn: 'Ver Perfil Completo de Tony de Luc',
-      successMsg: '¡Mensaje enviado con éxito! Nuestro equipo responderá en un plazo máximo de 24 horas hábiles.',
+      successTitle: '¡Mensaje listo para envío doble!',
+      successDesc: 'Su mensaje está siendo enviado directamente al correo oficial y al WhatsApp del Profesor Tony de Luc.',
+      dualNotice: 'Puede confirmar el envío a través de ambos canales a continuación:',
+      sendViaWa: 'Enviar por WhatsApp (+55 21 96672-5240)',
+      sendViaEmail: 'Enviar por Correo (tonydeluc@tv-diversidade.com)',
+      sendAnother: 'Escribir otro mensaje',
+      senderLabel: 'Remitente:',
+      subjectLabel: 'Asunto:',
+      messageLabel: 'Mensaje:',
       fullName: 'Nombre Completo',
       yourEmail: 'Tu Correo Electrónico',
       subject: 'Asunto',
@@ -137,7 +167,7 @@ export const ContactView: React.FC<ContactViewProps> = ({ settings, onNavigate }
       subjects: [
         'Dudas sobre el Curso',
         'Soporte Técnico en la Plataforma',
-        'Matrícula y Formas de Pago',
+        'Matrícula e Formas de Pago',
         'Hablar con el Profesor Tony de Luc',
         'Alianzas y Festivales de Cine',
       ],
@@ -154,7 +184,15 @@ export const ContactView: React.FC<ContactViewProps> = ({ settings, onNavigate }
       responseTime: 'Délai de Réponse :',
       tonyQuestion: 'Vous souhaitez découvrir la biographie, les récompenses et la filmographie complète du Réalisateur ?',
       tonyBtn: 'Consulter la Biographie de Tony de Luc',
-      successMsg: 'Message envoyé avec succès ! Notre équipe vous répondra sous 24h ouvrées.',
+      successTitle: 'Message prêt pour double envoi !',
+      successDesc: 'Votre message est transmis directement au courriel officiel et au WhatsApp du Professeur Tony de Luc.',
+      dualNotice: 'Vous pouvez confirmer l’envoi via les deux canaux ci-dessous :',
+      sendViaWa: 'Envoyer par WhatsApp (+55 21 96672-5240)',
+      sendViaEmail: 'Envoyer par Courriel (tonydeluc@tv-diversidade.com)',
+      sendAnother: 'Rédiger un autre message',
+      senderLabel: 'Expéditeur :',
+      subjectLabel: 'Objet :',
+      messageLabel: 'Message :',
       fullName: 'Nom Complet',
       yourEmail: 'Votre Adresse E-mail',
       subject: 'Objet',
@@ -175,7 +213,56 @@ export const ContactView: React.FC<ContactViewProps> = ({ settings, onNavigate }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!name.trim() || !email.trim() || !message.trim()) return;
+
+    const data = { name: name.trim(), email: email.trim(), subject, message: message.trim() };
+    setSubmittedData(data);
     setSent(true);
+
+    // Formata o e-mail completo
+    const mailSubject = encodeURIComponent(`[CINELAB Suporte] ${data.subject} - ${data.name}`);
+    const mailBody = encodeURIComponent(
+      `Olá Professor Tony de Luc / Coordenação CINELAB,\n\n` +
+      `Uma nova mensagem de contato foi enviada pela plataforma:\n\n` +
+      `• Nome: ${data.name}\n` +
+      `• E-mail para resposta: ${data.email}\n` +
+      `• Assunto: ${data.subject}\n\n` +
+      `Mensagem:\n${data.message}\n\n` +
+      `---\n` +
+      `Enviado através da plataforma CINELAB • Escola de Cinema`
+    );
+    const mailtoUrl = `mailto:${contactEmail}?subject=${mailSubject}&body=${mailBody}`;
+
+    // Formata o WhatsApp completo
+    const waText = encodeURIComponent(
+      `*Nova Mensagem de Suporte - CINELAB* 🎬\n\n` +
+      `*Nome:* ${data.name}\n` +
+      `*E-mail:* ${data.email}\n` +
+      `*Assunto:* ${data.subject}\n\n` +
+      `*Mensagem:*\n${data.message}`
+    );
+    const waUrl = `https://wa.me/${cleanWa}?text=${waText}`;
+
+    // Dispara a abertura do WhatsApp
+    try {
+      window.open(waUrl, '_blank');
+    } catch {
+      // Ignora restrições do navegador
+    }
+
+    // Dispara a abertura do cliente de e-mail com pequeno intervalo
+    setTimeout(() => {
+      try {
+        window.location.href = mailtoUrl;
+      } catch {
+        // Ignora
+      }
+    }, 400);
+  };
+
+  const handleResetForm = () => {
+    setSent(false);
+    setSubmittedData(null);
     setName('');
     setEmail('');
     setMessage('');
@@ -289,73 +376,148 @@ export const ContactView: React.FC<ContactViewProps> = ({ settings, onNavigate }
 
         {/* Form Column */}
         <div className="lg:col-span-7">
-          <div className="p-8 rounded-3xl bg-neutral-900 border border-neutral-800 shadow-xl space-y-6">
-            {sent && (
-              <div className="p-4 rounded-xl bg-emerald-950/60 border border-emerald-800 text-emerald-300 text-xs flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 shrink-0" />
-                <span>{tView.successMsg}</span>
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-xs font-mono text-neutral-400 mb-1">{tView.fullName}</label>
-                <input
-                  type="text"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Seu nome"
-                  className="w-full px-4 py-2.5 bg-neutral-950 border border-neutral-700 rounded-xl text-white text-xs focus:outline-none focus:border-amber-500"
-                />
+          {sent && submittedData ? (
+            <div className="p-8 rounded-3xl bg-neutral-900 border border-emerald-500/40 shadow-2xl space-y-6 animate-fadeIn">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 flex items-center justify-center shrink-0 border border-emerald-500/40 mt-0.5">
+                  <CheckCircle2 className="w-7 h-7 text-emerald-400" />
+                </div>
+                <div className="space-y-1">
+                  <h3 className="text-lg font-bold text-white font-display">
+                    {tView.successTitle}
+                  </h3>
+                  <p className="text-xs text-neutral-300 leading-relaxed">
+                    {tView.successDesc}
+                  </p>
+                </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-mono text-neutral-400 mb-1">{tView.yourEmail}</label>
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="exemplo@email.com"
-                  className="w-full px-4 py-2.5 bg-neutral-950 border border-neutral-700 rounded-xl text-white text-xs focus:outline-none focus:border-amber-500"
-                />
+              {/* Resumo da Mensagem */}
+              <div className="p-5 rounded-2xl bg-neutral-950/90 border border-neutral-800 text-xs space-y-2.5 font-mono">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-neutral-800/80 pb-2 gap-1">
+                  <span className="text-neutral-400">{tView.senderLabel}</span>
+                  <span className="text-white font-semibold">{submittedData.name} &lt;{submittedData.email}&gt;</span>
+                </div>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-neutral-800/80 pb-2 gap-1">
+                  <span className="text-neutral-400">{tView.subjectLabel}</span>
+                  <span className="text-amber-400 font-semibold">{submittedData.subject}</span>
+                </div>
+                <div className="pt-1 space-y-1.5 font-sans">
+                  <span className="text-neutral-400 font-mono text-[11px] block">{tView.messageLabel}</span>
+                  <div className="text-neutral-200 bg-neutral-900/90 p-3.5 rounded-xl border border-neutral-800 whitespace-pre-wrap text-xs leading-relaxed">
+                    {submittedData.message}
+                  </div>
+                </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-mono text-neutral-400 mb-1">{tView.subject}</label>
-                <select
-                  value={subject}
-                  onChange={(e) => setSubject(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-neutral-950 border border-neutral-700 rounded-xl text-white text-xs focus:outline-none focus:border-amber-500"
+              {/* Botões de Ação Dupla (WhatsApp + E-mail) */}
+              <div className="space-y-3 pt-1">
+                <p className="text-[11px] font-mono text-neutral-400 text-center">
+                  {tView.dualNotice}
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {/* WhatsApp Direto */}
+                  <a
+                    href={`https://wa.me/${cleanWa}?text=${encodeURIComponent(
+                      `*Nova Mensagem de Suporte - CINELAB* 🎬\n\n*Nome:* ${submittedData.name}\n*E-mail:* ${submittedData.email}\n*Assunto:* ${submittedData.subject}\n\n*Mensagem:*\n${submittedData.message}`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition-all cursor-pointer"
+                  >
+                    <MessageCircle className="w-4 h-4 shrink-0" />
+                    <span className="truncate">{tView.sendViaWa}</span>
+                    <ExternalLink className="w-3.5 h-3.5 opacity-80 shrink-0" />
+                  </a>
+
+                  {/* E-mail Direto */}
+                  <a
+                    href={`mailto:${contactEmail}?subject=${encodeURIComponent(`[CINELAB Suporte] ${submittedData.subject} - ${submittedData.name}`)}&body=${encodeURIComponent(
+                      `Olá Professor Tony de Luc / Coordenação CINELAB,\n\nNome: ${submittedData.name}\nE-mail: ${submittedData.email}\nAssunto: ${submittedData.subject}\n\nMensagem:\n${submittedData.message}\n\n---\nEnviado através da plataforma CINELAB • Escola de Cinema`
+                    )}`}
+                    className="w-full py-3 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 transition-all cursor-pointer"
+                  >
+                    <Mail className="w-4 h-4 shrink-0" />
+                    <span className="truncate">{tView.sendViaEmail}</span>
+                    <ExternalLink className="w-3.5 h-3.5 opacity-80 shrink-0" />
+                  </a>
+                </div>
+
+                <div className="pt-2 text-center">
+                  <button
+                    type="button"
+                    onClick={handleResetForm}
+                    className="inline-flex items-center gap-1.5 text-neutral-400 hover:text-amber-400 text-xs font-mono transition-colors cursor-pointer py-1 px-3 rounded-lg hover:bg-neutral-800"
+                  >
+                    <RefreshCw className="w-3.5 h-3.5" />
+                    <span>{tView.sendAnother}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="p-8 rounded-3xl bg-neutral-900 border border-neutral-800 shadow-xl space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-mono text-neutral-400 mb-1">{tView.fullName}</label>
+                  <input
+                    type="text"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Seu nome"
+                    className="w-full px-4 py-2.5 bg-neutral-950 border border-neutral-700 rounded-xl text-white text-xs focus:outline-none focus:border-amber-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-mono text-neutral-400 mb-1">{tView.yourEmail}</label>
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="exemplo@email.com"
+                    className="w-full px-4 py-2.5 bg-neutral-950 border border-neutral-700 rounded-xl text-white text-xs focus:outline-none focus:border-amber-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-mono text-neutral-400 mb-1">{tView.subject}</label>
+                  <select
+                    value={subject}
+                    onChange={(e) => setSubject(e.target.value)}
+                    className="w-full px-4 py-2.5 bg-neutral-950 border border-neutral-700 rounded-xl text-white text-xs focus:outline-none focus:border-amber-500"
+                  >
+                    {tView.subjects.map((sub, idx) => (
+                      <option key={idx} value={sub}>{sub}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-mono text-neutral-400 mb-1">{tView.yourMessage}</label>
+                  <textarea
+                    rows={4}
+                    required
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    placeholder={tView.msgPlaceholder}
+                    className="w-full p-4 bg-neutral-950 border border-neutral-700 rounded-xl text-white text-xs focus:outline-none focus:border-amber-500"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full py-3.5 bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold uppercase rounded-xl text-xs transition-all cursor-pointer flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 active:scale-98"
                 >
-                  {tView.subjects.map((sub, idx) => (
-                    <option key={idx} value={sub}>{sub}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-mono text-neutral-400 mb-1">{tView.yourMessage}</label>
-                <textarea
-                  rows={4}
-                  required
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  placeholder={tView.msgPlaceholder}
-                  className="w-full p-4 bg-neutral-950 border border-neutral-700 rounded-xl text-white text-xs focus:outline-none focus:border-amber-500"
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="w-full py-3.5 bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold uppercase rounded-xl text-xs transition-all cursor-pointer flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 active:scale-98"
-              >
-                <Send className="w-4 h-4" />
-                <span>{tView.sendBtn}</span>
-              </button>
-            </form>
-          </div>
+                  <Send className="w-4 h-4" />
+                  <span>{tView.sendBtn}</span>
+                </button>
+              </form>
+            </div>
+          )}
         </div>
       </div>
     </div>
