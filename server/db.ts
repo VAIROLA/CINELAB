@@ -994,6 +994,7 @@ export async function initSupabaseData(): Promise<void> {
         if (cloudState && cloudState.users && Array.isArray(cloudState.users)) {
           if (!db) {
             db = cloudState;
+            if (db && db.settings) db.settings.contactEmail = 'cinelab.ecole@gmail.com';
           } else {
             if (cloudState.users) db.users = cloudState.users;
             if (cloudState.enrollments) db.enrollments = cloudState.enrollments;
@@ -1001,6 +1002,7 @@ export async function initSupabaseData(): Promise<void> {
             if (cloudState.submissions) db.submissions = cloudState.submissions;
             if (cloudState.certificates) db.certificates = cloudState.certificates;
             if (cloudState.settings) db.settings = { ...db.settings, ...cloudState.settings };
+            if (db && db.settings) db.settings.contactEmail = 'cinelab.ecole@gmail.com';
             if (cloudState.apostilas && Array.isArray(cloudState.apostilas)) {
               const defaultPages: Record<number, number> = { 1: 33, 2: 52, 3: 7, 4: 6, 5: 6, 6: 6, 7: 6, 8: 6, 9: 6, 10: 6 };
               db.apostilas = cloudState.apostilas.map((a: any) => {
