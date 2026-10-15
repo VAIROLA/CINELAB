@@ -35,7 +35,7 @@ var initialCourseSettings = {
   cardPaymentLink: "https://pag.ae/82e6wXk2G",
   pagbankToken: "",
   logoUrl: "",
-  contactEmail: "tonydeluc@tv-diversidade.com",
+  contactEmail: "cinelab.ecole@gmail.com",
   contactPhone: "+55 (21) 96672-5240",
   directorName: "Professor Cineasta Tony de Luc",
   directorRole: "Cineasta, Diretor de Fotografia, Produtor, Ator, Jornalista & Fundador do CINELAB",

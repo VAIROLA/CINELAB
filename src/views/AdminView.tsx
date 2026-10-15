@@ -154,7 +154,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
   const [logoUrl, setLogoUrl] = useState('');
   const [directorName, setDirectorName] = useState('Professor Cineasta Tony de Luc');
   const [directorRole, setDirectorRole] = useState('Diretor Geral & Cineasta');
-  const [contactEmail, setContactEmail] = useState('tonydeluc@tv-diversidade.com');
+  const [contactEmail, setContactEmail] = useState('cinelab.ecole@gmail.com');
   const [contactPhone, setContactPhone] = useState('+55 (21) 96672-5240');
   const [simOffset, setSimOffset] = useState(0);
   const [quickUploadModuleId, setQuickUploadModuleId] = useState<number>(1);
@@ -330,7 +330,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
         setLogoUrl(setts.settings.logoUrl || '');
         setDirectorName(setts.settings.directorName || 'Professor Cineasta Tony de Luc');
         setDirectorRole(setts.settings.directorRole || 'Diretor Geral & Cineasta');
-        setContactEmail(setts.settings.contactEmail || 'tonydeluc@tv-diversidade.com');
+        setContactEmail(setts.settings.contactEmail || 'cinelab.ecole@gmail.com');
         setContactPhone(setts.settings.contactPhone || '+55 (21) 96672-5240');
         setSimOffset(setts.simulatedDaysOffset || 0);
       }

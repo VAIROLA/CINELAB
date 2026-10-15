@@ -86,7 +86,7 @@ export const InstitutionalTab: React.FC<InstitutionalTabProps> = ({
   const [vimeoUrl, setVimeoUrl] = useState(settings.vimeoUrl || 'https://vimeo.com/cinelab');
 
   // Contato & Suporte states
-  const [contactEmail, setContactEmail] = useState(settings.contactEmail || 'tonydeluc@tv-diversidade.com');
+  const [contactEmail, setContactEmail] = useState(settings.contactEmail || 'cinelab.ecole@gmail.com');
   const [contactPhone, setContactPhone] = useState(settings.contactPhone || '+55 (21) 96672-5240');
   const [whatsappNumber, setWhatsappNumber] = useState(settings.whatsappNumber || '+55 (21) 96672-5240');
   const [whatsappDefaultMessage, setWhatsappDefaultMessage] = useState(

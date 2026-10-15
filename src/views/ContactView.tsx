@@ -22,7 +22,7 @@ export const ContactView: React.FC<ContactViewProps> = ({ settings, onNavigate }
     message: string;
   } | null>(null);
 
-  const contactEmail = settings?.contactEmail || 'tonydeluc@tv-diversidade.com';
+  const contactEmail = settings?.contactEmail || 'cinelab.ecole@gmail.com';
   const contactPhone = settings?.contactPhone || settings?.whatsappNumber || '+55 (21) 96672-5240';
   const localizedSupportHours: Record<string, string> = {
     pt: settings?.supportHours || 'Segunda a Sexta, das 09h às 19h (Atendimento Humanizado)',
@@ -83,7 +83,7 @@ export const ContactView: React.FC<ContactViewProps> = ({ settings, onNavigate }
       successDesc: 'Sua mensagem está sendo encaminhada diretamente para o e-mail e para o WhatsApp do Professor Tony de Luc.',
       dualNotice: 'Você pode confirmar o envio através dos dois canais abaixo:',
       sendViaWa: 'Enviar pelo WhatsApp (+55 21 96672-5240)',
-      sendViaEmail: 'Enviar pelo E-mail (tonydeluc@tv-diversidade.com)',
+      sendViaEmail: 'Enviar pelo E-mail (cinelab.ecole@gmail.com)',
       sendAnother: 'Escrever outra mensagem',
       senderLabel: 'Remetente:',
       subjectLabel: 'Assunto:',
@@ -118,7 +118,7 @@ export const ContactView: React.FC<ContactViewProps> = ({ settings, onNavigate }
       successDesc: 'Your inquiry is being routed directly to Professor Tony de Luc\'s official email and WhatsApp.',
       dualNotice: 'You can confirm delivery through both channels below:',
       sendViaWa: 'Send via WhatsApp (+55 21 96672-5240)',
-      sendViaEmail: 'Send via Email (tonydeluc@tv-diversidade.com)',
+      sendViaEmail: 'Send via Email (cinelab.ecole@gmail.com)',
       sendAnother: 'Write another message',
       senderLabel: 'Sender:',
       subjectLabel: 'Subject:',
@@ -153,7 +153,7 @@ export const ContactView: React.FC<ContactViewProps> = ({ settings, onNavigate }
       successDesc: 'Su mensaje está siendo enviado directamente al correo oficial y al WhatsApp del Profesor Tony de Luc.',
       dualNotice: 'Puede confirmar el envío a través de ambos canales a continuación:',
       sendViaWa: 'Enviar por WhatsApp (+55 21 96672-5240)',
-      sendViaEmail: 'Enviar por Correo (tonydeluc@tv-diversidade.com)',
+      sendViaEmail: 'Enviar por Correo (cinelab.ecole@gmail.com)',
       sendAnother: 'Escribir otro mensaje',
       senderLabel: 'Remitente:',
       subjectLabel: 'Asunto:',
@@ -188,7 +188,7 @@ export const ContactView: React.FC<ContactViewProps> = ({ settings, onNavigate }
       successDesc: 'Votre message est transmis directement au courriel officiel et au WhatsApp du Professeur Tony de Luc.',
       dualNotice: 'Vous pouvez confirmer l’envoi via les deux canaux ci-dessous :',
       sendViaWa: 'Envoyer par WhatsApp (+55 21 96672-5240)',
-      sendViaEmail: 'Envoyer par Courriel (tonydeluc@tv-diversidade.com)',
+      sendViaEmail: 'Envoyer par Courriel (cinelab.ecole@gmail.com)',
       sendAnother: 'Rédiger un autre message',
       senderLabel: 'Expéditeur :',
       subjectLabel: 'Objet :',
