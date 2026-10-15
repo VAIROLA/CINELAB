@@ -350,6 +350,11 @@ export function initExtraVideosForApostila(apos: any, defaultSuffix: string): Ap
  */
 function sanitizeDatabaseState(targetDb: any): void {
   if (!targetDb) return;
+  if (targetDb.settings) {
+    if (!targetDb.settings.contactEmail || targetDb.settings.contactEmail === 'tonydeluc@tv-diversidade.com' || targetDb.settings.contactEmail === 'contato@cinelab.edu.br') {
+      targetDb.settings.contactEmail = 'cinelab.ecole@gmail.com';
+    }
+  }
   targetDb.users = (targetDb.users || []).filter(
     (u: any) => u.id !== 'user-student-mariana' && u.id !== 'user-student-rodrigo' && !u.id.includes('mariana') && !u.id.includes('rodrigo')
   );

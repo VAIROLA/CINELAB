@@ -22,7 +22,10 @@ export const ContactView: React.FC<ContactViewProps> = ({ settings, onNavigate }
     message: string;
   } | null>(null);
 
-  const contactEmail = settings?.contactEmail || 'cinelab.ecole@gmail.com';
+  const rawEmail = settings?.contactEmail;
+  const contactEmail = (!rawEmail || rawEmail === 'tonydeluc@tv-diversidade.com' || rawEmail === 'contato@cinelab.edu.br')
+    ? 'cinelab.ecole@gmail.com'
+    : rawEmail;
   const contactPhone = settings?.contactPhone || settings?.whatsappNumber || '+55 (21) 96672-5240';
   const localizedSupportHours: Record<string, string> = {
     pt: settings?.supportHours || 'Segunda a Sexta, das 09h às 19h (Atendimento Humanizado)',
