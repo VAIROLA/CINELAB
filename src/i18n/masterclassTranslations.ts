@@ -10,7 +10,6 @@ export interface MasterclassStageTranslation {
   lectureSummary: string;
   tonyQuote: string;
   keyDirectingRules: string[];
-  handoutConnection: string;
   audioNotice: string;
 }
 
@@ -26,7 +25,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'Respeite o eixo de ação de 180° para manter a orientação espacial do público.',
         'Cada corte deve responder a uma necessidade emocional, e nunca a um mero capricho visual.'
       ],
-      handoutConnection: 'Consulte as páginas 12 a 38 da Apostila 01 para diagramas de set e decupagem completa da Ilha das Flores.',
       audioNotice: 'Áudio original captado em estúdio acústico CINELAB. Para máxima fidelidade sonora, utilize fones estéreo.'
     },
     en: {
@@ -39,7 +37,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'Always maintain the 180-degree axis to preserve coherent screen direction.',
         'Every cut must serve an emotional urgency, never purely cosmetic styling.'
       ],
-      handoutConnection: 'Refer to pages 12–38 of Handout 01 for full set schematics and the breakdown of Isle of Flowers.',
       audioNotice: 'Original studio-recorded audio. Use stereo headphones for optimal acoustic fidelity.'
     },
     es: {
@@ -52,7 +49,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'Respete el eje de 180 grados para garantizar una orientación espacial diáfana.',
         'Cada corte debe obedecer a una necesidad dramática inaplazable.'
       ],
-      handoutConnection: 'Consulte las páginas 12 a 38 del Manual 01 para ver esquemas de planta y el análisis de Isla de las Flores.',
       audioNotice: 'Audio original de estudio CINELAB. Use auriculares para apreciar cada matiz sonoro.'
     },
     fr: {
@@ -65,7 +61,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'Respectez la règle des 180° pour assurer la continuité spatiale du regard.',
         'Chaque raccord doit répondre à une nécessité dramatique profonde.'
       ],
-      handoutConnection: 'Consultez les pages 12 à 38 du Fascicule 01 pour les plans d’implantation et l’analyse de L’Île aux Fleurs.',
       audioNotice: 'Son original enregistré en studio CINELAB. Écouteurs recommandés pour une clarté optimale.'
     }
   },
@@ -80,7 +75,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'Identifique o ponto de virada (plot point) e como ele é sustentado visualmente.',
         'Aprenda a ler a iluminação como manifestação psicológica do conflito.'
       ],
-      handoutConnection: 'Apostila 02 (páginas 20 a 55) traz o guia prático passo a passo das 6 camadas com estudo de Potemkin.',
       audioNotice: 'Gravação em alta fidelidade com isolamento acústico profissional.'
     },
     en: {
@@ -93,7 +87,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'Trace how plot points are reinforced through spatial blocking.',
         'Read camera lighting as psychological manifestations of internal conflict.'
       ],
-      handoutConnection: 'Handout 02 (pages 20–55) contains the step-by-step 6-layer protocol with Potemkin case study.',
       audioNotice: 'High-fidelity audio recording with professional vocal mastering.'
     },
     es: {
@@ -106,7 +99,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'Detecte cómo los giros dramáticos se traducen en el encuadre.',
         'Interprete la iluminación como metáfora del estado interior del personaje.'
       ],
-      handoutConnection: 'Manual 02 (páginas 20 a 55) con el protocolo completo y estudio de Potemkin.',
       audioNotice: 'Audio de alta fidelidad con masterización de voz en estudio.'
     },
     fr: {
@@ -119,7 +111,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'Observez comment les pivots dramatiques s’inscrivent dans l’espace.',
         'Déchiffrez l’éclairage comme miroir des tourments intérieurs.'
       ],
-      handoutConnection: 'Fascicule 02 (pages 20 à 55) avec guide d’analyse et cas pratique Potemkine.',
       audioNotice: 'Son haute fidélité avec traitement acoustique professionnel.'
     }
   },
@@ -134,7 +125,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'Use o formato Master Scenes: cabeçalho, ação visual no presente e diálogo enxuto.',
         'Apresente o conflito nos primeiros minutos do curta-metragem.'
       ],
-      handoutConnection: 'Apostila 03 e Bônus 01 (Glossário de Planos) e Bônus 02 (Glossário de Roteiro) liberados para download.',
       audioNotice: 'Áudio estúdio masterizado. Recomenda-se volume moderado com fones.'
     },
     en: {
@@ -147,7 +137,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'Master Scenes format: sluglines, active visual action lines, and lean dialogue.',
         'Establish core dramatic conflict in the opening minutes of your short.'
       ],
-      handoutConnection: 'Handout 03 plus Bonus 01 (Shot Glossary) & Bonus 02 (Script Glossary) ready in student area.',
       audioNotice: 'Mastered studio audio. Moderate volume with headphones recommended.'
     },
     es: {
@@ -160,7 +149,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'Formato Master Scenes: encabezados, acción en presente y diálogo depurado.',
         'Plantee el conflicto central desde los primeros compases.'
       ],
-      handoutConnection: 'Manual 03 y Bonos 01 y 02 (Glosarios) disponibles para consulta vitalicia.',
       audioNotice: 'Sonido estéreo de alta fidelidad optimizado para escucha clara.'
     },
     fr: {
@@ -173,7 +161,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'Norme Master Scenes : intitulés clairs, description au présent et dialogues épurés.',
         'Introduisez le nœud dramatique dès les premières minutes.'
       ],
-      handoutConnection: 'Fascicule 03 et Bonus 01 & 02 (Glossaires) téléchargeables dans votre espace.',
       audioNotice: 'Prise de son studio haute clarté. Casque stéréo conseillé.'
     }
   },
@@ -188,7 +175,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'Mise-en-scène é a coreografia de corpos no espaço sob a ótica da lente.',
         'A decupagem deve servir à atuação, nunca sufocá-la com tecnicismo.'
       ],
-      handoutConnection: 'Apostila 04 (páginas 15 a 48) detalha planilhas de decupagem e tabelas de ensaio.',
       audioNotice: 'Gravação original em estúdio com masterização dinâmica.'
     },
     en: {
@@ -201,7 +187,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'Mise-en-scène is the choreography of bodies in space captured by the lens.',
         'Shot breakdowns must support actor performance, never constrain it.'
       ],
-      handoutConnection: 'Handout 04 (pages 15–48) provides shot lists and rehearsal sheets.',
       audioNotice: 'Clean studio audio with dynamic mastering.'
     },
     es: {
@@ -214,7 +199,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'La puesta en escena es la danza de los cuerpos ante la cámara.',
         'El desglose técnico debe arropar la actuación.'
       ],
-      handoutConnection: 'Manual 04 (páginas 15 a 48) con modelos de desglose de escena.',
       audioNotice: 'Audio de estudio masterizado en alta fidelidad.'
     },
     fr: {
@@ -227,7 +211,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'La mise en scène est une chorégraphie des corps orchestrée pour l’objectif.',
         'Le découpage doit magnifier le jeu d’acteur sans l’étouffer.'
       ],
-      handoutConnection: 'Fascicule 04 (pages 15 à 48) avec fiches de découpage technique.',
       audioNotice: 'Prise de son studio claire et chaleureuse.'
     }
   },
@@ -242,7 +225,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'Lentes teleobjetivas achatam os planos; grandes angulares amplificam o ambiente.',
         'Use luz rebatida e difusores para suavizar o contraste em cenas intimistas.'
       ],
-      handoutConnection: 'Apostila 05 traz esquemas fotográficos em planta baixa com marcação de refletores.',
       audioNotice: 'Áudio com espectro de frequências estéreo completo.'
     },
     en: {
@@ -255,7 +237,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'Telephoto compresses space; wide angles emphasize environmental tension.',
         'Use bounce boards and diffusion for authentic, natural skin tones.'
       ],
-      handoutConnection: 'Handout 05 provides overhead lighting floor plans with fixture marks.',
       audioNotice: 'Full-spectrum stereo audio recording.'
     },
     es: {
@@ -268,7 +249,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'Lentes teleobjetivo comprimen; los angulares expanden el escenario.',
         'Rebotes y difusores generan texturas creíbles y cinematográficas.'
       ],
-      handoutConnection: 'Manual 05 con diagramas de iluminación en planta cenital.',
       audioNotice: 'Audio estéreo de amplio rango dinámico.'
     },
     fr: {
@@ -281,7 +261,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'Les longues focales écrasent l’espace ; les grands angles amplifient la tension.',
         'Privilégiez la lumière réfléchie et diffuse pour préserver le naturel.'
       ],
-      handoutConnection: 'Fascicule 05 avec plans de feux et schémas d’éclairage détaillés.',
       audioNotice: 'Son studio équilibré à haute dynamique.'
     }
   },
@@ -296,7 +275,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'O microfone de lapela garante clareza; o microfone boom garante profundidade espacial.',
         'O desenho de som deve sugerir o que está fora de quadro (espaço extracampo).'
       ],
-      handoutConnection: 'Apostila 06 detalha microfonação de set e fluxos de mixagem com Pro Tools e DaVinci Fairlight.',
       audioNotice: 'Atenção especial nesta aula aos exemplos de equalização e acústica.'
     },
     en: {
@@ -309,7 +287,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'Lavaliers ensure verbal clarity; boom mics preserve organic acoustic depth.',
         'Sound design breathes life into what lies beyond the edges of the frame.'
       ],
-      handoutConnection: 'Handout 06 covers set audio chains and mixing workflows in DaVinci Fairlight.',
       audioNotice: 'Pay special acoustic attention to the frequency comparisons demonstrated.'
     },
     es: {
@@ -322,7 +299,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'El micrófono de solapa da nitidez; el boom aporta aire y volumen espacial.',
         'El diseño de sonido debe evocar lo que sucede fuera de campo.'
       ],
-      handoutConnection: 'Manual 06 con diagramas de captura y técnicas de mezcla sonora.',
       audioNotice: 'Escuche con auriculares para notar las variaciones de acústica de set.'
     },
     fr: {
@@ -335,7 +311,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'Les micros cravate assurent l’intelligibilité ; la perche capture la vérité spatiale.',
         'Le sound design doit faire vivre tout ce qui se passe hors-champ.'
       ],
-      handoutConnection: 'Fascicule 06 avec chaînes d’enregistrement et workflows Fairlight.',
       audioNotice: 'Écoute au casque vivement recommandée pour ce module.'
     }
   },
@@ -350,7 +325,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'Varie a duração dos planos para criar dinamismo rítmico.',
         'Não corte cedo demais: deixe o plano respirar quando a verdade emocional assim exigir.'
       ],
-      handoutConnection: 'Apostila 07 detalha técnicas de montagem paralela, alternada e montagem métrica.',
       audioNotice: 'Exemplos com áudio sincronizado e cortes em continuidade.'
     },
     en: {
@@ -363,7 +337,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'Vary shot durations to build dramatic accelerations and pauses.',
         'Never cut too quickly: let the shot breathe when human truth resonates.'
       ],
-      handoutConnection: 'Handout 07 details parallel editing, cross-cutting, and metric montage.',
       audioNotice: 'Synchronized edit demonstrations with matched studio audio.'
     },
     es: {
@@ -376,7 +349,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'Alterne la duración de los planos para modular el pulso dramático.',
         'Deje respirar el encuadre cuando la emoción lo demande.'
       ],
-      handoutConnection: 'Manual 07 con análisis pormenorizado del montaje métrico y rítmico.',
       audioNotice: 'Ejemplos con sonido de edición sincronizado.'
     },
     fr: {
@@ -389,7 +361,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'Variez la durée des plans pour insuffler une pulsation vivante.',
         'Laissez le plan respirer quand la vérité du regard l’exige.'
       ],
-      handoutConnection: 'Fascicule 07 avec décryptage du montage alterné et parallèle.',
       audioNotice: 'Démonstrations de raccords avec mixage son calé à l’image.'
     }
   },
@@ -404,7 +375,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'Cuidado com o excesso de objetos: no cinema, menos elementos com maior significado é sempre melhor.',
         'O figurino deve parecer vivido e habitado pelo personagem, nunca recém-saído da loja.'
       ],
-      handoutConnection: 'Apostila 08 traz guias de cartelas de cores e decupagem de arte em longas premiados.',
       audioNotice: 'Áudio masterizado com clareza vocal cristalina.'
     },
     en: {
@@ -417,7 +387,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'Avoid cluttered frames: fewer, deeply meaningful props carry vastly more weight.',
         'Costumes must look lived-in and weathered by the character’s history.'
       ],
-      handoutConnection: 'Handout 08 contains color theory moodboards and art department call sheets.',
       audioNotice: 'Mastered vocal audio with crystal-clear dynamic presence.'
     },
     es: {
@@ -430,7 +399,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'Evite la sobrecarga: la sobriedad con significado potencia el impacto visual.',
         'El vestuario debe reflejar la vida cotidiana del personaje.'
       ],
-      handoutConnection: 'Manual 08 con guías de paletas y desglose de arte profesional.',
       audioNotice: 'Sonido estéreo balanceado en estudio.'
     },
     fr: {
@@ -443,7 +411,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'Évitez la surcharge : la pureté des lignes renforce l’autorité du cadre.',
         'Les costumes doivent porter l’usure et le vécu des personnages.'
       ],
-      handoutConnection: 'Fascicule 08 avec nuanciers de couleurs et fiches de repérage décor.',
       audioNotice: 'Prise de son studio claire et dynamique.'
     }
   },
@@ -458,7 +425,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'Nunca inicie as filmagens sem contratos e termos de autorização de imagem e voz assinados.',
         'A ordem do dia (call sheet) deve ser clara, antecipada e rigorosamente cumprida.'
       ],
-      handoutConnection: 'Apostila 09 traz planilhas orçamentárias editáveis e modelos de ordem do dia profissional.',
       audioNotice: 'Gravação clara com orientação prática passo a passo.'
     },
     en: {
@@ -471,7 +437,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'Never roll cameras without signed release and location agreements in hand.',
         'Call sheets must be clear, sent well in advance, and honored strictly.'
       ],
-      handoutConnection: 'Handout 09 includes editable budget spreadsheets and industry call sheet templates.',
       audioNotice: 'Crisp studio audio detailing concrete production processes.'
     },
     es: {
@@ -484,7 +449,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'Asegure cesiones de derechos de imagen y sonido antes de encender la cámara.',
         'La orden de rodaje (call sheet) es la brújula inviolable del set.'
       ],
-      handoutConnection: 'Manual 09 con plantillas de presupuesto y contratos tipo.',
       audioNotice: 'Audio de alta claridad pedagógica.'
     },
     fr: {
@@ -497,7 +461,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'Ne tournez jamais sans autorisations de droit à l’image et de lieu signées.',
         'La feuille de service doit être précise, transmise la veille et scrupuleusement respectée.'
       ],
-      handoutConnection: 'Fascicule 09 avec modèles de feuilles de service et tableaux budgétaires.',
       audioNotice: 'Enregistrement vocal soigné et direct.'
     }
   },
@@ -512,7 +475,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'Elabore um teaser enxuto de 60 segundos com o clímax visual do curta.',
         'Seu portfólio e o certificado CINELAB de 180 horas comprovam sua qualificação técnica.'
       ],
-      handoutConnection: 'Apostila 10 detalha listas de festivais com prazos e o guia de emissão do seu Certificado.',
       audioNotice: 'Masterclass de encerramento em áudio comemorativo de estúdio.'
     },
     en: {
@@ -525,7 +487,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'Craft a captivating 60-second teaser showcasing peak cinematic tension.',
         'Your CINELAB 180h Certificate validates your professional directorial proficiency.'
       ],
-      handoutConnection: 'Handout 10 includes festival directories and graduation certificate protocols.',
       audioNotice: 'Grand finale lecture with commemorative studio acoustic mastering.'
     },
     es: {
@@ -538,7 +499,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'Elabore un adelanto de 60 segundos con la máxima intensidad visual.',
         'Su certificado CINELAB de 180 horas acredita su competencia directiva.'
       ],
-      handoutConnection: 'Manual 10 con guía de festivales y emisión de certificado oficial.',
       audioNotice: 'Audio de clausura en máxima fidelidad.'
     },
     fr: {
@@ -551,7 +511,6 @@ export const MASTERCLASS_STAGE_TRANSLATIONS: Record<number, Record<'pt' | 'en' |
         'Montez un teaser percutant de 60 secondes condensant la force visuelle du film.',
         'Votre certification CINELAB 180h atteste de vos compétences de réalisateur.'
       ],
-      handoutConnection: 'Fascicule 10 avec carnet d’adresses des festivals et modalités de diplôme.',
       audioNotice: 'Enregistrement de clôture masterisé pour une expérience commémorative.'
     }
   }

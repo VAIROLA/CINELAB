@@ -566,8 +566,7 @@ export const VideosView: React.FC<VideosViewProps> = ({
                       </ul>
                     </div>
 
-                    <div className="pt-2 border-t border-neutral-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] text-neutral-400 font-mono">
-                      <span className="text-amber-400/90">{trans.handoutConnection}</span>
+                    <div className="pt-2 border-t border-neutral-800/60 flex items-center justify-end text-[11px] text-neutral-400 font-mono">
                       <span className="flex items-center gap-1 text-emerald-400">
                         <Volume2 className="w-3 h-3" />
                         {trans.audioNotice}
