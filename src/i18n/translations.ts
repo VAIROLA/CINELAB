@@ -2418,10 +2418,10 @@ export const MODULE_TRANSLATIONS: Record<
       fr: 'Bâtissez des histoires captivantes en maîtrisant le paradigme des 3 actes, les nœuds dramatiques et la psychologie des personnages.',
     },
     apostilaSummary: {
-      pt: 'Apostila com 7 páginas apresentando a estrutura clássica em 3 atos de Syd Field, pontos de virada, conflito dramático, construção de bíblia de personagens e formatação Master Scenes.',
-      en: '7-page handout presenting Syd Field classic 3-act structure, plot points, dramatic conflict, character bible construction, and Master Scenes formatting.',
-      es: 'Manual de 7 páginas que presenta la estructura clásica en 3 actos, puntos de giro, conflicto dramático y formato profesional de guion.',
-      fr: 'Fascicule de 7 pages présentant la structure classique en 3 actes, points de bascule, conflit dramatique et mise en page de scénario.',
+      pt: 'Apostila com 34 páginas apresentando a estrutura clássica em 3 atos de Syd Field, pontos de virada, conflito dramático, construção de bíblia de personagens e formatação Master Scenes.',
+      en: '34-page handout presenting Syd Field classic 3-act structure, plot points, dramatic conflict, character bible construction, and Master Scenes formatting.',
+      es: 'Manual de 34 páginas que presenta la estructura clásica en 3 actos, puntos de giro, conflicto dramático y formato profesional de guion.',
+      fr: 'Fascicule de 34 pages présentant la structure classique en 3 actes, points de bascule, conflit dramatique et mise en page de scénario.',
     },
     keyThemes: {
       pt: ['Estrutura em 3 Atos e Plot Points', 'Arco de Transformação do Protagonista', 'Subtexto e Diálogos Vivos', 'Formatação Master Scenes Standard'],

@@ -2525,12 +2525,12 @@ export const AdminView: React.FC<AdminViewProps> = ({
                             )}
                             {matchingApostila?.pdfUrl && (
                               <span className="px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-400 font-mono text-[10px] flex items-center gap-1">
-                                <CheckCircle2 className="w-3 h-3" /> PDF Ativo ({matchingApostila.pagesCount || 30} p)
+                                <CheckCircle2 className="w-3 h-3" /> PDF Ativo ({(mod.id === 3 && matchingApostila.pagesCount === 7 ? 34 : (matchingApostila.pagesCount || (mod.id === 3 ? 34 : 30)))} p)
                               </span>
                             )}
                             {matchingApostila?.extraPdfUrl && (
                               <span className="px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-mono text-[10px] flex items-center gap-1">
-                                <CheckCircle2 className="w-3 h-3" /> Extra Ativo ({matchingApostila.extraPagesCount || '?'} p)
+                                <CheckCircle2 className="w-3 h-3" /> Extra Ativo ({(mod.id === 3 && matchingApostila.extraPagesCount === 34 ? 7 : (matchingApostila.extraPagesCount ?? (mod.id === 3 ? 7 : '?')))} p)
                               </span>
                             )}
                           </div>
@@ -2566,7 +2566,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
                                 <BookOpen className="w-3.5 h-3.5 text-blue-400" /> Apostila Principal
                               </span>
                               <span className="text-[10px] font-mono text-neutral-400">
-                                {matchingApostila?.pagesCount || 30} págs
+                                {(mod.id === 3 && matchingApostila?.pagesCount === 7 ? 34 : (matchingApostila?.pagesCount || (mod.id === 3 ? 34 : 30)))} págs
                               </span>
                             </div>
 
@@ -2710,7 +2710,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
                               </span>
                               {matchingApostila?.extraPdfUrl ? (
                                 <span className="text-[10px] font-mono text-cyan-400">
-                                  {matchingApostila.extraPagesCount || 0} págs
+                                  {(mod.id === 3 && matchingApostila.extraPagesCount === 34 ? 7 : (matchingApostila.extraPagesCount ?? (mod.id === 3 ? 7 : 0)))} págs
                                 </span>
                               ) : (
                                 <span className="text-[10px] font-mono text-neutral-500">Opcional</span>

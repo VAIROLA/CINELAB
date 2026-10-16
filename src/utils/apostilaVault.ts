@@ -527,7 +527,7 @@ export function getMergedApostilasWithVault(serverApostilas: Apostila[]): Aposti
   const vault = getPersistentVaultIndex();
   let vaultNeedsSave = false;
 
-  const realPagesMap: Record<number, number> = { 1: 33, 2: 52, 3: 7, 4: 6, 5: 6, 6: 6, 7: 6, 8: 6, 9: 6, 10: 6 };
+  const realPagesMap: Record<number, number> = { 1: 33, 2: 52, 3: 34, 4: 6, 5: 6, 6: 6, 7: 6, 8: 6, 9: 6, 10: 6 };
 
   const getCleanExtraCover = (...candidates: Array<string | undefined>) => {
     for (const c of candidates) {
@@ -552,14 +552,14 @@ export function getMergedApostilasWithVault(serverApostilas: Apostila[]): Aposti
       return {
         ...apos,
         coverUrl: !isOutdatedOrBrokenCover ? apos.coverUrl : canonicalCover,
-        pagesCount: (apos.pagesCount && apos.pagesCount > 0 && !(modNum === 1 && apos.pagesCount === 8)) ? apos.pagesCount : canonicalPages,
-        totalPages: (apos.totalPages && apos.totalPages > 0 && !(modNum === 1 && apos.totalPages === 8)) ? apos.totalPages : canonicalPages,
+        pagesCount: (apos.pagesCount && apos.pagesCount > 0 && !(modNum === 1 && apos.pagesCount === 8) && !(modNum === 3 && apos.pagesCount === 7)) ? apos.pagesCount : canonicalPages,
+        totalPages: (apos.totalPages && apos.totalPages > 0 && !(modNum === 1 && apos.totalPages === 8) && !(modNum === 3 && apos.totalPages === 7)) ? apos.totalPages : canonicalPages,
         pdfUrl: apos.pdfUrl && !apos.pdfUrl.includes('1790444') && !apos.pdfUrl.includes('1790684') && !apos.pdfUrl.includes('1790652') ? apos.pdfUrl : canonicalPdf,
-        extraPdfUrl: apos.extraPdfUrl || extraLocal?.pdfUrl || (modNum === 1 ? '/materiais/cinelab-apostila-extra-01.pdf' : undefined),
-        extraTitle: apos.extraTitle || extraLocal?.title || (modNum === 1 ? 'Apostila Extra 01 (Material Complementar)' : undefined),
-        extraPagesCount: apos.extraPagesCount || extraLocal?.pagesCount || (modNum === 1 ? 8 : undefined),
-        extraFileSizeMb: apos.extraFileSizeMb || extraLocal?.fileSizeMb || (modNum === 1 ? 0.24 : undefined),
-        extraCoverUrl: getCleanExtraCover(apos.extraCoverUrl, extraLocal?.extraCoverUrl, extraLocal?.coverUrl, (modNum === 1 ? '/images/covers/apostila-01.jpg' : undefined)),
+        extraPdfUrl: apos.extraPdfUrl || extraLocal?.pdfUrl || (modNum === 1 ? '/materiais/cinelab-apostila-extra-01.pdf' : (modNum === 3 ? '/materiais/cinelab-apostila-extra-03.pdf' : undefined)),
+        extraTitle: apos.extraTitle || extraLocal?.title || (modNum === 1 ? 'Apostila Extra 01 (Material Complementar)' : (modNum === 3 ? 'Apostila Extra 03 ROTEIRO E CRIAÇÃO DE PERSONAGEM (Material Complementar)' : undefined)),
+        extraPagesCount: (modNum === 3 && (apos.extraPagesCount === 34 || !apos.extraPagesCount)) ? 7 : (apos.extraPagesCount || extraLocal?.pagesCount || (modNum === 1 ? 8 : undefined)),
+        extraFileSizeMb: apos.extraFileSizeMb || extraLocal?.fileSizeMb || (modNum === 1 ? 0.24 : (modNum === 3 ? 0.29 : undefined)),
+        extraCoverUrl: getCleanExtraCover(apos.extraCoverUrl, extraLocal?.extraCoverUrl, extraLocal?.coverUrl, (modNum === 1 ? '/images/covers/apostila-01.jpg' : (modNum === 3 ? '/images/covers/apostila-03.jpg' : undefined))),
       };
     }
 
@@ -579,19 +579,22 @@ export function getMergedApostilasWithVault(serverApostilas: Apostila[]): Aposti
       local.pdfUrl.includes('1790652');
 
     const isOldMod1PageCount = modNum === 1 && local.pagesCount === 8;
-    const isWrongPages = !local.pagesCount || local.pagesCount <= 0 || isOldMod1PageCount;
+    const isOldMod3PageCount = modNum === 3 && (local.pagesCount === 7 || apos.pagesCount === 7);
+    const isOldMod3ExtraCount = modNum === 3 && (local.extraPagesCount === 34 || apos.extraPagesCount === 34);
+    const isWrongPages = !local.pagesCount || local.pagesCount <= 0 || isOldMod1PageCount || isOldMod3PageCount;
 
-    if ((isCorruptedTitle || isCorruptedFile || isWrongPages) && vault[key]) {
+    if ((isCorruptedTitle || isCorruptedFile || isWrongPages || isOldMod3ExtraCount) && vault[key]) {
       vault[key] = {
         ...vault[key],
         title: effectiveTitle,
         pdfUrl: isCorruptedFile ? canonicalPdf : vault[key].pdfUrl,
         pagesCount: isWrongPages ? canonicalPages : vault[key].pagesCount,
+        extraPagesCount: isOldMod3ExtraCount ? 7 : vault[key].extraPagesCount,
       };
       vaultNeedsSave = true;
     }
 
-    const pages = (!isWrongPages && local.pagesCount && local.pagesCount > 0 && !isCorruptedFile) ? local.pagesCount : (apos.pagesCount && apos.pagesCount > 0 && !(modNum === 1 && apos.pagesCount === 8) ? apos.pagesCount : canonicalPages);
+    const pages = (!isWrongPages && local.pagesCount && local.pagesCount > 0 && !isCorruptedFile) ? local.pagesCount : ((apos.pagesCount && apos.pagesCount > 0 && !(modNum === 1 && apos.pagesCount === 8) && !(modNum === 3 && apos.pagesCount === 7)) ? apos.pagesCount : canonicalPages);
     const effectivePdf = isCorruptedFile ? canonicalPdf : (local.pdfUrl || apos.pdfUrl || canonicalPdf);
 
     const canonicalCover = `/images/covers/apostila-${modNum < 10 ? '0' + modNum : modNum}.jpg`;
@@ -600,10 +603,18 @@ export function getMergedApostilasWithVault(serverApostilas: Apostila[]): Aposti
 
     const extraKey = `mod-${modNum}-extra`;
     const extraLocal = vault[extraKey];
-    const effectiveExtraPdf = apos.extraPdfUrl || local.extraPdfUrl || extraLocal?.pdfUrl || (modNum === 1 ? '/materiais/cinelab-apostila-extra-01.pdf' : undefined);
-    const effectiveExtraTitle = apos.extraTitle || local.extraTitle || extraLocal?.title || (modNum === 1 ? 'Apostila Extra 01 (Material Complementar)' : undefined);
-    const effectiveExtraPages = apos.extraPagesCount || local.extraPagesCount || extraLocal?.pagesCount || (modNum === 1 ? 8 : undefined);
-    const effectiveExtraSize = apos.extraFileSizeMb || local.extraFileSizeMb || extraLocal?.fileSizeMb || (modNum === 1 ? 0.24 : undefined);
+    if (modNum === 3 && extraLocal && (extraLocal.pagesCount === 34 || !extraLocal.pagesCount)) {
+      vault[extraKey] = {
+        ...extraLocal,
+        pagesCount: 7,
+        title: extraLocal.title || 'Apostila Extra 03 ROTEIRO E CRIAÇÃO DE PERSONAGEM (Material Complementar)',
+      };
+      vaultNeedsSave = true;
+    }
+    const effectiveExtraPdf = apos.extraPdfUrl || local.extraPdfUrl || extraLocal?.pdfUrl || (modNum === 1 ? '/materiais/cinelab-apostila-extra-01.pdf' : (modNum === 3 ? '/materiais/cinelab-apostila-extra-03.pdf' : undefined));
+    const effectiveExtraTitle = apos.extraTitle || local.extraTitle || extraLocal?.title || (modNum === 1 ? 'Apostila Extra 01 (Material Complementar)' : (modNum === 3 ? 'Apostila Extra 03 ROTEIRO E CRIAÇÃO DE PERSONAGEM (Material Complementar)' : undefined));
+    const effectiveExtraPages = (modNum === 3 && (apos.extraPagesCount === 34 || local.extraPagesCount === 34 || extraLocal?.pagesCount === 34 || (!apos.extraPagesCount && !local.extraPagesCount))) ? 7 : (apos.extraPagesCount || local.extraPagesCount || extraLocal?.pagesCount || (modNum === 1 ? 8 : (modNum === 3 ? 7 : undefined)));
+    const effectiveExtraSize = apos.extraFileSizeMb || local.extraFileSizeMb || extraLocal?.fileSizeMb || (modNum === 1 ? 0.24 : (modNum === 3 ? 0.29 : undefined));
 
     return {
       ...apos,

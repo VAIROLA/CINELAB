@@ -498,8 +498,8 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
       subtitle: `Material Didático Complementar - Etapa 0${modNum}`,
       summary: `Apostila extra de aprofundamento técnico e exercícios práticos da Etapa 0${modNum}.`,
       pdfUrl: item.extraPdfUrl || item.pdfUrl,
-      pagesCount: item.extraPagesCount || 30,
-      totalPages: item.extraPagesCount || 30,
+      pagesCount: (modNum === 3 && item.extraPagesCount === 34) ? 7 : (item.extraPagesCount || (modNum === 3 ? 7 : 30)),
+      totalPages: (modNum === 3 && item.extraPagesCount === 34) ? 7 : (item.extraPagesCount || (modNum === 3 ? 7 : 30)),
       fileSizeMb: item.extraFileSizeMb || item.fileSizeMb,
       sections: [],
     };
@@ -743,8 +743,8 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
             durationDays: m?.durationDays,
             durationLabel: m?.durationLabel,
             evalLeadDays: m?.evalLeadDays,
-            totalPages: a.totalPages || a.pagesCount || ((a.moduleId || a.number) === 1 ? 8 : ((a.moduleId || a.number) === 2 ? 52 : ((a.moduleId || a.number) === 3 ? 7 : 6))),
-            pagesCount: a.pagesCount || a.totalPages || ((a.moduleId || a.number) === 1 ? 8 : ((a.moduleId || a.number) === 2 ? 52 : ((a.moduleId || a.number) === 3 ? 7 : 6))),
+            totalPages: a.totalPages || a.pagesCount || ((a.moduleId || a.number) === 1 ? 8 : ((a.moduleId || a.number) === 2 ? 52 : ((a.moduleId || a.number) === 3 ? 34 : 6))),
+            pagesCount: a.pagesCount || a.totalPages || ((a.moduleId || a.number) === 1 ? 8 : ((a.moduleId || a.number) === 2 ? 52 : ((a.moduleId || a.number) === 3 ? 34 : 6))),
             pdfUrl: a.pdfUrl || canonicalPdf,
           };
         });
@@ -761,7 +761,8 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
             title: `Apostila 0${num} – ${m.title}`,
             subtitle: m.subtitle,
             summary: m.summary,
-            totalPages: num === 1 ? 8 : (num === 2 ? 52 : (num === 3 ? 7 : 6)),
+            totalPages: num === 1 ? 8 : (num === 2 ? 52 : (num === 3 ? 34 : 6)),
+            pagesCount: num === 1 ? 8 : (num === 2 ? 52 : (num === 3 ? 34 : 6)),
             pdfUrl: `/materiais/cinelab-apostila-${num < 10 ? '0' + num : num}.pdf`,
             isUnlocked: true,
             unlockDate: m.startDate || '',
@@ -1581,7 +1582,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                     {/* Reading Metadata & Online Reader CTA */}
                     <div className="pt-2 space-y-2">
                       <div className="flex items-center justify-between text-[11px] font-mono text-neutral-400">
-                        <span>{item.totalPages || item.pagesCount || 30} {cur.pagesUnit}</span>
+                        <span>{(modNum === 3 && item.pagesCount === 7 ? 34 : (item.totalPages || item.pagesCount || (modNum === 3 ? 34 : 30)))} {cur.pagesUnit}</span>
                         <span>{cur.readingOnPlatform}</span>
                       </div>
 
@@ -1652,7 +1653,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                             </div>
                             {item.extraPdfUrl ? (
                               <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold">
-                                ✓ Ativa ({item.extraPagesCount || 0} págs)
+                                ✓ Ativa ({(modNum === 3 && item.extraPagesCount === 34 ? 7 : (item.extraPagesCount ?? (modNum === 3 ? 7 : 0)))} págs)
                               </span>
                             ) : (
                               <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-neutral-800 text-neutral-400 border border-neutral-700">

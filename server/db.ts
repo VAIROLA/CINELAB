@@ -1004,24 +1004,25 @@ export async function initSupabaseData(): Promise<void> {
             if (cloudState.settings) db.settings = { ...db.settings, ...cloudState.settings };
             if (db && db.settings) db.settings.contactEmail = 'cinelab.ecole@gmail.com';
             if (cloudState.apostilas && Array.isArray(cloudState.apostilas)) {
-              const defaultPages: Record<number, number> = { 1: 33, 2: 52, 3: 7, 4: 6, 5: 6, 6: 6, 7: 6, 8: 6, 9: 6, 10: 6 };
+              const defaultPages: Record<number, number> = { 1: 33, 2: 52, 3: 34, 4: 6, 5: 6, 6: 6, 7: 6, 8: 6, 9: 6, 10: 6 };
               db.apostilas = cloudState.apostilas.map((a: any) => {
                 const mod = a.moduleId || a.number || 1;
                 const pad = mod < 10 ? '0' + mod : '' + mod;
                 const canonicalPdf = `/materiais/cinelab-apostila-${pad}.pdf`;
                 const isCorrupted = !a.pdfUrl || a.pdfUrl.includes('1790444') || a.pdfUrl.includes('1790684') || a.pdfUrl.includes('1790652');
                 const isOldMod1PageCount = mod === 1 && a.pagesCount === 8;
-                const pages = (!isOldMod1PageCount && a.pagesCount && a.pagesCount > 0) ? a.pagesCount : (defaultPages[mod] || a.totalPages || 4);
+                const isOldMod3PageCount = mod === 3 && a.pagesCount === 7;
+                const pages = (!isOldMod1PageCount && !isOldMod3PageCount && a.pagesCount && a.pagesCount > 0) ? a.pagesCount : (defaultPages[mod] || a.totalPages || 4);
                 return {
                   ...a,
                   pdfUrl: isCorrupted ? canonicalPdf : a.pdfUrl,
                   pagesCount: pages,
                   totalPages: pages,
-                  extraPdfUrl: a.extraPdfUrl || (mod === 1 ? '/materiais/cinelab-apostila-extra-01.pdf' : undefined),
-                  extraTitle: a.extraTitle || (mod === 1 ? 'Apostila Extra 01 (Material Complementar)' : undefined),
-                  extraPagesCount: a.extraPagesCount || (mod === 1 ? 8 : undefined),
-                  extraFileSizeMb: a.extraFileSizeMb || (mod === 1 ? 0.24 : undefined),
-                  extraCoverUrl: a.extraCoverUrl || (mod === 1 ? '/images/covers/apostila-01.jpg' : undefined),
+                  extraPdfUrl: a.extraPdfUrl || (mod === 1 ? '/materiais/cinelab-apostila-extra-01.pdf' : (mod === 3 ? '/materiais/cinelab-apostila-extra-03.pdf' : undefined)),
+                  extraTitle: a.extraTitle || (mod === 1 ? 'Apostila Extra 01 (Material Complementar)' : (mod === 3 ? 'Apostila Extra 03 ROTEIRO E CRIAÇÃO DE PERSONAGEM (Material Complementar)' : undefined)),
+                  extraPagesCount: (mod === 3 && (a.extraPagesCount === 34 || !a.extraPagesCount)) ? 7 : (a.extraPagesCount || (mod === 1 ? 8 : undefined)),
+                  extraFileSizeMb: a.extraFileSizeMb || (mod === 1 ? 0.24 : (mod === 3 ? 0.29 : undefined)),
+                  extraCoverUrl: a.extraCoverUrl || (mod === 1 ? '/images/covers/apostila-01.jpg' : (mod === 3 ? '/images/covers/apostila-03.jpg' : undefined)),
                 };
               });
             }
