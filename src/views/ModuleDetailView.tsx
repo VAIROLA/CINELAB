@@ -870,7 +870,7 @@ export const ModuleDetailView: React.FC<ModuleDetailViewProps> = ({
                 {language === 'pt' ? apostila.title : (currentTranslation.title || apostila.title)}
               </h3>
               <p className="text-xs text-neutral-400">
-                {apostila.pagesCount || apostila.totalPages || 30} {t('apostila.pages', 'páginas didáticas reais')} de estudo, decupagens e gramática do filme
+                {Number(apostila.moduleId || apostila.number || moduleId) === 3 ? 34 : (apostila.pagesCount || apostila.totalPages || 30)} {t('apostila.pages', 'páginas didáticas reais')} de estudo, decupagens e gramática do filme
                 {apostila.fileSizeMb ? ` • ${apostila.fileSizeMb} MB` : ''}
               </p>
             </div>
@@ -921,7 +921,7 @@ export const ModuleDetailView: React.FC<ModuleDetailViewProps> = ({
                   <span className="truncate">Apostila: {apostila.pdfUrl.split('/').pop()}</span>
                 </span>
                 <span className="text-amber-400 shrink-0 font-bold">
-                  {apostila.pagesCount || apostila.totalPages || ((apostila.number || apostila.moduleId || moduleId) === 1 ? 33 : ((apostila.number || apostila.moduleId || moduleId) === 5 ? 6 : 4))} páginas didáticas reais (Leitura Online)
+                  {Number(apostila.number || apostila.moduleId || moduleId) === 3 ? 34 : (apostila.pagesCount || apostila.totalPages || ((apostila.number || apostila.moduleId || moduleId) === 1 ? 33 : ((apostila.number || apostila.moduleId || moduleId) === 2 ? 52 : 6)))} páginas didáticas reais (Leitura Online)
                 </span>
               </div>
 
@@ -942,7 +942,7 @@ export const ModuleDetailView: React.FC<ModuleDetailViewProps> = ({
                   <span>Leitura protegida no navegador CineLab. Download desativado por direitos autorais.</span>
                 </span>
                 <span className="text-neutral-500">
-                  Total: {apostila.pagesCount || apostila.totalPages || ((apostila.number || apostila.moduleId || moduleId) === 1 ? 33 : ((apostila.number || apostila.moduleId || moduleId) === 5 ? 6 : 4))} páginas oficiais
+                  Total: {Number(apostila.number || apostila.moduleId || moduleId) === 3 ? 34 : (apostila.pagesCount || apostila.totalPages || ((apostila.number || apostila.moduleId || moduleId) === 1 ? 33 : ((apostila.number || apostila.moduleId || moduleId) === 2 ? 52 : 6)))} páginas oficiais
                 </span>
               </div>
             </div>

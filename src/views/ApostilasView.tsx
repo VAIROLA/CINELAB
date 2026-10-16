@@ -498,8 +498,8 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
       subtitle: `Material Didático Complementar - Etapa 0${modNum}`,
       summary: `Apostila extra de aprofundamento técnico e exercícios práticos da Etapa 0${modNum}.`,
       pdfUrl: item.extraPdfUrl || item.pdfUrl,
-      pagesCount: (modNum === 3 && item.extraPagesCount === 34) ? 7 : (item.extraPagesCount || (modNum === 3 ? 7 : 30)),
-      totalPages: (modNum === 3 && item.extraPagesCount === 34) ? 7 : (item.extraPagesCount || (modNum === 3 ? 7 : 30)),
+      pagesCount: Number(modNum) === 3 ? 7 : (item.extraPagesCount || 30),
+      totalPages: Number(modNum) === 3 ? 7 : (item.extraPagesCount || 30),
       fileSizeMb: item.extraFileSizeMb || item.fileSizeMb,
       sections: [],
     };
@@ -1582,7 +1582,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                     {/* Reading Metadata & Online Reader CTA */}
                     <div className="pt-2 space-y-2">
                       <div className="flex items-center justify-between text-[11px] font-mono text-neutral-400">
-                        <span>{(modNum === 3 && item.pagesCount === 7 ? 34 : (item.totalPages || item.pagesCount || (modNum === 3 ? 34 : 30)))} {cur.pagesUnit}</span>
+                        <span>{Number(item.moduleId || item.number || modNum) === 3 ? 34 : (item.totalPages || item.pagesCount || 30)} {cur.pagesUnit}</span>
                         <span>{cur.readingOnPlatform}</span>
                       </div>
 
@@ -1653,7 +1653,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                             </div>
                             {item.extraPdfUrl ? (
                               <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold">
-                                ✓ Ativa ({(modNum === 3 && item.extraPagesCount === 34 ? 7 : (item.extraPagesCount ?? (modNum === 3 ? 7 : 0)))} págs)
+                                ✓ Ativa ({Number(item.moduleId || item.number || modNum) === 3 ? 7 : (item.extraPagesCount ?? 0)} págs)
                               </span>
                             ) : (
                               <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-neutral-800 text-neutral-400 border border-neutral-700">
@@ -1666,7 +1666,7 @@ export const ApostilasView: React.FC<ApostilasViewProps> = ({
                             <div className="space-y-2">
                               <div className="flex items-center justify-between text-xs text-neutral-300">
                                 <span className="font-semibold text-white truncate max-w-[240px]">
-                                  {item.extraTitle || `Material Complementar 0${modNum}`}
+                                  {Number(item.moduleId || item.number || modNum) === 3 ? 'Apostila Extra 03: Roteiro e Criação de Personagens (Material Complementar)' : (item.extraTitle || `Material Complementar 0${modNum}`)}
                                 </span>
                                 <span className="text-neutral-400 font-mono text-[10px]">
                                   {item.extraFileSizeMb ? `${item.extraFileSizeMb} MB` : ''}

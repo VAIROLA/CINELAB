@@ -593,7 +593,11 @@ Com a chegada do som sincronizado em 1927 (*The Jazz Singer*), o cinema sofreu u
     title: 'Apostila 03: Roteiro e Criação de Personagens',
     description:
       'Da ideia embrionária à cena formatada: storyline, logline, sinopse, escaleta, criação de personagens tridimensionais, diálogos e subtexto dramático.',
-    pagesCount: 4,
+    pagesCount: 34,
+    totalPages: 34,
+    extraPagesCount: 7,
+    extraTitle: 'Apostila Extra 03: Roteiro e Criação de Personagens (Material Complementar)',
+    extraPdfUrl: '/materiais/cinelab-apostila-extra-03.pdf',
     pdfUrl: '/materiais/cinelab-apostila-03.pdf',
     coverUrl: '/images/covers/apostila-03.jpg',
     fileSizeMb: 21.0,

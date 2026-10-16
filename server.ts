@@ -2758,11 +2758,23 @@ app.put('/api/admin/evaluations/:id', requireAdmin, (req: Request, res: Response
   res.json({ success: true, evaluation: db.evaluations[evalIndex] });
 });
 
-// Admin Apostilas (CRUD & Replace)
 app.get('/api/admin/apostilas', requireAdmin, (req: Request, res: Response) => {
   const db = getDb();
+  const safeApostilas = (db.apostilas || []).map((a) => {
+    const mod = Number(a.moduleId || a.number || 0);
+    if (mod === 3) {
+      return {
+        ...a,
+        pagesCount: 34,
+        totalPages: 34,
+        extraPagesCount: 7,
+        extraTitle: 'Apostila Extra 03: Roteiro e Criação de Personagens (Material Complementar)',
+      };
+    }
+    return a;
+  });
   res.json({
-    apostilas: db.apostilas,
+    apostilas: safeApostilas,
     bonusApostilas: db.bonusApostilas,
   });
 });

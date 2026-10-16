@@ -1017,7 +1017,11 @@ Com a chegada do som sincronizado em 1927 (*The Jazz Singer*), o cinema sofreu u
     number: 3,
     title: "Apostila 03: Roteiro e Cria\xE7\xE3o de Personagens",
     description: "Da ideia embrion\xE1ria \xE0 cena formatada: storyline, logline, sinopse, escaleta, cria\xE7\xE3o de personagens tridimensionais, di\xE1logos e subtexto dram\xE1tico.",
-    pagesCount: 4,
+    pagesCount: 34,
+    totalPages: 34,
+    extraPagesCount: 7,
+    extraTitle: "Apostila Extra 03: Roteiro e Criação de Personagens (Material Complementar)",
+    extraPdfUrl: "/materiais/cinelab-apostila-extra-03.pdf",
     pdfUrl: "/materiais/cinelab-apostila-03.pdf",
     coverUrl: "/images/covers/apostila-03.jpg",
     fileSizeMb: 21,
@@ -9398,8 +9402,21 @@ app.put("/api/admin/evaluations/:id", requireAdmin, (req, res) => {
 });
 app.get("/api/admin/apostilas", requireAdmin, (req, res) => {
   const db2 = getDb();
+  const safeApostilas = (db2.apostilas || []).map((a) => {
+    const mod = Number(a.moduleId || a.number || 0);
+    if (mod === 3) {
+      return {
+        ...a,
+        pagesCount: 34,
+        totalPages: 34,
+        extraPagesCount: 7,
+        extraTitle: "Apostila Extra 03: Roteiro e Criação de Personagens (Material Complementar)",
+      };
+    }
+    return a;
+  });
   res.json({
-    apostilas: db2.apostilas,
+    apostilas: safeApostilas,
     bonusApostilas: db2.bonusApostilas
   });
 });
