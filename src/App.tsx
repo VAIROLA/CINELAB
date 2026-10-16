@@ -62,6 +62,14 @@ export default function App() {
       setCurrentRoute(route);
     };
     window.addEventListener('popstate', handlePopState);
+
+    // Garantir que nenhum service worker legado prenda bundles antigos em cache
+    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then((regs) => {
+        regs.forEach((r) => r.unregister());
+      }).catch(() => {});
+    }
+
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
