@@ -149,7 +149,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
   const [pixBank, setPixBank] = useState('');
   const [pixQrCodeUrl, setPixQrCodeUrl] = useState('');
   const [pixPayload, setPixPayload] = useState('');
-  const [cardPaymentLink, setCardPaymentLink] = useState('https://pag.ae/82e6wXk2G');
+  const [cardPaymentLink, setCardPaymentLink] = useState('https://pag.ae/82fkynZ-v');
   const [pagbankToken, setPagbankToken] = useState('');
   const [logoUrl, setLogoUrl] = useState('');
   const [directorName, setDirectorName] = useState('Professor Cineasta Tony de Luc');
@@ -1379,8 +1379,48 @@ export const AdminView: React.FC<AdminViewProps> = ({
           {activeTab === 'stats' && stats && (
             <div className="space-y-8 animate-fadeIn">
               {/* Metric Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 font-mono">
-                <div className="p-6 rounded-2xl bg-neutral-900 border border-neutral-800">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 font-mono">
+                {/* 1. VISITAS TOTAIS */}
+                <div
+                  onClick={() => setActiveTab('visitors')}
+                  className="p-5 rounded-2xl bg-gradient-to-br from-neutral-900 to-neutral-950 border border-amber-500/30 hover:border-amber-400 transition-all cursor-pointer shadow-lg group"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-amber-400 text-[11px] font-bold flex items-center gap-1.5">
+                      <Eye className="w-3.5 h-3.5" />
+                      VISITAS TOTAIS
+                    </span>
+                    <span className="text-[10px] text-neutral-500 group-hover:text-amber-300 transition-colors">Ver →</span>
+                  </div>
+                  <div className="text-3xl font-display font-bold text-white mt-1">
+                    {visitorStats?.totalVisits || 0}
+                  </div>
+                  <span className="text-[11px] text-neutral-400 mt-1 block">
+                    {visitorStats?.uniqueVisitors || 0} visitantes únicos
+                  </span>
+                </div>
+
+                {/* 2. VISITAS HOJE */}
+                <div
+                  onClick={() => setActiveTab('visitors')}
+                  className="p-5 rounded-2xl bg-gradient-to-br from-neutral-900 to-neutral-950 border border-amber-500/30 hover:border-amber-400 transition-all cursor-pointer shadow-lg group"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-amber-400 text-[11px] font-bold flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                      VISITAS HOJE
+                    </span>
+                    <span className="text-[10px] text-neutral-500 group-hover:text-amber-300 transition-colors">Ao vivo</span>
+                  </div>
+                  <div className="text-3xl font-display font-bold text-amber-300 mt-1">
+                    {visitorStats?.todayVisits || 0}
+                  </div>
+                  <span className="text-[11px] text-neutral-400 mt-1 block">
+                    📱 {visitorStats?.devices?.mobile || 0} • 💻 {visitorStats?.devices?.desktop || 0}
+                  </span>
+                </div>
+
+                <div className="p-5 rounded-2xl bg-neutral-900 border border-neutral-800">
                   <span className="text-neutral-400 text-xs block">ALUNOS MATRICULADOS</span>
                   <div className="text-3xl font-display font-bold text-white mt-1">
                     {stats.totalStudents}
@@ -1390,34 +1430,34 @@ export const AdminView: React.FC<AdminViewProps> = ({
                   </span>
                 </div>
 
-                <div className="p-6 rounded-2xl bg-neutral-900 border border-neutral-800">
+                <div className="p-5 rounded-2xl bg-neutral-900 border border-neutral-800">
                   <span className="text-neutral-400 text-xs block">RECEITA CONFIRMADA</span>
                   <div className="text-3xl font-display font-bold text-amber-400 mt-1">
                     R$ {(stats.totalRevenue || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </div>
                   <span className="text-[11px] text-neutral-500 mt-1 block">
-                    PIX e Cartão de Crédito
+                    PIX e Cartão
                   </span>
                 </div>
 
-                <div className="p-6 rounded-2xl bg-neutral-900 border border-neutral-800">
+                <div className="p-5 rounded-2xl bg-neutral-900 border border-neutral-800">
                   <span className="text-neutral-400 text-xs block">AVALIAÇÕES ENVIADAS</span>
                   <div className="text-3xl font-display font-bold text-white mt-1">
                     {stats.totalSubmissions}
                   </div>
                   <span className="text-[11px] text-amber-400 mt-1 block">
-                    {stats.pendingSubmissions} aguardando correção
+                    {stats.pendingSubmissions} pendentes
                   </span>
                 </div>
 
-                <div className="p-6 rounded-2xl bg-neutral-900 border border-neutral-800">
-                  <span className="text-neutral-400 text-xs block">MÉDIA GERAL DA ESCOLA</span>
+                <div className="p-5 rounded-2xl bg-neutral-900 border border-neutral-800">
+                  <span className="text-neutral-400 text-xs block">MÉDIA GERAL ESCOLA</span>
                   <div className="text-3xl font-display font-bold text-emerald-400 mt-1">
                     {stats.totalSubmissions > 0 && stats.averageGrade > 0 ? stats.averageGrade.toFixed(1) : '0.0'}{' '}
                     <span className="text-xs text-neutral-400 font-normal">/ 10</span>
                   </div>
                   <span className="text-[11px] text-neutral-500 mt-1 block">
-                    {stats.certificatesIssued} diplomas emitidos
+                    {stats.certificatesIssued} diplomas
                   </span>
                 </div>
               </div>

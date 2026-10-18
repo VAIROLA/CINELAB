@@ -31,7 +31,7 @@ export const initialCourseSettings: CourseSettings = {
   pixBank: 'PagBank / PagSeguro (290)',
   pixQrCodeUrl: '',
   pixPayload: '00020126610014br.gov.bcb.pix0139tonydeluc@portal-tvdiversidade-news.com27600016BR.COM.PAGSEGURO01365CEF1E59-B572-44A8-9419-94EBA1F7910C52045499530398654071000.005802BR5923AILTON PAULO DOS SANTOS6006MARICA62290525PAGS0001000002610141120626304D326',
-  cardPaymentLink: 'https://pag.ae/82e6wXk2G',
+  cardPaymentLink: 'https://pag.ae/82fkynZ-v',
   pagbankToken: '',
   logoUrl: '',
   contactEmail: 'cinelab.ecole@gmail.com',
