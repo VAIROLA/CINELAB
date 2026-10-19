@@ -2226,11 +2226,29 @@ app.get('/api/admin/students', requireAdmin, (req: Request, res: Response) => {
 // ----------------------------------------------------
 // Public Tracking Endpoint
 app.post('/api/tracking/visit', (req: Request, res: Response) => {
-  const { pagePath, pageTitle, referrer, deviceType, isInterestedInEnrollment } = req.body;
+  // Ignorar acessos de administradores para não distorcer as métricas reais
+  const { user } = authenticate(req);
+  if (user?.role === 'admin' || user?.email === 'studiodeluc@gmail.com') {
+    return res.json({ success: true, ignored: true, reason: 'admin' });
+  }
+
+  const { pagePath, pageTitle, referrer, deviceType, isInterestedInEnrollment, city, state, country } = req.body;
+  if (pagePath && (pagePath.includes('/admin') || pagePath === 'admin')) {
+    return res.json({ success: true, ignored: true, reason: 'admin_path' });
+  }
+
   const ip = (req.headers['x-forwarded-for'] as string) || req.socket.remoteAddress || '127.0.0.1';
   const cleanIp = ip.split(',')[0].trim();
   const userAgent = req.headers['user-agent'] || 'Desconhecido';
-  const { user } = authenticate(req);
+
+  // Geolocalização de borda Vercel como fallback
+  const vercelCity = req.headers['x-vercel-ip-city'] ? decodeURIComponent(req.headers['x-vercel-ip-city'] as string) : undefined;
+  const vercelState = (req.headers['x-vercel-ip-country-region'] as string) || undefined;
+  const vercelCountry = (req.headers['x-vercel-ip-country'] as string) || undefined;
+
+  const finalCity = (city && String(city).trim()) || vercelCity || 'Cidade Não Identificada';
+  const finalState = (state && String(state).trim()) || vercelState || '';
+  const finalCountry = (country && String(country).trim()) || (vercelCountry === 'BR' ? 'Brasil' : vercelCountry) || 'Brasil';
 
   const parsedDevice = deviceType || (/iPhone|iPad|Android|Mobile/i.test(userAgent) ? 'mobile' : 'desktop');
 
@@ -2242,6 +2260,9 @@ app.post('/api/tracking/visit', (req: Request, res: Response) => {
     pageTitle: pageTitle || 'Página Inicial',
     referrer: referrer || 'Acesso Direto',
     isInterestedInEnrollment: Boolean(isInterestedInEnrollment),
+    city: finalCity,
+    state: finalState,
+    country: finalCountry,
     userId: user?.id,
     userName: user?.name,
     isStudent: user?.role === 'student',

@@ -466,6 +466,7 @@ export interface VisitorLog {
   isInterestedInEnrollment: boolean;
   city?: string;
   state?: string;
+  country?: string;
   userId?: string;
   userName?: string;
   isStudent?: boolean;

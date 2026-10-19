@@ -6282,8 +6282,9 @@ function logVisitor(visitorData) {
     referrer: visitorData.referrer || "Acesso Direto",
     timestamp: (/* @__PURE__ */ new Date()).toISOString(),
     isInterestedInEnrollment: Boolean(visitorData.isInterestedInEnrollment),
-    city: visitorData.city || "Brasil",
-    state: visitorData.state || "BR",
+    city: visitorData.city || "Cidade N\xE3o Identificada",
+    state: visitorData.state || "",
+    country: visitorData.country || "Brasil",
     userId: visitorData.userId,
     userName: visitorData.userName,
     isStudent: visitorData.isStudent
@@ -8973,11 +8974,28 @@ app.get("/api/admin/students", requireAdmin, (req, res) => {
   res.json(students);
 });
 app.post("/api/tracking/visit", (req, res) => {
-  const { pagePath, pageTitle, referrer, deviceType, isInterestedInEnrollment } = req.body;
+  const { user } = authenticate(req);
+  if (user?.role === "admin" || user?.email === "studiodeluc@gmail.com") {
+    return res.json({ success: true, ignored: true, reason: "admin" });
+  }
+
+  const { pagePath, pageTitle, referrer, deviceType, isInterestedInEnrollment, city, state, country } = req.body;
+  if (pagePath && (pagePath.includes("/admin") || pagePath === "admin")) {
+    return res.json({ success: true, ignored: true, reason: "admin_path" });
+  }
+
   const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress || "127.0.0.1";
   const cleanIp = ip.split(",")[0].trim();
   const userAgent = req.headers["user-agent"] || "Desconhecido";
-  const { user } = authenticate(req);
+
+  const vercelCity = req.headers["x-vercel-ip-city"] ? decodeURIComponent(req.headers["x-vercel-ip-city"]) : void 0;
+  const vercelState = req.headers["x-vercel-ip-country-region"] || void 0;
+  const vercelCountry = req.headers["x-vercel-ip-country"] || void 0;
+
+  const finalCity = city && String(city).trim() || vercelCity || "Cidade N\xE3o Identificada";
+  const finalState = state && String(state).trim() || vercelState || "";
+  const finalCountry = country && String(country).trim() || (vercelCountry === "BR" ? "Brasil" : vercelCountry) || "Brasil";
+
   const parsedDevice = deviceType || (/iPhone|iPad|Android|Mobile/i.test(userAgent) ? "mobile" : "desktop");
   const log = logVisitor({
     ip: cleanIp,
@@ -8987,6 +9005,9 @@ app.post("/api/tracking/visit", (req, res) => {
     pageTitle: pageTitle || "P\xE1gina Inicial",
     referrer: referrer || "Acesso Direto",
     isInterestedInEnrollment: Boolean(isInterestedInEnrollment),
+    city: finalCity,
+    state: finalState,
+    country: finalCountry,
     userId: user?.id,
     userName: user?.name,
     isStudent: user?.role === "student"

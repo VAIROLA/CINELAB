@@ -86,6 +86,8 @@ export const VisitorsTab: React.FC<VisitorsTabProps> = ({ stats, onRefresh }) =>
       v.pagePath.toLowerCase().includes(searchTerm.toLowerCase()) ||
       v.referrer.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (v.city && v.city.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (v.state && v.state.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (v.country && v.country.toLowerCase().includes(searchTerm.toLowerCase())) ||
       (v.userName && v.userName.toLowerCase().includes(searchTerm.toLowerCase()));
 
     const matchDevice = deviceFilter === 'all' || v.deviceType === deviceFilter;
@@ -366,9 +368,18 @@ export const VisitorsTab: React.FC<VisitorsTabProps> = ({ stats, onRefresh }) =>
                         </td>
                         <td className="p-4">
                           <div className="font-bold text-white">{vis.ip}</div>
-                          <div className="text-[11px] text-neutral-400 flex items-center gap-1">
-                            <MapPin className="w-3 h-3 text-neutral-500" />
-                            {vis.city ? `${vis.city}, ${vis.state || 'BR'}` : 'Brasil'}
+                          <div className="text-[11px] text-amber-300/90 flex items-center gap-1 mt-0.5">
+                            <MapPin className="w-3 h-3 text-amber-400 shrink-0" />
+                            <span>
+                              {(() => {
+                                const parts = [];
+                                if (vis.city && vis.city !== 'Cidade Não Identificada' && vis.city !== 'Brasil') parts.push(vis.city);
+                                if (vis.state && vis.state !== 'BR') parts.push(vis.state);
+                                if (vis.country) parts.push(vis.country);
+                                else parts.push('Brasil');
+                                return parts.length > 0 ? parts.join(', ') : 'Brasil';
+                              })()}
+                            </span>
                           </div>
                         </td>
                         <td className="p-4">

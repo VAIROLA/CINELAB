@@ -850,8 +850,11 @@ export const api = {
     referrer?: string;
     deviceType?: 'mobile' | 'desktop' | 'tablet';
     isInterestedInEnrollment?: boolean;
+    city?: string;
+    state?: string;
+    country?: string;
   }) =>
-    request<{ success: boolean; logId: string }>('/api/tracking/visit', {
+    request<{ success: boolean; logId?: string; ignored?: boolean }>('/api/tracking/visit', {
       method: 'POST',
       body: JSON.stringify(data),
     }),

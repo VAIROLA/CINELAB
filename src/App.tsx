@@ -106,15 +106,91 @@ export default function App() {
       contato: 'Fale Conosco',
       faq: 'Perguntas Frequentes',
     };
-    api
-      .trackVisit({
-        pagePath: '/' + (currentRoute === 'inicio' ? '' : currentRoute),
-        pageTitle: titles[currentRoute] || currentRoute,
-        referrer: typeof document !== 'undefined' ? document.referrer || 'Acesso Direto' : 'Acesso Direto',
-        isInterestedInEnrollment: currentRoute === 'matricula' || currentRoute === 'curso',
-      })
-      .catch(() => {});
-  }, [currentRoute]);
+    // 1. NÃO rastrear acessos do Administrador
+    const isAdmin = 
+      currentRoute === 'admin' ||
+      user?.role === 'admin' ||
+      user?.email === 'studiodeluc@gmail.com' ||
+      (typeof window !== 'undefined' && (
+        localStorage.getItem('cinelab_is_admin') === 'true' ||
+        !!localStorage.getItem('cinelab_admin_saved_token') ||
+        window.location.pathname.startsWith('/admin') ||
+        window.location.hash.includes('admin')
+      ));
+
+    if (isAdmin) {
+      return; // Administrador não é contabilizado no contador de visitas
+    }
+
+    const titles: Record<string, string> = {
+      inicio: 'Página Inicial – CINELAB',
+      home: 'Página Inicial – CINELAB',
+      curso: 'O Curso & Metodologia',
+      metodologia: 'Metodologia de Ensino',
+      'tony-de-luc': 'Sobre Tony de Luc – Direção, Feitos & Currículo',
+      'sobre-tony': 'Sobre Tony de Luc – Direção, Feitos & Currículo',
+      'filmografia': 'Filmografia do Diretor Tony de Luc – CINELAB',
+      'filmografia-diretor': 'Filmografia do Diretor Tony de Luc – CINELAB',
+      'filmografia-tony': 'Filmografia do Diretor Tony de Luc – CINELAB',
+      matricula: 'Inscrição & Matrícula Online',
+      apostilas: 'Apostilas Digitais Exclusivas',
+      videos: 'Masterclasses em Vídeo',
+      atividades: 'Atividades Práticas',
+      avaliacoes: 'Avaliações de Etapas',
+      notas: 'Boletim & Notas',
+      certificado: 'Certificado Profissional',
+      'tutor-ia': 'CineTutor IA – Mentor de Cinema & Audiovisual',
+      tutor: 'CineTutor IA – Mentor de Cinema & Audiovisual',
+      'ia-tutor': 'CineTutor IA – Mentor de Cinema & Audiovisual',
+      cinetutor: 'CineTutor IA – Mentor de Cinema & Audiovisual',
+      admin: 'Painel de Gestão Acadêmica',
+      contato: 'Fale Conosco',
+      faq: 'Perguntas Frequentes',
+    };
+
+    // Obter geolocalização detalhada (Cidade, Estado, País) com cache em sessionStorage
+    const fetchGeoAndTrack = async () => {
+      let geo = { city: '', state: '', country: 'Brasil' };
+      try {
+        const cached = sessionStorage.getItem('cinelab_geo_loc');
+        if (cached) {
+          geo = JSON.parse(cached);
+        } else {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 3000);
+          const res = await fetch('https://ipwho.is/', { signal: controller.signal });
+          clearTimeout(timeoutId);
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.success) {
+              geo = {
+                city: data.city || '',
+                state: data.region_code || data.region || '',
+                country: data.country === 'Brazil' ? 'Brasil' : (data.country || 'Brasil')
+              };
+              sessionStorage.setItem('cinelab_geo_loc', JSON.stringify(geo));
+            }
+          }
+        }
+      } catch {
+        // Fallback silencioso
+      }
+
+      api
+        .trackVisit({
+          pagePath: '/' + (currentRoute === 'inicio' ? '' : currentRoute),
+          pageTitle: titles[currentRoute] || currentRoute,
+          referrer: typeof document !== 'undefined' ? document.referrer || 'Acesso Direto' : 'Acesso Direto',
+          isInterestedInEnrollment: currentRoute === 'matricula' || currentRoute === 'curso',
+          city: geo.city,
+          state: geo.state,
+          country: geo.country,
+        })
+        .catch(() => {});
+    };
+
+    fetchGeoAndTrack();
+  }, [currentRoute, user]);
 
   const loadCourseInfo = async () => {
     try {
@@ -198,7 +274,10 @@ export default function App() {
     }
     setAuthModalOpen(false);
 
-    if (authenticatedUser.role === 'admin') {
+    if (authenticatedUser.role === 'admin' || authenticatedUser.email === 'studiodeluc@gmail.com') {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('cinelab_is_admin', 'true');
+      }
       navigateTo('admin');
     } else {
       navigateTo('minha-area');
