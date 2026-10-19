@@ -484,6 +484,7 @@ export interface VisitorStats {
     tablet: number;
   };
   topPages: { path: string; title: string; count: number }[];
+  topLocations?: { location: string; city: string; state: string; count: number; percentage: number }[];
   recentVisitors: VisitorLog[];
 }
 
