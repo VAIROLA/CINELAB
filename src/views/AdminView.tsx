@@ -1110,6 +1110,98 @@ export const AdminView: React.FC<AdminViewProps> = ({
     (localAdminUser && localAdminUser.role === 'admin')
   );
 
+  if (!isAuthedAdmin) {
+    return (
+      <div className="max-w-xl mx-auto py-16 px-4 text-neutral-200">
+        <div className="p-8 sm:p-10 rounded-3xl bg-neutral-900 border border-neutral-800 shadow-2xl space-y-6 text-center animate-fadeIn">
+          <div className="w-16 h-16 rounded-2xl bg-red-950/80 border border-red-800/80 flex items-center justify-center mx-auto text-red-400">
+            <Lock className="w-8 h-8" />
+          </div>
+          <div>
+            <span className="text-[11px] font-mono uppercase tracking-widest text-red-400 font-bold">
+              Autenticação de Segurança
+            </span>
+            <h2 className="text-xl font-display font-bold text-white mt-1">
+              Acesso da Coordenação Acadêmica
+            </h2>
+            <p className="text-xs text-neutral-400 mt-2">
+              Esta área é restrita ao <strong className="text-neutral-200">Professor Cineasta Tony de Luc</strong> para gestão do curso, controle de visitas, alunos, liberação de etapas e emissão de certificados.
+            </p>
+          </div>
+
+          {loginMessage && (
+            <div className="p-3 rounded-xl bg-red-950/40 border border-red-800/60 text-red-300 text-xs flex items-center gap-2 text-left">
+              <AlertCircle className="w-4 h-4 shrink-0 text-red-400" />
+              <span>{loginMessage}</span>
+            </div>
+          )}
+
+          {/* Formulário com credenciais seguras */}
+          <form onSubmit={handleFormAdminLogin} className="space-y-4 text-left">
+            <div>
+              <label className="block text-[11px] font-mono text-neutral-400 mb-1">E-mail Administrativo</label>
+              <input
+                type="email"
+                required
+                value={loginEmail}
+                onChange={(e) => setLoginEmail(e.target.value)}
+                placeholder="studiodeluc@gmail.com"
+                className="w-full px-3 py-2.5 rounded-xl bg-neutral-950 border border-neutral-800 text-white text-xs focus:border-red-500 focus:outline-none"
+              />
+            </div>
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-[11px] font-mono text-neutral-400">Senha de Acesso</label>
+                <button
+                  type="button"
+                  onClick={() => setShowAdminPassword(!showAdminPassword)}
+                  className="text-[10px] text-neutral-400 hover:text-white flex items-center gap-1 cursor-pointer"
+                >
+                  {showAdminPassword ? <EyeOff className="w-3 h-3 text-amber-400" /> : <Eye className="w-3 h-3 text-neutral-400" />}
+                  <span>{showAdminPassword ? 'Ocultar' : 'Exibir'}</span>
+                </button>
+              </div>
+              <input
+                type={showAdminPassword ? 'text' : 'password'}
+                required
+                value={loginPassword}
+                onChange={(e) => setLoginPassword(e.target.value)}
+                placeholder="Digite sua senha de acesso"
+                className="w-full px-3 py-2.5 rounded-xl bg-neutral-950 border border-neutral-800 text-white text-xs focus:border-red-500 focus:outline-none"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loginLoading}
+              className="w-full py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold transition-all cursor-pointer shadow-lg shadow-red-950/50 flex items-center justify-center gap-2"
+            >
+              {loginLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Autenticando...</span>
+                </>
+              ) : (
+                <>
+                  <Lock className="w-4 h-4" />
+                  <span>Entrar com E-mail & Senha</span>
+                </>
+              )}
+            </button>
+          </form>
+
+          <button
+            type="button"
+            onClick={() => onNavigate('inicio')}
+            className="text-xs text-neutral-400 hover:text-white transition-colors cursor-pointer"
+          >
+            ← Voltar para a Página Inicial
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-neutral-200 space-y-8 animate-fadeIn" id="admin-view-root">
       {/* Notifications bar */}
