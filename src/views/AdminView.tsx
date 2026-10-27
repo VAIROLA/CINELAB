@@ -96,7 +96,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
 
   const [loading, setLoading] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
-  const [loginEmail, setLoginEmail] = useState('studiodeluc@gmail.com');
+  const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [showAdminPassword, setShowAdminPassword] = useState(false);
   const [localAdminUser, setLocalAdminUser] = useState<any>(currentUser || null);
@@ -396,7 +396,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
     setLoginLoading(true);
     setLoginMessage('');
     try {
-      const emailToUse = (loginEmail || '').trim() || 'studiodeluc@gmail.com';
+      const emailToUse = (loginEmail || '').trim();
       const passwordToUse = (loginPassword || '').trim();
       if (!passwordToUse) {
         throw new Error('Por favor, digite sua senha de acesso.');
@@ -1145,7 +1145,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
                 required
                 value={loginEmail}
                 onChange={(e) => setLoginEmail(e.target.value)}
-                placeholder="studiodeluc@gmail.com"
+                placeholder="Digite seu e-mail"
                 className="w-full px-3 py-2.5 rounded-xl bg-neutral-950 border border-neutral-800 text-white text-xs focus:border-red-500 focus:outline-none"
               />
             </div>
@@ -1412,7 +1412,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
                 required
                 value={loginEmail}
                 onChange={(e) => setLoginEmail(e.target.value)}
-                placeholder="studiodeluc@gmail.com"
+                placeholder="Digite seu e-mail"
                 className="w-full px-3 py-2.5 rounded-xl bg-neutral-950 border border-neutral-800 text-white text-xs focus:border-red-500 focus:outline-none"
               />
             </div>
